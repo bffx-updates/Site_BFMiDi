@@ -1,0 +1,1069 @@
+/* ============================================================
+   BFMIDI — LANDING (Site/) · ESTILOS
+   Requer css/tokens.css carregado ANTES deste arquivo.
+
+   A PÁGINA NÃO ROLA. `.app` é travado em 100svh e o <body> tem
+   `overflow: hidden`: o que era seção virou PAINEL, e os painéis
+   ocupam todos a mesma caixa, trocando por opacidade. A única
+   rolagem que existe é a da coluna de texto de um painel, e só
+   quando a tela é baixa demais para o conteúdo — é válvula de
+   escape, não navegação.
+
+   ORDEM DO ARQUIVO
+     1. base            5. painéis (home / split / comprar)
+     2. utilitários     6. peças de conteúdo
+     3. cabeçalho       7. rodapé
+     4. SELETOR         8. estreito / baixo / menos movimento
+   ============================================================ */
+
+/* ---------- 1. base ---------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  /* A trava. Sem ela, um painel um pixel mais alto que a tela
+     devolveria a barra de rolagem que este layout existe para
+     eliminar. Quem pode rolar é `.split-copy`, e só ele. */
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { display: block; max-width: 100%; }
+
+a { color: var(--blue-ink); text-decoration: none; }
+a:hover { color: var(--blue); }
+
+button { font: inherit; color: inherit; }
+
+::selection { background: var(--blue); color: var(--paper-2); }
+
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+
+[hidden] { display: none !important; }
+
+
+/* ---------- 2. utilitários --------------------------------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--maxw-page);
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 40px);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* Foco visível ÚNICO da página. Declarado uma vez, aqui, em vez
+   de por componente — foi o que evitou que metade dos focáveis
+   caísse no anel padrão do navegador (azul, fora da paleta). */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Rótulo de silkscreen: o traço lido direto do painel do produto,
+   onde 9V / HOST / TRS / DIN5 / EXP / 2SW são impressos em caixa
+   alta minúscula dentro de uma caixinha de contorno fino. */
+.silk {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.1;
+}
+.silk-accent { color: var(--blue-ink); }
+
+/* O silk muda de lado quando cai sobre a lâmina escura. */
+.on-dark .silk { color: var(--on-graphite-dim); }
+.on-dark .silk-accent { color: var(--blue-lit); }
+
+/* ---- botões ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px;
+  height: clamp(42px, 3.6vw, 50px);
+  padding-inline: clamp(18px, 2.2vw, 30px);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 105, 'wght' 700;
+  font-size: clamp(11.5px, 0.85vw, 13px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background var(--dur-fade) ease,
+              border-color var(--dur-fade) ease,
+              color var(--dur-fade) ease;
+}
+/* CTA primário: um dos DOIS emissores da página (o outro é o
+   indicador do seletor). O glow é a luz dele, não elevação. */
+.btn-primary {
+  background: var(--blue);
+  color: var(--paper-2);
+  /* Sobre branco a sombra colorida do CTA some. O que sobra é uma
+     sombra NEUTRA e curta — o botão pousa na página, não brilha. */
+  box-shadow: 0 12px 26px -16px rgba(11, 87, 240, 0.75);
+}
+.btn-primary:hover { background: var(--blue-ink); color: var(--paper-2); }
+
+/* `--edge-control` e não `--hairline`: aqui o contorno é o que
+   IDENTIFICA o controle, e isso pede 3:1 — filete de divisor não
+   serve. Era invisível quando o botão virou escuro sobre branco. */
+.btn-ghost {
+  background: transparent;
+  border-color: var(--edge-control);
+  color: var(--ink);
+}
+.btn-ghost:hover {
+  background: rgba(26, 26, 32, 0.05);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.btn-sm { height: 36px; padding-inline: 17px; font-size: 11px; }
+
+
+/* ---------- A TELA ÚNICA ------------------------------------
+   100svh e não 100vh: no celular `vh` conta a barra de endereço
+   que some, então `vh` empurraria o rodapé para fora justamente
+   onde a promessa é que tudo caiba.
+   ------------------------------------------------------------ */
+.app {
+  position: relative;
+  display: flex; flex-direction: column;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+/* O FUNDO INFINITO que costura a composição: um ciclorama — o
+   cinza que sobe atrás da peça e morre antes das bordas. Sem
+   forma visível; se aparecer aresta, subiu demais. */
+.app::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(
+      ellipse 1100px 680px at 50% 82%,
+      var(--sweep) 0%,
+      rgba(239, 239, 242, 0.55) 45%,
+      rgba(239, 239, 242, 0) 72%);
+  pointer-events: none;
+}
+.app > * { position: relative; z-index: 1; }
+
+
+/* ---------- AMBIÊNCIA (as linhas do fundo) ------------------
+   A camada mora ENTRE o ciclorama e o conteúdo: `z-index: 0`
+   contra o `z-index: 1` de todo filho de `.app`. Por isso ela
+   passa por trás das fotos, do seletor e do texto, sem que
+   nenhum deles precise saber que ela existe.
+
+   O seletor de dois nomes (`.app > .ambience`) é proposital: a
+   regra logo acima também casa este elemento, e com a mesma
+   especificidade venceria a de baixo — o `position` voltaria a
+   `relative` e a camada empurraria a página inteira para baixo.
+
+   O traço é `--hairline-strong` (#D5D5DA) sobre o papel #FAFAFA:
+   o mesmo cinza dos filetes de divisão da página, e o mais forte
+   que o vocabulário permite sem virar desenho.
+   ------------------------------------------------------------ */
+.app > .ambience {
+  position: absolute; inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ambience-svg { display: block; width: 100%; height: 100%; }
+.ambience-lines { stroke: var(--hairline-strong); }
+
+/* A linha solta só carrega a DERIVA. A aparência dela mora nos dois
+   traços de dentro (`.core` e `.haze`), que é onde `--w` e `--op` são
+   lidos — e é assim que uma linha só consegue ter, ao mesmo tempo, um
+   fio nítido e uma faixa larga desfocada em volta. */
+.ln {
+  animation: bf-drift var(--dur, 90s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
+}
+
+/* `--w` e `--op` são lidos aqui, no traço, e não no path de `<defs>`:
+   atributo de apresentação no elemento venceria o valor herdado e todos
+   os traços sairiam iguais. */
+.core, .haze {
+  stroke-width: var(--w, 1);
+  opacity: var(--op, 0.5);
+}
+
+/* ---- as FITAS: UM FIO É A UNIDADE -------------------------
+   A fita não é "um feixe desenhado e depois iluminado". Ela é um
+   punhado de FIOS, e cada fio é uma peça completa: traz o próprio
+   brilho (`.s-haze` + `.s-mid` + `.s-core`) e a própria velocidade.
+
+   POR QUE ISSO MUDOU. Antes o feixe inteiro vivia dentro de um
+   grupo só, e as camadas de brilho eram cópias `<use>` dele por
+   baixo. Era barato, mas TODO fio se movia junto: o conjunto
+   deslizava como uma chapa, sem nada acontecendo dentro dele. Não
+   existe ajuste de velocidade que conserte isso — o problema é
+   estrutural.
+
+   A troca saiu de graça, e isso não era óbvio: a arquitetura antiga
+   desenhava o feixe SEIS vezes (cinco halos + o traço), e a nova
+   desenha cada fio três vezes. Mesmo com menos fios por fita, o
+   total de traços caiu de ~200 para ~119. */
+.rib-rev .strand { animation-direction: reverse; }
+
+/* O FIO. O movimento próprio dele é a DERIVA: cada um corre na sua
+   velocidade (30 a 39s na fita da frente, 40 a 51s na de trás),
+   então os fios escorregam uns pelos outros e o leque se recompõe
+   sozinho, sem nunca repetir. É o que faz a fita ondular em vez de
+   escorregar em bloco.
+
+   TRÊS decisões definem como isso se comporta:
+
+   1. É SÓ `translateX`. Uma versão anterior animava `scaleY` para
+      cada fio respirar — e PISCAVA. Dois motivos somados: animar
+      escala num traço com `vector-effect="non-scaling-stroke"`
+      obriga o navegador a refazer a geometria do traço a cada
+      quadro, e havia `will-change: transform` em 38 elementos, o
+      que cria 38 camadas compostas e estoura o orçamento do
+      compositor. Translação não recalcula traço nenhum, e sem
+      `will-change` o navegador decide sozinho o que promover.
+      NÃO reintroduza escala ou rotação animada por fio.
+
+   2. As velocidades são distribuídas pela RAZÃO ÁUREA
+      (`(i * 0.618) % 1`), e não em rampa: em rampa, fios vizinhos
+      ficam com velocidades quase iguais e andam colados em blocos.
+
+   3. Os atrasos são escalonados de leve (0,2s por fio). Muito
+      pouco e a fita nasce rígida; muito e o nó — o ponto em que
+      todos cruzam a linha de base — se desfaz logo de cara. Com um
+      escalonamento pequeno a fita nasce levemente torcida e vai
+      abrindo e fechando o nó sozinha, conforme as velocidades
+      diferentes defasam e realinham os fios.
+
+   Cada fio anda exatamente 800 (um período da onda) no seu ciclo,
+   então cada um fecha o próprio laço sem emenda, mesmo tendo
+   duração diferente do vizinho. */
+.strand {
+  animation: bf-drift var(--dur, 34s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Os QUATRO traços de um fio, de fora para dentro. Juntos eles são
+   o "desfoque" — ver a nota sobre filtros mais abaixo. Como os fios
+   ficam a ~8 unidades um do outro e o véu tem 44, as bordas dos
+   vizinhos se encavalam com folga e o feixe fecha num tom contínuo:
+   é o que impede as linhas de ficarem marcadas.
+
+   SÃO QUATRO E NÃO TRÊS por causa da rampa. Alargar o borrão sem
+   acrescentar degrau afasta as larguras (2 → 12 → 26) e a queda
+   começa a aparecer como anel em volta do fio. Com 2 → 12 → 26 → 44
+   o passo entre camadas continua curto e a queda fica contínua.
+   Regra geral: alargou muito, acrescente degrau.
+
+   CINZA NEUTRO, SEM COR, E QUASE NO TOM DO PAPEL. Os hexes são
+   MÉDIOS de propósito, e isso não contradiz "quase da cor do
+   fundo": o que o olho vê é a MISTURA com o papel, e a estes
+   níveis de opacidade um cinza já claro no hex sairia invisível.
+   A conta, no canal verde, é `250 − opacidade × (250 − hex)`:
+
+       os quatro sobrepostos ....... ~#EE  (onde o fio é mais denso)
+       véu + névoa + meio .......... ~#F5
+       véu + névoa ................. ~#F7
+       só o véu .................... ~#F9  (a um passo do papel #FAFAFA)
+       fita de fundo, os quatro .... ~#F2
+
+   ~#EFEFF2 é o `--sweep`, o cinza do ciclorama que a página já usa
+   atrás do produto. A fita da frente pousou EM CIMA dele e a de
+   fundo ficou entre ele e o papel — é por isso que elas se
+   dissolvem no fundo em vez de desenhar por cima dele.
+
+   Para CLAREAR ainda mais, mexa na OPACIDADE, nunca no hex. Trocar
+   por um valor claro (`--hairline-strong`, por exemplo) não deixa a
+   fita mais clara: apaga ela.
+
+   O NÚCLEO CAI MAIS QUE O HALO a cada rodada de clareamento
+   (0,30 → 0,10 → 0,07, contra 0,065 → 0,038 → 0,026 do meio).
+   Baixar os três na mesma proporção teria apagado o halo primeiro e
+   deixado o fio nítido sozinho — as linhas voltariam a ficar
+   marcadas, justamente o que o halo existe para evitar. Clarear uma
+   coisa dessas nunca é multiplicar tudo pelo mesmo número. */
+.s-veil { stroke: #9AA0AC; stroke-width: 44;  opacity: 0.012; }
+.s-haze { stroke: #9AA0AC; stroke-width: 26;  opacity: 0.019; }
+.s-mid  { stroke: #9AA0AC; stroke-width: 12;  opacity: 0.026; }
+.s-core { stroke: #8A8F99; stroke-width: 2.5; opacity: 0.065; }
+
+/* A fita do fundo: mesmo cinza, porque as duas são a mesma luz — o
+   que a manda para trás é ser mais fraca, mais fechada e mais
+   lenta, não ser de outro tom. */
+.rib-far .s-veil { opacity: 0.008; }
+.rib-far .s-haze { opacity: 0.012; }
+.rib-far .s-mid  { opacity: 0.017; }
+.rib-far .s-core { opacity: 0.040; }
+
+/* NÃO EXISTE UM ÚNICO `filter` NESTA PÁGINA — e isso é a conclusão
+   de uma medição, não preferência. Se você for acrescentar um,
+   leia isto antes.
+
+   Custo do primeiro segundo depois do load, mesma máquina, mesma
+   janela, com o desfoque feito por `filter: blur()`:
+
+       halo de 5px + 0,6px na fita de fundo ....  9 fps
+       só o 0,6px da fita de fundo ............. 48 fps
+       nenhum dos dois ........................ 61 fps
+
+   O que pesa NÃO é o raio — 0,6px custou 13 fps sozinho. É a ÁREA.
+   Um fio tem 3200 unidades de largura (quatro períodos da onda,
+   para a deriva nunca descobrir a tela), então o filtro tem de
+   rasterizar uma superfície de umas duas telas.
+
+   E pior: com a deriva rápida o custo deixa de ser só do load. Com
+   movimento lento o compositor reaproveitava a textura filtrada por
+   vários quadros; a ~34s por período ele passou a refiltrar de
+   verdade, e o regime caiu para 3 fps. Filtro em elemento que anima
+   é armadilha: parece de graça enquanto o movimento é lento demais
+   para se notar.
+
+   A SAÍDA FOI TROCAR ÓPTICA POR GEOMETRIA — os três traços do fio,
+   e o `.haze` das linhas soltas. Lê como desfoque, escala com a
+   tela e custa o mesmo que qualquer outro traço.
+
+   Se algum dia um desfoque de verdade for indispensável, o caminho
+   é um `<filter>` SVG com `filterUnits="userSpaceOnUse"` e região
+   limitada à tela, num invólucro ESTÁTICO por fora da deriva —
+   `filter: blur()` do CSS usa a caixa do elemento, que aqui é
+   enorme, e acompanha o elemento que se move. */
+
+/* Metade das linhas anda para o outro lado. Sem isso o conjunto
+   deriva todo para um lado só e lê como rolagem, não como piso. */
+.ln-rev { animation-direction: reverse; }
+
+/* 800 = UM período da onda de `#bf-wave`. É o que faz o retorno
+   ser invisível; mudou o path, muda este número junto. */
+@keyframes bf-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-800px); }
+}
+
+
+/* ---------- 3. cabeçalho ----------------------------------- */
+
+/* Só a marca mora aqui. O respiro é curto de propósito: cada pixel
+   que o cabeçalho não usa é pixel que sobe o seletor, e o seletor é o
+   elemento que o briefing põe acima de todos. */
+.site-header {
+  position: relative; z-index: 5;
+  display: flex; align-items: center;
+  padding-block: clamp(7px, 0.9vw, 11px);
+}
+
+.brand {
+  display: inline-flex; align-items: baseline; gap: 3px;
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 112, 'wght' 800;
+  font-size: 19px; letter-spacing: 0.06em;
+  color: var(--ink);
+}
+.brand:hover { color: var(--ink); }
+/* O ponto da marca é o ÚNICO laranja que sobrou na página. Ele é a
+   assinatura da BFFX e custa 5px; o acento da interface inteira
+   passou a ser o azul do LED. Ver a nota do bloco AZUL em tokens. */
+.brand-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #FF6A00;
+}
+
+
+/* ---------- 4. SELETOR DE MODELO ---------------------------
+   A peça mais importante da página — e, desde que a página virou
+   uma tela só, também a navegação inteira. Construída como
+   HARDWARE, não como controle de interface: aresta usinada no
+   topo (realce interno de 1px), corpo em degradê do grafite
+   anodizado, sombra projetada de peça pousada sob luz de cima.
+
+   DUAS CÁPSULAS, UMA POR NÍVEL
+     MODELOS  8SW+ | 6SW+ | NANO+ | MICRO
+     OPÇÕES   INFO | CONECTS | COMPRAR
+
+   `--n` é quantas abas há e `--i` é qual está acesa; os dois são
+   escritos pelo JS, e a MESMA régua serve as duas cápsulas — a de
+   modelos com `--n:4`, a de opções com `--n:3`. O leito e o LED
+   derivam a largura de coluna dessas variáveis, então a segunda
+   cápsula não precisou de cálculo próprio: só de outra pele.
+
+   O ativo é marcado do jeito que o APARELHO marca um footswitch
+   ativo: uma barra de LED acesa embutida na aresta de baixo, com
+   bloom, no MESMO azul que o anel do footswitch 1 emite na foto.
+   ------------------------------------------------------------ */
+
+/* A zona empilha as DUAS cápsulas: modelos em cima, opções embaixo.
+   O `gap` é curto de propósito — elas precisam ler como um bloco de
+   navegação, não como dois controles soltos. */
+.selector-zone {
+  position: relative; z-index: 4;
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(5px, 0.7vw, 9px);
+  padding-top: clamp(2px, 0.4vw, 6px);
+}
+
+.selector {
+  --pad: 10px;      /* respiro interno da cápsula */
+
+  position: relative;
+  display: flex; align-items: stretch;
+  width: min(760px, 100%);
+  padding: var(--pad);
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hairline-strong);
+  background:
+    linear-gradient(180deg, var(--graphite-lift) 0%, var(--graphite) 52%, #0E0E12 100%);
+  /* Sobre branco a sombra tem de ser MENOS densa e mais curta que
+     sobre preto: no escuro ela desaparecia no fundo e podia ser
+     larga; aqui ela é a única coisa entre a peça e o papel, e
+     larga demais vira mancha cinza em volta do seletor. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 18px 38px -22px rgba(22, 22, 32, 0.55);
+}
+
+.selector-track {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr));
+}
+
+/* leito do modelo ativo — "fundo ligeiramente diferente" do
+   briefing. Fica ABAIXO dos botões (z-index) e desliza. */
+.selector-bed {
+  position: absolute;
+  top: var(--pad); left: var(--pad);
+  width: calc((100% - 2 * var(--pad)) / var(--n, 4));
+  height: calc(100% - 2 * var(--pad));
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg,
+              rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  transform: translateX(calc(var(--i, 0) * 100%));
+  transition: transform var(--dur-slide) var(--ease);
+  pointer-events: none;
+}
+
+.tab {
+  position: relative; z-index: 2;
+  padding: clamp(13px, 1.4vw, 19px) 2px clamp(15px, 1.6vw, 21px);
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' var(--wdth-plate), 'wght' 700;
+  font-size: var(--fs-tab);
+  letter-spacing: var(--ls-tab);
+  line-height: 1;
+  color: var(--on-graphite-dim);
+  transition: color var(--dur-fade) ease, text-shadow var(--dur-fade) ease;
+}
+.tab:hover { color: rgba(255, 255, 255, 0.90); }
+
+/* Destaque do ativo = TEXTO azul aceso + brilho curto. Contido de
+   propósito: o peso do destaque está na barra de LED embaixo.
+   `--blue-lit` e não `--blue`: sobre a lâmina o azul de massa dá
+   3,32:1 e lê APAGADO, que é o oposto do que a marca significa. */
+.tab[aria-pressed="true"],
+.tab[aria-selected="true"] {
+  color: var(--blue-lit);
+  text-shadow: 0 0 22px rgba(61, 139, 255, 0.45);
+}
+
+/* divisórias verticais discretas, entre as abas e só entre elas */
+.tab + .tab::before {
+  content: '';
+  position: absolute; left: 0; top: 27%; bottom: 27%;
+  width: 1px;
+  background: var(--hairline-strong);
+}
+
+/* A ASSINATURA: a barra de LED acesa, embutida na aresta de baixo
+   da lâmina, deslizando para o item escolhido. */
+.selector-led {
+  position: absolute;
+  bottom: -1px; left: var(--pad);
+  width: calc((100% - 2 * var(--pad)) / var(--n, 4));
+  display: flex; justify-content: center;
+  transform: translateX(calc(var(--i, 0) * 100%));
+  transition: transform var(--dur-slide) var(--ease);
+  pointer-events: none;
+}
+.selector-led i {
+  display: block;
+  width: clamp(40px, 5.2vw, 72px);
+  height: 3px;
+  border-radius: 3px;
+  background: var(--blue-lit);
+  box-shadow: var(--led-core), var(--led-halo);
+}
+
+/* ---- A SEGUNDA CÁPSULA: as opções do modelo -----------------
+   Mesma mecânica (leito que desliza, barra de LED, `--n`/`--i`),
+   pele diferente. Ela é CLARA porque o vocabulário da página tem
+   UM material escuro — o grafite é o corpo do aparelho, e repeti-lo
+   aqui poria dois blocos de mesmo peso disputando o topo. Clara,
+   ela lê como o que é: o segundo nível.
+
+   Como o fundo virou papel, o azul também troca: `--blue` (o de
+   massa) no lugar do `--blue-lit`, que foi calibrado para acender
+   sobre grafite e sobre branco leria lavado. E o bloom do LED sai —
+   sobre branco, halo colorido não lê como luz, lê como borrão. */
+.selector-sub {
+  --pad: 5px;
+  width: min(560px, 100%);
+  border-color: var(--hairline-strong);
+  background: var(--paper-2);
+  box-shadow: 0 6px 16px -12px rgba(22, 22, 32, 0.35);
+}
+.selector-sub .tab {
+  padding: clamp(8px, 0.9vw, 12px) 2px clamp(9px, 1vw, 13px);
+  font-size: clamp(12px, 1.15vw, 16px);
+  color: var(--ink-3);
+}
+.selector-sub .tab:hover { color: var(--ink); }
+.selector-sub .tab[aria-selected="true"] {
+  color: var(--blue-ink);
+  text-shadow: none;
+}
+.selector-sub .selector-bed {
+  background: rgba(11, 87, 240, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(11, 87, 240, 0.10);
+}
+.selector-sub .tab + .tab::before { background: var(--hairline); }
+.selector-sub .selector-led i {
+  background: var(--blue);
+  box-shadow: none;
+}
+
+/* NENHUMA OPÇÃO EM CENA (a visão geral do modelo). O leito e o LED
+   apagam em vez de sumir: escondê-los com `display` os faria SALTAR
+   de posição ao voltar, porque o `--i` continua no último item aceso
+   e é dali que eles reacendem. */
+.selector-sub.is-idle .selector-bed,
+.selector-sub.is-idle .selector-led {
+  opacity: 0;
+  transition: opacity var(--dur-fade) ease;
+}
+
+/* ---------- 5. painéis -------------------------------------- */
+
+.panels {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Todos os painéis ocupam a MESMA caixa e só trocam de opacidade:
+   nenhum empurra o outro, então a altura da tela nunca muda e não
+   há para onde rolar. */
+.panel {
+  position: absolute; inset: 0;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  /* `visibility` NAO pode transicionar junto: ela salta. O atraso
+     igual à duração mantém o painel que sai visível até o fim do
+     fade e só então o retira da árvore — sem ele a saída piscaria. */
+  transition: opacity var(--dur-fade) ease,
+              visibility 0s linear var(--dur-fade);
+}
+.panel.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-fade) ease, visibility 0s linear 0s;
+}
+
+.panel-inner {
+  width: 100%;
+  max-width: var(--maxw-page);
+  margin-inline: auto;
+  min-height: 0;
+  padding: clamp(8px, 1.2vw, 18px) clamp(16px, 4vw, 40px) clamp(10px, 1.4vw, 20px);
+}
+
+/* ---- painel HOME: a composição centrada da lista de modelos ---- */
+
+.hero {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%;
+  max-width: var(--maxw-fold);
+  margin-inline: auto;
+  padding: clamp(10px, 1.4vw, 22px) clamp(16px, 4vw, 40px) clamp(12px, 1.4vw, 20px);
+  text-align: center;
+  min-height: 0;
+}
+
+.hero-id {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 0.78vw, 13px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--blue-ink);
+}
+
+.hero-h1 {
+  margin-top: var(--sp-3);
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 100, 'wght' 800;
+  font-size: var(--fs-h1);
+  letter-spacing: var(--ls-h1);
+  line-height: var(--lh-h1);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.hero-h1 span { display: block; }
+.hero-h1 .line-2 { color: var(--ink-2); }
+
+.hero-lead {
+  margin-top: var(--sp-3);
+  max-width: 46ch;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+
+/* O palco do produto ABSORVE a folga da tela: é ele que cresce ou
+   encolhe para a composição inteira caber, em vez de empurrar os
+   botões para fora. `min-height: 0` é obrigatório — sem ele o
+   filho flex se recusa a encolher abaixo do conteúdo. */
+.hero-stage {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  margin-top: clamp(4px, 0.8vw, 12px);
+}
+
+.shot {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-fade) ease,
+              visibility 0s linear var(--dur-fade);
+}
+.shot.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-fade) ease, visibility 0s linear 0s;
+}
+
+.shot img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  /* Sombra de CONTATO: a peça pousa no ciclorama em vez de flutuar
+     recortada. Sobre branco ela precisa ser bem mais fraca e mais
+     curta que sobre preto — a 0,75 de alfa, que era o valor da
+     versão escura, o recorte ganhava uma auréola cinza evidente. */
+  filter: drop-shadow(0 22px 26px var(--contact));
+}
+
+.hero-ctas {
+  display: flex; flex-wrap: wrap; gap: var(--sp-3);
+  justify-content: center;
+  margin-top: clamp(10px, 1.2vw, 16px);
+}
+
+/* ---- painéis INFO e CONECTS: foto de um lado, texto do outro ---- */
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(20px, 3.2vw, 56px);
+  height: 100%;
+  min-height: 0;
+}
+
+.split-media {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* SEM MOLDURA: a foto do painel é tratada como a da capa — o
+   recorte pousa direto no ciclorama, com sombra de contato e nada
+   em volta. Havia aqui uma placa branca com filete; ela punha uma
+   aresta reta em volta de um objeto que não tem aresta reta, e
+   fazia a mesma peça ler de dois jeitos diferentes conforme o
+   painel.
+
+   Isso só é possível porque TODOS os seis arquivos são recortes
+   com canal alfa (conferido: `VP8X alpha=True` nos doze .webp).
+   Se um dia entrar uma foto com fundo opaco, ela vai aparecer como
+   um retângulo pousado no cinza — aí o caminho é recortar o
+   arquivo, não devolver a moldura. */
+.panel-shot {
+  display: flex; align-items: center; justify-content: center;
+  max-width: 100%; max-height: 100%;
+}
+.panel-shot img {
+  width: auto; height: auto;
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+  /* A mesma sombra de contato da capa, um pouco mais curta porque
+     a peça aqui é menor: sobre branco ela precisa ser fraca, senão
+     o recorte ganha auréola cinza em vez de pousar. */
+  filter: drop-shadow(0 16px 20px var(--contact));
+}
+
+/* A ÚNICA coisa que pode rolar na página, e só quando a tela é
+   baixa demais para o texto daquele modelo. É válvula de escape:
+   o conteúdo foi dimensionado para caber sem ela. */
+.split-copy {
+  display: flex; flex-direction: column;
+  gap: clamp(8px, 1vw, 14px);
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+/* Num flex em coluna que ESTOURA, o padrão é os filhos encolherem — e
+   encolher aqui não significa "menos espaço", significa a ficha técnica
+   virar uma faixa de 2px e o texto dela sumir. Com `flex: 0 0 auto` cada
+   bloco fica na altura que pediu e quem cede é a rolagem, que é
+   exatamente para isso que ela existe. */
+.split-copy > *, .buy > * { flex: 0 0 auto; }
+
+.panel-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 106, 'wght' 800;
+  font-size: clamp(22px, 2.7vw, 38px);
+  letter-spacing: -0.022em;
+  line-height: 1.02;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.panel-lead {
+  max-width: 48ch;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: var(--ink-2);
+}
+.panel-note {
+  padding: var(--sp-4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-media);
+  background: var(--paper-2);
+  color: var(--ink-2);
+  font-size: 14px;
+}
+
+
+/* ---------- 6. peças de conteúdo ---------------------------- */
+
+/* ---- ficha técnica, agora dentro do painel INFO ---- */
+.spec-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: var(--sp-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-media);
+  background: var(--hairline);
+  overflow: hidden;
+}
+.spec-cell {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: clamp(12px, 1.4vw, 18px);
+  background: var(--paper-2);
+}
+.spec-value {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 108, 'wght' 700;
+  font-size: clamp(19px, 1.7vw, 26px);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.spec-note { color: var(--ink-2); font-size: 13px; line-height: 1.4; }
+
+/* ---- bloco de característica ---- */
+.feat { display: flex; flex-direction: column; gap: 8px; }
+.feat-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 102, 'wght' 700;
+  font-size: clamp(16px, 1.35vw, 21px);
+  letter-spacing: -0.012em;
+  line-height: 1.14;
+  text-transform: uppercase;
+}
+.feat-body { color: var(--ink-2); max-width: 48ch; font-size: 14.5px; line-height: 1.5; }
+
+.band-list { display: flex; flex-direction: column; gap: 7px; }
+.band-list li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--ink-2);
+  font-size: clamp(13.5px, 0.95vw, 15px);
+  line-height: 1.4;
+}
+.band-list li::before {
+  content: '';
+  position: absolute; left: 0; top: 0.62em;
+  width: 6px; height: 1px;
+  background: var(--blue);
+}
+
+/* ---- o editor, no fim do painel CONECTS ---- */
+.editor-note {
+  display: flex; flex-direction: column; gap: 7px;
+  margin-top: var(--sp-1);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--hairline);
+}
+
+/* ---- painel COMPRAR ---- */
+.buy {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: clamp(6px, 0.9vw, 12px);
+  max-width: 640px;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  text-align: center;
+}
+.buy-thumb {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 34%;
+  margin-bottom: var(--sp-2);
+}
+.buy-thumb img {
+  width: auto; height: 100%;
+  max-height: 100%; max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 22px var(--contact));
+}
+.buy-price {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 110, 'wght' 800;
+  font-size: clamp(26px, 3vw, 42px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--blue-ink);
+}
+/* A lista continua alinhada à ESQUERDA dentro do painel centrado:
+   marcador e texto centralizados viram serrilha e o olho perde a
+   coluna de leitura. */
+.buy .band-list { text-align: left; margin-top: var(--sp-2); }
+.buy .hero-ctas { margin-top: var(--sp-4); }
+
+/* ---- modelo sem foto: o mapa de footswitches ---- */
+.shot-map {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--sp-5);
+  width: min(430px, 90%); height: 100%;
+  max-height: 300px;
+  margin: auto;
+  padding: var(--sp-8) var(--sp-6);
+  /* Continua GRAFITE mesmo na página branca: este painel está no
+     lugar de uma controladora, e a controladora é escura. Um card
+     branco aqui leria como "faltou conteúdo"; escuro, lê como o
+     aparelho que ainda não foi fotografado. */
+  border: 1px solid #2A2A31;
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--graphite-lift) 0%, #0E0E12 100%);
+  box-shadow: 0 18px 38px -22px rgba(22, 22, 32, 0.55);
+}
+/* Este painel é uma ILHA ESCURA na página branca, então a tinta
+   dele tem de virar junto. Sem esta linha o rótulo herdava o cinza
+   do papel (--ink-3) e caía para 2,69:1 sobre o grafite. */
+.shot-map .silk { color: var(--on-graphite-dim); }
+
+.map-grid {
+  display: grid;
+  gap: clamp(10px, 2vw, 20px);
+}
+.map-grid.is-8 { grid-template-columns: repeat(4, 1fr); }
+.map-grid.is-6 { grid-template-columns: repeat(3, 1fr); }
+.map-grid.is-4 { grid-template-columns: repeat(2, 1fr); }
+.map-sw {
+  width: clamp(26px, 4.4vw, 40px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: radial-gradient(circle at 38% 32%, #3A3A42, #16161A 70%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+
+/* ---------- 7. rodapé --------------------------------------- */
+
+/* Uma linha só. Ele existe para fechar a tela, não para navegar —
+   os links dele apontariam para seções que não existem mais. */
+.site-footer {
+  border-top: 1px solid var(--hairline);
+  padding-block: 9px 12px;
+}
+.footer-row { display: flex; justify-content: center; }
+.footer-note { color: var(--ink-3); font-size: 12px; }
+
+
+/* ---------- 8. estreito ------------------------------------- */
+
+@media (max-width: 900px) {
+  /* NO CELULAR O PAINEL VIRA UMA COLUNA SÓ, E É ELA QUE ROLA.
+
+     A composição de duas colunas não cabe num telefone, e a saída óbvia —
+     foto travada em cima, texto rolando numa caixinha embaixo — é pior que
+     o problema: sobra uma janelinha de 200px onde o dedo empurra o texto
+     por baixo de uma foto que não sai do lugar. Aqui a foto entra no FLUXO,
+     com teto de altura, e a coluna inteira rola como uma leitura normal.
+
+     A PÁGINA continua sem rolar: quem rola é o painel, dentro da caixa
+     entre a cápsula e o rodapé, que permanecem no lugar. */
+  .split {
+    display: block;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .split-media { display: block; margin-bottom: var(--sp-4); overflow: visible; }
+  .panel-shot { max-height: 34svh; margin-inline: auto; }
+  /* O mapa de footswitches encolhe junto: no desktop ele é uma placa com
+     respiro de estúdio, no celular ele é só o fato "tantos pés". */
+  .split-media .shot-map {
+    height: auto; max-height: 34svh;
+    padding: var(--sp-5) var(--sp-4);
+    gap: var(--sp-3);
+  }
+  .split-copy { overflow: visible; padding-right: 0; }
+  .spec-note { font-size: 12.5px; }
+}
+
+@media (max-width: 560px) {
+  .selector { --pad: 7px; }
+  .selector-sub { --pad: 4px; }
+  .tab { padding: 13px 1px 14px; }
+  /* As abas do SUBMENU cedem antes das de modelo. "CONECTS" e "COMPRAR"
+     têm o dobro das letras de "8SW+" e dividem uma cápsula que ainda
+     reserva o botão VOLTAR — no mesmo corpo de fonte elas encostavam nos
+     divisores. `[role="tab"]` é o que separa os dois estados: quem tem
+     esse papel é sempre o submenu (ver o main.js). */
+  .tab[role="tab"] { font-size: 14px; letter-spacing: 0; }
+  .tab + .tab::before { top: 24%; bottom: 24%; }
+  .hero-ctas .btn { flex: 1 1 100%; }
+  .spec-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* A foto cede um pedaço para o texto: no celular é o texto que responde
+     a pergunta, e a foto do aparelho inteiro já foi vista na lista. */
+  .panel-shot, .split-media .shot-map { max-height: 30svh; }
+  .panel-lead, .feat-body { font-size: 14px; line-height: 1.45; }
+  .editor-note { padding-top: var(--sp-3); }
+  .spec-note { font-size: 12px; }
+}
+
+/* Celular estreito de verdade (iPhone SE e afins): o submenu cede mais
+   um degrau. Só ele — as abas de modelo continuam na escala cheia. */
+@media (max-width: 400px) {
+  .tab[role="tab"] { font-size: 12.5px; }
+}
+
+
+/* ---------- 8b. viewport BAIXA ------------------------------
+   Notebook de 768px de altura e o caso apertado: cabeçalho +
+   seletor + painel + rodapé em 100svh. Sem este bloco, o único
+   elemento elástico (o palco do produto) absorve sozinho toda a
+   falta de altura e a foto de produto encolhe num monitor menor,
+   que é o contrário do que a página quer mostrar.
+
+   A folga sai dos intervalos e do título, NUNCA do seletor: ele é
+   o elemento principal, e encolhê-lo para caber seria resolver o
+   problema errado.
+   ------------------------------------------------------------ */
+@media (max-height: 880px) {
+  .site-header   { padding-block: clamp(6px, 0.7vw, 9px); }
+  .selector-zone { padding-top: 2px; }
+  .tab           { padding: 13px 2px 15px; }
+  .hero          { padding-top: var(--sp-3); padding-bottom: var(--sp-3); }
+  .hero-h1       { margin-top: var(--sp-2); }
+  .hero-lead     { margin-top: var(--sp-2); }
+  .hero-stage    { margin-top: var(--sp-1); }
+  .hero-ctas     { margin-top: var(--sp-3); }
+  .btn           { height: 42px; }
+  .spec-cell     { padding: clamp(10px, 1.1vw, 14px); }
+  .split-copy    { gap: clamp(6px, 0.8vw, 11px); }
+}
+
+/* Tela muito baixa (celular deitado): a foto do painel COMPRAR é
+   a primeira a sair — ali quem trabalha é o preço e o botão. */
+@media (max-height: 560px) {
+  .buy-thumb { display: none; }
+}
+
+/* CELULAR DEITADO — o caso mais apertado que existe: ~390px de altura
+   para cabeçalho, cápsula, painel e rodapé, e o painel fica com uns
+   230px. Aqui o layout muda de estratégia em vez de encolher tudo:
+
+     · a foto sai de cena. Em coluna única ela teria 70px de altura —
+       pequena demais para mostrar o aparelho — e ainda assim empurraria
+       metade do texto para dentro da rolagem interna;
+     · a ficha vira UMA linha de quatro colunas, usando a largura que
+       sobrou, e fica só com rótulo e número;
+     · a lista de argumentos do COMPRAR sai: ali quem trabalha é o preço
+       e o botão.
+
+   Só no celular deitado (`orientation` + largura até 900px). Uma janela
+   baixa no desktop continua com a composição de duas colunas, que lá
+   cabe porque a largura dá 400px de foto. */
+@media (max-height: 620px) and (max-width: 900px) and (orientation: landscape) {
+  .split-media { display: none; }
+  .panel-title { font-size: clamp(19px, 3vw, 26px); }
+  .spec-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .spec-note { display: none; }
+  .buy .band-list { display: none; }
+  /* O parágrafo do bloco de característica sai e ficam os marcadores:
+     eles dizem a mesma coisa em um terço da altura. O que sobrar de
+     estouro aqui é o que a rolagem interna existe para resolver — este
+     é o único formato de tela em que ela entra em cena. */
+  .feat-body { display: none; }
+}
+
+
+/* ---------- 9. menos movimento ------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .selector-bed, .selector-led, .shot, .panel, .btn, .tab {
+    transition-duration: 0.01ms;
+  }
+  /* As fitas PARAM, mas continuam desenhadas: elas são o fundo do
+     estúdio, não a animação. Quem pediu menos movimento não pediu
+     menos página. Os fios entram aqui junto — parados eles ficam no
+     `--lo`, que é a fita levemente fechada, e não distorcida. */
+  .ln, .strand { animation: none; }
+}

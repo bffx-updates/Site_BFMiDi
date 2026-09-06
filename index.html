@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BFMIDI 8SW+ — Controladoras MIDI de palco | BFFX</title>
+<meta name="description" content="Quatro controladoras MIDI de palco: BFMIDI 8SW+, 6SW+, NANO+ e MICRO. Tela colorida, anel de LED por footswitch, MIDI DIN5, TRS e USB, e editor que abre no navegador.">
+<meta name="theme-color" content="#f6f7f9">
+<meta property="og:type" content="website">
+<meta property="og:title" content="BFMIDI — Controle total aos seus pés.">
+<meta property="og:description" content="Quatro controladoras MIDI de palco: 8SW+, 6SW+, NANO+ e MICRO.">
+<meta property="og:image" content="assets/8sw-hero.webp">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&amp;family=Barlow:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="preload" as="image" type="image/webp"
+      imagesrcset="assets/8sw-hero-sm.webp 800w, assets/8sw-hero.webp 1600w"
+      imagesizes="(max-width: 860px) 92vw, 58vw">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/refine.css">
+</head>
+<body>
+<a class="skip-link" href="#panels">Pular para o conteúdo</a>
+<div class="app" id="app">
+  <div class="wrap">
+    <header class="site-header">
+      <a class="brand" href="#" data-go="home" aria-label="BFFX — início">
+        BFFX<span class="brand-dot" aria-hidden="true"></span>
+      </a>
+<span class="header-caption" data-copy="header">CONTROLADORAS MIDI DE PALCO</span>
+<button class="header-link" type="button" data-go="view:conects"><span data-copy="headerLink">Seu setup. Conectado.</span><span aria-hidden="true">↗</span></button>
+    </header>
+  </div>
+  <div class="wrap selector-zone">
+<div class="collection-label"><span class="status-dot" aria-hidden="true"></span><span data-copy="collection">ENCONTRE O SEU CONTROLE</span></div>
+    <div class="selector" id="selector" role="group" aria-label="Modelos BFMIDI" style="--n:4">
+      <div class="selector-bed" aria-hidden="true"></div>
+      <div class="selector-led" aria-hidden="true"><i></i></div>
+      <div class="selector-track" id="selector-track">
+        <button class="tab" type="button" data-i="0" data-go="model:0" aria-pressed="true">8SW+</button>
+        <button class="tab" type="button" data-i="1" data-go="model:1" aria-pressed="false">6SW+</button>
+        <button class="tab" type="button" data-i="2" data-go="model:2" aria-pressed="false">NANO+</button>
+        <button class="tab" type="button" data-i="3" data-go="model:3" aria-pressed="false">MICRO</button>
+      </div>
+    </div>
+    <span class="collection-index" aria-hidden="true"><b id="model-index">01</b> / 04</span>
+</div>
+<nav class="view-nav wrap" aria-label="Explore o modelo">
+<button class="overview-link is-active" id="overview-link" data-go="home" type="button" aria-current="page" data-copy="overview">Visão geral</button>
+<div class="selector selector-sub is-idle" id="subselector"
+         role="tablist" aria-label="Seções do modelo" style="--n:3">
+      <div class="selector-bed" aria-hidden="true"></div>
+      <div class="selector-led" aria-hidden="true"><i></i></div>
+      <div class="selector-track" id="subselector-track">
+        <button class="tab" type="button" id="subtab-info"    role="tab" aria-selected="false" aria-controls="panel-info"    data-i="0" data-go="view:info">Detalhes</button>
+        <button class="tab" type="button" id="subtab-conects" role="tab" aria-selected="false" aria-controls="panel-conects" data-i="1" data-go="view:conects">Conexões</button>
+        <button class="tab" type="button" id="subtab-comprar" role="tab" aria-selected="false" aria-controls="panel-comprar" data-i="2" data-go="view:comprar">Comprar</button>
+      </div>
+    </div>
+  </nav>
+<p class="sr-only" id="live-region" aria-live="polite"></p>
+  <main class="panels" id="panels" tabindex="-1">
+    <section class="panel panel-home is-on" id="panel-home" aria-hidden="false">
+      <div class="hero">
+<div class="hero-copy">
+        <p class="hero-id" id="hero-id">BFMIDI 8SW+</p>
+        <h1 class="hero-h1">
+          <span id="hero-h1a">Controle total</span>
+          <span class="line-2" id="hero-h1b">aos seus pés.</span>
+        </h1>
+        <p class="hero-lead" id="hero-lead">Máximo controle para setups completos.</p>
+                <div class="hero-ctas">
+          <button class="btn btn-primary" type="button" data-go="view:info">
+            <span id="hero-cta-label">Conhecer 8SW+</span><span aria-hidden="true">↗</span>
+          </button>
+          <button class="btn btn-ghost" type="button" data-go="view:comprar"><span data-copy="buy">Comprar</span><span aria-hidden="true">→</span></button>
+        </div>
+<div class="hero-signature"><span class="signature-line" aria-hidden="true"></span><span data-copy="signature">MENOS LIMITES. MAIS MÚSICA.</span></div>
+</div>
+<div class="hero-stage" id="hero-stage">
+<span class="stage-watermark" id="stage-watermark" aria-hidden="true">8SW+</span><div class="stage-orbit" aria-hidden="true"></div>
+<div class="stage-caption"><span data-copy="stage">PROJETADA PARA O SEU PALCO</span><span class="stage-mark" aria-hidden="true">＋</span></div>
+          <figure class="shot is-on" data-i="0">
+            <img src="assets/8sw-hero.webp"
+                 srcset="assets/8sw-hero-sm.webp 800w, assets/8sw-hero.webp 1600w"
+                 sizes="(max-width: 860px) 92vw, 58vw"
+                 alt="BFMIDI 8SW+ em perspectiva: os seis footswitches numerados, LIVE MODE e GLOBAL SWITCH nas pontas, a tela colorida acesa com o preset CLASSIC ROCK e os anéis de LED acesos."
+                 fetchpriority="high">
+          </figure>
+        </div>
+<div class="hero-facts" id="hero-facts" aria-label="Destaques do modelo"></div>
+      </div>
+    </section>
+    <section class="panel" id="panel-info"    role="tabpanel" aria-labelledby="subtab-info"    aria-hidden="true"></section>
+    <section class="panel" id="panel-conects" role="tabpanel" aria-labelledby="subtab-conects" aria-hidden="true"></section>
+    <section class="panel" id="panel-comprar" role="tabpanel" aria-labelledby="subtab-comprar" aria-hidden="true"></section>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <p class="footer-note">© BFFX · BFMIDI</p><p class="footer-center" data-copy="footer">O seu som começa com você.</p><p class="footer-end"><span class="status-dot" aria-hidden="true"></span><span data-copy="footerEnd">CONTROLE EM CADA DETALHE</span></p>
+    </div>
+  </footer>
+</div>
+<script src="js/content.js" defer></script>
+<script src="js/main.js" defer></script>
+</body>
+</html>
+

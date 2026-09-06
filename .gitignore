@@ -1,0 +1,6 @@
+.bak/
+dist/
+8SW+ PNG/
+NANO+ PNG/
+*.tar.gz
+node_modules/
