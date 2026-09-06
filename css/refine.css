@@ -53,9 +53,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .panel { position: static; grid-area: 1/1; min-width: 0; display: none; transition: none; }
 .panel.is-on { display: flex; animation: panel-enter .4s var(--ease) both; }
 .hero { max-width: 1120px; padding: 24px clamp(20px,4.5vw,64px) 30px; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.hero-copy { position: relative; z-index: 2; }
-.hero-h1 { display: flex; align-items: baseline; justify-content: center; gap: 14px; margin-top: 0; font: 700 clamp(2.1rem,3.4vw,3.2rem)/1.1 var(--font-display); letter-spacing: -.045em; text-transform: none; }
-.hero-h1 .line-2 { color: var(--ink); }
 .hero-stage { flex: none; width: 100%; min-height: 0; height: clamp(300px,42vh,440px); margin-top: 8px; isolation: isolate; }
 .hero-stage::before { content: ''; position: absolute; inset: -22% -15%; z-index: -2; background: radial-gradient(ellipse at 50% 57%,#28416366 0%,#19273844 25%,transparent 64%); pointer-events: none; }
 .hero-stage::after { content: ''; position: absolute; width: 68%; height: 12%; bottom: 8%; left: 16%; border-radius: 50%; background: #0009; filter: blur(24px); z-index: -1; }

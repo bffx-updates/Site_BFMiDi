@@ -330,7 +330,7 @@
     markTabs(subTrack, 'aria-selected', vi);
 
     /* ---- painel HOME (mantido em dia mesmo fora de cena) ---- */
-    heroH1b.textContent  = m.h1[1];
+    heroH1b.textContent  = m.id;
     $('#model-index').textContent = String(mi + 1).padStart(2, '0');
     $('#overview-link').classList.toggle('is-active', view === 'home');
     if (view === 'home') $('#overview-link').setAttribute('aria-current', 'page');
