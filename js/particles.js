@@ -1,0 +1,64 @@
+/* Poeira luminosa decorativa. Pausa fora de cena e respeita movimento reduzido. */
+(function () {
+  'use strict';
+  var canvas = document.getElementById('particle-field');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var width = 0, height = 0, points = [], frame = 0, last = 0;
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    var ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    var count = Math.min(100, Math.max(30, Math.round(width * height / 12000)));
+    points = Array.from({ length: count }, function () {
+      return { x: Math.random() * width, y: Math.random() * height,
+        radius: .5 + Math.random() * 1.2, opacity: .15 + Math.random() * .4,
+        dx: (Math.random() - .5) * 3, dy: -3 - Math.random() * 7 };
+    });
+    draw(0);
+  }
+
+  function draw(dt) {
+    ctx.clearRect(0, 0, width, height);
+    points.forEach(function (p) {
+      p.x = (p.x + p.dx * dt + width) % width;
+      p.y = (p.y + p.dy * dt + height) % height;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(133,176,234,' + p.opacity * .07 + ')';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(167,197,237,' + p.opacity + ')';
+      ctx.fill();
+    });
+  }
+
+  function tick(now) {
+    if (now - last >= 1000 / 30) {
+      draw(last ? Math.min((now - last) / 1000, .1) : 0);
+      last = now;
+    }
+    frame = requestAnimationFrame(tick);
+  }
+
+  function sync() {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    last = 0;
+    if (!document.hidden && !reduced.matches) frame = requestAnimationFrame(tick);
+    else draw(0);
+  }
+
+  window.addEventListener('resize', resize, { passive: true });
+  document.addEventListener('visibilitychange', sync);
+  reduced.addEventListener('change', sync);
+  resize();
+  sync();
+})();

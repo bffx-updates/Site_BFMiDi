@@ -127,7 +127,7 @@
     if (i === 0 && mounted) return '';
     var on = i === 0 ? ' is-on' : '';
     var inner = m.shot
-      ? imgTag(m.shot, m.shotAlt, '(max-width: 860px) 92vw, 62vw', i === 0)
+      ? imgTag(m.shot, m.shotAlt, '(max-width: 860px) 92vw, (max-width: 1200px) 82vw, 1000px', i === 0)
       : mapFigure(m);
     return '<figure class="shot' + on + '" data-i="' + i + '">' + inner + '</figure>';
   }).join(''));
@@ -339,7 +339,6 @@
     heroH1b.textContent  = m.h1[1];
     heroLead.textContent = m.lead;
     heroCta.textContent  = m.cta;
-    $('#stage-watermark').textContent = m.tab;
     $('#model-index').textContent = String(mi + 1).padStart(2, '0');
     $('#overview-link').classList.toggle('is-active', view === 'home');
     if (view === 'home') $('#overview-link').setAttribute('aria-current', 'page');

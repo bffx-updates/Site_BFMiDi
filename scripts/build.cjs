@@ -7,7 +7,9 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const context = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(root, 'js/content.js'), 'utf8'), context);
-new vm.Script(fs.readFileSync(path.join(root, 'js/main.js'), 'utf8'));
+for (const match of html.matchAll(/<script\s+src="(js\/[^"?#]+)"/g)) {
+  new vm.Script(fs.readFileSync(path.join(root, match[1]), 'utf8'), { filename: match[1] });
+}
 const content = context.window.BF_CONTENT;
 assert.equal(content.models.length, 4, 'A vitrine deve conter os quatro modelos.');
 assert.equal(new Set(content.models.map(m => m.hash)).size, 4, 'Links dos modelos repetidos.');

@@ -80,14 +80,11 @@ window.BF_CONTENT = (function () {
   return {
     ui: {
       header: 'CONTROLADORAS MIDI DE PALCO',
-      headerLink: 'Seu setup. Conectado.',
-      collection: 'ENCONTRE O SEU CONTROLE',
+      headerLink: 'Conexões',
+      collection: 'MODELOS',
       overview: 'Visão geral',
       buy: 'Comprar',
-      signature: 'MENOS LIMITES. MAIS MÚSICA.',
-      stage: 'PROJETADA PARA O SEU PALCO',
-      footer: 'O seu som começa com você.',
-      footerEnd: 'CONTROLE EM CADA DETALHE'
+      footerEnd: 'Controladoras MIDI'
     },
     models: [
       /* ---------------------------------------------------------------- 8SW+ */
@@ -95,9 +92,9 @@ window.BF_CONTENT = (function () {
         hash: '8sw',
         tab: '8SW+',
         id: 'BFMIDI 8SW+',
-        h1: ['Controle total', 'aos seus pés.'],
-        lead: 'Máximo controle para setups completos.',
-        cta: 'Conhecer 8SW+',
+        h1: ['BFMIDI', '8SW+'],
+        lead: 'MIDI DIN5, TRS e USB. Entradas para expressão e footswitches externos.',
+        cta: 'Ver detalhes',
         shot: '8sw-hero',
         shotAlt: 'BFMIDI 8SW+ em perspectiva: os seis footswitches numerados, ' +
                  'LIVE MODE e GLOBAL SWITCH nas pontas, a tela colorida acesa ' +
@@ -115,7 +112,7 @@ window.BF_CONTENT = (function () {
             img: '8sw-top',
             alt: 'BFMIDI 8SW+ vista de cima com os anéis de LED acesos em cores ' +
                  'diferentes e a tela mostrando seis ícones de efeito.',
-            title: 'Você lê o preset sem olhar para baixo',
+            title: 'Anéis de LED independentes',
             body: 'Cada footswitch tem o próprio anel de LED. A cor diz o estado, ' +
                   'e o estado é seu: você escolhe a cor de ligado e de desligado ' +
                   'em cada um.',
@@ -130,7 +127,7 @@ window.BF_CONTENT = (function () {
             img: '8sw-rear',
             alt: 'Painel traseiro da BFMIDI 8SW+ com as entradas e saídas ' +
                  'identificadas: DEVICE, 2SW, EXP, DIN5, TRS, HOST e 9V.',
-            title: 'Conecta no que você já tem',
+            title: 'Conexões MIDI e USB HOST',
             body: 'MIDI clássico, MIDI por TRS e MIDI por USB saem juntos. A porta ' +
                   'HOST vai além: ela controla pedais USB direto, sem computador ' +
                   'no meio.',
@@ -148,9 +145,9 @@ window.BF_CONTENT = (function () {
         hash: '6sw',
         tab: '6SW+',
         id: 'BFMIDI 6SW+',
-        h1: ['A medida certa', 'do seu palco.'],
-        lead: 'Controle, versatilidade e tamanho na medida certa.',
-        cta: 'Conhecer 6SW+',
+        h1: ['BFMIDI', '6SW+'],
+        lead: 'Seis footswitches, tela colorida e acesso ao modo LIVE.',
+        cta: 'Ver detalhes',
         shot: null,                       /* foto ainda não fotografada */
         switches: 6,
         specs: [
@@ -167,9 +164,9 @@ window.BF_CONTENT = (function () {
         hash: 'nano',
         tab: 'NANO+',
         id: 'BFMIDI NANO+',
-        h1: ['Todo o controle.', 'Metade do espaço.'],
-        lead: 'Compacta no tamanho. Gigante no controle.',
-        cta: 'Conhecer NANO+',
+        h1: ['BFMIDI', 'NANO+'],
+        lead: 'Seis footswitches e tela colorida em formato compacto.',
+        cta: 'Ver detalhes',
         shot: 'nano-hero',
         shotAlt: 'BFMIDI NANO+ em perspectiva: seis footswitches em duas fileiras, ' +
                  'a tela colorida acesa com o preset CLASSIC ROCK e o anel de LED ' +
@@ -187,7 +184,7 @@ window.BF_CONTENT = (function () {
             img: 'nano-top',
             alt: 'BFMIDI NANO+ vista de cima com os seis anéis de LED acesos em ' +
                  'cores diferentes e a tela mostrando ícones de efeito.',
-            title: 'Nada foi cortado do controle',
+            title: 'Recursos da NANO+',
             body: 'Mesmos seis presets por banco, mesma tela colorida, mesmos nove ' +
                   'comportamentos de footswitch. O que encolheu foi o corpo.',
             list: [
@@ -201,7 +198,7 @@ window.BF_CONTENT = (function () {
             img: 'nano-rear',
             alt: 'Painel traseiro da BFMIDI NANO+ com as entradas e saídas ' +
                  'identificadas: DEVICE, 2SW, EXP, DIN5, TRS, HOST e 9V.',
-            title: 'A traseira inteira, no corpo pequeno',
+            title: 'Conexões da NANO+',
             body: 'A NANO+ não abre mão de conexão: as mesmas saídas MIDI e a mesma ' +
                   'porta USB HOST da irmã maior cabem aqui.',
             list: [
@@ -218,9 +215,9 @@ window.BF_CONTENT = (function () {
         hash: 'micro',
         tab: 'MICRO',
         id: 'BFMIDI MICRO',
-        h1: ['Cabe onde', 'não cabia.'],
-        lead: 'O essencial do controle MIDI no menor espaço possível.',
-        cta: 'Conhecer MICRO',
+        h1: ['BFMIDI', 'MICRO'],
+        lead: 'Quatro footswitches e 40 presets ao alcance do pé.',
+        cta: 'Ver detalhes',
         shot: null,                       /* foto ainda não fotografada */
         switches: 4,
         specs: [
@@ -268,7 +265,7 @@ window.BF_CONTENT = (function () {
        conexão da lista, e é a que diferencia o aparelho. */
     closer: {
       eyebrow: 'Editor BFMIDI',
-      title: 'Monte o preset no navegador.',
+      title: 'Editor no navegador',
       lead: 'O editor abre no celular ou no computador, por Wi-Fi ou por cabo USB, ' +
             'sem instalar nada. Você monta banco, preset e cada footswitch na ' +
             'tela, salva, e o pedal já está pronto para o show.'
