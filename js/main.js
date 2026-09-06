@@ -88,11 +88,7 @@
   var subTrack = $('#subselector-track');
   var live     = $('#live-region');
 
-  var heroId   = $('#hero-id');
-  var heroH1a  = $('#hero-h1a');
   var heroH1b  = $('#hero-h1b');
-  var heroLead = $('#hero-lead');
-  var heroCta  = $('#hero-cta-label');
   var stage    = $('#hero-stage');
 
   /* A vista 'home' é a VISÃO GERAL do modelo — a foto grande. Ela não tem
@@ -334,11 +330,7 @@
     markTabs(subTrack, 'aria-selected', vi);
 
     /* ---- painel HOME (mantido em dia mesmo fora de cena) ---- */
-    heroId.textContent   = m.id;
-    heroH1a.textContent  = m.h1[0];
     heroH1b.textContent  = m.h1[1];
-    heroLead.textContent = m.lead;
-    heroCta.textContent  = m.cta;
     $('#model-index').textContent = String(mi + 1).padStart(2, '0');
     $('#overview-link').classList.toggle('is-active', view === 'home');
     if (view === 'home') $('#overview-link').setAttribute('aria-current', 'page');
