@@ -41,7 +41,8 @@
   if (!C || !C.models || !C.models.length) return;   /* sem conteúdo, sem página */
 
   var MODELS = C.models;
-  var SUB    = (C.sub && C.sub.items) || [];
+  var SUB = (C.sub && C.sub.items) || [];
+  var RES = C.resources.items;
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
 
@@ -94,6 +95,7 @@
   /* A vista 'home' é a VISÃO GERAL do modelo — a foto grande. Ela não tem
      aba própria: quem volta para ela é o modelo aceso na cápsula de cima. */
   var panels = { home: $('#panel-home') };
+  RES.forEach(function (item) { panels[item.key] = $('#panel-' + item.key); });
   SUB.forEach(function (s) { panels[s.key] = $('#panel-' + s.key); });
 
   /* -------------------------------------------------------- fotos do HOME */
@@ -139,7 +141,8 @@
   /* --------------------------------------------------------------- painéis */
 
   function eyebrowOf(key) {
-    for (var i = 0; i < SUB.length; i++) if (SUB[i].key === key) return SUB[i].eyebrow;
+    var items = SUB.concat(RES);
+    for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i].eyebrow;
     return '';
   }
 
@@ -251,7 +254,32 @@
     '</div>';
   }
 
+
+  /* Icônes funcionais em traço, compartilhados por todos os submenus. */
+  var ICONS = {
+    home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/>',
+    conects: '<path d="M7 3v5m6-5v5M5 8h10v3a5 5 0 0 1-10 0Zm5 8v2a3 3 0 0 0 6 0v-3h4v6"/>',
+    comprar: '<path d="M3 3h2l3 12h11l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
+    apps: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+    downloads: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
+    manual: '<path d="M12 5C8 2 5 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-3-1-6-2-10 1Zm0 0v16"/>',
+    gear: '<path d="m9 3-1 3-3 1-2 3 2 2-1 3 3 3 3-1 2 2 3-1 1-3 3-1 1-3-2-2 1-3-3-3-3 1-2-2Z"/><circle cx="11" cy="11" r="3"/>'
+  };
+  function icon(key) { return '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[key] || '') + '</svg>'; }
+  function renderResource(item) {
+    return '<div class="panel-inner resource-page"><div class="resource-heading">' + icon(item.key) +
+      '<h2 class="panel-title">' + esc(item.title) + '</h2><p class="panel-lead">' + esc(item.lead) + '</p></div>' +
+      '<div class="resource-cards">' + item.links.map(function (link) {
+        return '<article class="resource-card"><h3>' + esc(link.title) + '</h3><p>' + esc(link.description) +
+          '</p><a class="btn btn-primary" href="' + esc(link.href) + '" target="_blank" rel="noopener noreferrer">' +
+          esc(link.label) + '<span class="sr-only"> (abre em nova aba)</span><span aria-hidden="true">↗</span></a></article>';
+      }).join('') + '</div></div>';
+  }
+
   var RENDER = { info: renderInfo, conects: renderConects, comprar: renderComprar };
+
+  RES.forEach(function (item) { RENDER[item.key] = function () { return renderResource(item); }; });
 
   /* O painel é remontado só quando MUDA o modelo que ele está mostrando — o
      atributo é a memória disso. Sem ele, cada ida e volta pelo submenu
@@ -278,7 +306,7 @@
                        ' aria-controls="panel-' + esc(it.key) + '"' : '') +
              ' data-i="' + i + '"' +
              ' data-go="' + (it.key ? 'view:' + esc(it.key) : 'model:' + i) + '"' +
-             ' ' + attr + '="false">' + esc(it[label]) + '</button>';
+             ' ' + attr + '="false">' + (it.key ? icon(it.key) : '') + '<span>' + esc(it[label]) + '</span></button>';
     }).join('');
   }
 
@@ -291,180 +319,112 @@
 
   /* ------------------------------------------------------------ aplicação */
 
-  var curModel = -1;
-  var curView  = '';
 
-  function isView(v) {
-    for (var i = 0; i < SUB.length; i++) if (SUB[i].key === v) return true;
-    return false;
-  }
-  function viewIndexOrIdle(v) {
-    for (var i = 0; i < SUB.length; i++) if (SUB[i].key === v) return i;
-    return -1;
-  }
+  /* O modelo é preservado ao consultar Apps, Downloads ou Manual. */
+  var curModel = -1, curView = '', lastResource = 'apps';
+  var modelNav = $('#model-navigation');
+  var resourceNav = $('#resource-navigation');
+  var overview = $('#overview-link');
+  function resourceView(view) { return RES.some(function (item) { return item.key === view; }); }
+  function isView(view) { return SUB.concat(RES).some(function (item) { return item.key === view; }); }
+  function viewIndex(view) { return SUB.findIndex(function (item) { return item.key === view; }); }
 
   function apply(mi, view) {
     mi = Number.isFinite(mi) ? Math.max(0, Math.min(MODELS.length - 1, Math.trunc(mi))) : 0;
     if (view !== 'home' && !isView(view)) view = 'home';
     if (mi === curModel && view === curView) return;
-
-    var first = curView === '';
-    var modelChanged = mi !== curModel;
-    var viewChanged  = view !== curView;
-    var m = MODELS[mi];
-
+    var first = curView === '', m = MODELS[mi], resources = resourceView(view);
     curModel = mi;
-    curView  = view;
-
-    /* ---- as duas cápsulas ---- */
-    selector.style.setProperty('--i', mi);
-    markTabs(track, 'aria-pressed', mi);
-
-    /* O índice -1 é a VISÃO GERAL: nenhuma opção em cena. A classe apaga o
-       leito e o LED em vez de escondê-los, senão eles saltariam de posição
-       ao voltar. O `--i` continua no último item aceso, e é dali que o LED
-       reacende quando o visitante volta a escolher uma opção. */
-    var vi = viewIndexOrIdle(view);
+    curView = view;
+    if (resources) lastResource = view;
+    var active = resources ? MODELS.length : mi;
+    selector.style.setProperty('--i', active);
+    markTabs(track, 'aria-pressed', active);
+    track.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i === active ? 0 : -1; });
+    var gear = $('#resources-toggle');
+    gear.setAttribute('aria-expanded', String(resources));
+    modelNav.hidden = resources;
+    resourceNav.hidden = !resources;
+    var vi = viewIndex(view);
     subSel.classList.toggle('is-idle', vi < 0);
     if (vi >= 0) subSel.style.setProperty('--i', vi);
     markTabs(subTrack, 'aria-selected', vi);
-
-    /* ---- painel HOME (mantido em dia mesmo fora de cena) ---- */
-    heroH1b.textContent  = m.id;
+    var ri = RES.findIndex(function (item) { return item.key === view; });
+    markTabs(resourceNav, 'aria-selected', ri);
+    resourceNav.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i === ri ? 0 : -1; });
+    modelNav.querySelectorAll('button').forEach(function (tab, i) { tab.tabIndex = i === vi + 1 ? 0 : -1; });
+    overview.classList.toggle('is-active', view === 'home');
+    if (view === 'home') overview.setAttribute('aria-current', 'page');
+    else overview.removeAttribute('aria-current');
+    heroH1b.textContent = m.id;
     $('#model-index').textContent = String(mi + 1).padStart(2, '0');
-    $('#overview-link').classList.toggle('is-active', view === 'home');
-    if (view === 'home') $('#overview-link').setAttribute('aria-current', 'page');
-    else $('#overview-link').removeAttribute('aria-current');
-    $('#hero-facts').innerHTML = m.specs.map(function (s) {
-      return '<div class="hero-fact"><span class="fact-value">' + esc(s.value) +
-             '</span><span class="fact-label">' + esc(s.label) + '</span></div>';
+    $('#hero-facts').innerHTML = m.specs.map(function (spec) {
+      return '<div class="hero-fact"><span class="fact-value">' + esc(spec.value) + '</span><span class="fact-label">' + esc(spec.label) + '</span></div>';
     }).join('');
-    shots.forEach(function (s, k) {
-      s.classList.toggle('is-on', k === mi);
-      s.setAttribute('aria-hidden', k === mi ? 'false' : 'true');
-    });
-
-    /* ---- painel em cena ---- */
+    shots.forEach(function (shot, i) { shot.classList.toggle('is-on', i === mi); shot.setAttribute('aria-hidden', String(i !== mi)); });
     if (view !== 'home') ensurePanel(view, mi);
-    Object.keys(panels).forEach(function (k) {
-      var el = panels[k];
-      if (!el) return;
-      var on = k === view;
-      el.classList.toggle('is-on', on);
-      el.setAttribute('aria-hidden', on ? 'false' : 'true');
-      el.inert = !on;
+    Object.keys(panels).forEach(function (key) {
+      var panel = panels[key], on = key === view;
+      panel.classList.toggle('is-on', on);
+      panel.setAttribute('aria-hidden', String(!on));
+      panel.inert = !on;
     });
-
-    document.title = m.id + ' — Controladoras MIDI de palco | BFFX';
-
-    /* A URL acompanha a escolha para o link poder ser compartilhado, mas via
-       replaceState: `location.hash =` empilharia uma entrada no histórico a
-       cada clique e prenderia o botão Voltar dentro da página. */
-    if (!first && window.history && history.replaceState) {
-      history.replaceState(null, '', '#' + m.hash + (view === 'home' ? '' : '/' + view));
-    }
-
-    /* Anúncio só depois da primeira pintura: na carga inicial não houve
-       mudança nenhuma para anunciar. */
-    if (!first && live) {
-      live.textContent = modelChanged && viewChanged ? m.id + ' · ' + eyebrowOf(view)
-                       : viewChanged                 ? eyebrowOf(view) || m.id
-                       : m.id + ' selecionado.';
-    }
+    document.title = resources ? eyebrowOf(view) + ' — BFMIDI | BFFX' : m.id + ' — Controladoras MIDI de palco | BFFX';
+    if (!first && window.history && history.replaceState) history.replaceState(null, '', '#' + m.hash + (view === 'home' ? '' : '/' + view));
+    if (!first && live) live.textContent = resources ? eyebrowOf(view) : m.id + (view === 'home' ? ' selecionado.' : ' · ' + eyebrowOf(view));
   }
 
-  /* ------------------------------------------------------------- interação */
-
-  /* UM clique para a página inteira. Qualquer elemento com `data-go` navega:
-       data-go="model:2"     escolhe o modelo (e abre o submenu)
-       data-go="view:info"   abre um painel do modelo em cena
-       data-go="home"        volta à lista de modelos
-     É o que deixa o CTA do cabeçalho, os botões do hero, as abas e o VOLTAR
-     compartilharem o mesmo caminho, inclusive os que o JS cria depois. */
-  document.addEventListener('click', function (e) {
-    var el = e.target.closest ? e.target.closest('[data-go]') : null;
-    if (!el) return;
-    var go = el.getAttribute('data-go');
-    e.preventDefault();
-
-    /* Clicar num MODELO devolve a visão geral dele. É por isso que o botão
-       VOLTAR deixou de existir: o modelo aceso já é o caminho de volta, e
-       ele nunca sai da tela. */
-    if (go === 'home') { apply(curModel < 0 ? 0 : curModel, 'home'); return; }
-    if (go.indexOf('model:') === 0) { apply(Number(go.slice(6)), 'home'); return; }
-    if (go.indexOf('view:') === 0)  { apply(curModel < 0 ? 0 : curModel, go.slice(5)); }
+  document.addEventListener('click', function (event) {
+    var control = event.target.closest('[data-go]');
+    if (!control) return;
+    event.preventDefault();
+    var go = control.getAttribute('data-go');
+    if (go === 'resources') apply(curModel, resourceView(curView) ? 'home' : lastResource);
+    else if (go === 'home') apply(curModel, 'home');
+    else if (go.indexOf('model:') === 0) apply(Number(go.slice(6)), 'home');
+    else if (go.indexOf('view:') === 0) apply(curModel, go.slice(5));
   });
 
-  /* Setas percorrem a cápsula, como em qualquer conjunto de opções. Home/End
-     vão às pontas, Esc volta aos modelos. O foco acompanha a seleção — senão
-     a seta moveria a página sem mover o cursor de quem navega por teclado. */
-  /* Setas percorrem a cápsula em que o foco está — cada uma tem o seu
-     conjunto. Home/End vão às pontas. O foco acompanha a seleção: senão a
-     seta moveria a página sem mover o cursor de quem navega por teclado. */
-  function wireKeys(el, count, currentIdx, go) {
-    el.addEventListener('keydown', function (e) {
-      var map = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -1, ArrowDown: 1 };
-      var cur = currentIdx();
-      var next;
-      if (e.key in map) next = (cur < 0 ? 0 : cur) + map[e.key];
-      else if (e.key === 'Home') next = 0;
-      else if (e.key === 'End') next = count() - 1;
+  /* Setas, Home e End percorrem cada nível sem perder o foco. */
+  function wireKeys(container, getIndex, select) {
+    container.addEventListener('keydown', function (event) {
+      var buttons = Array.from(container.querySelectorAll('button'));
+      var current = getIndex(), next;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (current + 1) % buttons.length;
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (current + buttons.length - 1) % buttons.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = buttons.length - 1;
       else return;
-      e.preventDefault();
-      next = Math.max(0, Math.min(count() - 1, next));
-      go(next);
-      var tab = el.querySelector('.tab[data-i="' + next + '"]');
-      if (tab) tab.focus();
+      event.preventDefault();
+      select(next);
+      buttons[next].focus();
     });
   }
-
-  wireKeys(selector,
-           function () { return MODELS.length; },
-           function () { return curModel; },
-           function (i) { apply(i, 'home'); });
-
-  wireKeys(subSel,
-           function () { return SUB.length; },
-           function () { return viewIndexOrIdle(curView); },
-           function (i) { apply(curModel, SUB[i].key); });
-
-  /* Esc devolve a visão geral do modelo, de qualquer painel. */
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && curView !== 'home') apply(curModel, 'home');
+  wireKeys(selector, function () { return resourceView(curView) ? MODELS.length : curModel; }, function (i) { if (i === MODELS.length) apply(curModel, lastResource); else apply(i, 'home'); });
+  wireKeys(modelNav, function () { return viewIndex(curView) + 1; }, function (i) { apply(curModel, i === 0 ? 'home' : SUB[i - 1].key); });
+  wireKeys(resourceNav, function () { return RES.findIndex(function (item) { return item.key === curView; }); }, function (i) { apply(curModel, RES[i].key); });
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape' || curView === 'home') return;
+    var wasResource = resourceView(curView);
+    apply(curModel, 'home');
+    if (wasResource) track.querySelector('[data-i="' + curModel + '"]').focus();
+    else overview.focus();
   });
-
-  /* Link direto: #8sw, #nano/conects, #micro/comprar. Também responde ao
-     Voltar do navegador. A forma antiga (#8sw, sem painel) continua valendo e
-     cai na lista de modelos — links já publicados não mudam de destino. */
   function fromHash() {
-    var raw = (location.hash || '').replace('#', '').toLowerCase().split('/');
-    var out = { model: -1, view: 'home' };
-    for (var i = 0; i < MODELS.length; i++) {
-      if (MODELS[i].hash === raw[0]) { out.model = i; break; }
-    }
-    if (raw[1] && isView(raw[1])) out.view = raw[1];
-    return out;
+    var parts = (location.hash || '').slice(1).toLowerCase().split('/');
+    var model = MODELS.findIndex(function (m) { return m.hash === parts[0]; });
+    return { model: model >= 0 ? model : 0, view: isView(parts[1]) ? parts[1] : 'home' };
   }
-  window.addEventListener('hashchange', function () {
-    var h = fromHash();
-    if (h.model >= 0) apply(h.model, h.view);
-  });
+  window.addEventListener('hashchange', function () { var state = fromHash(); apply(state.model, state.view); });
 
-  /* ------------------------------------------------------------------ boot */
-  document.querySelectorAll('[data-copy]').forEach(function (el) {
-    var copy = C.ui && C.ui[el.getAttribute('data-copy')];
-    if (copy) el.textContent = copy;
-  });
-
-  /* As abas vêm ESTÁTICAS do HTML (ver o comentário lá) e aqui são refeitas a
-     partir do content.js: a marcação garante que as cápsulas existam mesmo
-     sem script, e o conteúdo garante o texto. Se os dois discordarem no
-     número de itens, o content.js ganha. */
+  document.querySelectorAll('[data-copy]').forEach(function (el) { var copy = C.ui && C.ui[el.getAttribute('data-copy')]; if (copy) el.textContent = copy; });
   fillTrack(track, MODELS, 'tab', 'aria-pressed');
-  selector.style.setProperty('--n', MODELS.length);
+  track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="4" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">' + icon('gear') + '</button>');
+  selector.style.setProperty('--n', MODELS.length + 1);
   fillTrack(subTrack, SUB, 'label', 'aria-selected');
   subSel.style.setProperty('--n', SUB.length);
-
+  fillTrack(resourceNav, RES, 'label', 'aria-selected');
+  overview.innerHTML = icon('home') + '<span>' + esc(C.ui.overview) + '</span>';
   var start = fromHash();
-  apply(start.model >= 0 ? start.model : 0, start.model >= 0 ? start.view : 'home');
+  apply(start.model, start.view);
 })();

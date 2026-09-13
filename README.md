@@ -1,6 +1,6 @@
 # Vitrine BFMIDI
 
-Site estático em português, com quatro modelos e painéis de detalhes, conexões e compra.
+Site estático em português, com quatro modelos e painéis de detalhes, conexões e compra. A engrenagem ao final do menu abre Apps, Downloads e Manual. Os endereços ficam em `resources.items` de `js/content.js`.
 
 - Conteúdo e destinos comerciais: `js/content.js`.
 - Navegação, links diretos e acessibilidade: `js/main.js`.
@@ -12,6 +12,6 @@ O tema escuro apresenta a controladora centralizada, com nome do modelo e inform
 
 A rolagem natural permite ler todo o conteúdo no celular, em telas baixas e com texto ampliado.
 
-Os links de contato e manual ainda precisam ser preenchidos em `buy.primary.href` e `buy.ghost.href`. Até receberem destinos reais, os botões aparecem desabilitados e acompanhados de uma explicação. As fotos pendentes da 6SW+ e MICRO continuam identificadas; nenhuma especificação nova foi inventada.
+O link de contato ainda precisa ser preenchido em `buy.primary.href`. Até receber um destino real, o botão aparece desabilitado e acompanhado de uma explicação. O manual, o editor e a central de downloads usam os endereços de publicação do projeto. As fotos pendentes da 6SW+ e MICRO continuam identificadas; nenhuma especificação nova foi inventada.
 
 A versão anterior está guardada em `.bak/refinamento-20260906/`.

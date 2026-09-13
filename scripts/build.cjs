@@ -15,7 +15,8 @@ assert.equal(content.models.length, 4, 'A vitrine deve conter os quatro modelos.
 assert.equal(new Set(content.models.map(m => m.hash)).size, 4, 'Links dos modelos repetidos.');
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
 assert.equal(ids.length, new Set(ids).size, 'IDs repetidos no HTML.');
-for (const section of content.sub.items) assert(ids.includes('panel-' + section.key));
+const sections = content.sub.items.concat(content.resources ? content.resources.items : []);
+for (const section of sections) assert(ids.includes('panel-' + section.key));
 let images = 0;
 for (const model of content.models) {
   assert(model.specs.length && model.h1.length === 2 && model.switches > 0);
@@ -32,5 +33,5 @@ const output = path.join(root, 'dist');
 fs.mkdirSync(output, { recursive: true });
 fs.copyFileSync(path.join(root, 'index.html'), path.join(output, 'index.html'));
 for (const folder of ['assets', 'css', 'js']) fs.cpSync(path.join(root, folder), path.join(output, folder), { recursive: true });
-console.log('Validação concluída: quatro modelos, três painéis, ' + images + ' imagens e referências locais válidas.');
+console.log('Validação concluída: quatro modelos, ' + sections.length + ' painéis, ' + images + ' imagens e referências locais válidas.');
 console.log('Site estático preparado em dist/.');

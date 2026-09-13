@@ -27,7 +27,7 @@
 <canvas id="particle-field" aria-hidden="true"></canvas>
   <div class="wrap selector-zone">
 <div class="collection-label"><span class="status-dot" aria-hidden="true"></span><span data-copy="collection">MODELOS</span></div>
-    <div class="selector" id="selector" role="group" aria-label="Modelos BFMIDI" style="--n:4">
+    <div class="selector" id="selector" role="group" aria-label="Modelos BFMIDI e recursos" style="--n:5">
       <div class="selector-bed" aria-hidden="true"></div>
       <div class="selector-led" aria-hidden="true"><i></i></div>
       <div class="selector-track" id="selector-track">
@@ -35,11 +35,12 @@
         <button class="tab" type="button" data-i="1" data-go="model:1" aria-pressed="false">6SW+</button>
         <button class="tab" type="button" data-i="2" data-go="model:2" aria-pressed="false">NANO+</button>
         <button class="tab" type="button" data-i="3" data-go="model:3" aria-pressed="false">MICRO</button>
+<button class="tab gear-tab" id="resources-toggle" type="button" data-i="4" data-go="resources" aria-label="Recursos" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation"><span aria-hidden="true">⚙</span></button>
       </div>
     </div>
     <span class="collection-index" aria-hidden="true"><b id="model-index">01</b> / 04</span>
 </div>
-<nav class="view-nav wrap" aria-label="Explore o modelo">
+<nav class="view-nav wrap" id="model-navigation" aria-label="Explore o modelo">
 <button class="overview-link is-active" id="overview-link" data-go="home" type="button" aria-current="page" data-copy="overview">Visão geral</button>
 <div class="selector selector-sub is-idle" id="subselector"
          role="tablist" aria-label="Seções do modelo" style="--n:3">
@@ -52,6 +53,11 @@
       </div>
     </div>
   </nav>
+<nav class="view-nav resource-nav wrap" id="resource-navigation" role="tablist" aria-label="Recursos" hidden>
+<button class="tab" id="subtab-apps" type="button" role="tab" aria-selected="false" aria-controls="panel-apps" data-go="view:apps" data-i="0">Apps</button>
+<button class="tab" id="subtab-downloads" type="button" role="tab" aria-selected="false" aria-controls="panel-downloads" data-go="view:downloads" data-i="1">Downloads</button>
+<button class="tab" id="subtab-manual" type="button" role="tab" aria-selected="false" aria-controls="panel-manual" data-go="view:manual" data-i="2">Manual</button>
+</nav>
 <p class="sr-only" id="live-region" aria-live="polite"></p>
   <main class="panels" id="panels" tabindex="-1">
     <section class="panel panel-home is-on" id="panel-home" aria-hidden="false">
@@ -74,6 +80,9 @@
     <section class="panel" id="panel-info"    role="tabpanel" aria-labelledby="subtab-info"    aria-hidden="true"></section>
     <section class="panel" id="panel-conects" role="tabpanel" aria-labelledby="subtab-conects" aria-hidden="true"></section>
     <section class="panel" id="panel-comprar" role="tabpanel" aria-labelledby="subtab-comprar" aria-hidden="true"></section>
+    <section class="panel" id="panel-apps" role="tabpanel" aria-labelledby="subtab-apps" aria-hidden="true" inert></section>
+    <section class="panel" id="panel-downloads" role="tabpanel" aria-labelledby="subtab-downloads" aria-hidden="true" inert></section>
+    <section class="panel" id="panel-manual" role="tabpanel" aria-labelledby="subtab-manual" aria-hidden="true" inert></section>
   </main>
   <footer class="site-footer">
     <div class="wrap footer-row">

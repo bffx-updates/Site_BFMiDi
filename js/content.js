@@ -247,6 +247,29 @@ window.BF_CONTENT = (function () {
       ]
     },
 
+    resources: {
+      label: 'Recursos',
+      items: [
+        { key: 'apps', label: 'Apps', eyebrow: 'Apps', title: 'Editor BFMIDI',
+          lead: 'Configure bancos, presets e footswitches no navegador ou no aplicativo.',
+          links: [
+            { title: 'Editor no navegador', description: 'Acesse o editor BFMIDI pelo computador ou celular.', label: 'Abrir editor', href: 'https://bffx-updates.github.io/Editor_BFMiDi_v13/' },
+            { title: 'Aplicativos', description: 'Veja as versões disponíveis para o seu dispositivo.', label: 'Ver aplicativos', href: 'https://bffx-updates.github.io/Download_Apps/' }
+          ] },
+        { key: 'downloads', label: 'Downloads', eyebrow: 'Downloads', title: 'Downloads e atualizações',
+          lead: 'Acesse os aplicativos e o atualizador da controladora.',
+          links: [
+            { title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
+            { title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/BFMiDi_v13/' }
+          ] },
+        { key: 'manual', label: 'Manual', eyebrow: 'Manual', title: 'Manual BFMIDI',
+          lead: 'Consulte as instruções de configuração e uso da controladora.',
+          links: [
+            { title: 'Manual online', description: 'Consulte os recursos, os modos de operação e as conexões.', label: 'Abrir manual', href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' }
+          ] }
+      ]
+    },
+
     /* Texto do estado provisório. Fica aqui, e não no main.js, porque é copy. */
     pending: {
       shot:  'Fotografia em produção',
@@ -279,7 +302,7 @@ window.BF_CONTENT = (function () {
        Os itens de `list` são fatos do produto (firmware e editor), não
        promessa comercial: só entre aqui o que a BFFX consegue cumprir. */
     buy: {
-      unavailable: 'Os canais de contato e o manual estarão disponíveis em breve.',
+      unavailable: 'O canal de contato estará disponível em breve.',
       price: 'Sob consulta',
       lead: 'Fale direto com a BFFX: a gente confirma preço, prazo e a versão ' +
             'certa para o seu setup antes de fechar.',
@@ -289,7 +312,7 @@ window.BF_CONTENT = (function () {
         'Presets de fábrica já gravados, prontos para tocar'
       ],
       primary: { label: 'Falar com a BFFX', href: '#' },
-      ghost:   { label: 'Abrir o manual',   href: '#' }
+      ghost:   { label: 'Abrir o manual',   href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' }
     }
   };
 })();
