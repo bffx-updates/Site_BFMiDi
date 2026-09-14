@@ -1,6 +1,6 @@
 # Vitrine BFMIDI
 
-Site estático em português, com quatro modelos e painéis de detalhes, conexões e compra. A engrenagem ao final do menu abre Apps, Downloads e Manual. Os endereços ficam em `resources.items` de `js/content.js`.
+Site estático em português, com quatro modelos e painéis de detalhes, conexões e compra. A engrenagem ao final do menu abre Apps, Downloads e Manual. Apps exibe diretamente a página importada de `download_apps_page`, com cartões por plataforma, instalador local do Windows e diálogo de ajuda. O conteúdo está em `index.html`, os estilos em `css/apps.css`, a ajuda em `js/apps.js` e os arquivos em `assets/apps/`. Os demais recursos ficam em `resources.items` de `js/content.js`.
 
 - Conteúdo e destinos comerciais: `js/content.js`.
 - Navegação, links diretos e acessibilidade: `js/main.js`.

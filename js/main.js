@@ -279,14 +279,16 @@
 
   var RENDER = { info: renderInfo, conects: renderConects, comprar: renderComprar };
 
-  RES.forEach(function (item) { RENDER[item.key] = function () { return renderResource(item); }; });
+  RES.forEach(function (item) {
+    if (item.key !== 'apps') RENDER[item.key] = function () { return renderResource(item); };
+  });
 
   /* O painel é remontado só quando MUDA o modelo que ele está mostrando — o
      atributo é a memória disso. Sem ele, cada ida e volta pelo submenu
      recriaria as <img> e devolveria o piscar que o HOME evita. */
   function ensurePanel(key, mi) {
     var el = panels[key];
-    if (!el || !RENDER[key]) return;
+    if (!el || !RENDER[key] || key === 'apps') return;
     if (el.getAttribute('data-for') === String(mi)) return;
     el.innerHTML = RENDER[key](MODELS[mi]);
     el.setAttribute('data-for', String(mi));
@@ -336,6 +338,8 @@
     var first = curView === '', m = MODELS[mi], resources = resourceView(view);
     curModel = mi;
     curView = view;
+    var helpDialog = $('#ajuda-dialog');
+    if (view !== 'apps' && helpDialog && helpDialog.open) helpDialog.close();
     if (resources) lastResource = view;
     var active = resources ? MODELS.length : mi;
     selector.style.setProperty('--i', active);
@@ -404,7 +408,7 @@
   wireKeys(modelNav, function () { return viewIndex(curView) + 1; }, function (i) { apply(curModel, i === 0 ? 'home' : SUB[i - 1].key); });
   wireKeys(resourceNav, function () { return RES.findIndex(function (item) { return item.key === curView; }); }, function (i) { apply(curModel, RES[i].key); });
   document.addEventListener('keydown', function (event) {
-    if (event.key !== 'Escape' || curView === 'home') return;
+    if (event.key !== 'Escape' || curView === 'home' || document.querySelector('dialog[open]')) return;
     var wasResource = resourceView(curView);
     apply(curModel, 'home');
     if (wasResource) track.querySelector('[data-i="' + curModel + '"]').focus();

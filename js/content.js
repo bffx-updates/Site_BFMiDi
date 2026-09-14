@@ -250,12 +250,7 @@ window.BF_CONTENT = (function () {
     resources: {
       label: 'Recursos',
       items: [
-        { key: 'apps', label: 'Apps', eyebrow: 'Apps', title: 'Editor BFMIDI',
-          lead: 'Configure bancos, presets e footswitches no navegador ou no aplicativo.',
-          links: [
-            { title: 'Editor no navegador', description: 'Acesse o editor BFMIDI pelo computador ou celular.', label: 'Abrir editor', href: 'https://bffx-updates.github.io/Editor_BFMiDi_v13/' },
-            { title: 'Aplicativos', description: 'Veja as versões disponíveis para o seu dispositivo.', label: 'Ver aplicativos', href: 'https://bffx-updates.github.io/Download_Apps/' }
-          ] },
+        { key: 'apps', label: 'Apps', eyebrow: 'Apps', title: 'BFMiDi Editor' },
         { key: 'downloads', label: 'Downloads', eyebrow: 'Downloads', title: 'Downloads e atualizações',
           lead: 'Acesse os aplicativos e o atualizador da controladora.',
           links: [
