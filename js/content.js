@@ -95,10 +95,9 @@ window.BF_CONTENT = (function () {
         h1: ['BFMIDI', '8SW+'],
         lead: 'MIDI DIN5, TRS e USB. Entradas para expressão e footswitches externos.',
         cta: 'Ver detalhes',
-        shot: '8sw-hero',
-        shotAlt: 'BFMIDI 8SW+ em perspectiva: os seis footswitches numerados, ' +
-                 'LIVE MODE e GLOBAL SWITCH nas pontas, a tela colorida acesa ' +
-                 'com o preset CLASSIC ROCK e os anéis de LED acesos.',
+        shot: '8sw-hero-front',
+        shotAlt: 'BFMIDI 8SW+ visto de frente: oito footswitches, LIVE MODE e GLOBAL SWITCH, ' +
+                 'tela colorida com amplificador e o anel azul do footswitch 1 aceso.',
         switches: 8,
         specs: [
           specSwitches(8, 'Seis para presets, mais LIVE MODE e GLOBAL SWITCH dedicados.'),
