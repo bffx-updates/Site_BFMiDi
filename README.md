@@ -7,6 +7,7 @@ Site estático em português, com quatro modelos e painéis de detalhes, conexõ
 - Composição e ajustes responsivos atuais: `css/refine.css`, carregado após os estilos de base.
 - Preparação para hospedagem e validação de arquivos: `node scripts/build.cjs`.
 - Prévia local: `servidor_local.bat`.
+- Publicação do código no GitHub: execute `SUBIR_SITE_GITHUB.bat`. Para apenas validar sem enviar, use `SUBIR_SITE_GITHUB.bat --verificar`.
 
 O tema escuro apresenta a controladora centralizada, com nome do modelo e informações diretas. O fundo usa partículas discretas em `js/particles.js`: até 100 pontos, atualização limitada a 30 quadros por segundo e resolução limitada para reduzir o custo em telas de alta densidade. A animação pausa quando a aba fica oculta e permanece estática quando o visitante prefere movimento reduzido. O canvas é decorativo e não intercepta cliques.
 

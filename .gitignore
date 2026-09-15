@@ -4,3 +4,4 @@ dist/
 NANO+ PNG/
 *.tar.gz
 node_modules/
+.codex-remote-attachments/
