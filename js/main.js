@@ -361,7 +361,6 @@
     if (view === 'home') overview.setAttribute('aria-current', 'page');
     else overview.removeAttribute('aria-current');
     heroH1b.textContent = m.id;
-    $('#model-index').textContent = String(mi + 1).padStart(2, '0');
     $('#hero-facts').innerHTML = m.specs.map(function (spec) {
       return '<div class="hero-fact"><span class="fact-value">' + esc(spec.value) + '</span><span class="fact-label">' + esc(spec.label) + '</span></div>';
     }).join('');

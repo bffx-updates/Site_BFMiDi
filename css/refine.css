@@ -24,18 +24,15 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .site-header { height: 72px; padding-block: 0; gap: 28px; border-bottom: 1px solid var(--hairline); }
 .brand { gap: 4px; font: 900 27px/1 var(--font-display); letter-spacing: -.06em; }
 .brand-dot { height: 5px; width: 5px; background: #8ab5ff; box-shadow: 0 0 12px #4f92ff66; }
-.header-caption,.collection-label,.collection-index { font: 400 .75rem/1.4 var(--font-mono); letter-spacing: .12em; color: var(--ink-3); }
+.header-caption { font: 400 .75rem/1.4 var(--font-mono); letter-spacing: .12em; color: var(--ink-3); }
 .header-caption { border-left: 1px solid var(--hairline-strong); padding-left: 26px; }
 .header-link { margin-left: auto; display: flex; align-items: center; gap: 16px; border: 0; background: transparent; padding: 12px 0; font-size: .875rem; color: var(--ink-2); cursor: pointer; }
 .header-link:hover { color: #fff; }
 .header-link > span:last-child { font-size: 20px; }
 
 /* Menu inspirado na cápsula do aplicativo: vidro azul e seleção âmbar. */
-.selector-zone { display: grid; grid-template-columns: 1fr minmax(420px,780px) 1fr; align-items: center; gap: 24px; padding-block: 32px 20px; }
-.collection-label { display: flex; align-items: center; gap: 10px; }
-.status-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #719dd9; }
-.collection-index { justify-self: end; }
-.collection-index b { color: var(--ink); font-weight: 400; }
+.selector-zone { display: flex; justify-content: center; align-items: center; padding-block: 32px 20px; }
+.selector-zone > .selector { width: min(780px,100%); }
 .selector { --pad: 9px; width: 100%; padding: var(--pad); border: 1px solid #6997b77a; border-radius: 999px; background: linear-gradient(165deg,#243e58e8 0%,#14283df2 48%,#1a344ced 100%); box-shadow: inset 0 2px 2px #aedbff4a,inset 0 -2px 3px #0009,0 0 0 1px #273f55,0 16px 35px -18px #000,0 0 35px -18px #5d9ccc66; }
 .selector-track { position: relative; }
 .selector-bed { border-radius: 999px; background: linear-gradient(160deg,#ffbb64 0%,#ff8e3e 44%,#ff6933 100%); box-shadow: inset 0 2px 2px #fff0cbcc,inset 0 -2px 3px #b9311766,0 0 0 1px #ffae6077,0 5px 22px -6px #ff6f3388; }
@@ -127,8 +124,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 @media (max-width: 860px) {
   .site-header { height: 64px; gap: 22px; }
   .header-caption { display: none; }
-  .selector-zone { grid-template-columns: 1fr; gap: 12px; padding-block: 18px 8px; }
-  .collection-label,.collection-index { display: none; }
+  .selector-zone { padding-block: 18px 8px; }
   .selector { width: min(780px,100%); margin-inline: auto; }
   .selector-sub { margin: 0; width: auto; }
   .view-nav { gap: 4px; }
@@ -164,7 +160,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .btn-ghost { background: linear-gradient(#23394c,#152537); border-color: #86a8c64d; color: #d3dfed; box-shadow: inset 0 1px #b7dbf31a; }
 .btn-ghost:hover { background: linear-gradient(#2c4860,#1b3046); border-color: #86a8c67d; }
 .btn:disabled { background: #182330; color: #8797aa; border-color: #43536955; box-shadow: none; }
-@media (max-width: 1050px) { .selector-zone { grid-template-columns: 1fr minmax(360px,680px) 1fr; gap: 14px; padding-inline: 24px; } .collection-label { font-size: .75rem; } }
-@media (max-width: 860px) { .selector-zone { grid-template-columns: 1fr; padding: 22px 20px 16px; } .view-nav { max-width: 600px; } .resource-nav { max-width: 510px; } }
+@media (max-width: 1050px) { .selector-zone { padding-inline: 24px; } }
+@media (max-width: 860px) { .selector-zone { padding: 22px 20px 16px; } .view-nav { max-width: 600px; } .resource-nav { max-width: 510px; } }
 @media (max-width: 560px) { .selector { --pad: 6px; } .tab { min-height: 56px; padding: 14px 3px; font-size: .875rem; font-variation-settings: 'wdth' 100; } .gear-tab { width: 52px; height: 56px; padding: 0; } .gear-tab .nav-icon { width: 25px; height: 25px; } .view-nav { padding: 5px; border-radius: 26px; } .overview-link,.selector-sub .tab,.resource-nav .tab { padding: 9px 4px; min-height: 64px; border-radius: 20px; font-size: .875rem; } .nav-icon { width: 20px; height: 20px; } .resource-card { padding: 22px; } }
 @media (max-width: 360px) { .selector-zone { padding-inline: 12px; } .view-nav { width: calc(100% - 24px); } .gear-tab { width: 44px; } }
