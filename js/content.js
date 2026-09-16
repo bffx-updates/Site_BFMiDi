@@ -71,6 +71,11 @@ window.BF_CONTENT = (function () {
     label: 'Tela colorida',
     note: 'Fundo por imagem, ícone e cor próprios em cada footswitch.'
   };
+  var SPEC_SCREEN_35 = {
+    value: '3,5″',
+    label: 'Tela colorida',
+    note: 'Fundo por imagem, ícone e cor próprios em cada footswitch.'
+  };
   var SPEC_MODES = {
     value: '9',
     label: 'Comportamentos em LIVE',
@@ -102,7 +107,7 @@ window.BF_CONTENT = (function () {
         specs: [
           specSwitches(8, 'Seis para presets, mais LIVE MODE e GLOBAL SWITCH dedicados.'),
           specPresets(6),
-          SPEC_SCREEN,
+          SPEC_SCREEN_35,
           SPEC_MODES
         ],
         bands: [
