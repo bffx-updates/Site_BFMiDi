@@ -239,14 +239,14 @@ window.BF_CONTENT = (function () {
           },
           {
             panel: 'conects',
-            img: 'nano-rear',
+            img: 'nano-gallery-6',
             alt: 'Painel traseiro da BFMIDI NANO+ com as entradas e saídas ' +
-                 'identificadas: DEVICE, 2SW, EXP, DIN5, TRS, HOST e 9V.',
+                 'identificadas: EXP, 2SW, DEVICE, 9V, HOST e TRS.',
             title: 'Conexões da NANO+',
-            body: 'A NANO+ não abre mão de conexão: as mesmas saídas MIDI e a mesma ' +
-                  'porta USB HOST da irmã maior cabem aqui.',
+            body: 'A NANO+ oferece MIDI por TRS e USB, além da porta USB HOST para ' +
+                  'controlar pedais sem computador.',
             list: [
-              'Saídas MIDI DIN5, TRS e USB',
+              'Saídas MIDI TRS e USB',
               'Porta USB HOST para pedais USB',
               'Pedal de expressão e dois footswitches externos'
             ]
