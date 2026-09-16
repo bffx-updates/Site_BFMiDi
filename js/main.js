@@ -43,6 +43,7 @@
   var MODELS = C.models;
   var SUB = (C.sub && C.sub.items) || [];
   var RES = C.resources.items;
+  var SOFTWARE = C.software;
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
 
@@ -95,6 +96,7 @@
   /* A vista 'home' é a VISÃO GERAL do modelo — a foto grande. Ela não tem
      aba própria: quem volta para ela é o modelo aceso na cápsula de cima. */
   var panels = { home: $('#panel-home') };
+  panels[SOFTWARE.key] = $('#panel-' + SOFTWARE.key);
   RES.forEach(function (item) { panels[item.key] = $('#panel-' + item.key); });
   SUB.forEach(function (s) { panels[s.key] = $('#panel-' + s.key); });
 
@@ -205,7 +207,7 @@
   /* --------------------------------------------------------------- painéis */
 
   function eyebrowOf(key) {
-    var items = SUB.concat(RES);
+    var items = SUB.concat(RES).concat([SOFTWARE]);
     for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i].eyebrow;
     return '';
   }
@@ -362,7 +364,24 @@
       }).join('') + '</div></div>';
   }
 
-  var RENDER = { info: renderInfo, conects: renderConects, comprar: renderComprar };
+  function renderSoftware(item) {
+    return '<div class="panel-inner software-page">' +
+      '<section class="software-hero">' +
+        '<div class="software-brand-icon" role="img" aria-label="Ícone do Sistema BFMiDi"></div>' +
+        '<div class="software-intro"><p class="silk">' + esc(item.eyebrow) + '</p>' +
+          '<h2 class="panel-title">' + esc(item.title) + '</h2>' +
+          '<p class="panel-lead">' + esc(item.lead) + '</p></div>' +
+        '<a class="btn btn-primary software-action" href="' + esc(item.action.href) + '" target="_blank" rel="noopener noreferrer">' +
+          esc(item.action.label) + '<span aria-hidden="true">↗</span></a>' +
+      '</section>' +
+      '<div class="software-features">' + item.features.map(function (feature, i) {
+        return '<article class="software-feature"><span class="software-feature-number">0' + (i + 1) + '</span>' +
+          '<h3>' + esc(feature.title) + '</h3><p>' + esc(feature.description) + '</p></article>';
+      }).join('') + '</div>' +
+    '</div>';
+  }
+
+  var RENDER = { info: renderInfo, conects: renderConects, comprar: renderComprar, software: function () { return renderSoftware(SOFTWARE); } };
 
   RES.forEach(function (item) {
     if (item.key !== 'apps') RENDER[item.key] = function () { return renderResource(item); };
@@ -413,26 +432,27 @@
   var resourceNav = $('#resource-navigation');
   var overview = $('#overview-link');
   function resourceView(view) { return RES.some(function (item) { return item.key === view; }); }
-  function isView(view) { return SUB.concat(RES).some(function (item) { return item.key === view; }); }
+  function softwareView(view) { return view === SOFTWARE.key; }
+  function isView(view) { return softwareView(view) || SUB.concat(RES).some(function (item) { return item.key === view; }); }
   function viewIndex(view) { return SUB.findIndex(function (item) { return item.key === view; }); }
 
   function apply(mi, view) {
     mi = Number.isFinite(mi) ? Math.max(0, Math.min(MODELS.length - 1, Math.trunc(mi))) : 0;
     if (view !== 'home' && !isView(view)) view = 'home';
     if (mi === curModel && view === curView) return;
-    var first = curView === '', m = MODELS[mi], resources = resourceView(view);
+    var first = curView === '', m = MODELS[mi], resources = resourceView(view), software = softwareView(view), special = resources || software;
     curModel = mi;
     curView = view;
     var helpDialog = $('#ajuda-dialog');
     if (view !== 'apps' && helpDialog && helpDialog.open) helpDialog.close();
     if (resources && view !== 'apps') lastResource = view;
-    var active = resources ? (view === 'apps' ? MODELS.length : MODELS.length + 1) : mi;
+    var active = software ? MODELS.length : resources ? MODELS.length + 1 : mi;
     selector.style.setProperty('--i', active);
     markTabs(track, 'aria-pressed', active);
     track.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i === active ? 0 : -1; });
     var gear = $('#resources-toggle');
     gear.setAttribute('aria-expanded', String(resources));
-    modelNav.hidden = resources;
+    modelNav.hidden = special;
     resourceNav.hidden = !resources;
     var vi = viewIndex(view);
     subSel.classList.toggle('is-idle', vi < 0);
@@ -457,9 +477,9 @@
       panel.setAttribute('aria-hidden', String(!on));
       panel.inert = !on;
     });
-    document.title = resources ? eyebrowOf(view) + ' — BFMIDI | BFFX' : m.id + ' — Controladoras MIDI de palco | BFFX';
+    document.title = special ? eyebrowOf(view) + ' — BFMIDI | BFFX' : m.id + ' — Controladoras MIDI de palco | BFFX';
     if (!first && window.history && history.replaceState) history.replaceState(null, '', '#' + m.hash + (view === 'home' ? '' : '/' + view));
-    if (!first && live) live.textContent = resources ? eyebrowOf(view) : m.id + (view === 'home' ? ' selecionado.' : ' · ' + eyebrowOf(view));
+    if (!first && live) live.textContent = special ? eyebrowOf(view) : m.id + (view === 'home' ? ' selecionado.' : ' · ' + eyebrowOf(view));
   }
 
   document.addEventListener('click', function (event) {
@@ -488,8 +508,8 @@
       buttons[next].focus();
     });
   }
-  wireKeys(selector, function () { return resourceView(curView) ? (curView === 'apps' ? MODELS.length : MODELS.length + 1) : curModel; }, function (i) {
-    if (i === MODELS.length) apply(curModel, 'apps');
+  wireKeys(selector, function () { return softwareView(curView) ? MODELS.length : resourceView(curView) ? MODELS.length + 1 : curModel; }, function (i) {
+    if (i === MODELS.length) apply(curModel, 'software');
     else if (i === MODELS.length + 1) apply(curModel, lastResource);
     else apply(i, 'home');
   });
@@ -511,7 +531,7 @@
 
   document.querySelectorAll('[data-copy]').forEach(function (el) { var copy = C.ui && C.ui[el.getAttribute('data-copy')]; if (copy) el.textContent = copy; });
   fillTrack(track, MODELS, 'tab', 'aria-pressed');
-  track.insertAdjacentHTML('beforeend', '<button class="tab software-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:apps" aria-label="' + esc(C.resources.softwareLabel) + '" title="' + esc(C.resources.softwareLabel) + '" aria-pressed="false" aria-controls="panel-apps">' + icon('system') + '</button>');
+  track.insertAdjacentHTML('beforeend', '<button class="tab software-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:software" aria-label="' + esc(SOFTWARE.label) + '" title="' + esc(SOFTWARE.label) + '" aria-pressed="false" aria-controls="panel-software">' + icon('system') + '</button>');
   track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="' + (MODELS.length + 1) + '" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">' + icon('gear') + '</button>');
   selector.style.setProperty('--n', MODELS.length + 2);
   fillTrack(subTrack, SUB, 'label', 'aria-selected');

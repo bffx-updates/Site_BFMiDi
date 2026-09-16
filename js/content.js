@@ -291,6 +291,20 @@ window.BF_CONTENT = (function () {
       ]
     },
 
+    software: {
+      key: 'software',
+      label: 'Sistema BFMiDi',
+      eyebrow: 'Software',
+      title: 'Sistema BFMiDi',
+      lead: 'O centro de configuração da sua controladora. Crie presets, personalize cada footswitch e envie tudo para o pedal em uma interface visual.',
+      features: [
+        { title: 'Editor visual', description: 'Organize bancos, presets e comandos MIDI com uma visão clara do seu setup.' },
+        { title: 'Cores e tela', description: 'Defina as cores dos anéis de LED e o conteúdo exibido na tela da controladora.' },
+        { title: 'Pronto para tocar', description: 'Conecte, configure e salve. As alterações ficam prontas para usar no palco.' }
+      ],
+      action: { label: 'Abrir Sistema BFMiDi', href: 'https://bffx-updates.github.io/Editor_BFMiDi_v13/' }
+    },
+
     resources: {
       label: 'Recursos',
       softwareLabel: 'Sistema BFMiDi',
