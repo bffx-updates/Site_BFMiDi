@@ -169,6 +169,10 @@
 
   function renderInfo(m) {
     var band = bandFor(m, 'info');
+    var intro = m.hash === '8sw' ? '' :
+      '<p class="silk">' + esc(eyebrowOf('info')) + '</p>' +
+      '<h2 class="panel-title">' + esc(m.id) + '</h2>' +
+      '<p class="panel-lead">' + esc(m.lead) + '</p>';
     var feature = band
       ? '<div class="feat"><h3 class="feat-title">' + esc(band.title) + '</h3>' +
         '<p class="feat-body">' + esc(band.body) + '</p>' + listTag(band.list) + '</div>'
@@ -177,9 +181,7 @@
     return '<div class="panel-inner split">' +
       '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' +
       '<div class="split-copy">' +
-        '<p class="silk">' + esc(eyebrowOf('info')) + '</p>' +
-        '<h2 class="panel-title">' + esc(m.id) + '</h2>' +
-        '<p class="panel-lead">' + esc(m.lead) + '</p>' +
+        intro +
         specStrip(m) +
         feature +
       '</div>' +
