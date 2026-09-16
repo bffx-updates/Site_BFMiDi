@@ -190,9 +190,21 @@ window.BF_CONTENT = (function () {
         specs: [
           specSwitches(6, 'Os mesmos seis presets por banco, num corpo bem menor.'),
           specPresets(6),
-          SPEC_SCREEN,
+          SPEC_SCREEN_35,
           SPEC_MODES
         ],
+        buy: {
+          hideDetails: true,
+          primary: {
+            label: 'Comprar NANO+',
+            href: 'https://bffx.com.br/produtos/bfmidi-s3-nano-1o1uu'
+          },
+          waitlist: {
+            text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
+            label: 'Chamar no WhatsApp',
+            href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%20NANO%2B.'
+          }
+        },
         bands: [
           {
             panel: 'info',
