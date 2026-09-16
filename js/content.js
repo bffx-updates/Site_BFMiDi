@@ -111,6 +111,7 @@ window.BF_CONTENT = (function () {
           SPEC_MODES
         ],
         buy: {
+          hideDetails: true,
           primary: {
             label: 'Comprar 8SW+',
             href: 'https://bffx.com.br/produtos/bfmidi-s3-8sw-417n6'

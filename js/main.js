@@ -235,7 +235,8 @@
       list: modelBuy.list || C.buy.list,
       primary: modelBuy.primary || C.buy.primary,
       ghost: modelBuy.ghost || C.buy.ghost,
-      waitlist: modelBuy.waitlist || null
+      waitlist: modelBuy.waitlist || null,
+      hideDetails: modelBuy.hideDetails === true
     };
     function cta(spec, cls) {
       if (!spec || !spec.label) return '';
@@ -260,11 +261,12 @@
 
     return '<div class="panel-inner buy">' +
       thumb +
-      '<p class="silk">' + esc(eyebrowOf('comprar')) + '</p>' +
-      '<h2 class="panel-title">' + esc(m.id) + '</h2>' +
-      '<p class="buy-price">' + esc(b.price) + '</p>' +
-      '<p class="panel-lead">' + esc(b.lead) + '</p>' +
-      listTag(b.list) +
+      (b.hideDetails ? '' :
+        '<p class="silk">' + esc(eyebrowOf('comprar')) + '</p>' +
+        '<h2 class="panel-title">' + esc(m.id) + '</h2>' +
+        '<p class="buy-price">' + esc(b.price) + '</p>' +
+        '<p class="panel-lead">' + esc(b.lead) + '</p>' +
+        listTag(b.list)) +
       '<div class="hero-ctas">' + cta(b.primary, 'btn-primary') + cta(b.ghost, 'btn-ghost') + '</div>' +
       waitlist +
       ((!b.primary.href || b.primary.href === '#' || !b.ghost.href || b.ghost.href === '#')
