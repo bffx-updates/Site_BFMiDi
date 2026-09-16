@@ -140,6 +140,10 @@
     '</div>';
   }
 
+  if (mounted && MODELS[0].gallery && MODELS[0].gallery.length) {
+    mounted.innerHTML = galleryFigure(MODELS[0]);
+  }
+
   stage.insertAdjacentHTML('beforeend', MODELS.map(function (m, i) {
     if (i === 0 && mounted) return '';
     var on = i === 0 ? ' is-on' : '';
