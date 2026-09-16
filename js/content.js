@@ -110,6 +110,17 @@ window.BF_CONTENT = (function () {
           SPEC_SCREEN_35,
           SPEC_MODES
         ],
+        buy: {
+          primary: {
+            label: 'Comprar 8SW+',
+            href: 'https://bffx.com.br/produtos/bfmidi-s3-8sw-417n6'
+          },
+          waitlist: {
+            text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
+            label: 'Chamar no WhatsApp',
+            href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%208SW%2B.'
+          }
+        },
         bands: [
           {
             panel: 'info',

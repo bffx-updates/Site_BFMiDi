@@ -227,7 +227,16 @@
   }
 
   function renderComprar(m) {
-    var b = C.buy;
+    var modelBuy = m.buy || {};
+    var b = {
+      unavailable: modelBuy.unavailable || C.buy.unavailable,
+      price: modelBuy.price || C.buy.price,
+      lead: modelBuy.lead || C.buy.lead,
+      list: modelBuy.list || C.buy.list,
+      primary: modelBuy.primary || C.buy.primary,
+      ghost: modelBuy.ghost || C.buy.ghost,
+      waitlist: modelBuy.waitlist || null
+    };
     function cta(spec, cls) {
       if (!spec || !spec.label) return '';
       if (!spec.href || spec.href === '#') {
@@ -242,6 +251,12 @@
           imgTag(m.shot, m.shotAlt, '(max-width: 900px) 60vw, 300px', false) +
         '</figure>'
       : '';
+    var waitlist = b.waitlist
+      ? '<a class="whatsapp-waitlist" href="' + esc(b.waitlist.href) + '" target="_blank" rel="noopener noreferrer">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.8a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.3-4.7A8.5 8.5 0 1 1 20.5 11.8Z"/><path d="M8.3 7.5c.2-.4.4-.4.7-.4h.5l.8 2c.1.3 0 .5-.2.7l-.6.7c-.2.2-.1.4 0 .6a9 9 0 0 0 3.5 3.1c.3.1.5.1.7-.1l.8-1c.2-.3.5-.3.8-.2l1.9.9c.3.1.4.3.4.5 0 .4-.2 1.3-.8 1.8-.6.6-1.5.9-2.5.6-1.1-.3-2.8-.9-4.7-2.6-1.6-1.5-2.7-3.3-3-4.4-.3-1 .1-1.8.5-2.2.3-.3.8-.5 1.2-.5Z"/></svg>' +
+          '<span><strong>' + esc(b.waitlist.label) + '</strong>' + esc(b.waitlist.text) + '</span>' +
+        '</a>'
+      : '';
 
     return '<div class="panel-inner buy">' +
       thumb +
@@ -251,6 +266,7 @@
       '<p class="panel-lead">' + esc(b.lead) + '</p>' +
       listTag(b.list) +
       '<div class="hero-ctas">' + cta(b.primary, 'btn-primary') + cta(b.ghost, 'btn-ghost') + '</div>' +
+      waitlist +
       ((!b.primary.href || b.primary.href === '#' || !b.ghost.href || b.ghost.href === '#')
         ? '<p class="buy-unavailable" id="buy-unavailable">' + esc(b.unavailable) + '</p>' : '') +
     '</div>';
