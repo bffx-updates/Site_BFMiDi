@@ -348,6 +348,7 @@
     apps: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
     downloads: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
     manual: '<path d="M12 5C8 2 5 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-3-1-6-2-10 1Zm0 0v16"/>',
+    system: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 14h2m4 0h2m-8 3h8"/>',
     gear: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/>'
   };
   function icon(key) { return '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[key] || '') + '</svg>'; }
@@ -407,7 +408,7 @@
 
 
   /* O modelo é preservado ao consultar Apps, Downloads ou Manual. */
-  var curModel = -1, curView = '', lastResource = 'apps';
+  var curModel = -1, curView = '', lastResource = 'downloads';
   var modelNav = $('#model-navigation');
   var resourceNav = $('#resource-navigation');
   var overview = $('#overview-link');
@@ -424,8 +425,8 @@
     curView = view;
     var helpDialog = $('#ajuda-dialog');
     if (view !== 'apps' && helpDialog && helpDialog.open) helpDialog.close();
-    if (resources) lastResource = view;
-    var active = resources ? MODELS.length : mi;
+    if (resources && view !== 'apps') lastResource = view;
+    var active = resources ? (view === 'apps' ? MODELS.length : MODELS.length + 1) : mi;
     selector.style.setProperty('--i', active);
     markTabs(track, 'aria-pressed', active);
     track.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i === active ? 0 : -1; });
@@ -466,7 +467,7 @@
     if (!control) return;
     event.preventDefault();
     var go = control.getAttribute('data-go');
-    if (go === 'resources') apply(curModel, resourceView(curView) ? 'home' : lastResource);
+    if (go === 'resources') apply(curModel, resourceView(curView) && curView !== 'apps' ? 'home' : lastResource);
     else if (go === 'home') apply(curModel, 'home');
     else if (go.indexOf('model:') === 0) apply(Number(go.slice(6)), 'home');
     else if (go.indexOf('view:') === 0) apply(curModel, go.slice(5));
@@ -487,7 +488,11 @@
       buttons[next].focus();
     });
   }
-  wireKeys(selector, function () { return resourceView(curView) ? MODELS.length : curModel; }, function (i) { if (i === MODELS.length) apply(curModel, lastResource); else apply(i, 'home'); });
+  wireKeys(selector, function () { return resourceView(curView) ? (curView === 'apps' ? MODELS.length : MODELS.length + 1) : curModel; }, function (i) {
+    if (i === MODELS.length) apply(curModel, 'apps');
+    else if (i === MODELS.length + 1) apply(curModel, lastResource);
+    else apply(i, 'home');
+  });
   wireKeys(modelNav, function () { return viewIndex(curView) + 1; }, function (i) { apply(curModel, i === 0 ? 'home' : SUB[i - 1].key); });
   wireKeys(resourceNav, function () { return RES.findIndex(function (item) { return item.key === curView; }); }, function (i) { apply(curModel, RES[i].key); });
   document.addEventListener('keydown', function (event) {
@@ -506,8 +511,9 @@
 
   document.querySelectorAll('[data-copy]').forEach(function (el) { var copy = C.ui && C.ui[el.getAttribute('data-copy')]; if (copy) el.textContent = copy; });
   fillTrack(track, MODELS, 'tab', 'aria-pressed');
-  track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="4" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">' + icon('gear') + '</button>');
-  selector.style.setProperty('--n', MODELS.length + 1);
+  track.insertAdjacentHTML('beforeend', '<button class="tab software-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:apps" aria-label="' + esc(C.resources.softwareLabel) + '" title="' + esc(C.resources.softwareLabel) + '" aria-pressed="false" aria-controls="panel-apps">' + icon('system') + '</button>');
+  track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="' + (MODELS.length + 1) + '" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">' + icon('gear') + '</button>');
+  selector.style.setProperty('--n', MODELS.length + 2);
   fillTrack(subTrack, SUB, 'label', 'aria-selected');
   subSel.style.setProperty('--n', SUB.length);
   fillTrack(resourceNav, RES, 'label', 'aria-selected');

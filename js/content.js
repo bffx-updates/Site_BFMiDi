@@ -293,6 +293,7 @@ window.BF_CONTENT = (function () {
 
     resources: {
       label: 'Recursos',
+      softwareLabel: 'Sistema BFMiDi',
       items: [
         { key: 'apps', label: 'Apps', eyebrow: 'Apps', title: 'BFMiDi Editor' },
         { key: 'downloads', label: 'Downloads', eyebrow: 'Downloads', title: 'Downloads e atualizações',
