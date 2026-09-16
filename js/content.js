@@ -122,7 +122,7 @@ window.BF_CONTENT = (function () {
           hideDetails: true,
           primary: {
             label: 'Comprar 8SW+',
-            href: 'https://bffx.com.br/produtos/bfmidi-s3-8sw-417n6'
+            href: 'https://loja.bffx.com.br/produtos/bfmidi-s3-8sw-417n6'
           },
           waitlist: {
             text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
@@ -214,7 +214,7 @@ window.BF_CONTENT = (function () {
           hideDetails: true,
           primary: {
             label: 'Comprar NANO+',
-            href: 'https://bffx.com.br/produtos/bfmidi-s3-nano-1o1uu'
+            href: 'https://loja.bffx.com.br/produtos/bfmidi-s3-nano-1o1uu'
           },
           waitlist: {
             text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
