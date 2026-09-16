@@ -184,9 +184,8 @@ window.BF_CONTENT = (function () {
         lead: 'Seis footswitches e tela colorida em formato compacto.',
         cta: 'Ver detalhes',
         shot: 'nano-hero',
-        shotAlt: 'BFMIDI NANO+ em perspectiva: seis footswitches em duas fileiras, ' +
-                 'a tela colorida acesa com o preset CLASSIC ROCK e o anel de LED ' +
-                 'azul aceso no footswitch 1.',
+        shotAlt: 'BFMIDI NANO+ vista de frente: seis footswitches, tela colorida ' +
+                 'com o preset CLASSIC ROCK e anel azul aceso no footswitch 1.',
         switches: 6,
         specs: [
           specSwitches(6, 'Os mesmos seis presets por banco, num corpo bem menor.'),
