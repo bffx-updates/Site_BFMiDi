@@ -405,13 +405,17 @@
      seletor trocava de estado, o track era refeito por innerHTML a cada
      clique e havia uma classe só para congelar a animação durante a troca;
      com uma cápsula para cada nível, nada disso é preciso. */
-  function fillTrack(el, items, label, attr) {
+  /* `tip` só no submenu do modelo, onde o rótulo fica escondido e o ícone
+     é a única pista visível: ali a dica do mouse é a legenda. Nos outros
+     trilhos o texto está à vista e a dica seria redundante. */
+  function fillTrack(el, items, label, attr, tip) {
     el.innerHTML = items.map(function (it, i) {
       return '<button class="tab" type="button"' +
              (it.key ? ' id="subtab-' + esc(it.key) + '" role="tab"' +
                        ' aria-controls="panel-' + esc(it.key) + '"' : '') +
              ' data-i="' + i + '"' +
              ' data-go="' + (it.key ? 'view:' + esc(it.key) : 'model:' + i) + '"' +
+             (tip ? ' title="' + esc(it[label]) + '"' : '') +
              ' ' + attr + '="false">' + (it.key ? icon(it.key) : '') + '<span>' + esc(it[label]) + '</span></button>';
     }).join('');
   }
@@ -534,10 +538,11 @@
   track.insertAdjacentHTML('beforeend', '<button class="tab software-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:software" aria-label="' + esc(SOFTWARE.label) + '" title="' + esc(SOFTWARE.label) + '" aria-pressed="false" aria-controls="panel-software">' + icon('system') + '</button>');
   track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="' + (MODELS.length + 1) + '" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">' + icon('gear') + '</button>');
   selector.style.setProperty('--n', MODELS.length + 2);
-  fillTrack(subTrack, SUB, 'label', 'aria-selected');
+  fillTrack(subTrack, SUB, 'label', 'aria-selected', true);
   subSel.style.setProperty('--n', SUB.length);
   fillTrack(resourceNav, RES, 'label', 'aria-selected');
   overview.innerHTML = icon('home') + '<span>' + esc(C.ui.overview) + '</span>';
+  overview.title = C.ui.overview;
   var start = fromHash();
   apply(start.model, start.view);
 })();
