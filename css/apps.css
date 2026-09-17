@@ -12,14 +12,14 @@
 .apps-help-button { margin-left: auto; display: inline-flex; align-items: center; gap: 9px; padding: 11px 16px; border: 1px solid #a6bedd24; border-radius: 14px; color: #e8edf5; background: #121c29d9; font: 600 14px/1.4 var(--font-body); cursor: pointer; flex-shrink: 0; }
 .apps-help-button span { display: grid; place-items: center; width: 24px; height: 24px; border: 1.5px solid #ffae70; color: #ffae70; border-radius: 50%; font: 700 16px/1 sans-serif; }
 .apps-help-button:hover,.apps-close-help:hover { background: #243247; border-color: #8091aa; }
-.apps-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 18px; }
+.apps-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 18px; }
 .apps-card { position: relative; display: flex; flex-direction: column; gap: 22px; padding: 56px 20px 22px; text-align: center; border: 1px solid #a6bedd24; border-radius: 20px; background: linear-gradient(180deg,#192332eb,#101722f0); box-shadow: 0 16px 40px #0003; transition: transform .18s,border-color .18s; }
-.apps-card:first-child { border-color: #ff8b4366; }
+.apps-card.apps-ready { border-color: #ff8b4366; }
 .apps-card:hover { transform: translateY(-3px); border-color: #a4c1e752; }
-.apps-card:first-child:hover { border-color: #ff8b43b3; }
+.apps-card.apps-ready:hover { border-color: #ff8b43b3; }
 .apps-os { display: flex; align-items: center; flex-direction: column; gap: 22px; }
 .apps-os svg { width: 80px; height: 80px; }
-.apps-os h3 { font: 700 clamp(23px,2.2vw,32px)/1.2 var(--font-body); letter-spacing: -.035em; margin: 0; }
+.apps-os h3 { font: 700 clamp(21px,1.75vw,27px)/1.2 var(--font-body); letter-spacing: -.035em; margin: 0; }
 .apps-sub { color: #a3afc2; font-size: 14px; margin: 0; }
 .apps-badge { position: absolute; top: 16px; right: 16px; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 999px; background: #ffffff0f; border: 1px solid #a6bedd24; color: #a3afc2; }
 .apps-badge.apps-new { color: #90e4b7; background: #39d98a17; border-color: #39d98a38; }
@@ -28,9 +28,6 @@
 .apps-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
 .apps-page .apps-btn.apps-soon { color: #a3afc2; background: #ffffff06; border-color: #a6bedd24; box-shadow: none; }
 .apps-btn.apps-soon:hover { filter: none; transform: none; }
-.apps-browser-shortcut { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px 14px; color: #a3afc2; font-size: 14px; }
-.apps-browser-shortcut a { color: #ffaf78; text-decoration: none; padding: 8px 0; }
-.apps-browser-shortcut a:hover { text-decoration: underline; text-underline-offset: 5px; }
 .apps-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid #a6bedd24; padding-top: 18px; color: #a3afc2; font-size: 12px; }
 .apps-page :is(a,button):focus-visible { outline: 2px solid #ffb347; outline-offset: 5px; }
 #ajuda-dialog { padding: 0; margin: auto; width: min(760px,calc(100% - 32px)); max-height: calc(100svh - 48px); border: 1px solid #3a485c; border-radius: 20px; color: #e8edf5; background: #101722; box-shadow: 0 30px 100px #0009; }
@@ -53,7 +50,8 @@
 .apps-links { display: flex; flex-wrap: wrap; gap: 10px; }
 .apps-links a { padding: 11px 15px; background: #151f2d; border: 1px solid #a6bedd24; border-radius: 12px; font-size: 14px; text-decoration: none; }
 .apps-links a:hover { border-color: #8091aa; }
-@media (max-width: 1050px) { .apps-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .apps-os h3 { font-size: 30px; } }
+@media (max-width: 1180px) { .apps-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .apps-os h3 { font-size: 30px; } }
+@media (max-width: 820px) { .apps-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 700px) { .apps-hero { flex-wrap: wrap; gap: 16px; } .apps-hero > div:nth-child(2) { flex: 1; } .apps-icon { width: 64px; height: 64px; border-radius: 16px; } .apps-help-button { margin-left: auto; } }
 @media (max-width: 560px) { .apps-page { padding-top: 28px; gap: 26px; } .apps-hero { gap: 12px; } .apps-hero h2 { font-size: 29px; } .apps-title-row { gap: 6px 12px; } .apps-pill { padding: 6px 12px; font-size: 14px; } .apps-grid { grid-template-columns: 1fr; } .apps-card { padding: 48px 22px 22px; gap: 20px; } .apps-dialog-head { padding: 18px; gap: 12px; } .apps-dialog-head h2 { font-size: 21px; } .apps-dialog-body { padding: 0 18px 18px; } .apps-note { padding: 16px; } }
 @media (prefers-reduced-motion: reduce) { .apps-card,.apps-btn { transition: none; } }
