@@ -92,6 +92,12 @@
 
   var heroH1b  = $('#hero-h1b');
   var heroWordmark = $('#hero-wordmark');
+  /* O <p> que envolve a palavra e o campo de luz. Recebe `is-flash` na
+     troca de modelo (o clarão do CSS) e a devolve sozinho no fim. */
+  var heroWordmarkBox = $('.hero-wordmark');
+  if (heroWordmarkBox) heroWordmarkBox.addEventListener('animationend', function (e) {
+    if (e.animationName === 'bf-rays-flash') heroWordmarkBox.classList.remove('is-flash');
+  });
   var stage    = $('#hero-stage');
 
   /* A vista 'home' é a VISÃO GERAL do modelo — a foto grande. Ela não tem
@@ -467,7 +473,17 @@
     if (view === 'home') overview.setAttribute('aria-current', 'page');
     else overview.removeAttribute('aria-current');
     heroH1b.textContent = m.id;
-    heroWordmark.textContent = m.h1[1];
+    if (heroWordmark.textContent !== m.h1[1]) {
+      heroWordmark.textContent = m.h1[1];
+      /* A palavra nova acende: clarão curto no campo de luz. Não na
+         primeira pintura — ali não há troca, só chegada. Tirar e repor a
+         classe com um reflow no meio é o que reinicia a animação. */
+      if (!first && heroWordmarkBox) {
+        heroWordmarkBox.classList.remove('is-flash');
+        void heroWordmarkBox.offsetWidth;
+        heroWordmarkBox.classList.add('is-flash');
+      }
+    }
     shots.forEach(function (shot, i) { shot.classList.toggle('is-on', i === mi); shot.setAttribute('aria-hidden', String(i !== mi)); });
     if (view !== 'home') ensurePanel(view, mi);
     Object.keys(panels).forEach(function (key) {

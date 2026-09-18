@@ -468,54 +468,128 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
   .view-nav .nav-icon { width: 21px; height: 21px; }
 }
-
 /* ── Nome da controladora no vão do HOME (18/09/2026, imagem de referência) ──
    Só no desktop: é lá que sobrava a faixa entre o produto e a barra. No
    celular o palco já encosta na barra e a palavra não teria onde caber.
 
    O texto não é lido em voz alta (`aria-hidden` no HTML): o h1.sr-only logo
    acima já anuncia "BFMIDI 8SW+", e sem isso o leitor de tela repetiria o
-   modelo duas vezes seguidas. */
+   modelo duas vezes seguidas.
+
+   A LUZ (segunda rodada, mesma data — imagem de referência do usuário: a
+   palavra em silhueta escura sobre uma explosão de raios branco-azulados).
+   Nada de imagem: são gradientes cônicos REPETIDOS, três camadas de período
+   incomensurável (5,23° · 13,7° · 23,9°) girando devagar em sentidos
+   opostos — a interferência entre elas é o que faz os raios parecerem
+   irregulares e vivos, como um zoom blur de ruído. Pontos que custam caro:
+
+   - O campo é um QUADRADO esticado por `scaleX(2.3)`. Esticar DEPOIS de
+     desenhar é o que dá o visual de "warp": os raios se adensam e engrossam
+     perto do eixo horizontal, e a máscara circular vira a elipse larga da
+     referência. Um gradiente cônico desenhado direto numa caixa larga daria
+     raios uniformes em todos os ângulos.
+   - A máscara radial é o que apaga os raios para a borda; sem suporte a
+     `mask-image` o quadrado inteiro apareceria — o @supports lá embaixo
+     esconde os raios e devolve a letra clara de antes.
+   - Os raios ficam ATRÁS da foto do produto, não só da palavra: o `.hero`
+     vira contexto de empilhamento (`isolation`) e o campo fica em z:-1
+     dentro dele. Por isso a `.hero-wordmark` NÃO pode ter z-index — com ele
+     o campo ficaria preso no contexto dela e passaria por CIMA da foto.
+   - A letra é silhueta (azul-marinho quase preto recortado pelo texto) e só
+     é legível porque o núcleo da luz está atrás dela; o @supports do recorte
+     continua valendo.
+   - Tudo é transform/opacity/filter: nada reflui. E para quem pede menos
+     movimento a regra global de prefers-reduced-motion já zera as
+     animações — a luz fica parada, não desaparece.
+   - `is-flash` (main.js, na troca de modelo) dá um clarão curto no campo: a
+     palavra nova "acende". A classe sai sozinha no animationend. */
 .hero-wordmark { display: none; }
 
 @media (min-width: 901px) {
+  .hero { position: relative; isolation: isolate; }
+
   .hero-wordmark {
-    display: block;
-    position: relative;
-    z-index: 0;
-    flex: 1 1 auto;
     display: grid;
+    position: relative;
     place-items: center;
+    flex: 1 1 auto;
     min-height: 0;
     margin: clamp(2px,1.4vh,20px) 0 0;
-    font: 800 clamp(58px,9.2vw,152px)/.86 var(--font-display);
-    letter-spacing: -.045em;
+    font: 900 clamp(58px,9.2vw,152px)/.86 var(--font-display);
+    font-variation-settings: 'wdth' 112, 'wght' 900;
+    letter-spacing: -.04em;
     text-transform: uppercase;
-    /* A letra é o próprio degradê, recortado pelo texto: clara em cima,
-       apagando para a base, como na referência. */
+    /* A silhueta da referência: quase preto com viés azul, um fio mais
+       claro no topo, recortado pelo texto. */
     color: transparent;
-    background: linear-gradient(180deg,#46647f 0%,#2a3e55 52%,#16222f 100%);
+    background: linear-gradient(180deg,#303d51 0%,#1b2432 38%,#0e131b 100%);
     -webkit-background-clip: text;
     background-clip: text;
     user-select: none;
   }
 
-  /* A iluminação. Duas manchas de luz — uma fria e uma quente, as cores da
-     marca — passeiam devagar ATRÁS da palavra (z-index -1 dentro do contexto
-     que o z-index:0 acima cria). É desenho, não conteúdo: não intercepta
-     clique e some para quem pede menos movimento. */
-  .hero-wordmark::before {
-    content: '';
+  /* ── O campo de luz ── */
+  .hero-rays {
     position: absolute;
     z-index: -1;
-    inset: -70% -16%;
+    left: 50%; top: 50%;
+    width: min(780px,58vw);
+    aspect-ratio: 1;
+    transform: translate(-50%,-50%);
     pointer-events: none;
-    background:
-      radial-gradient(44% 58% at 32% 46%,#3f86c766 0%,transparent 70%),
-      radial-gradient(38% 52% at 71% 56%,#ff8b4333 0%,transparent 72%);
-    filter: blur(16px);
-    animation: bf-wordmark-light 11s ease-in-out infinite alternate;
+    animation: bf-rays-drift 19s ease-in-out infinite alternate;
   }
+  .hero-rays-field {
+    position: absolute;
+    inset: 0;
+    transform: scaleX(2.3);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 9%,#000c 28%,#0006 50%,#0001 68%,transparent 76%);
+            mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 9%,#000c 28%,#0006 50%,#0001 68%,transparent 76%);
+  }
+  .hero-rays-field > i { position: absolute; inset: 0; border-radius: 50%; }
+
+  /* r1 — raios finos e numerosos, azulados, os mais curtos. */
+  .hero-rays-field > .r1 {
+    background: repeating-conic-gradient(from 0deg at 50% 50%,
+      transparent 0deg,    #c4dcff8a .14deg,  #c4dcff8a .3deg,   transparent .46deg,
+      transparent 1.62deg, #8fb9ff5c 1.74deg, #8fb9ff5c 1.9deg,  transparent 2.04deg,
+      transparent 3.02deg, #e3eeffbf 3.18deg, #e3eeffbf 3.5deg,  transparent 3.7deg,
+      transparent 4.28deg, #7fadf24d 4.34deg, #7fadf24d 4.46deg, transparent 4.56deg,
+      transparent 5.23deg);
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000a 30%,transparent 60%);
+            mask-image: radial-gradient(circle,#000 0%,#000a 30%,transparent 60%);
+    filter: blur(.7px);
+    animation: bf-rays-spin 160s linear infinite;
+  }
+  /* r2 — raios largos e brancos, girando ao contrário. */
+  .hero-rays-field > .r2 {
+    background: repeating-conic-gradient(from 7deg at 50% 50%,
+      transparent 0deg,   #f1f6ffd9 .2deg,   #f1f6ffd9 .62deg,  transparent .95deg,
+      transparent 5.1deg, #cfe1ff80 5.3deg,  #cfe1ff80 5.55deg, transparent 5.8deg,
+      transparent 9deg,   #e6efffa6 9.12deg, #e6efffa6 9.3deg,  transparent 9.5deg,
+      transparent 13.7deg);
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c 36%,transparent 70%);
+            mask-image: radial-gradient(circle,#000 0%,#000c 36%,transparent 70%);
+    filter: blur(1px);
+    animation: bf-rays-spin 115s linear infinite reverse;
+  }
+  /* r3 — poucos raios, muito finos e muito longos, tremeluzindo. */
+  .hero-rays-field > .r3 {
+    background: repeating-conic-gradient(from 2.5deg at 50% 50%,
+      transparent 0deg,    #ffffffe6 .06deg,   #ffffffe6 .24deg,   transparent .36deg,
+      transparent 11.2deg, #d6e6ff99 11.26deg, #d6e6ff99 11.38deg, transparent 11.5deg,
+      transparent 23.9deg);
+    filter: blur(.5px);
+    animation: bf-rays-spin 230s linear infinite, bf-rays-flicker 7.5s ease-in-out infinite;
+  }
+  /* O núcleo: branco no centro, azul-LED na borda, respirando. */
+  .hero-rays-field > .core {
+    background: radial-gradient(circle at 50% 50%,#f6f9ff 0%,#dfeaffed 5%,#b9d3ffb3 12%,#7fb0f766 24%,#4886dc2e 38%,transparent 56%);
+    filter: blur(6px);
+    animation: bf-core-breathe 6s ease-in-out infinite alternate;
+  }
+
+  .hero-wordmark.is-flash .hero-rays-field { animation: bf-rays-flash .9s cubic-bezier(.2,.8,.3,1); }
 }
 
 /* Rede de segurança: `color: transparent` só é seguro enquanto o recorte pelo
@@ -525,11 +599,21 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .hero-wordmark { color: #3a5570; background: none; }
 }
 
-@keyframes bf-wordmark-light {
-  from { transform: translate3d(-4%,2%,0) scale(1);    opacity: .72; }
-  to   { transform: translate3d(4%,-2%,0) scale(1.09); opacity: 1; }
+/* Sem máscara não há elipse: o quadrado de raios apareceria inteiro. Some o
+   campo e a letra volta ao degradê claro, que não depende de luz atrás. */
+@supports not ((mask-image: radial-gradient(#000,#0000)) or (-webkit-mask-image: radial-gradient(#000,#0000))) {
+  .hero-rays { display: none; }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .hero-wordmark { background-image: linear-gradient(180deg,#46647f 0%,#2a3e55 52%,#16222f 100%); }
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-wordmark::before { animation: none; }
+@keyframes bf-rays-spin    { to { transform: rotate(1turn); } }
+@keyframes bf-rays-drift   { from { translate: -1.6% .6%; } to { translate: 1.6% -.6%; } }
+@keyframes bf-rays-flicker { 0%,100% { opacity: .82; } 28% { opacity: 1; } 47% { opacity: .7; } 66% { opacity: .96; } 84% { opacity: .78; } }
+@keyframes bf-core-breathe { from { opacity: .8; transform: scale(.93); } to { opacity: 1; transform: scale(1.07); } }
+@keyframes bf-rays-flash {
+  0%   { filter: brightness(1);   transform: scaleX(2.3) scale(1); }
+  16%  { filter: brightness(2.1); transform: scaleX(2.3) scale(1.06); }
+  100% { filter: brightness(1);   transform: scaleX(2.3) scale(1); }
 }
