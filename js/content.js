@@ -97,14 +97,16 @@ window.BF_CONTENT = (function () {
        um tile por tipo de saída, com o nome já impresso na própria imagem —
        o `label` é só o texto alternativo. Cada modelo lista em `ports` as
        chaves que tem, NA ORDEM em que devem aparecer; modelo sem `ports`
-       não mostra a fileira. Arquivo: assets/<img>.webp, 480px de largura com
-       alfa; `h` é a altura em px, para o <img> reservar a proporção certa
-       antes de carregar (os tiles USB são um pouco mais baixos). */
+       não mostra a fileira. Arquivo: assets/<img>.webp, 480×477 com alfa —
+       TODOS na mesma caixa ("deixe os ícones do mesmo tamanho"): a arte dos
+       USB era 6% mais baixa e foi esticada na exportação, o que não se nota.
+       `h` é a altura em px, para o <img> reservar a proporção antes de
+       carregar. */
     ports: {
       din5:      { img: 'port-din5',       h: 477, label: 'MIDI OUT (DIN5)' },
       trs:       { img: 'port-trs',        h: 477, label: 'MIDI OUT (TRS-A)' },
-      usbDevice: { img: 'port-usb-device', h: 452, label: 'USB MIDI DEVICE' },
-      usbHost:   { img: 'port-usb-host',   h: 451, label: 'USB HOST' }
+      usbDevice: { img: 'port-usb-device', h: 477, label: 'USB MIDI DEVICE' },
+      usbHost:   { img: 'port-usb-host',   h: 477, label: 'USB HOST' }
     },
 
     models: [

@@ -462,8 +462,8 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    folga no desktop (a foto termina bem antes da barra) e, no celular, é o
    cartão da foto — os ícones ficam junto do que ilustram. Uma coluna por
    ícone no desktop (4 na 8SW+, 3 na NANO+), duas por linha no celular. Os
-   tiles têm alturas um pouco diferentes (os USB são 6% mais baixos), por
-   isso alinham pela BASE: é onde está a faixa com o nome.
+   quatro arquivos têm a MESMA caixa (480×477), então os tiles saem do mesmo
+   tamanho em qualquer coluna.
 
    A .split-media é um flex EM LINHA (style.css) — sem isto a fileira
    entrava ao LADO da foto e a encolhia pela metade (visto no desktop). Com
@@ -474,7 +474,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .port-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(0,1fr));
-  align-items: end;
   gap: 14px;
   width: min(100%,560px);
   margin: 10px auto 0;
