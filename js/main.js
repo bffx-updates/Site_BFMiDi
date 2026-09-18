@@ -197,6 +197,20 @@
     '</div>';
   }
 
+  /* Os ícones das portas (CONECTS): um <img> por chave de `m.ports`, tirado
+     do catálogo C.ports. O nome já está impresso na arte, então o alt repete
+     o mesmo texto e nada mais. Chave desconhecida é pulada em silêncio. */
+  function portGrid(m) {
+    var keys = (m.ports || []).filter(function (k) { return C.ports && C.ports[k]; });
+    if (!keys.length) return '';
+    return '<ul class="port-grid" aria-label="Portas da ' + esc(m.id) + '">' +
+      keys.map(function (k) {
+        var p = C.ports[k];
+        return '<li><img src="assets/' + esc(p.img) + '.webp" width="480" height="' + esc(p.h || 480) + '" alt="' + esc(p.label) + '" loading="lazy" decoding="async"></li>';
+      }).join('') +
+    '</ul>';
+  }
+
   function renderConects(m) {
     var band = bandFor(m, 'conects');
     var head = band
@@ -226,7 +240,7 @@
     var eyebrow = band ? eyebrowOf('conects') + ' · ' + m.id : eyebrowOf('conects');
 
     return '<div class="panel-inner split">' +
-      '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' +
+      '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + portGrid(m) + '</div>' +
       '<div class="split-copy">' +
         '<p class="silk">' + esc(eyebrow) + '</p>' +
         head +

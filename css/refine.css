@@ -457,6 +457,36 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
   .view-nav .nav-icon { width: 21px; height: 21px; }
 }
+/* ── Ícones das portas no painel CONECTS (18/09/2026, arte do usuário) ──
+   Fileira sob a foto traseira, dentro da .split-media: é a coluna que tem
+   folga no desktop (a foto termina bem antes da barra) e, no celular, é o
+   cartão da foto — os ícones ficam junto do que ilustram. Uma coluna por
+   ícone no desktop (4 na 8SW+, 3 na NANO+), duas por linha no celular. Os
+   tiles têm alturas um pouco diferentes (os USB são 6% mais baixos), por
+   isso alinham pela BASE: é onde está a faixa com o nome.
+
+   A .split-media é um flex EM LINHA (style.css) — sem isto a fileira
+   entrava ao LADO da foto e a encolhia pela metade (visto no desktop). Com
+   a fileira dentro, a coluna vira pilha; a foto continua centrada e limitada
+   à largura da coluna. */
+.split-media:has(.port-grid) { flex-direction: column; }
+.split-media:has(.port-grid) .panel-shot { width: 100%; }
+.port-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(0,1fr));
+  align-items: end;
+  gap: 14px;
+  width: min(100%,560px);
+  margin: 10px auto 0;
+  padding: 0;
+  list-style: none;
+}
+.port-grid li { margin: 0; min-width: 0; }
+.port-grid img { display: block; width: 100%; height: auto; filter: drop-shadow(0 12px 18px #0009); }
+@media (max-width: 600px) {
+  .port-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 12px; }
+}
+
 /* ── Nome da controladora no vão do HOME (18/09/2026, imagem de referência) ──
    Em TODA largura. Nasceu só no desktop, com a justificativa de que "no
    celular o palco já encosta na barra" — e não encosta: a foto do iPhone do

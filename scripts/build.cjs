@@ -26,6 +26,10 @@ for (const model of content.models) {
     images++;
   }
 }
+for (const model of content.models) for (const key of model.ports || []) {
+  assert(content.ports && content.ports[key], 'Porta desconhecida em ' + model.id + ': ' + key);
+  assert(fs.existsSync(path.join(root, 'assets', content.ports[key].img + '.webp')), 'Ícone de porta ausente: ' + content.ports[key].img);
+}
 for (const match of html.matchAll(/(?:src|href)="((?:assets|css|js)\/[^"?#]+)"/g)) {
   assert(fs.existsSync(path.join(root, match[1])), 'Arquivo ausente: ' + match[1]);
 }
