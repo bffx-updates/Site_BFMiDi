@@ -546,6 +546,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   /* LETRA */
   --wm-font: 6.6vw;        /* tamanho (dentro do clamp 58..152px) */
   --wm-wdth: 109;          /* largura da Archivo (100..125) */
+  --wm-ink: 0%;            /* quanto de claro mistura na letra (0 = #070A0F puro) */
   /* CAMPO DE LUZ */
   --wm-light: 1;           /* BRILHO GERAL — opacity do campo, raios + núcleo */
   --wm-field: 205px;       /* lado do quadrado do campo (limitado a 34vw) */
@@ -588,6 +589,12 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
      do núcleo alcançar até lá. */
   color: #070a0f;
   user-select: none;
+}
+/* A mesma letra com --wm-ink de claro misturado (painel de ajuste). Atrás
+   de um @supports porque uma função desconhecida derrubaria a declaração e
+   a cor cairia no herdado. */
+@supports (color: color-mix(in srgb, red 10%, blue)) {
+  .hero-wordmark { color: color-mix(in srgb,#070a0f,#dfe8f5 var(--wm-ink)); }
 }
 /* ── O campo de luz ── */
 .hero-rays {
