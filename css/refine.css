@@ -498,9 +498,9 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
      vira contexto de empilhamento (`isolation`) e o campo fica em z:-1
      dentro dele. Por isso a `.hero-wordmark` NÃO pode ter z-index — com ele
      o campo ficaria preso no contexto dela e passaria por CIMA da foto.
-   - A letra é silhueta (azul-marinho quase preto recortado pelo texto), um
-     degrau mais clara que o fundo de propósito: a ponta da palavra mais
-     larga (o "+" do NANO+) fica fora do brilho e precisa ler sozinha.
+   - A letra é um buraco na luz: cor sólida #070A0F, quase o fundo da
+     página. Sem luz atrás ela não existe — por isso o fallback sem máscara
+     lá embaixo troca a cor.
    - Tudo é transform/opacity/filter: nada reflui. Para quem pede menos
      movimento a regra global de prefers-reduced-motion já zera as
      animações — a luz fica parada, não desaparece.
@@ -552,10 +552,11 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   font-variation-settings: 'wdth' var(--wm-wdth), 'wght' 900;
   letter-spacing: -.04em;
   text-transform: uppercase;
-  color: transparent;
-  background: linear-gradient(180deg,#3a485e 0%,#232e3f 38%,#151c27 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  /* #070A0F, pedido do usuário (18/09): é praticamente o fundo da página
+     (#080b10), então a letra existe só como RECORTE na luz — onde a luz não
+     chega, ela some. A ponta da palavra mais larga (o "+" do NANO+) depende
+     do núcleo alcançar até lá. */
+  color: #070a0f;
   user-select: none;
 }
 /* ── O campo de luz ── */
@@ -646,20 +647,12 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .hero-wordmark { display: none; }
 }
 
-/* Rede de segurança: `color: transparent` só é seguro enquanto o recorte pelo
-   texto funcionar. Sem suporte, a palavra sumiria por completo — aqui ela cai
-   numa cor sólida. */
-@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
-  .hero-wordmark { color: #3a5570; background: none; }
-}
-
 /* Sem máscara não há elipse: o quadrado de raios apareceria inteiro. Some o
-   campo e a letra volta ao degradê claro, que não depende de luz atrás. */
+   campo — e, sem luz atrás, a letra #070A0F sumiria no fundo, então ela
+   ganha uma cor que lê sozinha. */
 @supports not ((mask-image: radial-gradient(#000,#0000)) or (-webkit-mask-image: radial-gradient(#000,#0000))) {
   .hero-rays { display: none; }
-  @supports (background-clip: text) or (-webkit-background-clip: text) {
-    .hero-wordmark { background-image: linear-gradient(180deg,#46647f 0%,#2a3e55 52%,#16222f 100%); }
-  }
+  .hero-wordmark { color: #3a5570; }
 }
 
 @keyframes bf-rays-spin    { to { transform: rotate(1turn); } }
