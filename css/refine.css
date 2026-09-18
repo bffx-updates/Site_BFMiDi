@@ -548,47 +548,52 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
   .hero-rays-field > i { position: absolute; inset: 0; border-radius: 50%; }
 
+  /* Os raios (18/09/2026, "metade dessa distância e com blur"): as três
+     camadas apagam entre 25% e 32% do raio do campo — metade do que era —
+     e cada uma leva blur de 1,6 a 2,5px. Curto e desfocado exige raio mais
+     GROSSO: a largura angular dobrou, porque a 60px do centro um raio de
+     0,3° tinha meio pixel e sumia dentro do núcleo. */
   /* r1 — raios finos e numerosos, azulados, os mais curtos. */
   .hero-rays-field > .r1 {
     background: repeating-conic-gradient(from 0deg at 50% 50%,
-      transparent 0deg,    #c4dcff8a .14deg,  #c4dcff8a .3deg,   transparent .46deg,
-      transparent 1.62deg, #8fb9ff5c 1.74deg, #8fb9ff5c 1.9deg,  transparent 2.04deg,
-      transparent 3.02deg, #e3eeffbf 3.18deg, #e3eeffbf 3.5deg,  transparent 3.7deg,
-      transparent 4.28deg, #7fadf24d 4.34deg, #7fadf24d 4.46deg, transparent 4.56deg,
+      transparent 0deg,    #c4dcff8a .22deg,  #c4dcff8a .56deg,  transparent .82deg,
+      transparent 1.56deg, #8fb9ff5c 1.74deg, #8fb9ff5c 2.02deg, transparent 2.24deg,
+      transparent 2.96deg, #e3eeffbf 3.18deg, #e3eeffbf 3.72deg, transparent 4.02deg,
+      transparent 4.3deg,  #7fadf24d 4.4deg,  #7fadf24d 4.62deg, transparent 4.76deg,
       transparent 5.23deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000a 26%,transparent 50%);
-            mask-image: radial-gradient(circle,#000 0%,#000a 26%,transparent 50%);
-    filter: blur(.7px);
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000a 13%,transparent 25%);
+            mask-image: radial-gradient(circle,#000 0%,#000a 13%,transparent 25%);
+    filter: blur(2px);
     animation: bf-rays-spin 160s linear infinite;
   }
   /* r2 — raios largos e brancos, girando ao contrário. */
   .hero-rays-field > .r2 {
     background: repeating-conic-gradient(from 7deg at 50% 50%,
-      transparent 0deg,   #f1f6ffd9 .2deg,   #f1f6ffd9 .62deg,  transparent .95deg,
-      transparent 5.1deg, #cfe1ff80 5.3deg,  #cfe1ff80 5.55deg, transparent 5.8deg,
-      transparent 9deg,   #e6efffa6 9.12deg, #e6efffa6 9.3deg,  transparent 9.5deg,
+      transparent 0deg,   #f1f6ffd9 .3deg,   #f1f6ffd9 1.1deg,  transparent 1.6deg,
+      transparent 5deg,   #cfe1ff80 5.3deg,  #cfe1ff80 5.8deg,  transparent 6.2deg,
+      transparent 8.9deg, #e6efffa6 9.1deg,  #e6efffa6 9.5deg,  transparent 9.8deg,
       transparent 13.7deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c 30%,transparent 58%);
-            mask-image: radial-gradient(circle,#000 0%,#000c 30%,transparent 58%);
-    filter: blur(1px);
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c 15%,transparent 29%);
+            mask-image: radial-gradient(circle,#000 0%,#000c 15%,transparent 29%);
+    filter: blur(2.5px);
     animation: bf-rays-spin 115s linear infinite reverse;
   }
-  /* r3 — poucos raios, muito finos, os mais longos, tremeluzindo. */
+  /* r3 — poucos raios, os mais longos, tremeluzindo. */
   .hero-rays-field > .r3 {
     background: repeating-conic-gradient(from 2.5deg at 50% 50%,
-      transparent 0deg,    #ffffffe6 .06deg,   #ffffffe6 .24deg,   transparent .36deg,
-      transparent 11.2deg, #d6e6ff99 11.26deg, #d6e6ff99 11.38deg, transparent 11.5deg,
+      transparent 0deg,    #ffffffe6 .1deg,    #ffffffe6 .48deg,   transparent .7deg,
+      transparent 11.1deg, #d6e6ff99 11.24deg, #d6e6ff99 11.5deg,  transparent 11.72deg,
       transparent 23.9deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c 34%,transparent 64%);
-            mask-image: radial-gradient(circle,#000 0%,#000c 34%,transparent 64%);
-    filter: blur(.5px);
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c 17%,transparent 32%);
+            mask-image: radial-gradient(circle,#000 0%,#000c 17%,transparent 32%);
+    filter: blur(1.6px);
     animation: bf-rays-spin 230s linear infinite, bf-rays-flicker 7.5s ease-in-out infinite;
   }
   /* O núcleo: branco no centro, azul-LED na borda, respirando. Mais largo
      que os raios (o scaleX extra está nos keyframes) para a palavra inteira
      ter luz atrás mesmo com os raios curtos — o "+" do NANO+ é a ponta. */
   .hero-rays-field > .core {
-    background: radial-gradient(circle at 50% 50%,#f6f9ff 0%,#dfeaffed 6%,#b9d3ffb3 14%,#7fb0f766 28%,#4886dc3a 46%,#2f60a81f 62%,transparent 78%);
+    background: radial-gradient(circle at 50% 50%,#f6f9ff 0%,#dfeaffed 6%,#b9d3ffb3 14%,#7fb0f766 28%,#4886dc4a 46%,#2f60a82e 62%,transparent 78%);
     filter: blur(6px);
     animation: bf-core-breathe 6s ease-in-out infinite alternate;
   }
