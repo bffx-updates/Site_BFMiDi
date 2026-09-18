@@ -405,17 +405,13 @@
      seletor trocava de estado, o track era refeito por innerHTML a cada
      clique e havia uma classe só para congelar a animação durante a troca;
      com uma cápsula para cada nível, nada disso é preciso. */
-  /* `tip` só no submenu do modelo, onde o rótulo fica escondido e o ícone
-     é a única pista visível: ali a dica do mouse é a legenda. Nos outros
-     trilhos o texto está à vista e a dica seria redundante. */
-  function fillTrack(el, items, label, attr, tip) {
+  function fillTrack(el, items, label, attr) {
     el.innerHTML = items.map(function (it, i) {
       return '<button class="tab" type="button"' +
              (it.key ? ' id="subtab-' + esc(it.key) + '" role="tab"' +
                        ' aria-controls="panel-' + esc(it.key) + '"' : '') +
              ' data-i="' + i + '"' +
              ' data-go="' + (it.key ? 'view:' + esc(it.key) : 'model:' + i) + '"' +
-             (tip ? ' title="' + esc(it[label]) + '"' : '') +
              ' ' + attr + '="false">' + (it.key ? icon(it.key) : '') + '<span>' + esc(it[label]) + '</span></button>';
     }).join('');
   }
@@ -470,9 +466,6 @@
     if (view === 'home') overview.setAttribute('aria-current', 'page');
     else overview.removeAttribute('aria-current');
     heroH1b.textContent = m.id;
-    $('#hero-facts').innerHTML = m.specs.map(function (spec) {
-      return '<div class="hero-fact"><span class="fact-value">' + esc(spec.value) + '</span><span class="fact-label">' + esc(spec.label) + '</span></div>';
-    }).join('');
     shots.forEach(function (shot, i) { shot.classList.toggle('is-on', i === mi); shot.setAttribute('aria-hidden', String(i !== mi)); });
     if (view !== 'home') ensurePanel(view, mi);
     Object.keys(panels).forEach(function (key) {
@@ -538,7 +531,7 @@
   track.insertAdjacentHTML('beforeend', '<button class="tab software-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:software" aria-label="' + esc(SOFTWARE.label) + '" title="' + esc(SOFTWARE.label) + '" aria-pressed="false" aria-controls="panel-software">' + icon('system') + '</button>');
   track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="' + (MODELS.length + 1) + '" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">' + icon('gear') + '</button>');
   selector.style.setProperty('--n', MODELS.length + 2);
-  fillTrack(subTrack, SUB, 'label', 'aria-selected', true);
+  fillTrack(subTrack, SUB, 'label', 'aria-selected');
   subSel.style.setProperty('--n', SUB.length);
   fillTrack(resourceNav, RES, 'label', 'aria-selected');
   overview.innerHTML = icon('home') + '<span>' + esc(C.ui.overview) + '</span>';

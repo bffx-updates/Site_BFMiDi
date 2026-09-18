@@ -285,9 +285,9 @@ window.BF_CONTENT = (function () {
        olho, e por isso é uma palavra por extenso, não a sigla da aba. */
     sub: {
       items: [
-        { key: 'info',    label: 'Detalhes', eyebrow: 'Informações' },
-        { key: 'conects', label: 'Conexões', eyebrow: 'Conexões' },
-        { key: 'comprar', label: 'Comprar',  eyebrow: 'Comprar' }
+        { key: 'info',    label: 'INFO',   eyebrow: 'Informações' },
+        { key: 'conects', label: 'IN/OUT', eyebrow: 'Conexões' },
+        { key: 'comprar', label: 'SHOP',   eyebrow: 'Comprar' }
       ]
     },
 

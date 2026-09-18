@@ -108,11 +108,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .btn-ghost { color: var(--ink-2); border-color: #ffffff28; background: #11182388; }
 .btn-ghost:hover { color: #fff; background: #1b2634; border-color: #ffffff45; transform: translateY(-1px); }
 .btn:disabled { cursor: not-allowed; background: #1b2430; color: #8c99ab; border-color: #ffffff12; box-shadow: none; transform: none; }
-.hero-facts { align-self: stretch; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); padding: 22px 0 0; margin-top: 28px; border-top: 1px solid var(--hairline); gap: 20px; }
-.hero-fact { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
-.hero-fact + .hero-fact { border-left: 1px solid var(--hairline); }
-.fact-value { font: 600 1.375rem/1.2 var(--font-display); letter-spacing: -.02em; color: #d6e1f1; }
-.fact-label { color: var(--ink-3); font-size: .875rem; line-height: 1.35; }
 .panel-inner { max-width: var(--maxw-page); padding: 38px clamp(20px,4.5vw,64px); margin-block: auto; }
 .split { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(30px,5vw,70px); align-items: center; height: auto; }
 .split-media { position: relative; min-width: 0; padding: 30px 0; background: radial-gradient(ellipse,#253a5355,transparent 70%); }
@@ -160,8 +155,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .hero { padding-top: 26px; }
   .hero-stage { height: clamp(270px,55vw,400px); }
   .shot { inset: 0 -3%; }
-  .hero-facts { margin-top: 24px; gap: 20px; grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .hero-fact:nth-child(3) { border-left: 0; }
   .split { display: grid; grid-template-columns: 1fr; gap: 20px; overflow: visible; }
   .panel-inner { padding-top: 20px; }
   .split-media { display: block; padding: 0; }
@@ -176,7 +169,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .selector-sub .tab { padding-inline: 6px; font-size: .875rem; }
   .btn { padding-inline: 18px; gap: 14px; }
   .hero-stage { height: 245px; }
-  .hero-facts { gap: 18px; }
   .spec-cell { padding: 14px; }
 }
 @media (max-height: 620px) and (max-width: 900px) and (orientation: landscape) { .split-media,.feat-body { display: block; } .spec-strip { grid-template-columns: repeat(2,minmax(0,1fr)); } .spec-note { display: block; } .buy .band-list { display: flex; } }
@@ -292,29 +284,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .gallery-next { right: 7px; }
   .gallery-dots { bottom: 7px; gap: 6px; padding: 6px 9px; }
 
-  .hero-facts {
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 8px;
-    margin-top: 10px;
-    padding: 8px;
-    border: 1px solid #7292ad29;
-    border-radius: 22px;
-    background: linear-gradient(150deg,#152333d9,#0c151fdf);
-    box-shadow: inset 0 1px #bfddf014;
-  }
-  .hero-fact {
-    min-height: 88px;
-    justify-content: center;
-    gap: 5px;
-    padding: 12px 8px;
-    border: 1px solid #91aec51a;
-    border-radius: 16px;
-    background: #ffffff05;
-  }
-  .hero-fact + .hero-fact { border-left: 1px solid #91aec51a; }
-  .hero-fact:nth-child(3) { border-left: 1px solid #91aec51a; }
-  .fact-value { font-size: 1.3rem; }
-  .fact-label { font-size: .8rem; line-height: 1.25; }
 
   .panel-inner { width: 100%; margin: 0; padding: 16px 16px 26px; }
   .split { display: flex; flex-direction: column; gap: 14px; }
@@ -361,25 +330,141 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .hero-stage { height: 242px; }
 }
 
-/* Submenu do modelo só com ícones (17/09/2026). O rótulo continua no DOM,
-   escondido como .sr-only: some da vista, não da árvore de acessibilidade —
-   é ele que dá nome ao botão para leitor de tela. Como estas regras vêm por
-   último no arquivo, elas vencem por ORDEM os blocos responsivos acima, que
-   dimensionam a mesma pílula; mexer nelas exige olhar lá também. */
-.overview-link > span,.selector-sub .tab > span {
+/* ── Navegação em barra flutuante no rodapé (18/09/2026, imagem de referência
+   do usuário) ─────────────────────────────────────────────────────────────
+   Quatro pílulas SOLTAS, flutuando sobre o conteúdo: o trilho perdeu moldura,
+   fundo e sombra, e cada botão virou a sua própria pílula, com ícone e nome
+   lado a lado. O HOME fica só com o ícone — o nome continua no DOM, escondido
+   como .sr-only, porque é ele que dá nome ao botão para leitor de tela; com
+   display:none o botão ficaria anônimo.
+
+   Os dois seletores precisam de `.app > #id` (1,1,0) para EMPATAR com
+   `.app > :not(#particle-field)` lá do topo do arquivo, que prende todo filho
+   do .app em `position: relative` — era ele que matava, em silêncio, o
+   `position: fixed` que o bloco de 600px já pedia. O desempate é a ORDEM,
+   então este bloco tem de continuar sendo o ÚLTIMO do arquivo. */
+.app > #model-navigation,
+.app > #resource-navigation {
+  position: fixed;
+  z-index: 50;
+  left: 50%;
+  bottom: calc(max(10px,env(safe-area-inset-bottom)) + var(--bf-footbar));
+  transform: translateX(-50%);
+  width: min(100% - 28px,720px);
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 12px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* A assinatura desce para DEBAIXO das pílulas e vira a última faixa da tela:
+   fixa também, se não a barra passaria por cima dela. `--bf-footbar` é a
+   altura reservada para essa faixa e é o que ergue a barra — os dois leem a
+   mesma medida, então mudar a fonte do rodapé aqui move tudo junto. */
+.app { --bf-footbar: 30px; padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+#app > .site-footer {
+  position: fixed;
+  z-index: 49;
+  left: 50%;
+  bottom: max(6px,env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(100% - 28px,720px);
+  margin: 0;
+  padding: 0;
+}
+#app > .site-footer .footer-row { min-height: var(--bf-footbar); padding: 0 6px; }
+
+/* Véu do rodapé. O conteúdo rola POR BAIXO da barra — é o que a imagem de
+   referência mostra — mas passava legível atrás da assinatura, e duas linhas
+   de texto sobrepostas viram borrão. O degradê apaga o que entra na faixa sem
+   cortar nada, e não intercepta clique. Fica ABAIXO das pílulas e da
+   assinatura no empilhamento (47 < 49 < 50) e ACIMA do conteúdo, que os
+   filhos do #app fixam em z-index 1. A altura sai do mesmo `--bf-footbar`,
+   então acompanha a faixa se ela mudar. */
+#app::after {
+  content: '';
+  position: fixed;
+  z-index: 47;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--bf-footbar) + 108px + env(safe-area-inset-bottom));
+  pointer-events: none;
+  background: linear-gradient(180deg,#080b1000,#080b10d9 42%,#080b10);
+}
+
+/* As quatro pílulas saem EXATAMENTE iguais. A largura do HOME é FIXADA na
+   conta (três vãos de 12px fora, dividido por quatro) em vez de sair de uma
+   proporção 1:3 de flex-grow: com `min-width: auto` o HOME reivindicava a
+   largura do próprio conteúdo e terminava 25px mais gordo que as abas. O
+   submenu leva o resto, e o grid de 3 colunas dele reparte em partes iguais.
+   Mudou o `gap` da barra? Mude os dois 12px daqui junto. */
+.view-nav .overview-link { flex: 0 0 calc((100% - 36px) / 4); min-width: 0; }
+.view-nav .selector-sub { flex: 1 1 auto; min-width: 0; }
+.view-nav .selector-sub .selector-track { gap: 12px; }
+
+.view-nav .overview-link,
+.view-nav .selector-sub .tab,
+#resource-navigation .tab {
+  flex-direction: row;
+  gap: 10px;
+  min-height: 56px;
+  padding: 8px 12px;
+  border: 1px solid #6f91b155;
+  border-radius: 18px;
+  background: linear-gradient(155deg,#1b2f43ee,#0d1927f5);
+  box-shadow: inset 0 1px 1px #add3f41f,0 10px 26px -14px #000c;
+  font: 600 .9rem/1.1 var(--font-body);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #c3d3e6;
+  backdrop-filter: blur(18px) saturate(1.2);
+}
+.view-nav .overview-link { gap: 0; }
+.view-nav .overview-link > span {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
   clip-path: inset(50%); white-space: nowrap; border: 0;
 }
-#model-navigation { max-width: 460px; padding: 5px; border-radius: 21px; }
-.overview-link,.selector-sub .tab { min-height: 42px; padding: 6px 4px; gap: 0; border-radius: 16px; }
-#model-navigation .nav-icon { width: 25px; height: 25px; }
+.view-nav .nav-icon { width: 22px; height: 22px; flex: 0 0 auto; }
 
-/* No celular a pílula encolhe, mas o alvo de toque não pode acompanhar:
-   48px é o piso confortável para o polegar. (O bloco de 600px acima QUER
-   esta barra fixa no rodapé e não consegue — `.app > :not(#particle-field)`
-   ganha em especificidade e a mantém `relative`. Bug anterior a isto.) */
-@media (max-width: 600px) {
-  #model-navigation { max-width: none; border-radius: 19px; }
-  .overview-link,.selector-sub .tab { min-height: 48px; }
+.view-nav .overview-link:hover,
+.view-nav .selector-sub .tab:hover,
+#resource-navigation .tab:hover {
+  color: #f1f6ff;
+  border-color: #8fb4d4aa;
+  background: linear-gradient(155deg,#22394fee,#122234f5);
+}
+
+/* Laranja = "você está aqui", e só isso. A imagem de referência trazia IN/OUT
+   e SHOP com borda laranja mesmo inativos; ficou combinado manter a cor como
+   indicação de aba aberta, para ela não perder o significado. */
+.view-nav .overview-link.is-active,
+.view-nav .selector-sub .tab[aria-selected="true"],
+#resource-navigation .tab[aria-selected="true"] {
+  color: #ffd2a4;
+  border-color: #e7a36b;
+  background: linear-gradient(155deg,#5a3d2ae8,#33271cf2);
+  box-shadow: inset 0 1px 1px #ffd7ad2e,0 10px 26px -14px #000c;
+}
+
+/* Abaixo de ~620px o nome não cabe ao lado do ícone (a pílula fica com ~77px):
+   volta a ficar embaixo dele, como a barra de aplicativo já fazia. */
+@media (max-width: 620px) {
+  .view-nav .overview-link,
+  .view-nav .selector-sub .tab,
+  #resource-navigation .tab {
+    flex-direction: column;
+    gap: 4px;
+    min-height: 58px;
+    padding: 7px 4px;
+    border-radius: 16px;
+    font-size: .66rem;
+    letter-spacing: .05em;
+  }
+  .view-nav .nav-icon { width: 21px; height: 21px; }
 }
