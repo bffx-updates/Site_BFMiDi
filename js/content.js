@@ -103,14 +103,6 @@ window.BF_CONTENT = (function () {
         shot: '8sw-hero-front',
         shotAlt: 'BFMIDI 8SW+ visto de frente: oito footswitches, LIVE MODE e GLOBAL SWITCH, ' +
                  'tela colorida com amplificador e o anel azul do footswitch 1 aceso.',
-        gallery: [
-          { img: '8sw-gallery-1', alt: 'BFMIDI 8SW+ vista de frente com amplificador na tela e anel azul aceso.' },
-          { img: '8sw-gallery-2', alt: 'BFMIDI 8SW+ vista de frente com a tela desligada.' },
-          { img: '8sw-gallery-3', alt: 'BFMIDI 8SW+ vista superior e traseira mostrando todas as conexões.' },
-          { img: '8sw-gallery-4', alt: 'BFMIDI 8SW+ vista de frente com anéis coloridos e seis efeitos na tela.' },
-          { img: '8sw-gallery-5', alt: 'BFMIDI 8SW+ em perspectiva com o preset CLASSIC ROCK na tela.' },
-          { img: '8sw-gallery-6', alt: 'BFMIDI 8SW+ vista de frente com o preset MODERN AMBIENT e anéis coloridos.' }
-        ],
         switches: 8,
         specs: [
           specSwitches(8, 'Seis para presets, mais LIVE MODE e GLOBAL SWITCH dedicados.'),
@@ -194,15 +186,6 @@ window.BF_CONTENT = (function () {
         shot: 'nano-hero',
         shotAlt: 'BFMIDI NANO+ vista de frente: seis footswitches, tela colorida ' +
                  'com o preset CLASSIC ROCK e anel azul aceso no footswitch 1.',
-        gallery: [
-          { img: 'nano-gallery-1', alt: 'BFMIDI NANO+ vista de frente com a tela CLASSIC ROCK e o anel azul do footswitch 1 aceso.' },
-          { img: 'nano-gallery-2', alt: 'BFMIDI NANO+ em perspectiva com a tela CLASSIC ROCK e o anel azul aceso.' },
-          { img: 'nano-gallery-3', alt: 'BFMIDI NANO+ vista de frente com anéis coloridos e seis efeitos exibidos na tela.' },
-          { img: 'nano-gallery-4', alt: 'BFMIDI NANO+ vista de frente com a tela desligada.' },
-          { img: 'nano-gallery-5', alt: 'BFMIDI NANO+ em perspectiva com a tela desligada.' },
-          { img: 'nano-gallery-6', alt: 'Painel traseiro da BFMIDI NANO+ mostrando todas as conexões.' },
-          { img: 'nano-gallery-7', alt: 'BFMIDI NANO+ vista superior e traseira mostrando os conectores.' }
-        ],
         switches: 6,
         specs: [
           specSwitches(6, 'Os mesmos seis presets por banco, num corpo bem menor.'),

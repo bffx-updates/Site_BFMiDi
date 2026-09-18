@@ -130,35 +130,10 @@
            '</div>';
   }
 
-  function galleryFigure(m) {
-    var slides = m.gallery.map(function (item, i) {
-      return '<div class="gallery-slide" aria-hidden="' + (i ? 'true' : 'false') + '">' +
-        imgTag(item.img, item.alt, '(max-width: 860px) 92vw, (max-width: 1200px) 82vw, 1000px', false) +
-      '</div>';
-    }).join('');
-    var dots = m.gallery.map(function (_, i) {
-      return '<button type="button" class="gallery-dot' + (i ? '' : ' is-active') + '" data-gallery-dot="' + i +
-        '" aria-label="Mostrar foto ' + (i + 1) + ' de ' + m.gallery.length + '" aria-current="' + (i ? 'false' : 'true') + '"></button>';
-    }).join('');
-    return '<div class="product-gallery" data-gallery tabindex="0" role="region" aria-roledescription="carrossel" aria-label="Fotos da ' + esc(m.id) + '">' +
-      '<div class="gallery-track">' + slides + '</div>' +
-      '<button type="button" class="gallery-arrow gallery-prev" data-gallery-prev aria-label="Foto anterior"><span aria-hidden="true">‹</span></button>' +
-      '<button type="button" class="gallery-arrow gallery-next" data-gallery-next aria-label="Próxima foto"><span aria-hidden="true">›</span></button>' +
-      '<div class="gallery-dots" aria-label="Escolher foto">' + dots + '</div>' +
-      '<span class="sr-only gallery-status" aria-live="polite">Foto 1 de ' + m.gallery.length + '</span>' +
-    '</div>';
-  }
-
-  if (mounted && MODELS[0].gallery && MODELS[0].gallery.length) {
-    mounted.innerHTML = galleryFigure(MODELS[0]);
-  }
-
   stage.insertAdjacentHTML('beforeend', MODELS.map(function (m, i) {
     if (i === 0 && mounted) return '';
     var on = i === 0 ? ' is-on' : '';
-    var inner = m.gallery && m.gallery.length
-      ? galleryFigure(m)
-      : m.shot
+    var inner = m.shot
       ? imgTag(m.shot, m.shotAlt, '(max-width: 860px) 92vw, (max-width: 1200px) 82vw, 1000px', i === 0)
       : mapFigure(m);
     return '<figure class="shot' + on + '" data-i="' + i + '">' + inner + '</figure>';
@@ -171,45 +146,6 @@
     .sort(function (a, b) {
       return Number(a.getAttribute('data-i')) - Number(b.getAttribute('data-i'));
     });
-
-  stage.querySelectorAll('[data-gallery]').forEach(function (gallery) {
-    var track = gallery.querySelector('.gallery-track');
-    var slides = Array.from(gallery.querySelectorAll('.gallery-slide'));
-    var dots = Array.from(gallery.querySelectorAll('[data-gallery-dot]'));
-    var status = gallery.querySelector('.gallery-status');
-    var current = 0, pointerStart = null;
-
-    function showGallerySlide(index) {
-      current = (index + slides.length) % slides.length;
-      track.style.transform = 'translateX(-' + (current * 100) + '%)';
-      slides.forEach(function (slide, i) { slide.setAttribute('aria-hidden', String(i !== current)); });
-      dots.forEach(function (dot, i) {
-        dot.classList.toggle('is-active', i === current);
-        dot.setAttribute('aria-current', String(i === current));
-      });
-      status.textContent = 'Foto ' + (current + 1) + ' de ' + slides.length;
-    }
-
-    gallery.querySelector('[data-gallery-prev]').addEventListener('click', function () { showGallerySlide(current - 1); });
-    gallery.querySelector('[data-gallery-next]').addEventListener('click', function () { showGallerySlide(current + 1); });
-    dots.forEach(function (dot, i) { dot.addEventListener('click', function () { showGallerySlide(i); }); });
-    gallery.addEventListener('keydown', function (event) {
-      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-      event.preventDefault();
-      showGallerySlide(current + (event.key === 'ArrowRight' ? 1 : -1));
-    });
-    gallery.addEventListener('pointerdown', function (event) {
-      if (event.target.closest('button')) return;
-      pointerStart = event.clientX;
-    });
-    gallery.addEventListener('pointerup', function (event) {
-      if (pointerStart === null) return;
-      var distance = event.clientX - pointerStart;
-      pointerStart = null;
-      if (Math.abs(distance) > 45) showGallerySlide(current + (distance < 0 ? 1 : -1));
-    });
-    gallery.addEventListener('pointercancel', function () { pointerStart = null; });
-  });
 
   /* --------------------------------------------------------------- painéis */
 
