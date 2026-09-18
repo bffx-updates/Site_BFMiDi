@@ -348,7 +348,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   position: fixed;
   z-index: 50;
   left: 50%;
-  bottom: calc(max(10px,env(safe-area-inset-bottom)) + var(--bf-footbar));
+  bottom: calc(max(10px,env(safe-area-inset-bottom)) + var(--bf-footbar) + var(--bf-bar-gap));
   transform: translateX(-50%);
   width: min(100% - 28px,720px);
   max-width: none;
@@ -364,8 +364,12 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 /* A assinatura desce para DEBAIXO das pílulas e vira a última faixa da tela:
    fixa também, se não a barra passaria por cima dela. `--bf-footbar` é a
    altura reservada para essa faixa e é o que ergue a barra — os dois leem a
-   mesma medida, então mudar a fonte do rodapé aqui move tudo junto. */
-.app { --bf-footbar: 30px; padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+   mesma medida, então mudar a fonte do rodapé aqui move tudo junto.
+   `--bf-bar-gap` é o respiro entre a base das pílulas e a assinatura
+   ("os botões estão muito juntos do rodapé", 18/09/2026): antes eram 4px,
+   com a assinatura colada na barra. Entra na altura da barra, na folga do
+   .app e no véu, para os três continuarem casados. */
+.app { --bf-footbar: 30px; --bf-bar-gap: 14px; padding-bottom: calc(112px + var(--bf-bar-gap) + env(safe-area-inset-bottom)); }
 #app > .site-footer {
   position: fixed;
   z-index: 49;
@@ -392,7 +396,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   left: 0;
   right: 0;
   bottom: 0;
-  height: calc(var(--bf-footbar) + 108px + env(safe-area-inset-bottom));
+  height: calc(var(--bf-footbar) + var(--bf-bar-gap) + 108px + env(safe-area-inset-bottom));
   pointer-events: none;
   background: linear-gradient(180deg,#080b1000,#080b10d9 42%,#080b10);
 }
