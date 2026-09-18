@@ -366,10 +366,11 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    altura reservada para essa faixa e é o que ergue a barra — os dois leem a
    mesma medida, então mudar a fonte do rodapé aqui move tudo junto.
    `--bf-bar-gap` é o respiro entre a base das pílulas e a assinatura
-   ("os botões estão muito juntos do rodapé", 18/09/2026): antes eram 4px,
+   ("os botões estão muito juntos do rodapé", 18/09/2026; 14px, depois
+   "o dobro disso" a mais = 42px): antes eram 4px,
    com a assinatura colada na barra. Entra na altura da barra, na folga do
    .app e no véu, para os três continuarem casados. */
-.app { --bf-footbar: 30px; --bf-bar-gap: 14px; padding-bottom: calc(112px + var(--bf-bar-gap) + env(safe-area-inset-bottom)); }
+.app { --bf-footbar: 30px; --bf-bar-gap: 42px; padding-bottom: calc(112px + var(--bf-bar-gap) + env(safe-area-inset-bottom)); }
 #app > .site-footer {
   position: fixed;
   z-index: 49;
