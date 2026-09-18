@@ -269,16 +269,49 @@ window.BF_CONTENT = (function () {
         h1: ['BFMIDI', 'MICRO'],
         lead: 'Quatro footswitches e 40 presets ao alcance do pé.',
         cta: 'Ver detalhes',
-        shot: null,                       /* foto ainda não fotografada */
+        shot: 'micro-hero',
+        shotAlt: 'BFMIDI 3 MICRO vista de cima: quatro footswitches com anéis de LED ' +
+                 'coloridos, LIVE MODE, tela colorida com o preset ROCK e as portas ' +
+                 '9V, TRS, USB HOST e USB DEVICE no topo.',
+        /* O que a foto mostra no topo: TRS, HOST e DEVICE (mais o 9V). Sem
+           DIN5, expressão ou dual switch. */
+        ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi'],
         switches: 4,
         specs: [
           specSwitches(4, 'Quatro footswitches, para quem conta cada centímetro da placa.'),
           /* 4 por banco, e não 6: nas placas de quatro footswitches o pé alcança
              quatro presets por letra. Ver boardPresetCount() no firmware. */
           specPresets(4),
+          SPEC_SCREEN,
           SPEC_MODES
         ],
-        bands: []
+        /* As bandas não trazem `img`: a MICRO tem uma foto só, e o main.js cai
+           na foto principal quando a banda não tem a sua. */
+        bands: [
+          {
+            panel: 'info',
+            title: 'Recursos da MICRO',
+            body: 'Quatro footswitches, tela colorida e os mesmos nove comportamentos ' +
+                  'de LIVE das maiores. Sem footswitch dedicado, o LIVE MODE entra ' +
+                  'pisando o 1 e o 3 juntos.',
+            list: [
+              'Quatro footswitches com anel de LED próprio',
+              'LIVE MODE pisando os footswitches 1 e 3 juntos',
+              'Mesmo editor, mesmos presets, mesma memória'
+            ]
+          },
+          {
+            panel: 'conects',
+            title: 'Conexões da MICRO',
+            body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
+                  'USB sem computador. Tudo no topo, com a alimentação de 9V.',
+            list: [
+              'Saídas MIDI TRS e USB',
+              'Porta USB HOST para pedais USB',
+              'Editor por Wi-Fi ou pelo cabo USB'
+            ]
+          }
+        ]
       }
     ],
 
