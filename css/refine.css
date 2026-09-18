@@ -645,3 +645,38 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 @media (max-height: 620px) and (max-width: 900px) and (orientation: landscape) {
   .hero-wordmark { display: none; }
 }
+
+/* Rede de segurança: `color: transparent` só é seguro enquanto o recorte pelo
+   texto funcionar. Sem suporte, a palavra sumiria por completo — aqui ela cai
+   numa cor sólida. */
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+  .hero-wordmark { color: #3a5570; background: none; }
+}
+
+/* Sem máscara não há elipse: o quadrado de raios apareceria inteiro. Some o
+   campo e a letra volta ao degradê claro, que não depende de luz atrás. */
+@supports not ((mask-image: radial-gradient(#000,#0000)) or (-webkit-mask-image: radial-gradient(#000,#0000))) {
+  .hero-rays { display: none; }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .hero-wordmark { background-image: linear-gradient(180deg,#46647f 0%,#2a3e55 52%,#16222f 100%); }
+  }
+}
+
+@keyframes bf-rays-spin    { to { transform: rotate(1turn); } }
+@keyframes bf-rays-drift   { from { translate: -1.6% .6%; } to { translate: 1.6% -.6%; } }
+@keyframes bf-rays-flicker {
+  0%,100% { opacity: calc(.82 * var(--wm-long)); }
+  28%     { opacity: var(--wm-long); }
+  47%     { opacity: calc(.7 * var(--wm-long)); }
+  66%     { opacity: calc(.96 * var(--wm-long)); }
+  84%     { opacity: calc(.78 * var(--wm-long)); }
+}
+@keyframes bf-core-breathe {
+  from { opacity: calc(.8 * var(--wm-core-light)); transform: scaleX(var(--wm-core-stretch)) scale(calc(.93 * var(--wm-core-size))); }
+  to   { opacity: var(--wm-core-light);            transform: scaleX(var(--wm-core-stretch)) scale(calc(1.07 * var(--wm-core-size))); }
+}
+@keyframes bf-rays-flash {
+  0%   { filter: brightness(1);               transform: scaleX(var(--wm-stretch)) scale(1); }
+  16%  { filter: brightness(var(--wm-flash)); transform: scaleX(var(--wm-stretch)) scale(1.06); }
+  100% { filter: brightness(1);               transform: scaleX(var(--wm-stretch)) scale(1); }
+}
