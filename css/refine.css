@@ -476,18 +476,16 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    acima já anuncia "BFMIDI 8SW+", e sem isso o leitor de tela repetiria o
    modelo duas vezes seguidas.
 
-   A LUZ (segunda rodada, mesma data — imagem de referência do usuário: a
-   palavra em silhueta escura sobre uma explosão de raios branco-azulados).
-   Nada de imagem: são gradientes cônicos REPETIDOS, três camadas de período
-   incomensurável (5,23° · 13,7° · 23,9°) girando devagar em sentidos
-   opostos — a interferência entre elas é o que faz os raios parecerem
-   irregulares e vivos, como um zoom blur de ruído. Pontos que custam caro:
+   A LUZ (mesma data — imagem de referência do usuário: a palavra em silhueta
+   escura sobre uma explosão de raios branco-azulados). Nada de imagem: são
+   gradientes cônicos REPETIDOS, três camadas de período incomensurável
+   (5,23° · 13,7° · 23,9°) girando devagar em sentidos opostos — a
+   interferência entre elas é o que faz os raios parecerem irregulares e
+   vivos. Pontos que custam caro:
 
-   - O campo é um QUADRADO esticado por `scaleX(2.35)`. Esticar DEPOIS de
-     desenhar é o que dá o visual de "warp": os raios se adensam e engrossam
-     perto do eixo horizontal, e a máscara circular vira a elipse larga da
-     referência. Um gradiente cônico desenhado direto numa caixa larga daria
-     raios uniformes em todos os ângulos.
+   - O campo é um QUADRADO esticado por scaleX. Esticar DEPOIS de desenhar é
+     o que dá o visual de "warp": os raios se adensam e engrossam perto do
+     eixo horizontal, e a máscara circular vira a elipse larga da referência.
    - A máscara radial é o que apaga os raios para a borda; sem suporte a
      `mask-image` o quadrado inteiro apareceria — o @supports lá embaixo
      esconde os raios e devolve a letra clara de antes.
@@ -495,15 +493,49 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
      vira contexto de empilhamento (`isolation`) e o campo fica em z:-1
      dentro dele. Por isso a `.hero-wordmark` NÃO pode ter z-index — com ele
      o campo ficaria preso no contexto dela e passaria por CIMA da foto.
-   - A letra é silhueta (azul-marinho quase preto recortado pelo texto) e só
-     é legível porque o núcleo da luz está atrás dela; o @supports do recorte
-     continua valendo.
-   - Tudo é transform/opacity/filter: nada reflui. E para quem pede menos
+   - A letra é silhueta (azul-marinho quase preto recortado pelo texto), um
+     degrau mais clara que o fundo de propósito: a ponta da palavra mais
+     larga (o "+" do NANO+) fica fora do brilho e precisa ler sozinha.
+   - Tudo é transform/opacity/filter: nada reflui. Para quem pede menos
      movimento a regra global de prefers-reduced-motion já zera as
      animações — a luz fica parada, não desaparece.
    - `is-flash` (main.js, na troca de modelo) dá um clarão curto no campo: a
-     palavra nova "acende". A classe sai sozinha no animationend. */
+     palavra nova "acende". A classe sai sozinha no animationend.
+
+   AJUSTE FINO (18/09/2026): TODOS os números da luz saem das variáveis
+   `--wm-*` logo abaixo. O painel temporário de sliders (js/tune.js +
+   css/tune.css, ligados no index.html com o marcador "tune") só reescreve
+   essas variáveis em :root e guarda no localStorage. Para TRAVAR: copiar os
+   valores finais do painel para cá e tirar os dois arquivos do index. */
 .hero-wordmark { display: none; }
+
+:root {
+  /* LETRA */
+  --wm-font: 9.2vw;          /* tamanho (dentro do clamp 58..152px) */
+  --wm-wdth: 112;            /* largura da Archivo (100..125) */
+  --wm-ink: 0%;              /* quanto de claro mistura na silhueta */
+  /* CAMPO DE LUZ */
+  --wm-light: .78;           /* BRILHO GERAL — opacity do campo, raios + núcleo */
+  --wm-field: 460px;         /* lado do quadrado do campo (limitado a 34vw) */
+  --wm-stretch: 2.35;        /* esticamento horizontal */
+  --wm-y: 0px;               /* deslocamento vertical da luz */
+  --wm-hue: 0deg;            /* matiz */
+  --wm-sat: 1;               /* saturação */
+  /* RAIOS */
+  --wm-reach: 25%;           /* alcance dos raios finos; largos ×1.16, longos ×1.28 */
+  --wm-blur: 2px;            /* dispersão dos raios finos; largos ×1.25, longos ×.8 */
+  --wm-fine: 1;              /* força dos raios finos */
+  --wm-wide: 1;              /* força dos raios largos */
+  --wm-long: 1;              /* força dos raios longos */
+  --wm-spin: 1;              /* velocidade do giro (1 = 160 s por volta nos finos) */
+  /* NÚCLEO */
+  --wm-core-size: 1;         /* tamanho do núcleo */
+  --wm-core-stretch: 1.3;    /* largura extra do núcleo */
+  --wm-core-light: 1;        /* brilho do núcleo */
+  --wm-core-blur: 6px;       /* suavidade do núcleo */
+  /* CLARÃO */
+  --wm-flash: 2.1;           /* força do clarão na troca de modelo */
+}
 
 @media (min-width: 901px) {
   .hero { position: relative; isolation: isolate; }
@@ -515,52 +547,53 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     flex: 1 1 auto;
     min-height: 0;
     margin: clamp(2px,1.4vh,20px) 0 0;
-    font: 900 clamp(58px,9.2vw,152px)/.86 var(--font-display);
-    font-variation-settings: 'wdth' 112, 'wght' 900;
+    font: 900 clamp(58px,var(--wm-font),152px)/.86 var(--font-display);
+    font-variation-settings: 'wdth' var(--wm-wdth), 'wght' 900;
     letter-spacing: -.04em;
     text-transform: uppercase;
-    /* A silhueta da referência: quase preto com viés azul, um fio mais
-       claro no topo, recortado pelo texto. Um degrau mais clara que o
-       fundo (#080b10) de propósito: com a luz mais fraca, a ponta da
-       palavra mais larga (o "+" do NANO+) fica fora do brilho e precisa
-       ler sozinha, sem depender de luz atrás. */
     color: transparent;
     background: linear-gradient(180deg,#3a485e 0%,#232e3f 38%,#151c27 100%);
     -webkit-background-clip: text;
     background-clip: text;
     user-select: none;
   }
+  /* A mesma silhueta, com --wm-ink de claro misturado. Fica atrás de um
+     @supports porque uma função desconhecida derrubaria a declaração inteira
+     e a palavra (color: transparent) sumiria. */
+  @supports (color: color-mix(in srgb, red 10%, blue)) {
+    .hero-wordmark {
+      background-image: linear-gradient(180deg,
+        color-mix(in srgb,#3a485e,#dfe8f5 var(--wm-ink)) 0%,
+        color-mix(in srgb,#232e3f,#dfe8f5 var(--wm-ink)) 38%,
+        color-mix(in srgb,#151c27,#dfe8f5 var(--wm-ink)) 100%);
+    }
+  }
 
   /* ── O campo de luz ── */
   .hero-rays {
     position: absolute;
     z-index: -1;
-    left: 50%; top: 50%;
-    width: min(460px,34vw);
+    left: 50%;
+    top: calc(50% + var(--wm-y));
+    width: min(var(--wm-field),34vw);
     aspect-ratio: 1;
     transform: translate(-50%,-50%);
     pointer-events: none;
+    filter: hue-rotate(var(--wm-hue)) saturate(var(--wm-sat));
     animation: bf-rays-drift 19s ease-in-out infinite alternate;
   }
   .hero-rays-field {
     position: absolute;
     inset: 0;
-    /* BRILHO GERAL — o único botão de intensidade: dima raios e núcleo
-       juntos sem mexer em forma nem alcance ("diminua um pouco o brilho",
-       18/09/2026). O clarão da troca de modelo é brightness() em cima
-       disto, então continua proporcional. */
-    opacity: .78;
-    transform: scaleX(2.35);
+    opacity: var(--wm-light);
+    transform: scaleX(var(--wm-stretch));
     -webkit-mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
             mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
   }
   .hero-rays-field > i { position: absolute; inset: 0; border-radius: 50%; }
 
-  /* Os raios (18/09/2026, "metade dessa distância e com blur"): as três
-     camadas apagam entre 25% e 32% do raio do campo — metade do que era —
-     e cada uma leva blur de 1,6 a 2,5px. Curto e desfocado exige raio mais
-     GROSSO: a largura angular dobrou, porque a 60px do centro um raio de
-     0,3° tinha meio pixel e sumia dentro do núcleo. */
+  /* Os raios: curtos e desfocados, por isso GROSSOS — a 60px do centro um
+     raio de 0,3° tinha meio pixel e sumia dentro do núcleo depois do blur. */
   /* r1 — raios finos e numerosos, azulados, os mais curtos. */
   .hero-rays-field > .r1 {
     background: repeating-conic-gradient(from 0deg at 50% 50%,
@@ -569,10 +602,11 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
       transparent 2.96deg, #e3eeffbf 3.18deg, #e3eeffbf 3.72deg, transparent 4.02deg,
       transparent 4.3deg,  #7fadf24d 4.4deg,  #7fadf24d 4.62deg, transparent 4.76deg,
       transparent 5.23deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000a 13%,transparent 25%);
-            mask-image: radial-gradient(circle,#000 0%,#000a 13%,transparent 25%);
-    filter: blur(2px);
-    animation: bf-rays-spin 160s linear infinite;
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000a calc(var(--wm-reach) * .52),transparent var(--wm-reach));
+            mask-image: radial-gradient(circle,#000 0%,#000a calc(var(--wm-reach) * .52),transparent var(--wm-reach));
+    opacity: var(--wm-fine);
+    filter: blur(var(--wm-blur));
+    animation: bf-rays-spin calc(160s / var(--wm-spin)) linear infinite;
   }
   /* r2 — raios largos e brancos, girando ao contrário. */
   .hero-rays-field > .r2 {
@@ -581,28 +615,30 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
       transparent 5deg,   #cfe1ff80 5.3deg,  #cfe1ff80 5.8deg,  transparent 6.2deg,
       transparent 8.9deg, #e6efffa6 9.1deg,  #e6efffa6 9.5deg,  transparent 9.8deg,
       transparent 13.7deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c 15%,transparent 29%);
-            mask-image: radial-gradient(circle,#000 0%,#000c 15%,transparent 29%);
-    filter: blur(2.5px);
-    animation: bf-rays-spin 115s linear infinite reverse;
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .6),transparent calc(var(--wm-reach) * 1.16));
+            mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .6),transparent calc(var(--wm-reach) * 1.16));
+    opacity: var(--wm-wide);
+    filter: blur(calc(var(--wm-blur) * 1.25));
+    animation: bf-rays-spin calc(115s / var(--wm-spin)) linear infinite reverse;
   }
-  /* r3 — poucos raios, os mais longos, tremeluzindo. */
+  /* r3 — poucos raios, os mais longos, tremeluzindo (a força --wm-long
+     entra nos keyframes do tremeluzir, porque a opacity é animada). */
   .hero-rays-field > .r3 {
     background: repeating-conic-gradient(from 2.5deg at 50% 50%,
       transparent 0deg,    #ffffffe6 .1deg,    #ffffffe6 .48deg,   transparent .7deg,
       transparent 11.1deg, #d6e6ff99 11.24deg, #d6e6ff99 11.5deg,  transparent 11.72deg,
       transparent 23.9deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c 17%,transparent 32%);
-            mask-image: radial-gradient(circle,#000 0%,#000c 17%,transparent 32%);
-    filter: blur(1.6px);
-    animation: bf-rays-spin 230s linear infinite, bf-rays-flicker 7.5s ease-in-out infinite;
+    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .68),transparent calc(var(--wm-reach) * 1.28));
+            mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .68),transparent calc(var(--wm-reach) * 1.28));
+    filter: blur(calc(var(--wm-blur) * .8));
+    animation: bf-rays-spin calc(230s / var(--wm-spin)) linear infinite, bf-rays-flicker 7.5s ease-in-out infinite;
   }
   /* O núcleo: branco no centro, azul-LED na borda, respirando. Mais largo
-     que os raios (o scaleX extra está nos keyframes) para a palavra inteira
-     ter luz atrás mesmo com os raios curtos — o "+" do NANO+ é a ponta. */
+     que os raios (scaleX nos keyframes) para a palavra inteira ter luz atrás
+     mesmo com os raios curtos. */
   .hero-rays-field > .core {
     background: radial-gradient(circle at 50% 50%,#f6f9ff 0%,#dfeaffed 6%,#b9d3ffb3 14%,#7fb0f766 28%,#4886dc4a 46%,#2f60a82e 62%,transparent 78%);
-    filter: blur(6px);
+    filter: blur(var(--wm-core-blur));
     animation: bf-core-breathe 6s ease-in-out infinite alternate;
   }
 
@@ -627,10 +663,19 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 
 @keyframes bf-rays-spin    { to { transform: rotate(1turn); } }
 @keyframes bf-rays-drift   { from { translate: -1.6% .6%; } to { translate: 1.6% -.6%; } }
-@keyframes bf-rays-flicker { 0%,100% { opacity: .82; } 28% { opacity: 1; } 47% { opacity: .7; } 66% { opacity: .96; } 84% { opacity: .78; } }
-@keyframes bf-core-breathe { from { opacity: .8; transform: scaleX(1.3) scale(.93); } to { opacity: 1; transform: scaleX(1.3) scale(1.07); } }
+@keyframes bf-rays-flicker {
+  0%,100% { opacity: calc(.82 * var(--wm-long)); }
+  28%     { opacity: var(--wm-long); }
+  47%     { opacity: calc(.7 * var(--wm-long)); }
+  66%     { opacity: calc(.96 * var(--wm-long)); }
+  84%     { opacity: calc(.78 * var(--wm-long)); }
+}
+@keyframes bf-core-breathe {
+  from { opacity: calc(.8 * var(--wm-core-light)); transform: scaleX(var(--wm-core-stretch)) scale(calc(.93 * var(--wm-core-size))); }
+  to   { opacity: var(--wm-core-light);            transform: scaleX(var(--wm-core-stretch)) scale(calc(1.07 * var(--wm-core-size))); }
+}
 @keyframes bf-rays-flash {
-  0%   { filter: brightness(1);   transform: scaleX(2.35) scale(1); }
-  16%  { filter: brightness(2.1); transform: scaleX(2.35) scale(1.06); }
-  100% { filter: brightness(1);   transform: scaleX(2.35) scale(1); }
+  0%   { filter: brightness(1);               transform: scaleX(var(--wm-stretch)) scale(1); }
+  16%  { filter: brightness(var(--wm-flash)); transform: scaleX(var(--wm-stretch)) scale(1.06); }
+  100% { filter: brightness(1);               transform: scaleX(var(--wm-stretch)) scale(1); }
 }
