@@ -502,39 +502,38 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    - `is-flash` (main.js, na troca de modelo) dá um clarão curto no campo: a
      palavra nova "acende". A classe sai sozinha no animationend.
 
-   AJUSTE FINO (18/09/2026): TODOS os números da luz saem das variáveis
-   `--wm-*` logo abaixo. O painel temporário de sliders (js/tune.js +
-   css/tune.css, ligados no index.html com o marcador "tune") só reescreve
-   essas variáveis em :root e guarda no localStorage. Para TRAVAR: copiar os
-   valores finais do painel para cá e tirar os dois arquivos do index. */
+   TODOS os números da luz saem das variáveis `--wm-*` logo abaixo. Os
+   valores foram TRAVADOS em 18/09/2026 com os números que o usuário achou
+   num painel temporário de sliders (js/tune.js + css/tune.css, removidos no
+   mesmo dia — estão no commit c6df268, se um dia for preciso reajustar:
+   basta religar as duas linhas "tune" no index.html). */
 .hero-wordmark { display: none; }
 
 :root {
   /* LETRA */
-  --wm-font: 9.2vw;          /* tamanho (dentro do clamp 58..152px) */
-  --wm-wdth: 112;            /* largura da Archivo (100..125) */
-  --wm-ink: 0%;              /* quanto de claro mistura na silhueta */
+  --wm-font: 6.6vw;        /* tamanho (dentro do clamp 58..152px) */
+  --wm-wdth: 109;          /* largura da Archivo (100..125) */
   /* CAMPO DE LUZ */
-  --wm-light: .78;           /* BRILHO GERAL — opacity do campo, raios + núcleo */
-  --wm-field: 460px;         /* lado do quadrado do campo (limitado a 34vw) */
-  --wm-stretch: 2.35;        /* esticamento horizontal */
-  --wm-y: 0px;               /* deslocamento vertical da luz */
-  --wm-hue: 0deg;            /* matiz */
-  --wm-sat: 1;               /* saturação */
+  --wm-light: 1;           /* BRILHO GERAL — opacity do campo, raios + núcleo */
+  --wm-field: 205px;       /* lado do quadrado do campo (limitado a 34vw) */
+  --wm-stretch: 4;         /* esticamento horizontal */
+  --wm-y: 2px;             /* deslocamento vertical da luz */
+  --wm-hue: -3deg;         /* matiz */
+  --wm-sat: 1.35;          /* saturação */
   /* RAIOS */
-  --wm-reach: 25%;           /* alcance dos raios finos; largos ×1.16, longos ×1.28 */
-  --wm-blur: 2px;            /* dispersão dos raios finos; largos ×1.25, longos ×.8 */
-  --wm-fine: 1;              /* força dos raios finos */
-  --wm-wide: 1;              /* força dos raios largos */
-  --wm-long: 1;              /* força dos raios longos */
-  --wm-spin: 1;              /* velocidade do giro (1 = 160 s por volta nos finos) */
+  --wm-reach: 36%;         /* alcance dos raios finos; largos ×1.16, longos ×1.28 */
+  --wm-blur: 1.8px;        /* dispersão dos raios finos; largos ×1.25, longos ×.8 */
+  --wm-fine: 1.2;          /* força dos raios finos */
+  --wm-wide: .8;           /* força dos raios largos */
+  --wm-long: 1;            /* força dos raios longos */
+  --wm-spin: 4.9;          /* velocidade do giro (1 = 160 s por volta nos finos; 4.9 ≈ 33 s) */
   /* NÚCLEO */
-  --wm-core-size: 1;         /* tamanho do núcleo */
-  --wm-core-stretch: 1.3;    /* largura extra do núcleo */
-  --wm-core-light: 1;        /* brilho do núcleo */
-  --wm-core-blur: 6px;       /* suavidade do núcleo */
+  --wm-core-size: 1.15;    /* tamanho do núcleo */
+  --wm-core-stretch: 1;    /* largura extra do núcleo */
+  --wm-core-light: 1.5;    /* brilho do núcleo */
+  --wm-core-blur: 4.5px;   /* suavidade do núcleo */
   /* CLARÃO */
-  --wm-flash: 2.1;           /* força do clarão na troca de modelo */
+  --wm-flash: 5;           /* força do clarão na troca de modelo */
 }
 
 @media (min-width: 901px) {
@@ -557,18 +556,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     background-clip: text;
     user-select: none;
   }
-  /* A mesma silhueta, com --wm-ink de claro misturado. Fica atrás de um
-     @supports porque uma função desconhecida derrubaria a declaração inteira
-     e a palavra (color: transparent) sumiria. */
-  @supports (color: color-mix(in srgb, red 10%, blue)) {
-    .hero-wordmark {
-      background-image: linear-gradient(180deg,
-        color-mix(in srgb,#3a485e,#dfe8f5 var(--wm-ink)) 0%,
-        color-mix(in srgb,#232e3f,#dfe8f5 var(--wm-ink)) 38%,
-        color-mix(in srgb,#151c27,#dfe8f5 var(--wm-ink)) 100%);
-    }
-  }
-
   /* ── O campo de luz ── */
   .hero-rays {
     position: absolute;
