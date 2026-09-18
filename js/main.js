@@ -197,13 +197,18 @@
     '</div>';
   }
 
-  /* Os ícones das portas (CONECTS): um <img> por chave de `m.ports`, tirado
+  /* A faixa de conexões (CONECTS): um <img> por chave de `m.ports`, tirado
      do catálogo C.ports. O nome já está impresso na arte, então o alt repete
-     o mesmo texto e nada mais. Chave desconhecida é pulada em silêncio. */
+     o mesmo texto e nada mais. Chave desconhecida é pulada em silêncio. É o
+     TERCEIRO filho do .split, depois da foto e do texto: no desktop atravessa
+     as duas colunas; no celular o CSS a põe entre a foto e o texto. */
   function portGrid(m) {
     var keys = (m.ports || []).filter(function (k) { return C.ports && C.ports[k]; });
     if (!keys.length) return '';
-    return '<ul class="port-grid" aria-label="Portas da ' + esc(m.id) + '">' +
+    /* --n é a contagem: o CSS abre exatamente n colunas no desktop. Um
+       auto-fit com máximo de 150px contava as colunas pelo MÁXIMO e abria
+       sete para oito tiles — o último caía numa segunda linha. */
+    return '<ul class="port-grid" style="--n:' + keys.length + '" aria-label="Conexões da ' + esc(m.id) + '">' +
       keys.map(function (k) {
         var p = C.ports[k];
         return '<li><img src="assets/' + esc(p.img) + '.webp" width="480" height="' + esc(p.h || 480) + '" alt="' + esc(p.label) + '" loading="lazy" decoding="async"></li>';
@@ -240,12 +245,13 @@
     var eyebrow = band ? eyebrowOf('conects') + ' · ' + m.id : eyebrowOf('conects');
 
     return '<div class="panel-inner split">' +
-      '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + portGrid(m) + '</div>' +
+      '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' +
       '<div class="split-copy">' +
         '<p class="silk">' + esc(eyebrow) + '</p>' +
         head +
         editor +
       '</div>' +
+      portGrid(m) +
     '</div>';
   }
 

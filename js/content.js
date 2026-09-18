@@ -23,8 +23,8 @@
      · `lead`, `h1`, `shot` ................ painel HOME (a lista de modelos)
      · `specs` + banda `panel:'info'` ...... painel INFO
      · banda `panel:'conects'` + `closer` .. painel CONECTS
-     · `ports` (chaves de `PORTS`) ......... painel CONECTS, os ícones das
-                                              portas sob a foto traseira
+     · `ports` (chaves de `ports`) ......... painel CONECTS, a faixa de ícones
+                                              das conexões sob foto e texto
      · `buy` (compartilhado) ............... painel COMPRAR
 
    MODELO SEM FOTO  ->  `shot: null`
@@ -93,11 +93,11 @@ window.BF_CONTENT = (function () {
       buy: 'Comprar',
       footerEnd: 'Controladoras MIDI'
     },
-    /* Os ícones das portas do painel CONECTS (18/09/2026, arte do usuário):
-       um tile por tipo de saída, com o nome já impresso na própria imagem —
-       o `label` é só o texto alternativo. Cada modelo lista em `ports` as
-       chaves que tem, NA ORDEM em que devem aparecer; modelo sem `ports`
-       não mostra a fileira. Arquivo: assets/<img>.webp, 480×477 com alfa —
+    /* Os ícones das conexões do painel CONECTS (18/09/2026, arte do usuário):
+       um tile por conexão, com o nome já impresso na própria imagem — o
+       `label` é só o texto alternativo. Cada modelo lista em `ports` as
+       chaves que tem, NA ORDEM em que devem aparecer (saídas MIDI, USB, sem
+       fio, entradas); modelo sem `ports` não mostra a faixa. Arquivo: assets/<img>.webp, 480×477 com alfa —
        TODOS na mesma caixa ("deixe os ícones do mesmo tamanho"): a arte dos
        USB era 6% mais baixa e foi esticada na exportação, o que não se nota.
        `h` é a altura em px, para o <img> reservar a proporção antes de
@@ -106,7 +106,11 @@ window.BF_CONTENT = (function () {
       din5:      { img: 'port-din5',       h: 477, label: 'MIDI OUT (DIN5)' },
       trs:       { img: 'port-trs',        h: 477, label: 'MIDI OUT (TRS-A)' },
       usbDevice: { img: 'port-usb-device', h: 477, label: 'USB MIDI DEVICE' },
-      usbHost:   { img: 'port-usb-host',   h: 477, label: 'USB HOST' }
+      usbHost:   { img: 'port-usb-host',   h: 477, label: 'USB HOST' },
+      bluetooth: { img: 'port-bluetooth',  h: 477, label: 'Conexão Bluetooth MIDI — BLE (MIDI wireless)' },
+      wifi:      { img: 'port-wifi',       h: 477, label: 'Conexão Wi-Fi para o app' },
+      dualSw:    { img: 'port-dual-switch',h: 477, label: 'Entrada Dual Switch — P10 TRS' },
+      exp:       { img: 'port-expression', h: 477, label: 'Entrada Pedal de Expressão — P10 TRS' }
     },
 
     models: [
@@ -121,7 +125,7 @@ window.BF_CONTENT = (function () {
         shot: '8sw-hero-front',
         shotAlt: 'BFMIDI 8SW+ visto de frente: oito footswitches, LIVE MODE e GLOBAL SWITCH, ' +
                  'tela colorida com amplificador e o anel azul do footswitch 1 aceso.',
-        ports: ['din5', 'trs', 'usbDevice', 'usbHost'],
+        ports: ['din5', 'trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 8,
         specs: [
           specSwitches(8, 'Seis para presets, mais LIVE MODE e GLOBAL SWITCH dedicados.'),
@@ -205,7 +209,7 @@ window.BF_CONTENT = (function () {
         shot: 'nano-hero',
         shotAlt: 'BFMIDI NANO+ vista de frente: seis footswitches, tela colorida ' +
                  'com o preset CLASSIC ROCK e anel azul aceso no footswitch 1.',
-        ports: ['trs', 'usbDevice', 'usbHost'],
+        ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 6,
         specs: [
           specSwitches(6, 'Os mesmos seis presets por banco, num corpo bem menor.'),

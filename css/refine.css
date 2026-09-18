@@ -462,33 +462,41 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   }
   .view-nav .nav-icon { width: 21px; height: 21px; }
 }
-/* ── Ícones das portas no painel CONECTS (18/09/2026, arte do usuário) ──
-   Fileira sob a foto traseira, dentro da .split-media: é a coluna que tem
-   folga no desktop (a foto termina bem antes da barra) e, no celular, é o
-   cartão da foto — os ícones ficam junto do que ilustram. Uma coluna por
-   ícone no desktop (4 na 8SW+, 3 na NANO+), duas por linha no celular. Os
-   quatro arquivos têm a MESMA caixa (480×477), então os tiles saem do mesmo
-   tamanho em qualquer coluna.
+/* ── Faixa de conexões no painel CONECTS (18/09/2026, arte do usuário) ──
+   Oito tiles na 8SW+, sete na NANO+ (sem DIN5): saídas MIDI, USB, sem fio e
+   entradas. Nasceu com quatro, sob a foto; com oito virou uma FAIXA que
+   atravessa as duas colunas do .split, abaixo de foto e texto — sob a foto,
+   oito tiles viravam um bloco de 2×4 que empurrava tudo. Os arquivos têm a
+   mesma caixa (480×477), então os tiles saem iguais em qualquer coluna.
 
-   A .split-media é um flex EM LINHA (style.css) — sem isto a fileira
-   entrava ao LADO da foto e a encolhia pela metade (visto no desktop). Com
-   a fileira dentro, a coluna vira pilha; a foto continua centrada e limitada
-   à largura da coluna. */
-.split-media:has(.port-grid) { flex-direction: column; }
-.split-media:has(.port-grid) .panel-shot { width: 100%; }
+   Desktop: UMA linha com exatamente n colunas (o main.js escreve --n no
+   <ul>), tiles de até 130px, centrada — um auto-fit com máximo definido
+   conta as colunas pelo máximo e abria sete para oito tiles. Tablet (≤860):
+   quatro por linha. Celular (≤600): dois por linha, e a faixa sobe para
+   ENTRE a foto e o texto (order), porque ilustra a foto e não o fechamento
+   do editor. */
 .port-grid {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(0,1fr));
+  grid-template-columns: repeat(var(--n,4),minmax(0,1fr));
   gap: 14px;
-  width: min(100%,560px);
-  margin: 10px auto 0;
+  width: 100%;
+  max-width: calc(var(--n,4) * 130px + (var(--n,4) - 1) * 14px);
+  margin: 0 auto;
   padding: 0;
   list-style: none;
 }
 .port-grid li { margin: 0; min-width: 0; }
 .port-grid img { display: block; width: 100%; height: auto; filter: drop-shadow(0 12px 18px #0009); }
+/* O gap do .split (até 70px) vale também entre as LINHAS; a faixa não
+   precisa de tanto ar acima dela. */
+.split { row-gap: 22px; }
+@media (max-width: 860px) {
+  .port-grid { grid-template-columns: repeat(4,minmax(0,1fr)); max-width: none; gap: 12px; }
+}
 @media (max-width: 600px) {
-  .port-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 12px; }
+  .port-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; order: 1; }
+  .split-copy { order: 2; }
 }
 
 /* ── Nome da controladora no vão do HOME (18/09/2026, imagem de referência) ──
