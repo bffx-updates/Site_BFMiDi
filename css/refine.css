@@ -483,7 +483,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    opostos — a interferência entre elas é o que faz os raios parecerem
    irregulares e vivos, como um zoom blur de ruído. Pontos que custam caro:
 
-   - O campo é um QUADRADO esticado por `scaleX(2.3)`. Esticar DEPOIS de
+   - O campo é um QUADRADO esticado por `scaleX(2.35)`. Esticar DEPOIS de
      desenhar é o que dá o visual de "warp": os raios se adensam e engrossam
      perto do eixo horizontal, e a máscara circular vira a elipse larga da
      referência. Um gradiente cônico desenhado direto numa caixa larga daria
@@ -533,7 +533,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     position: absolute;
     z-index: -1;
     left: 50%; top: 50%;
-    width: min(780px,58vw);
+    width: min(540px,40vw);
     aspect-ratio: 1;
     transform: translate(-50%,-50%);
     pointer-events: none;
@@ -542,9 +542,9 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .hero-rays-field {
     position: absolute;
     inset: 0;
-    transform: scaleX(2.3);
-    -webkit-mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 9%,#000c 28%,#0006 50%,#0001 68%,transparent 76%);
-            mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 9%,#000c 28%,#0006 50%,#0001 68%,transparent 76%);
+    transform: scaleX(2.35);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 24%,#0005 42%,#0001 58%,transparent 66%);
+            mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 24%,#0005 42%,#0001 58%,transparent 66%);
   }
   .hero-rays-field > i { position: absolute; inset: 0; border-radius: 50%; }
 
@@ -613,7 +613,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 @keyframes bf-rays-flicker { 0%,100% { opacity: .82; } 28% { opacity: 1; } 47% { opacity: .7; } 66% { opacity: .96; } 84% { opacity: .78; } }
 @keyframes bf-core-breathe { from { opacity: .8; transform: scale(.93); } to { opacity: 1; transform: scale(1.07); } }
 @keyframes bf-rays-flash {
-  0%   { filter: brightness(1);   transform: scaleX(2.3) scale(1); }
-  16%  { filter: brightness(2.1); transform: scaleX(2.3) scale(1.06); }
-  100% { filter: brightness(1);   transform: scaleX(2.3) scale(1); }
+  0%   { filter: brightness(1);   transform: scaleX(2.35) scale(1); }
+  16%  { filter: brightness(2.1); transform: scaleX(2.35) scale(1.06); }
+  100% { filter: brightness(1);   transform: scaleX(2.35) scale(1); }
 }
