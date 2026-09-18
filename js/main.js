@@ -91,6 +91,7 @@
   var live     = $('#live-region');
 
   var heroH1b  = $('#hero-h1b');
+  var heroWordmark = $('#hero-wordmark');
   var stage    = $('#hero-stage');
 
   /* A vista 'home' é a VISÃO GERAL do modelo — a foto grande. Ela não tem
@@ -466,6 +467,7 @@
     if (view === 'home') overview.setAttribute('aria-current', 'page');
     else overview.removeAttribute('aria-current');
     heroH1b.textContent = m.id;
+    heroWordmark.textContent = m.h1[1];
     shots.forEach(function (shot, i) { shot.classList.toggle('is-on', i === mi); shot.setAttribute('aria-hidden', String(i !== mi)); });
     if (view !== 'home') ensurePanel(view, mi);
     Object.keys(panels).forEach(function (key) {

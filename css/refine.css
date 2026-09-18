@@ -365,7 +365,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    fixa também, se não a barra passaria por cima dela. `--bf-footbar` é a
    altura reservada para essa faixa e é o que ergue a barra — os dois leem a
    mesma medida, então mudar a fonte do rodapé aqui move tudo junto. */
-.app { --bf-footbar: 30px; padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+.app { --bf-footbar: 30px; padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
 #app > .site-footer {
   position: fixed;
   z-index: 49;
@@ -467,4 +467,69 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     letter-spacing: .05em;
   }
   .view-nav .nav-icon { width: 21px; height: 21px; }
+}
+
+/* ── Nome da controladora no vão do HOME (18/09/2026, imagem de referência) ──
+   Só no desktop: é lá que sobrava a faixa entre o produto e a barra. No
+   celular o palco já encosta na barra e a palavra não teria onde caber.
+
+   O texto não é lido em voz alta (`aria-hidden` no HTML): o h1.sr-only logo
+   acima já anuncia "BFMIDI 8SW+", e sem isso o leitor de tela repetiria o
+   modelo duas vezes seguidas. */
+.hero-wordmark { display: none; }
+
+@media (min-width: 901px) {
+  .hero-wordmark {
+    display: block;
+    position: relative;
+    z-index: 0;
+    flex: 1 1 auto;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    margin: clamp(2px,1.4vh,20px) 0 0;
+    font: 800 clamp(58px,9.2vw,152px)/.86 var(--font-display);
+    letter-spacing: -.045em;
+    text-transform: uppercase;
+    /* A letra é o próprio degradê, recortado pelo texto: clara em cima,
+       apagando para a base, como na referência. */
+    color: transparent;
+    background: linear-gradient(180deg,#46647f 0%,#2a3e55 52%,#16222f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    user-select: none;
+  }
+
+  /* A iluminação. Duas manchas de luz — uma fria e uma quente, as cores da
+     marca — passeiam devagar ATRÁS da palavra (z-index -1 dentro do contexto
+     que o z-index:0 acima cria). É desenho, não conteúdo: não intercepta
+     clique e some para quem pede menos movimento. */
+  .hero-wordmark::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -70% -16%;
+    pointer-events: none;
+    background:
+      radial-gradient(44% 58% at 32% 46%,#3f86c766 0%,transparent 70%),
+      radial-gradient(38% 52% at 71% 56%,#ff8b4333 0%,transparent 72%);
+    filter: blur(16px);
+    animation: bf-wordmark-light 11s ease-in-out infinite alternate;
+  }
+}
+
+/* Rede de segurança: `color: transparent` só é seguro enquanto o recorte pelo
+   texto funcionar. Sem suporte, a palavra sumiria por completo — aqui ela cai
+   numa cor sólida. */
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+  .hero-wordmark { color: #3a5570; background: none; }
+}
+
+@keyframes bf-wordmark-light {
+  from { transform: translate3d(-4%,2%,0) scale(1);    opacity: .72; }
+  to   { transform: translate3d(4%,-2%,0) scale(1.09); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wordmark::before { animation: none; }
 }
