@@ -520,9 +520,12 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     letter-spacing: -.04em;
     text-transform: uppercase;
     /* A silhueta da referência: quase preto com viés azul, um fio mais
-       claro no topo, recortado pelo texto. */
+       claro no topo, recortado pelo texto. Um degrau mais clara que o
+       fundo (#080b10) de propósito: com a luz mais fraca, a ponta da
+       palavra mais larga (o "+" do NANO+) fica fora do brilho e precisa
+       ler sozinha, sem depender de luz atrás. */
     color: transparent;
-    background: linear-gradient(180deg,#303d51 0%,#1b2432 38%,#0e131b 100%);
+    background: linear-gradient(180deg,#3a485e 0%,#232e3f 38%,#151c27 100%);
     -webkit-background-clip: text;
     background-clip: text;
     user-select: none;
@@ -542,6 +545,11 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .hero-rays-field {
     position: absolute;
     inset: 0;
+    /* BRILHO GERAL — o único botão de intensidade: dima raios e núcleo
+       juntos sem mexer em forma nem alcance ("diminua um pouco o brilho",
+       18/09/2026). O clarão da troca de modelo é brightness() em cima
+       disto, então continua proporcional. */
+    opacity: .78;
     transform: scaleX(2.35);
     -webkit-mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
             mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
