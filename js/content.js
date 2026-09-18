@@ -285,6 +285,18 @@ window.BF_CONTENT = (function () {
           SPEC_SCREEN,
           SPEC_MODES
         ],
+        buy: {
+          hideDetails: true,
+          primary: {
+            label: 'Comprar MICRO',
+            href: 'https://loja.bffx.com.br/produtos/bfmidi-3-micro-qdul0'
+          },
+          waitlist: {
+            text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
+            label: 'Chamar no WhatsApp',
+            href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%20MICRO.'
+          }
+        },
         /* As bandas não trazem `img`: a MICRO tem uma foto só, e o main.js cai
            na foto principal quando a banda não tem a sua. */
         bands: [
