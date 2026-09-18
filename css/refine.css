@@ -119,7 +119,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .band-list { gap: 10px; }
 .band-list li { padding-left: 20px; }
 .band-list li::before { top: .68em; height: 4px; width: 4px; border-radius: 50%; background: #759dce; }
-.editor-note { gap: 10px; margin-top: 10px; padding-top: 22px; }
 .buy { max-width: 740px; gap: 14px; height: auto; overflow: visible; }
 .buy-thumb { max-height: none; }
 .buy-thumb img { width: 320px; height: auto; max-height: 200px; object-fit: contain; }

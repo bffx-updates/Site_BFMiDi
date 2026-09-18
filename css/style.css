@@ -838,12 +838,6 @@ ul, ol { padding: 0; list-style: none; }
 }
 
 /* ---- o editor, no fim do painel CONECTS ---- */
-.editor-note {
-  display: flex; flex-direction: column; gap: 7px;
-  margin-top: var(--sp-1);
-  padding-top: var(--sp-4);
-  border-top: 1px solid var(--hairline);
-}
 
 /* ---- painel COMPRAR ---- */
 .buy {
@@ -984,7 +978,6 @@ ul, ol { padding: 0; list-style: none; }
      a pergunta, e a foto do aparelho inteiro já foi vista na lista. */
   .panel-shot, .split-media .shot-map { max-height: 30svh; }
   .panel-lead, .feat-body { font-size: 14px; line-height: 1.45; }
-  .editor-note { padding-top: var(--sp-3); }
   .spec-note { font-size: 12px; }
 }
 

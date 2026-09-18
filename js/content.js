@@ -22,7 +22,7 @@
    ONDE CADA TEXTO DESTE ARQUIVO APARECE
      · `lead`, `h1`, `shot` ................ painel HOME (a lista de modelos)
      · `specs` + banda `panel:'info'` ...... painel INFO
-     · banda `panel:'conects'` + `closer` .. painel CONECTS
+     · banda `panel:'conects'` ............. painel CONECTS
      · `ports` (chaves de `ports`) ......... painel CONECTS, a faixa de ícones
                                               das conexões sob foto e texto
      · `buy` (compartilhado) ............... painel COMPRAR
@@ -347,13 +347,6 @@ window.BF_CONTENT = (function () {
     /* Bloco do editor — igual para todos os modelos, e por isso vive fora da
        lista. Aparece no fim do painel CONECTS: conectar ao editor é a última
        conexão da lista, e é a que diferencia o aparelho. */
-    closer: {
-      eyebrow: 'Editor BFMIDI',
-      title: 'Editor no navegador',
-      lead: 'O editor abre no celular ou no computador, por Wi-Fi ou por cabo USB, ' +
-            'sem instalar nada. Você monta banco, preset e cada footswitch na ' +
-            'tela, salva, e o pedal já está pronto para o show.'
-    },
 
     /* ----------------------------------------------------------- COMPRAR ----
        PREENCHER: `price` e os dois `href`. Eles nascem em '#' de propósito —

@@ -227,15 +227,6 @@
       : '<h2 class="panel-title">' + esc(m.id) + '</h2>' +
         '<p class="panel-lead">' + esc(C.pending.conects) + '</p>';
 
-    /* O editor fecha o painel: conectar ao editor é a última conexão da lista,
-       e é a que diferencia o aparelho. Texto compartilhado — não é do modelo. */
-    var editor =
-      '<div class="editor-note">' +
-        '<span class="silk silk-accent">' + esc(C.closer.eyebrow) + '</span>' +
-        '<h3 class="feat-title">' + esc(C.closer.title) + '</h3>' +
-        '<p class="feat-body">' + esc(C.closer.lead) + '</p>' +
-      '</div>';
-
     /* O NOME DO MODELO ENTRA NO MICRO-RÓTULO quando o título é o da banda.
        Antes existia uma dica acima da cápsula dizendo qual modelo estava em
        cena; ela saiu, e INFO e COMPRAR não sentiram porque os dois já usam o
@@ -249,7 +240,6 @@
       '<div class="split-copy">' +
         '<p class="silk">' + esc(eyebrow) + '</p>' +
         head +
-        editor +
       '</div>' +
       portGrid(m) +
     '</div>';
