@@ -538,25 +538,28 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
      palavra nova "acende". A classe sai sozinha no animationend.
 
    TODOS os números da luz saem das variáveis `--wm-*` logo abaixo. Os
-   valores foram TRAVADOS em 18/09/2026 com os números que o usuário achou
-   num painel temporário de sliders (js/tune.js + css/tune.css, removidos no
-   mesmo dia — estão no commit c6df268, se um dia for preciso reajustar:
-   basta religar as duas linhas "tune" no index.html). */
+   valores foram TRAVADOS em 18/09/2026, em duas rodadas, com os números que
+   o usuário achou num painel temporário de sliders (js/tune.js +
+   css/tune.css, removidos de novo — a versão mais recente está no commit
+   be353d3; para reajustar, basta restaurar os dois arquivos e religar as
+   duas linhas "tune" no index.html). A segunda rodada clareou a letra 4%
+   (color-mix logo abaixo) e puxou a luz para um azul mais quente (matiz
+   +22°, saturação 1.75). */
 :root {
   /* LETRA */
-  --wm-font: 6.6vw;        /* tamanho (dentro do clamp 58..152px) */
-  --wm-wdth: 109;          /* largura da Archivo (100..125) */
-  --wm-ink: 0%;            /* quanto de claro mistura na letra (0 = #070A0F puro) */
+  --wm-font: 9.8vw;        /* tamanho (dentro do clamp 58..152px) */
+  --wm-wdth: 104;          /* largura da Archivo (100..125) */
+  --wm-ink: 4%;            /* quanto de claro mistura na letra (0% = #070A0F puro) */
   /* CAMPO DE LUZ */
   --wm-light: 1;           /* BRILHO GERAL — opacity do campo, raios + núcleo */
-  --wm-field: 205px;       /* lado do quadrado do campo (limitado a 34vw) */
+  --wm-field: 345px;       /* lado do quadrado do campo (limitado a 34vw) */
   --wm-stretch: 4;         /* esticamento horizontal */
-  --wm-y: 2px;             /* deslocamento vertical da luz */
-  --wm-hue: -3deg;         /* matiz */
-  --wm-sat: 1.35;          /* saturação */
+  --wm-y: 3px;             /* deslocamento vertical da luz */
+  --wm-hue: 22deg;         /* matiz */
+  --wm-sat: 1.75;          /* saturação */
   /* RAIOS */
-  --wm-reach: 36%;         /* alcance dos raios finos; largos ×1.16, longos ×1.28 */
-  --wm-blur: 1.8px;        /* dispersão dos raios finos; largos ×1.25, longos ×.8 */
+  --wm-reach: 28%;         /* alcance dos raios finos; largos ×1.16, longos ×1.28 */
+  --wm-blur: .8px;         /* dispersão dos raios finos; largos ×1.25, longos ×.8 */
   --wm-fine: 1.2;          /* força dos raios finos */
   --wm-wide: .8;           /* força dos raios largos */
   --wm-long: 1;            /* força dos raios longos */
@@ -564,10 +567,10 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   /* NÚCLEO */
   --wm-core-size: 1.15;    /* tamanho do núcleo */
   --wm-core-stretch: 1;    /* largura extra do núcleo */
-  --wm-core-light: 1.5;    /* brilho do núcleo */
-  --wm-core-blur: 4.5px;   /* suavidade do núcleo */
+  --wm-core-light: 1.05;   /* brilho do núcleo */
+  --wm-core-blur: 7.5px;   /* suavidade do núcleo */
   /* CLARÃO */
-  --wm-flash: 5;           /* força do clarão na troca de modelo */
+  --wm-flash: 6;           /* força do clarão na troca de modelo */
 }
 
 .hero { position: relative; isolation: isolate; }
