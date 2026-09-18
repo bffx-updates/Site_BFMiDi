@@ -78,6 +78,11 @@ window.BF_CONTENT = (function () {
     label: 'Tela colorida',
     note: 'Fundo por imagem, ícone e cor próprios em cada footswitch.'
   };
+  var SPEC_SCREEN_24 = {
+    value: '2,4″',
+    label: 'Tela colorida',
+    note: 'Fundo por imagem, ícone e cor próprios em cada footswitch.'
+  };
   var SPEC_MODES = {
     value: '9',
     label: 'Comportamentos em LIVE',
@@ -274,7 +279,8 @@ window.BF_CONTENT = (function () {
                  'coloridos, LIVE MODE, tela colorida com o preset ROCK e as portas ' +
                  '9V, TRS, USB HOST e USB DEVICE no topo.',
         /* O que a foto mostra no topo: TRS, HOST e DEVICE (mais o 9V). Sem
-           DIN5, expressão ou dual switch. */
+           DIN5, e sem entrada de expressão ou dual switch (confirmado pelo
+           usuário, 18/09/2026). */
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi'],
         switches: 4,
         specs: [
@@ -282,7 +288,7 @@ window.BF_CONTENT = (function () {
           /* 4 por banco, e não 6: nas placas de quatro footswitches o pé alcança
              quatro presets por letra. Ver boardPresetCount() no firmware. */
           specPresets(4),
-          SPEC_SCREEN,
+          SPEC_SCREEN_24,               /* tela de 2,4″, informação do usuário */
           SPEC_MODES
         ],
         buy: {
