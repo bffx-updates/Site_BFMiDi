@@ -96,7 +96,12 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .btn-ghost { color: var(--ink-2); border-color: #ffffff28; background: #11182388; }
 .btn-ghost:hover { color: #fff; background: #1b2634; border-color: #ffffff45; transform: translateY(-1px); }
 .btn:disabled { cursor: not-allowed; background: #1b2430; color: #8c99ab; border-color: #ffffff12; box-shadow: none; transform: none; }
-.panel-inner { max-width: var(--maxw-page); padding: 38px clamp(20px,4.5vw,64px); margin-block: auto; }
+/* O painel fica centrado na vertical (margin-block: auto). Para o conteúdo
+   subir SEM perder o centro, o padding de baixo cresce mais do que o de cima
+   encolhe: a caixa fica 24px mais alta, as margens automáticas cedem 12px
+   cada, e o conteúdo sobe 20px ("diminua um pouco o espaço do menu pro
+   conteúdo", 18/09/2026 — era ~110px entre a cápsula e o micro-rótulo). */
+.panel-inner { max-width: var(--maxw-page); padding: 30px clamp(20px,4.5vw,64px) 70px; margin-block: auto; }
 .split { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(30px,5vw,70px); align-items: center; height: auto; }
 .split-media { position: relative; min-width: 0; padding: 30px 0; background: radial-gradient(ellipse,#253a5355,transparent 70%); }
 .panel-shot img { max-height: 440px; width: 100%; object-fit: contain; }
@@ -144,7 +149,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .hero-stage { height: clamp(270px,55vw,400px); }
   .shot { inset: 0 -3%; }
   .split { display: grid; grid-template-columns: 1fr; gap: 20px; overflow: visible; }
-  .panel-inner { padding-top: 20px; }
+  .panel-inner { padding-top: 12px; }
   .split-media { display: block; padding: 0; }
   .panel-shot { max-height: none; }
   .panel-shot img { max-height: 320px; }
