@@ -469,8 +469,13 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .view-nav .nav-icon { width: 21px; height: 21px; }
 }
 /* ── Nome da controladora no vão do HOME (18/09/2026, imagem de referência) ──
-   Só no desktop: é lá que sobrava a faixa entre o produto e a barra. No
-   celular o palco já encosta na barra e a palavra não teria onde caber.
+   Em TODA largura. Nasceu só no desktop, com a justificativa de que "no
+   celular o palco já encosta na barra" — e não encosta: a foto do iPhone do
+   usuário (18/09) mostrou ~250px vazios entre o cartão da foto e a barra,
+   porque o painel HOME é absoluto dentro de um .panels com min-height de
+   100dvh e o palco tem altura fixa. A palavra ocupa esse vão nos dois. Só
+   some no celular DEITADO (bloco lá embaixo), onde o palco sozinho já
+   passa da altura.
 
    O texto não é lido em voz alta (`aria-hidden` no HTML): o h1.sr-only logo
    acima já anuncia "BFMIDI 8SW+", e sem isso o leitor de tela repetiria o
@@ -507,8 +512,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    num painel temporário de sliders (js/tune.js + css/tune.css, removidos no
    mesmo dia — estão no commit c6df268, se um dia for preciso reajustar:
    basta religar as duas linhas "tune" no index.html). */
-.hero-wordmark { display: none; }
-
 :root {
   /* LETRA */
   --wm-font: 6.6vw;        /* tamanho (dentro do clamp 58..152px) */
@@ -536,133 +539,109 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   --wm-flash: 5;           /* força do clarão na troca de modelo */
 }
 
-@media (min-width: 901px) {
-  .hero { position: relative; isolation: isolate; }
+.hero { position: relative; isolation: isolate; }
 
-  .hero-wordmark {
-    display: grid;
-    position: relative;
-    place-items: center;
-    flex: 1 1 auto;
-    min-height: 0;
-    margin: clamp(2px,1.4vh,20px) 0 0;
-    font: 900 clamp(58px,var(--wm-font),152px)/.86 var(--font-display);
-    font-variation-settings: 'wdth' var(--wm-wdth), 'wght' 900;
-    letter-spacing: -.04em;
-    text-transform: uppercase;
-    color: transparent;
-    background: linear-gradient(180deg,#3a485e 0%,#232e3f 38%,#151c27 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    user-select: none;
-  }
-  /* ── O campo de luz ── */
-  .hero-rays {
-    position: absolute;
-    z-index: -1;
-    left: 50%;
-    top: calc(50% + var(--wm-y));
-    width: min(var(--wm-field),34vw);
-    aspect-ratio: 1;
-    transform: translate(-50%,-50%);
-    pointer-events: none;
-    filter: hue-rotate(var(--wm-hue)) saturate(var(--wm-sat));
-    animation: bf-rays-drift 19s ease-in-out infinite alternate;
-  }
-  .hero-rays-field {
-    position: absolute;
-    inset: 0;
-    opacity: var(--wm-light);
-    transform: scaleX(var(--wm-stretch));
-    -webkit-mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
-            mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
-  }
-  .hero-rays-field > i { position: absolute; inset: 0; border-radius: 50%; }
+.hero-wordmark {
+  display: grid;
+  position: relative;
+  place-items: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: clamp(2px,1.4vh,20px) 0 0;
+  font: 900 clamp(58px,var(--wm-font),152px)/.86 var(--font-display);
+  font-variation-settings: 'wdth' var(--wm-wdth), 'wght' 900;
+  letter-spacing: -.04em;
+  text-transform: uppercase;
+  color: transparent;
+  background: linear-gradient(180deg,#3a485e 0%,#232e3f 38%,#151c27 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  user-select: none;
+}
+/* ── O campo de luz ── */
+.hero-rays {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(50% + var(--wm-y));
+  width: min(var(--wm-field),34vw);
+  aspect-ratio: 1;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  filter: hue-rotate(var(--wm-hue)) saturate(var(--wm-sat));
+  animation: bf-rays-drift 19s ease-in-out infinite alternate;
+}
+.hero-rays-field {
+  position: absolute;
+  inset: 0;
+  opacity: var(--wm-light);
+  transform: scaleX(var(--wm-stretch));
+  -webkit-mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
+          mask-image: radial-gradient(circle at 50% 50%,#000 0%,#000 8%,#000c 22%,#0006 40%,#0002 58%,transparent 76%);
+}
+.hero-rays-field > i { position: absolute; inset: 0; border-radius: 50%; }
 
-  /* Os raios: curtos e desfocados, por isso GROSSOS — a 60px do centro um
-     raio de 0,3° tinha meio pixel e sumia dentro do núcleo depois do blur. */
-  /* r1 — raios finos e numerosos, azulados, os mais curtos. */
-  .hero-rays-field > .r1 {
-    background: repeating-conic-gradient(from 0deg at 50% 50%,
-      transparent 0deg,    #c4dcff8a .22deg,  #c4dcff8a .56deg,  transparent .82deg,
-      transparent 1.56deg, #8fb9ff5c 1.74deg, #8fb9ff5c 2.02deg, transparent 2.24deg,
-      transparent 2.96deg, #e3eeffbf 3.18deg, #e3eeffbf 3.72deg, transparent 4.02deg,
-      transparent 4.3deg,  #7fadf24d 4.4deg,  #7fadf24d 4.62deg, transparent 4.76deg,
-      transparent 5.23deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000a calc(var(--wm-reach) * .52),transparent var(--wm-reach));
-            mask-image: radial-gradient(circle,#000 0%,#000a calc(var(--wm-reach) * .52),transparent var(--wm-reach));
-    opacity: var(--wm-fine);
-    filter: blur(var(--wm-blur));
-    animation: bf-rays-spin calc(160s / var(--wm-spin)) linear infinite;
-  }
-  /* r2 — raios largos e brancos, girando ao contrário. */
-  .hero-rays-field > .r2 {
-    background: repeating-conic-gradient(from 7deg at 50% 50%,
-      transparent 0deg,   #f1f6ffd9 .3deg,   #f1f6ffd9 1.1deg,  transparent 1.6deg,
-      transparent 5deg,   #cfe1ff80 5.3deg,  #cfe1ff80 5.8deg,  transparent 6.2deg,
-      transparent 8.9deg, #e6efffa6 9.1deg,  #e6efffa6 9.5deg,  transparent 9.8deg,
-      transparent 13.7deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .6),transparent calc(var(--wm-reach) * 1.16));
-            mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .6),transparent calc(var(--wm-reach) * 1.16));
-    opacity: var(--wm-wide);
-    filter: blur(calc(var(--wm-blur) * 1.25));
-    animation: bf-rays-spin calc(115s / var(--wm-spin)) linear infinite reverse;
-  }
-  /* r3 — poucos raios, os mais longos, tremeluzindo (a força --wm-long
-     entra nos keyframes do tremeluzir, porque a opacity é animada). */
-  .hero-rays-field > .r3 {
-    background: repeating-conic-gradient(from 2.5deg at 50% 50%,
-      transparent 0deg,    #ffffffe6 .1deg,    #ffffffe6 .48deg,   transparent .7deg,
-      transparent 11.1deg, #d6e6ff99 11.24deg, #d6e6ff99 11.5deg,  transparent 11.72deg,
-      transparent 23.9deg);
-    -webkit-mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .68),transparent calc(var(--wm-reach) * 1.28));
-            mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .68),transparent calc(var(--wm-reach) * 1.28));
-    filter: blur(calc(var(--wm-blur) * .8));
-    animation: bf-rays-spin calc(230s / var(--wm-spin)) linear infinite, bf-rays-flicker 7.5s ease-in-out infinite;
-  }
-  /* O núcleo: branco no centro, azul-LED na borda, respirando. Mais largo
-     que os raios (scaleX nos keyframes) para a palavra inteira ter luz atrás
-     mesmo com os raios curtos. */
-  .hero-rays-field > .core {
-    background: radial-gradient(circle at 50% 50%,#f6f9ff 0%,#dfeaffed 6%,#b9d3ffb3 14%,#7fb0f766 28%,#4886dc4a 46%,#2f60a82e 62%,transparent 78%);
-    filter: blur(var(--wm-core-blur));
-    animation: bf-core-breathe 6s ease-in-out infinite alternate;
-  }
-
-  .hero-wordmark.is-flash .hero-rays-field { animation: bf-rays-flash .9s cubic-bezier(.2,.8,.3,1); }
+/* Os raios: curtos e desfocados, por isso GROSSOS — a 60px do centro um
+   raio de 0,3° tinha meio pixel e sumia dentro do núcleo depois do blur. */
+/* r1 — raios finos e numerosos, azulados, os mais curtos. */
+.hero-rays-field > .r1 {
+  background: repeating-conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg,    #c4dcff8a .22deg,  #c4dcff8a .56deg,  transparent .82deg,
+    transparent 1.56deg, #8fb9ff5c 1.74deg, #8fb9ff5c 2.02deg, transparent 2.24deg,
+    transparent 2.96deg, #e3eeffbf 3.18deg, #e3eeffbf 3.72deg, transparent 4.02deg,
+    transparent 4.3deg,  #7fadf24d 4.4deg,  #7fadf24d 4.62deg, transparent 4.76deg,
+    transparent 5.23deg);
+  -webkit-mask-image: radial-gradient(circle,#000 0%,#000a calc(var(--wm-reach) * .52),transparent var(--wm-reach));
+          mask-image: radial-gradient(circle,#000 0%,#000a calc(var(--wm-reach) * .52),transparent var(--wm-reach));
+  opacity: var(--wm-fine);
+  filter: blur(var(--wm-blur));
+  animation: bf-rays-spin calc(160s / var(--wm-spin)) linear infinite;
+}
+/* r2 — raios largos e brancos, girando ao contrário. */
+.hero-rays-field > .r2 {
+  background: repeating-conic-gradient(from 7deg at 50% 50%,
+    transparent 0deg,   #f1f6ffd9 .3deg,   #f1f6ffd9 1.1deg,  transparent 1.6deg,
+    transparent 5deg,   #cfe1ff80 5.3deg,  #cfe1ff80 5.8deg,  transparent 6.2deg,
+    transparent 8.9deg, #e6efffa6 9.1deg,  #e6efffa6 9.5deg,  transparent 9.8deg,
+    transparent 13.7deg);
+  -webkit-mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .6),transparent calc(var(--wm-reach) * 1.16));
+          mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .6),transparent calc(var(--wm-reach) * 1.16));
+  opacity: var(--wm-wide);
+  filter: blur(calc(var(--wm-blur) * 1.25));
+  animation: bf-rays-spin calc(115s / var(--wm-spin)) linear infinite reverse;
+}
+/* r3 — poucos raios, os mais longos, tremeluzindo (a força --wm-long
+   entra nos keyframes do tremeluzir, porque a opacity é animada). */
+.hero-rays-field > .r3 {
+  background: repeating-conic-gradient(from 2.5deg at 50% 50%,
+    transparent 0deg,    #ffffffe6 .1deg,    #ffffffe6 .48deg,   transparent .7deg,
+    transparent 11.1deg, #d6e6ff99 11.24deg, #d6e6ff99 11.5deg,  transparent 11.72deg,
+    transparent 23.9deg);
+  -webkit-mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .68),transparent calc(var(--wm-reach) * 1.28));
+          mask-image: radial-gradient(circle,#000 0%,#000c calc(var(--wm-reach) * .68),transparent calc(var(--wm-reach) * 1.28));
+  filter: blur(calc(var(--wm-blur) * .8));
+  animation: bf-rays-spin calc(230s / var(--wm-spin)) linear infinite, bf-rays-flicker 7.5s ease-in-out infinite;
+}
+/* O núcleo: branco no centro, azul-LED na borda, respirando. Mais largo
+   que os raios (scaleX nos keyframes) para a palavra inteira ter luz atrás
+   mesmo com os raios curtos. */
+.hero-rays-field > .core {
+  background: radial-gradient(circle at 50% 50%,#f6f9ff 0%,#dfeaffed 6%,#b9d3ffb3 14%,#7fb0f766 28%,#4886dc4a 46%,#2f60a82e 62%,transparent 78%);
+  filter: blur(var(--wm-core-blur));
+  animation: bf-core-breathe 6s ease-in-out infinite alternate;
 }
 
-/* Rede de segurança: `color: transparent` só é seguro enquanto o recorte pelo
-   texto funcionar. Sem suporte, a palavra sumiria por completo — aqui ela cai
-   numa cor sólida. */
-@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
-  .hero-wordmark { color: #3a5570; background: none; }
-}
+.hero-wordmark.is-flash .hero-rays-field { animation: bf-rays-flash .9s cubic-bezier(.2,.8,.3,1); }
 
-/* Sem máscara não há elipse: o quadrado de raios apareceria inteiro. Some o
-   campo e a letra volta ao degradê claro, que não depende de luz atrás. */
-@supports not ((mask-image: radial-gradient(#000,#0000)) or (-webkit-mask-image: radial-gradient(#000,#0000))) {
-  .hero-rays { display: none; }
-  @supports (background-clip: text) or (-webkit-background-clip: text) {
-    .hero-wordmark { background-image: linear-gradient(180deg,#46647f 0%,#2a3e55 52%,#16222f 100%); }
-  }
+/* No celular a palavra é proporcionalmente maior (6.6vw seriam 26px) e o
+   campo de luz encolhe para caber na largura: a 390px o campo de 205px
+   esticado 4× passaria das bordas. O teto de 34vw da largura do campo,
+   que no desktop nunca entra, é o que manda aqui. */
+@media (max-width: 900px) {
+  :root { --wm-font: min(15vw,84px); --wm-field: 150px; }
 }
-
-@keyframes bf-rays-spin    { to { transform: rotate(1turn); } }
-@keyframes bf-rays-drift   { from { translate: -1.6% .6%; } to { translate: 1.6% -.6%; } }
-@keyframes bf-rays-flicker {
-  0%,100% { opacity: calc(.82 * var(--wm-long)); }
-  28%     { opacity: var(--wm-long); }
-  47%     { opacity: calc(.7 * var(--wm-long)); }
-  66%     { opacity: calc(.96 * var(--wm-long)); }
-  84%     { opacity: calc(.78 * var(--wm-long)); }
-}
-@keyframes bf-core-breathe {
-  from { opacity: calc(.8 * var(--wm-core-light)); transform: scaleX(var(--wm-core-stretch)) scale(calc(.93 * var(--wm-core-size))); }
-  to   { opacity: var(--wm-core-light);            transform: scaleX(var(--wm-core-stretch)) scale(calc(1.07 * var(--wm-core-size))); }
-}
-@keyframes bf-rays-flash {
-  0%   { filter: brightness(1);               transform: scaleX(var(--wm-stretch)) scale(1); }
-  16%  { filter: brightness(var(--wm-flash)); transform: scaleX(var(--wm-stretch)) scale(1.06); }
-  100% { filter: brightness(1);               transform: scaleX(var(--wm-stretch)) scale(1); }
+/* Celular deitado: o palco sozinho já passa da altura do painel, e a
+   palavra cairia por cima da barra. */
+@media (max-height: 620px) and (max-width: 900px) and (orientation: landscape) {
+  .hero-wordmark { display: none; }
 }
