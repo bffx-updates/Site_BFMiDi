@@ -209,8 +209,8 @@ window.BF_CONTENT = (function () {
           SPEC_SCREEN,
           SPEC_MODES
         ],
-        /* As bandas não trazem `img`: a 6SW+ tem uma foto só, e o main.js cai
-           na principal quando a banda não tem a sua. */
+        /* A banda de INFO não traz `img` e cai na foto principal (main.js);
+           a de CONEXÕES tem a foto traseira. */
         bands: [
           {
             panel: 'info',
@@ -226,6 +226,9 @@ window.BF_CONTENT = (function () {
           },
           {
             panel: 'conects',
+            img: '6sw-rear',
+            alt: 'Painel traseiro da BFMIDI 6SW+ com as conexões identificadas: ' +
+                 '9V, SW1/2, EXP, USB HOST, TRS e USB DEVICE.',
             title: 'Conexões da 6SW+',
             body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
                   'USB sem computador. As entradas de expressão e de footswitches ' +
