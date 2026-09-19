@@ -490,6 +490,23 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 /* O gap do .split (até 70px) vale também entre as LINHAS; a faixa não
    precisa de tanto ar acima dela. */
 .split { row-gap: 22px; }
+/* CONEXÕES no desktop cabe SEM ROLAGEM numa janela de ~770px de altura
+   (1080p a 125%, medido no print do usuário, 19/09/2026). Ali o painel
+   tem 491px (771 − cápsula 126 − folga da barra 154) e a MICRO media 548:
+   a foto encolhe de ~340 para 260px, os tiles de 130 para 96px, o ar
+   entre as linhas de 22 para 12px, e o painel perde o respiro de 70px
+   embaixo — aquele existe para puxar o conteúdo para cima quando SOBRA
+   altura, e aqui era só o que empurrava a página para fora. Sem ele o
+   painel fica centrado sem viés: em janelas altas o CONEXÕES começa uns
+   20px abaixo do INFO, e é o preço de caber nas baixas. Só no desktop: no
+   celular a página rola. */
+@media (min-width: 861px) {
+  #panel-conects .panel-inner { padding-top: 24px; padding-bottom: 24px; }
+  #panel-conects .panel-shot img { max-height: 260px; }
+  #panel-conects .split { row-gap: 12px; }
+  #panel-conects .split-copy { gap: 12px; }
+  #panel-conects .port-grid { max-width: calc(var(--n,4) * 96px + (var(--n,4) - 1) * 12px); gap: 12px; }
+}
 @media (max-width: 860px) {
   .port-grid { grid-template-columns: repeat(4,minmax(0,1fr)); max-width: none; gap: 12px; }
 }
