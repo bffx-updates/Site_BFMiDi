@@ -155,13 +155,44 @@
     return '';
   }
 
+  /* Ilustrações decorativas em vetor; a tela usa a foto real do produto. */
+  function infoIcon(key) {
+    var paths = {
+      switches: '<ellipse cx="16" cy="24" rx="11" ry="5"/><path d="M9 11v11c0 5 14 5 14 0V11"/><ellipse cx="16" cy="10" rx="7" ry="4"/><path d="M6 20v4m20-4v4"/>',
+      presets: '<path d="m16 4 12 7-12 7L4 11Z"/><path d="m4 17 12 7 12-7M4 23l12 7 12-7"/>',
+      screen: '<rect x="3" y="5" width="26" height="19" rx="2"/><path d="M16 24v5m-7 0h14"/>',
+      live: '<path d="m18 2-12 17h9l-1 11 12-18h-9Z" fill="currentColor" stroke="none"/>'
+    };
+    return '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">' + paths[key] + '</svg>';
+  }
+
+  function switchArt(id, color) {
+    return '<svg viewBox="0 0 110 110" aria-hidden="true"><defs>' +
+      '<linearGradient id="metal-' + id + '" x2=".8" y2="1"><stop stop-color="#fff3dc"/><stop offset=".3" stop-color="#a9aaa9"/><stop offset=".5" stop-color="#404950"/><stop offset=".72" stop-color="#dfded5"/><stop offset="1" stop-color="#707779"/></linearGradient>' +
+      '</defs><circle cx="55" cy="59" r="40" fill="#07121b" stroke="' + color + '" stroke-width="9"/>' +
+      '<path d="m30 35 29-8 24 21-3 29-29 10-25-22Z" fill="url(#metal-' + id + ')" stroke="#111b22" stroke-width="3"/>' +
+      '<ellipse cx="53" cy="56" rx="25" ry="28" fill="url(#metal-' + id + ')" stroke="#dedacf" stroke-width="2"/>' +
+      '<path d="M30 41v15c0 24 43 24 43 0V41" fill="url(#metal-' + id + ')" stroke="#444c52" stroke-width="2"/>' +
+      '<ellipse cx="51" cy="41" rx="22" ry="23" fill="#cbc9c1" stroke="#f0ede2" stroke-width="2"/></svg>';
+  }
+
   function specStrip(m) {
-    return '<div class="spec-strip">' + m.specs.map(function (s) {
-      return '<div class="spec-cell">' +
-        '<span class="silk">' + esc(s.label) + '</span>' +
-        '<span class="spec-value">' + esc(s.value) + '</span>' +
-        '<p class="spec-note">' + esc(s.note) + '</p>' +
-      '</div>';
+    var keys = ['switches', 'presets', 'screen', 'live'];
+    var art = [
+      switchArt('feature', '#e9b477'),
+      '<div class="preset-art"><div class="preset-art-effects"><i>♧</i><i>▥</i><i>∿</i></div><div class="preset-art-banks"><b>A</b><b>B</b><b>C</b><b>D</b><b>E</b></div><div class="preset-art-name"><b>01</b><span>CLASSIC ROCK</span><span>›</span></div></div>',
+      '<svg class="screen-art" viewBox="320 60 470 300" aria-hidden="true"><image href="assets/8sw-top.webp" width="1200" height="866" preserveAspectRatio="none"/></svg>',
+      '<svg viewBox="0 0 220 150" fill="none" aria-hidden="true"><path d="M0 125C28 124 32 32 68 35S112 155 145 119 183-13 220 9L220 85C180 46 184 146 145 142S101 67 68 70 30 147 0 125" fill="currentColor" opacity=".12"/><path d="M0 125C28 124 32 32 68 35S112 155 145 119 183-13 220 9M0 137C34 158 40 72 76 66S119 146 151 136 181 43 220 68" stroke="currentColor" stroke-width="2"/></svg>'
+    ];
+    return '<div class="info-card-grid">' + m.specs.map(function (s, i) {
+      var key = keys[i], copy = C.infoCards[key];
+      return '<article class="info-card info-card--' + key + '">' +
+        '<div class="info-card-top"><span class="info-card-icon">' + infoIcon(key) + '</span>' +
+        '<div><h3 class="silk">' + esc(s.label) + '</h3><p class="info-card-value">' + esc(s.value) + '</p></div></div>' +
+        '<div class="info-card-art" aria-hidden="true">' + art[i] + '</div>' +
+        '<h4 class="info-card-title">' + esc(copy.title || s.note) + '</h4>' +
+        '<p class="info-card-note">' + esc(copy.description || s.note) + '</p>' +
+      '</article>';
     }).join('') + '</div>';
   }
 
@@ -181,10 +212,13 @@
     /* Sem abertura (micro-rótulo, nome do modelo e frase): saiu em 19/09/2026
        a pedido do usuário, em todos os modelos — a 8SW+ já vinha sem. O painel
        começa direto na ficha de números. */
-    var feature = band
-      ? '<div class="feat"><h3 class="feat-title">' + esc(band.title) + '</h3>' +
-        '<p class="feat-body">' + esc(band.body) + '</p>' + listTag(band.list) + '</div>'
-      : '<p class="panel-note">' + esc(C.pending.bands) + '</p>';
+    var rings = ['#139dff', '#57df95', '#ffac61', '#ff579c', '#ab65ff', '#39e1e9'];
+    var feature = '<div class="info-led-band">' + icon('gear') +
+      '<div class="info-led-copy"><h3>' + esc(C.infoCards.leds.title) + '</h3><p>' + esc(C.infoCards.leds.description) + '</p></div>' +
+      '<div class="info-led-rings" aria-hidden="true">' + rings.map(function (color, i) {
+        return '<span style="--led-color:' + color + '">' + switchArt('led-' + i, color) + '</span>';
+      }).join('') + '</div></div>' +
+      (band && !band.img ? '<p class="info-model-note">' + esc(band.body) + '</p>' : '');
 
     return '<div class="panel-inner split">' +
       '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' +

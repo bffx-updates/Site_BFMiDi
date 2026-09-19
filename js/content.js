@@ -100,6 +100,16 @@ window.BF_CONTENT = (function () {
       buy: 'Comprar',
       footerEnd: 'Controladoras MIDI'
     },
+    infoCards: {
+      switches: { description: 'Acesso rápido, intuitivo e total controle do seu setup em qualquer situação.' },
+      presets: { description: 'Organize seus timbres e setups com liberdade e praticidade.' },
+      screen: { title: 'Visualização clara e intuitiva.' },
+      live: { title: 'Mais possibilidades no seu palco.' },
+      leds: {
+        title: 'Anéis de LED independentes',
+        description: 'Cada footswitch tem o próprio anel de LED. A cor diz o estado, e o estado é seu: você escolhe a cor de ligado e de desligado em cada um.'
+      }
+    },
     /* Os ícones das conexões do painel CONECTS (18/09/2026, arte do usuário):
        um tile por conexão, com o nome já impresso na própria imagem — o
        `label` é só o texto alternativo. Cada modelo lista em `ports` as

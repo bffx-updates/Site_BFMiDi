@@ -349,15 +349,9 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   box-shadow: none;
 }
 
-/* A assinatura desce para DEBAIXO das pílulas e vira a última faixa da tela:
-   fixa também, se não a barra passaria por cima dela. `--bf-footbar` é a
-   altura reservada para essa faixa e é o que ergue a barra — os dois leem a
-   mesma medida, então mudar a fonte do rodapé aqui move tudo junto.
-   `--bf-bar-gap` é o respiro entre a base das pílulas e a assinatura
-   ("os botões estão muito juntos do rodapé", 18/09/2026; 14px, depois
-   "o dobro disso" a mais = 42px): antes eram 4px,
-   com a assinatura colada na barra. Entra na altura da barra, na folga do
-   .app e no véu, para os três continuarem casados. */
+/* Assinatura discreta abaixo das pílulas. A referência de 19/09 aproxima
+   a navegação da base: 18px de assinatura e 8px de intervalo. A folga do
+   documento permite rolar o último parágrafo acima da barra e do véu. */
 .app { --bf-footbar: 18px; --bf-bar-gap: 8px; padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 #app > .site-footer {
   position: fixed;
@@ -765,11 +759,12 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .view-nav .nav-icon { width: 25px; height: 25px; }
 }
 
-@media (min-width: 861px) and (max-width: 1200px) {
+@media (min-width: 861px) and (max-width: 1440px) {
   .selector-zone > .selector { width: min(860px,100%); --pad: 7px; }
   .selector-zone .tab { min-height: 62px; }
   .selector-zone .gear-tab,.selector-zone .software-tab { width: 62px; height: 62px; }
   #panel-info .panel-inner { gap: 40px; padding-top: 28px; }
+  #panel-info .panel-shot img { max-height: 400px; }
   #panel-info .spec-cell { padding: 18px; }
   #panel-info .spec-cell .silk { font-size: .75rem; }
   #panel-info .spec-note { font-size: 1rem; }
