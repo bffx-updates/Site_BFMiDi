@@ -5,3 +5,4 @@ NANO+ PNG/
 *.tar.gz
 node_modules/
 .codex-remote-attachments/
+.DS_Store

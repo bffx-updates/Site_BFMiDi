@@ -1,0 +1,16 @@
+# Quebra de linha do repositorio (19/09/2026). O .git deste site vive no
+# OneDrive, compartilhado entre o notebook Windows (core.autocrlf=true, CRLF no
+# disco) e o Mac mini (sem autocrlf). Sem esta regra, o Mac via os arquivos
+# sincronizados como "toda linha mudou" e commitava CRLF - foi o que gerou
+# um push non-fast-forward de 3.013 linhas sem conteudo. Texto sempre LF, no
+# repositorio E no disco, nas duas maquinas; binarios ficam de fora.
+* text=auto eol=lf
+*.webp binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.exe  binary
+*.zip  binary
+*.woff binary
+*.woff2 binary

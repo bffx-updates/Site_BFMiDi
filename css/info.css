@@ -14,6 +14,10 @@
   --card-accent: #ffc58a;
   position: relative;
   isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 33%;
+  column-gap: 10px;
+  row-gap: 10px;
   min-width: 0;
   padding: 22px;
   border: 1px solid #47718c88;
@@ -24,7 +28,7 @@
 .info-card--presets { --card-accent: #bd93ff; }
 .info-card--screen { --card-accent: #22d5ff; }
 .info-card--live { --card-accent: #81f6bb; }
-.info-card-top { display: flex; align-items: center; gap: 22px; min-height: 68px; }
+.info-card-top { grid-column: 1 / -1; display: flex; align-items: center; gap: 22px; min-height: 68px; }
 .info-card-top > div { min-width: 0; }
 .info-card .silk { color: #a7bacd; font-size: .72rem; line-height: 1.5; letter-spacing: .045em; font-weight: 500; }
 .info-card--screen .silk { color: var(--card-accent); }
@@ -40,12 +44,12 @@
   font: 700 clamp(2rem,2.7vw,2.8rem)/1 var(--font-display); letter-spacing: -.03em;
   text-shadow: 0 0 19px color-mix(in srgb,var(--card-accent) 30%,transparent);
 }
-.info-card-title { position: relative; z-index: 1; max-width: 72%; margin: 17px 0 10px; color: #c5e2f3; font: 700 clamp(1.05rem,1.4vw,1.4rem)/1.2 var(--font-display); letter-spacing: -.015em; }
-.info-card-note { position: relative; z-index: 1; margin: 0; color: #96adbf; font-size: 1rem; line-height: 1.35; }
-.info-card-art { position: absolute; z-index: 0; top: 70px; right: 17px; width: 31%; height: 115px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.info-card-title { grid-column: 1; grid-row: 2; align-self: center; position: relative; z-index: 1; margin: 0; color: #c5e2f3; font: 700 clamp(1.05rem,1.4vw,1.4rem)/1.2 var(--font-display); letter-spacing: -.015em; }
+.info-card-note { grid-column: 1 / -1; position: relative; z-index: 1; margin: 0; color: #96adbf; font-size: 1rem; line-height: 1.35; }
+.info-card-art { grid-column: 2; grid-row: 2; align-self: center; position: relative; z-index: 0; height: 105px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 .info-card-art > svg { width: 100%; height: 100%; overflow: visible; }
-.info-card--switches .info-card-art { top: 56px; width: 25%; transform: rotate(-20deg); filter: drop-shadow(0 10px 9px #000); }
-.info-card--presets .info-card-art { top: 70px; right: 14px; width: 33%; transform: perspective(500px) rotateY(-19deg) rotateZ(-6deg); }
+.info-card--switches .info-card-art { transform: rotate(-20deg); filter: drop-shadow(0 10px 9px #000); }
+.info-card--presets .info-card-art { transform: perspective(500px) rotateY(-19deg) rotateZ(-6deg); }
 .preset-art { width: 100%; padding: 7px; border: 1px solid #36586b; border-radius: 5px; background: #02080e; box-shadow: 7px 9px 0 #03070c,0 14px 20px #0006; }
 .preset-art-effects { display: flex; gap: 4px; }
 .preset-art-effects i { flex: 1; padding: 2px 0; color: #c8baff; text-align: center; font: normal 22px/1.2 var(--font-body); border: 1px solid #a59bf1; border-radius: 4px; background: linear-gradient(#18134e,#383191); }
@@ -55,9 +59,9 @@
 .preset-art-banks b:first-child,.preset-art-name b { background: #17c9f4; color: #031a2b; padding: 2px 4px; }
 .preset-art-name { display: flex; align-items: center; justify-content: space-between; gap: 3px; color: #b6d7e2; font: 600 6px/1.4 var(--font-mono); }
 .preset-art-name b { font-size: 13px; }
-.info-card--screen .info-card-art { top: 67px; transform: perspective(500px) rotateY(-22deg) rotateZ(-7deg); filter: drop-shadow(6px 9px 3px #0008); }
+.info-card--screen .info-card-art { transform: perspective(500px) rotateY(-22deg) rotateZ(-7deg); filter: drop-shadow(6px 9px 3px #0008); }
 .info-card-art .screen-art { border: 3px solid #36464e; border-radius: 5px; overflow: hidden; background: #000; }
-.info-card--live .info-card-art { color: #23d2d9; top: 65px; width: 39%; height: 125px; }
+.info-card--live .info-card-art { color: #23d2d9; }
 .info-led-band {
   display: flex; align-items: center; gap: 18px; padding: 19px 22px;
   border: 1px solid #47718c88; border-radius: 19px;
@@ -98,7 +102,7 @@
   .info-card { padding: 22px; }
   .info-card-top { gap: 20px; }
   .info-card-icon { flex-basis: 60px; height: 60px; }
-  .info-card-title { font-size: 1.25rem; max-width: 70%; }
+  .info-card-title { font-size: 1.25rem; }
   .info-card .silk { font-size: .72rem; }
   .info-card-value { font-size: 2.6rem; }
   .info-led-band { padding: 20px; gap: 14px; }
