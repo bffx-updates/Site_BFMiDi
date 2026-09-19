@@ -194,7 +194,14 @@ window.BF_CONTENT = (function () {
         h1: ['BFMIDI', '6SW+'],
         lead: 'Seis footswitches, tela colorida e acesso ao modo LIVE.',
         cta: 'Ver detalhes',
-        shot: null,                       /* foto ainda não fotografada */
+        shot: '6sw-hero',
+        shotAlt: 'BFMIDI 6SW+ vista de cima: seis footswitches em linha, tela colorida ' +
+                 'com amplificador e o preset Classic Rock, anel verde aceso no ' +
+                 'footswitch 2, e as conexões DEVICE, TRS, HOST, EXP, SW1/2 e 9V na ' +
+                 'borda de cima.',
+        /* O que a foto mostra na borda de cima: DEVICE, TRS, HOST, EXP e SW1/2
+           (mais o 9V). Sem DIN5, como a NANO+. */
+        ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 6,
         specs: [
           specSwitches(6, 'Seis footswitches para presets, com acesso ao modo LIVE.'),
@@ -202,7 +209,34 @@ window.BF_CONTENT = (function () {
           SPEC_SCREEN,
           SPEC_MODES
         ],
-        bands: []
+        /* As bandas não trazem `img`: a 6SW+ tem uma foto só, e o main.js cai
+           na principal quando a banda não tem a sua. */
+        bands: [
+          {
+            panel: 'info',
+            title: 'Recursos da 6SW+',
+            body: 'Seis footswitches em linha e a mesma tela colorida da 8SW+, num ' +
+                  'corpo baixo e estreito. Sem footswitch dedicado, o LIVE MODE ' +
+                  'entra pisando o 1 e o 2 juntos.',
+            list: [
+              'Seis footswitches com anel de LED próprio',
+              'LIVE MODE pisando os footswitches 1 e 2 juntos',
+              'Mesmo editor, mesmos presets, mesma memória'
+            ]
+          },
+          {
+            panel: 'conects',
+            title: 'Conexões da 6SW+',
+            body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
+                  'USB sem computador. As entradas de expressão e de footswitches ' +
+                  'externos ficam na mesma borda, ao lado do 9V.',
+            list: [
+              'Saídas MIDI TRS e USB',
+              'Porta USB HOST para pedais USB',
+              'Pedal de expressão e dois footswitches externos'
+            ]
+          }
+        ]
       },
 
       /* --------------------------------------------------------------- NANO+ */
