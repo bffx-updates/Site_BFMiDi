@@ -64,6 +64,7 @@
 .info-card-art .screen-art { height: auto; aspect-ratio: 47 / 30; border: 3px solid #36464e; border-radius: 5px; overflow: hidden; background: #000; }
 .info-card--live .info-card-art { color: #23d2d9; }
 .info-led-band {
+  grid-column: 1 / -1;
   display: flex; align-items: center; gap: 18px; padding: 19px 22px;
   border: 1px solid #47718c88; border-radius: 19px;
   background: linear-gradient(125deg,#102231cc,#081119f5);
@@ -76,7 +77,7 @@
 .info-led-rings { display: flex; gap: 6px; width: 39%; flex-shrink: 0; }
 .info-led-rings span { flex: 1; min-width: 0; filter: drop-shadow(0 0 5px color-mix(in srgb,var(--led-color) 45%,transparent)); }
 .info-led-rings svg { display: block; width: 100%; }
-.info-model-note { color: var(--ink-2); font-size: .95rem; line-height: 1.5; }
+.info-model-note { grid-column: 1 / -1; color: var(--ink-2); font-size: .95rem; line-height: 1.5; }
 @media (min-width: 861px) and (max-width: 1250px) {
   #panel-info .panel-inner { grid-template-columns: minmax(0,.7fr) minmax(0,1.3fr); gap: 24px; padding-inline: 24px; }
   .info-card { padding: 17px; }
@@ -97,6 +98,84 @@
   .info-led-band { flex-wrap: wrap; }
   .info-led-rings { width: 240px; margin-left: auto; }
 }
+
+/* A 6SW+ tem a foto mais horizontal: os anéis ficam sob ela e liberam a
+   coluna de cards para respirar. O texto particular do modelo continua
+   abaixo da faixa, atravessando a largura disponível. */
+@media (min-width: 861px) {
+  #panel-info .info-6sw-layout {
+    zoom: .82;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: 28px 48px;
+    align-items: start;
+    max-width: 1720px;
+    padding: 28px 48px 24px;
+  }
+  #panel-info .info-6sw-left,
+  #panel-info .info-6sw-right { min-width: 0; }
+  #panel-info .info-6sw-left { display: flex; flex-direction: column; gap: 18px; }
+  #panel-info .info-6sw-left .split-media { padding: 0; background: none; }
+  #panel-info .info-6sw-left .panel-shot { width: 100%; max-width: 690px; }
+  #panel-info .info-6sw-left .panel-shot img { max-height: 430px; }
+  #panel-info .info-6sw-left .info-led-band {
+    width: 100%;
+    transform: none;
+    margin-bottom: 0;
+  }
+  #panel-info .info-6sw-right { display: flex; flex-direction: column; gap: 18px; }
+  #panel-info .info-6sw-right .info-card-grid { width: 100%; }
+  #panel-info .info-6sw-right .info-model-note { margin: 0; }
+
+  #panel-info .info-model-6sw {
+    /* Mantido para links antigos que ainda renderizem a classe anterior. */
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    grid-template-rows: auto auto auto;
+    align-items: start;
+    row-gap: 18px;
+  }
+  #panel-info .info-model-6sw .split-media {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    padding-top: 0;
+  }
+  #panel-info .info-model-6sw .panel-shot img { max-height: 430px; }
+  #panel-info .info-model-6sw .split-copy {
+    display: contents;
+  }
+  #panel-info .info-model-6sw .info-card-grid {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    width: 100%;
+  }
+  #panel-info .info-model-6sw .info-led-band {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    align-self: start;
+  }
+  #panel-info .info-model-6sw .info-model-note {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    margin: 0;
+  }
+}
+
+/* Nas outras INFO, aproxime a faixa dos cards. A 6SW+ conserva a composição
+   própria, com os LEDs logo abaixo da foto. */
+@media (min-width: 861px) {
+  #panel-info .info-led-band {
+    transform: translateY(-70px);
+    margin-bottom: -70px;
+  }
+  #panel-info .info-6sw-left .info-led-band {
+    transform: none;
+    margin-bottom: 0;
+  }
+}
 @media (max-width: 600px) {
   #panel-info .panel-inner { padding-inline: 16px; }
   .info-card-grid { grid-template-columns: 1fr; gap: 14px; }
@@ -110,4 +189,52 @@
   .info-led-rings { width: 100%; }
   .info-led-copy p { font-size: .9rem; }
   #panel-info .panel-shot img { max-height: 280px; }
+}
+
+/* SHOP: o produto e as ações precisam ter a mesma presença das conexões. */
+@media (min-width: 861px) {
+  #panel-comprar .buy {
+    width: min(100%, 1100px);
+    max-width: 1100px;
+    padding-top: 34px;
+    gap: 22px;
+  }
+  #panel-comprar .buy-thumb {
+    width: min(100%, 650px);
+    max-height: none;
+    margin-bottom: 6px;
+  }
+  #panel-comprar .buy-thumb img {
+    width: 560px;
+    max-width: 100%;
+    max-height: 360px;
+  }
+  #panel-comprar .hero-ctas { gap: 16px; margin-top: 10px; }
+  #panel-comprar .hero-ctas .btn {
+    min-height: 60px;
+    padding: 15px 32px;
+    font-size: 1.125rem;
+  }
+  #panel-comprar .whatsapp-waitlist {
+    width: min(100%, 760px);
+    margin-top: 0;
+    padding: 18px 24px;
+    gap: 17px;
+    border-radius: 18px;
+  }
+  #panel-comprar .whatsapp-waitlist svg { width: 36px; height: 36px; }
+  #panel-comprar .whatsapp-waitlist span { font-size: 1rem; line-height: 1.45; }
+  #panel-comprar .whatsapp-waitlist strong { font-size: 1.1rem; }
+}
+
+@media (min-width: 861px) and (max-width: 1100px) {
+  #panel-comprar .buy-thumb img { width: 470px; max-height: 300px; }
+  #panel-comprar .hero-ctas .btn { min-height: 54px; padding-inline: 26px; font-size: 1rem; }
+  #panel-comprar .whatsapp-waitlist { width: min(100%, 650px); padding: 15px 18px; }
+}
+
+@media (max-width: 860px) {
+  #panel-comprar .buy-thumb img { width: min(100%, 420px); max-height: 300px; }
+  #panel-comprar .hero-ctas .btn { min-height: 54px; font-size: 1rem; }
+  #panel-comprar .whatsapp-waitlist { padding: 16px 18px; }
 }

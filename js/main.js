@@ -219,12 +219,19 @@
       }).join('') + '</div></div>' +
       (band && !band.img ? '<p class="info-model-note">' + esc(band.body) + '</p>' : '');
 
-    return '<div class="panel-inner split">' +
+    if (m.hash === '6sw') {
+      var modelNote = band && !band.img ? '<p class="info-model-note">' + esc(band.body) + '</p>' : '';
+      var ledOnly = feature.replace(modelNote, '');
+      return '<div class="panel-inner info-6sw-layout">' +
+        '<div class="info-6sw-left"><div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' + ledOnly + '</div>' +
+        '<div class="info-6sw-right">' + specStrip(m) + modelNote + '</div>' +
+      '</div>';
+    }
+
+    return '<div class="panel-inner split info-model-' + esc(m.hash) + '">' +
       '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' +
-      '<div class="split-copy">' +
-        specStrip(m) +
-        feature +
-      '</div>' +
+      specStrip(m) +
+      feature +
     '</div>';
   }
 
@@ -424,13 +431,13 @@
     mi = Number.isFinite(mi) ? Math.max(0, Math.min(MODELS.length - 1, Math.trunc(mi))) : 0;
     if (view !== 'home' && !isView(view)) view = 'home';
     if (mi === curModel && view === curView) return;
-    var first = curView === '', m = MODELS[mi], resources = resourceView(view), software = softwareView(view), special = resources || software;
+    var first = curView === '', m = MODELS[mi], resources = resourceView(view), software = softwareView(view), appView = view === 'apps', special = resources || software;
     curModel = mi;
     curView = view;
     var helpDialog = $('#ajuda-dialog');
     if (view !== 'apps' && helpDialog && helpDialog.open) helpDialog.close();
     if (resources && view !== 'apps') lastResource = view;
-    var active = software ? MODELS.length : resources ? MODELS.length + 1 : mi;
+    var active = (software || appView) ? MODELS.length : resources ? MODELS.length + 1 : mi;
     selector.style.setProperty('--i', active);
     markTabs(track, 'aria-pressed', active);
     track.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i === active ? 0 : -1; });
@@ -500,8 +507,8 @@
       buttons[next].focus();
     });
   }
-  wireKeys(selector, function () { return softwareView(curView) ? MODELS.length : resourceView(curView) ? MODELS.length + 1 : curModel; }, function (i) {
-    if (i === MODELS.length) apply(curModel, 'software');
+  wireKeys(selector, function () { return (softwareView(curView) || curView === 'apps') ? MODELS.length : resourceView(curView) ? MODELS.length + 1 : curModel; }, function (i) {
+    if (i === MODELS.length) apply(curModel, curView === 'apps' ? 'apps' : 'software');
     else if (i === MODELS.length + 1) apply(curModel, lastResource);
     else apply(i, 'home');
   });
@@ -523,7 +530,7 @@
 
   document.querySelectorAll('[data-copy]').forEach(function (el) { var copy = C.ui && C.ui[el.getAttribute('data-copy')]; if (copy) el.textContent = copy; });
   fillTrack(track, MODELS, 'tab', 'aria-pressed');
-  track.insertAdjacentHTML('beforeend', '<button class="tab software-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:software" aria-label="' + esc(SOFTWARE.label) + '" title="' + esc(SOFTWARE.label) + '" aria-pressed="false" aria-controls="panel-software">' + icon('system') + '</button>');
+  track.insertAdjacentHTML('beforeend', '<button class="tab software-tab apps-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:apps" aria-label="Apps" title="Apps" aria-pressed="false" aria-controls="panel-apps">' + icon('apps') + '</button>');
   track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="' + (MODELS.length + 1) + '" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">' + icon('gear') + '</button>');
   selector.style.setProperty('--n', MODELS.length + 2);
   fillTrack(subTrack, SUB, 'label', 'aria-selected');

@@ -216,9 +216,25 @@ window.BF_CONTENT = (function () {
         specs: [
           specSwitches(6, 'Seis footswitches para presets, com acesso ao modo LIVE.'),
           specPresets(6),
-          SPEC_SCREEN,
+          SPEC_SCREEN_35,
           SPEC_MODES
         ],
+        buy: {
+          hideDetails: true,
+          primary: {
+            label: 'Comprar 6SW+',
+            href: '#'
+          },
+          ghost: {
+            label: 'Abrir o manual',
+            href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/'
+          },
+          waitlist: {
+            text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
+            label: 'Chamar no WhatsApp',
+            href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%206SW%2B.'
+          }
+        },
         /* A banda de INFO não traz `img` e cai na foto principal (main.js);
            a de CONEXÕES tem a foto traseira. */
         bands: [
