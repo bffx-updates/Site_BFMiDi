@@ -209,9 +209,8 @@
 
   function renderInfo(m) {
     var band = bandFor(m, 'info');
-    /* Sem abertura (micro-rótulo, nome do modelo e frase): saiu em 19/09/2026
-       a pedido do usuário, em todos os modelos — a 8SW+ já vinha sem. O painel
-       começa direto na ficha de números. */
+    /* Os cards abrem a coluna de informações; os LEDs têm uma faixa própria.
+       As particularidades de LIVE da 6SW+ e MICRO continuam abaixo dela. */
     var rings = ['#139dff', '#57df95', '#ffac61', '#ff579c', '#ab65ff', '#39e1e9'];
     var feature = '<div class="info-led-band">' + icon('gear') +
       '<div class="info-led-copy"><h3>' + esc(C.infoCards.leds.title) + '</h3><p>' + esc(C.infoCards.leds.description) + '</p></div>' +

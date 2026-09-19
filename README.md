@@ -5,6 +5,7 @@ Site estático em português, com quatro modelos e painéis de detalhes, conexõ
 - Conteúdo e destinos comerciais: `js/content.js`.
 - Navegação, links diretos e acessibilidade: `js/main.js`.
 - Composição e ajustes responsivos atuais: `css/refine.css`, carregado após os estilos de base.
+- Cards ilustrados da seção INFO e faixa de LEDs: `css/info.css`. Os textos complementares ficam em `infoCards` de `js/content.js`; números e especificações continuam próprios de cada modelo.
 - Preparação para hospedagem e validação de arquivos: `node scripts/build.cjs`.
 - Prévia local: `servidor_local.bat`.
 - Publicação do código no GitHub: execute `SUBIR_SITE_GITHUB.bat`. Para apenas validar sem enviar, use `SUBIR_SITE_GITHUB.bat --verificar`.

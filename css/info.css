@@ -17,9 +17,9 @@
   display: grid;
   grid-template-columns: minmax(0,1fr) 33%;
   column-gap: 10px;
-  row-gap: 10px;
+  row-gap: 8px;
   min-width: 0;
-  padding: 22px;
+  padding: 20px;
   border: 1px solid #47718c88;
   border-radius: 19px;
   background: radial-gradient(ellipse at 80% 60%,#18324824,transparent 65%),linear-gradient(130deg,#0c1721f5,#071018f5);
@@ -46,9 +46,10 @@
 }
 .info-card-title { grid-column: 1; grid-row: 2; align-self: center; position: relative; z-index: 1; margin: 0; color: #c5e2f3; font: 700 clamp(1.05rem,1.4vw,1.4rem)/1.2 var(--font-display); letter-spacing: -.015em; }
 .info-card-note { grid-column: 1 / -1; position: relative; z-index: 1; margin: 0; color: #96adbf; font-size: 1rem; line-height: 1.35; }
-.info-card-art { grid-column: 2; grid-row: 2; align-self: center; position: relative; z-index: 0; height: 105px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.info-card-art { grid-column: 2; grid-row: 2; align-self: center; position: relative; z-index: 0; height: 90px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 .info-card-art > svg { width: 100%; height: 100%; overflow: visible; }
-.info-card--switches .info-card-art { transform: rotate(-20deg); filter: drop-shadow(0 10px 9px #000); }
+.info-card--switches .info-card-art { filter: drop-shadow(0 10px 9px #000); }
+.info-card--switches .info-card-art > svg { width: 85%; height: 85%; transform: rotate(-12deg); }
 .info-card--presets .info-card-art { transform: perspective(500px) rotateY(-19deg) rotateZ(-6deg); }
 .preset-art { width: 100%; padding: 7px; border: 1px solid #36586b; border-radius: 5px; background: #02080e; box-shadow: 7px 9px 0 #03070c,0 14px 20px #0006; }
 .preset-art-effects { display: flex; gap: 4px; }
@@ -60,7 +61,7 @@
 .preset-art-name { display: flex; align-items: center; justify-content: space-between; gap: 3px; color: #b6d7e2; font: 600 6px/1.4 var(--font-mono); }
 .preset-art-name b { font-size: 13px; }
 .info-card--screen .info-card-art { transform: perspective(500px) rotateY(-22deg) rotateZ(-7deg); filter: drop-shadow(6px 9px 3px #0008); }
-.info-card-art .screen-art { border: 3px solid #36464e; border-radius: 5px; overflow: hidden; background: #000; }
+.info-card-art .screen-art { height: auto; aspect-ratio: 47 / 30; border: 3px solid #36464e; border-radius: 5px; overflow: hidden; background: #000; }
 .info-card--live .info-card-art { color: #23d2d9; }
 .info-led-band {
   display: flex; align-items: center; gap: 18px; padding: 19px 22px;
