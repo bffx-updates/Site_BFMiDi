@@ -303,8 +303,8 @@ window.BF_CONTENT = (function () {
             href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%20MICRO.'
           }
         },
-        /* As bandas não trazem `img`: a MICRO tem uma foto só, e o main.js cai
-           na foto principal quando a banda não tem a sua. */
+        /* A banda de INFO não traz `img` e cai na foto principal (main.js);
+           a de CONEXÕES tem a foto traseira. */
         bands: [
           {
             panel: 'info',
@@ -320,6 +320,9 @@ window.BF_CONTENT = (function () {
           },
           {
             panel: 'conects',
+            img: 'micro-rear',
+            alt: 'Painel traseiro da BFMIDI 3 MICRO com as conexões identificadas: ' +
+                 '9V, TRS, USB DEVICE e USB HOST.',
             title: 'Conexões da MICRO',
             body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
                   'USB sem computador. Tudo no topo, com a alimentação de 9V.',
