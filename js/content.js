@@ -20,7 +20,9 @@
    (INFO · CONECTS · COMPRAR), e cada item do submenu é um painel.
 
    ONDE CADA TEXTO DESTE ARQUIVO APARECE
-     · `lead`, `h1`, `shot` ................ painel HOME (a lista de modelos)
+     · `h1`, `shot` .......................... painel HOME (a lista de modelos)
+       (`lead` não aparece mais em lugar nenhum: abria o painel INFO e saiu
+        em 19/09/2026; fica no arquivo como descrição do modelo)
      · `specs` + banda `panel:'info'` ...... painel INFO
      · banda `panel:'conects'` ............. painel CONECTS
      · `ports` (chaves de `ports`) ......... painel CONECTS, a faixa de ícones
