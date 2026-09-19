@@ -846,5 +846,29 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 }
 
 @media (max-width: 860px) {
-  .selector-zone .software-tab.apps-tab::after { content: none; }
+  .selector-zone .software-tab.apps-tab {
+    position: relative;
+    z-index: 3;
+    width: 46px;
+    height: 50px;
+    min-height: 50px;
+    padding: 0;
+    gap: 2px;
+    border: 1px solid #83b9e8aa;
+    border-radius: 11px;
+    background: radial-gradient(circle at 35% 25%, #2b4d70 0%, #142b45 45%, #091727 78%);
+    box-shadow: inset 0 1px 2px #e8f7ff66, 0 0 0 1px #1c3550, 0 8px 16px -10px #000, 0 0 16px #78b9ef55;
+    transform: scale(1.28);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .selector-zone .software-tab.apps-tab .nav-icon { width: 23px; height: 23px; color: #edf8ff; }
+  .selector-zone .software-tab.apps-tab::after {
+    content: 'APP';
+    color: #8dbce9;
+    font: 700 .56rem/1 var(--font-body);
+    letter-spacing: .06em;
+  }
 }
