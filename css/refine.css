@@ -839,10 +839,11 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     font: 700 1rem/1 var(--font-body);
     letter-spacing: .08em;
   }
-  .selector-zone .software-tab.apps-tab[aria-pressed="true"] {
+.selector-zone .software-tab.apps-tab[aria-pressed="true"] {
     background: radial-gradient(circle at 35% 25%, #39668f 0%, #183755 48%, #0b1d31 80%);
     box-shadow: inset 0 1px 2px #fff8, 0 0 0 1px #2c5277, 0 13px 25px -12px #000, 0 0 28px #8bc8ff88;
   }
+  .selector.apps-active .selector-bed { opacity: 0; }
 }
 
 @media (max-width: 860px) {
@@ -871,4 +872,5 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
     font: 700 .56rem/1 var(--font-body);
     letter-spacing: .06em;
   }
+  .selector.apps-active .selector-bed { opacity: 0; }
 }

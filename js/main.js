@@ -439,6 +439,7 @@
     if (resources && view !== 'apps') lastResource = view;
     var active = (software || appView) ? MODELS.length : resources ? MODELS.length + 1 : mi;
     selector.style.setProperty('--i', active);
+    selector.classList.toggle('apps-active', appView);
     markTabs(track, 'aria-pressed', active);
     track.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i === active ? 0 : -1; });
     var gear = $('#resources-toggle');
