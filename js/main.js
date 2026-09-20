@@ -207,6 +207,18 @@
     return '<figure class="panel-shot">' + imgTag(key, alt, sizes, false) + '</figure>';
   }
 
+  function dimensionedInfoMedia(m, band, sizes) {
+    var dimensions = m.dimensions;
+    if (!dimensions) return panelMedia(m, band, sizes);
+    var width = esc(dimensions.width) + ' cm';
+    var height = esc(dimensions.height) + ' cm';
+    return '<div class="info-measured-media" role="group" aria-label="Dimensões da ' + esc(m.id) + ': ' + width + ' de largura por ' + height + ' de altura">' +
+      panelMedia(m, band, sizes) +
+      '<div class="info-measure info-measure--width" aria-hidden="true"><i></i><span>' + width + '</span></div>' +
+      '<div class="info-measure info-measure--height" aria-hidden="true"><i></i><span>' + height + '</span></div>' +
+    '</div>';
+  }
+
   function renderInfo(m) {
     var band = bandFor(m, 'info');
     /* Os cards abrem a coluna de informações; os LEDs têm uma faixa própria.
@@ -223,13 +235,13 @@
       var modelNote = band && !band.img ? '<p class="info-model-note">' + esc(band.body) + '</p>' : '';
       var ledOnly = feature.replace(modelNote, '');
       return '<div class="panel-inner info-6sw-layout">' +
-        '<div class="info-6sw-left"><div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' + ledOnly + '</div>' +
+        '<div class="info-6sw-left"><div class="split-media">' + dimensionedInfoMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' + ledOnly + '</div>' +
         '<div class="info-6sw-right">' + specStrip(m) + modelNote + '</div>' +
       '</div>';
     }
 
     return '<div class="panel-inner split info-model-' + esc(m.hash) + '">' +
-      '<div class="split-media">' + panelMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' +
+      '<div class="split-media">' + dimensionedInfoMedia(m, band, '(max-width: 900px) 86vw, 42vw') + '</div>' +
       specStrip(m) +
       feature +
     '</div>';
@@ -346,6 +358,15 @@
   };
   function icon(key) { return '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[key] || '') + '</svg>'; }
   function renderResource(item) {
+    if (item.key === 'downloads') {
+      var manualItem = RES.find(function (entry) { return entry.key === 'manual'; });
+      var manualLink = manualItem && manualItem.links && manualItem.links[0];
+      var updaterLink = item.links && item.links[1];
+      return '<div class="panel-inner resource-page resource-quick-page"><div class="resource-quick-links">' +
+        '<a class="resource-quick-link" href="' + esc(manualLink.href) + '" target="_blank" rel="noopener noreferrer">' + icon('manual') + '<span>Manual</span></a>' +
+        '<a class="resource-quick-link" href="' + esc(updaterLink.href) + '" target="_blank" rel="noopener noreferrer">' + icon('downloads') + '<span>Atualizador</span></a>' +
+      '</div></div>';
+    }
     return '<div class="panel-inner resource-page"><div class="resource-heading">' + icon(item.key) +
       '<h2 class="panel-title">' + esc(item.title) + '</h2><p class="panel-lead">' + esc(item.lead) + '</p></div>' +
       '<div class="resource-cards">' + item.links.map(function (link) {

@@ -144,6 +144,7 @@ window.BF_CONTENT = (function () {
                  'tela colorida com amplificador e o anel azul do footswitch 1 aceso.',
         ports: ['din5', 'trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 8,
+        dimensions: { width: 18, height: 14 },
         specs: [
           specSwitches(8, 'Seis para presets, mais LIVE MODE e GLOBAL SWITCH dedicados.'),
           specPresets(6),
@@ -213,6 +214,7 @@ window.BF_CONTENT = (function () {
            (mais o 9V). Sem DIN5, como a NANO+. */
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 6,
+        dimensions: { width: 26, height: 9 },
         specs: [
           specSwitches(6, 'Seis footswitches para presets, com acesso ao modo LIVE.'),
           specPresets(6),
@@ -281,6 +283,7 @@ window.BF_CONTENT = (function () {
                  'com o preset CLASSIC ROCK e anel azul aceso no footswitch 1.',
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 6,
+        dimensions: { width: 18, height: 11 },
         specs: [
           specSwitches(6, 'Os mesmos seis presets por banco, num corpo bem menor.'),
           specPresets(6),
@@ -348,6 +351,7 @@ window.BF_CONTENT = (function () {
            usuário, 18/09/2026). */
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi'],
         switches: 4,
+        dimensions: { width: 14, height: 10 },
         specs: [
           specSwitches(4, 'Quatro footswitches, para quem conta cada centímetro da placa.'),
           /* 4 por banco, e não 6: nas placas de quatro footswitches o pé alcança

@@ -78,6 +78,32 @@
 .info-led-rings span { flex: 1; min-width: 0; filter: drop-shadow(0 0 5px color-mix(in srgb,var(--led-color) 45%,transparent)); }
 .info-led-rings svg { display: block; width: 100%; }
 .info-model-note { grid-column: 1 / -1; color: var(--ink-2); font-size: .95rem; line-height: 1.5; }
+
+/* Cotas físicas do produto: largura abaixo e altura à direita da foto. */
+.info-measured-media {
+  --measure-color: #1cc7ff;
+  position: relative;
+  width: calc(100% - 52px);
+  margin: 0 52px 44px 0;
+}
+.info-measured-media .panel-shot { width: 100%; max-width: none; }
+.info-measure { position: absolute; color: var(--measure-color); font: 700 1.65rem/1 var(--font-mono); text-shadow: 0 0 12px #11bfff77; }
+.info-measure i { position: absolute; display: block; background: currentColor; box-shadow: 0 0 8px #11bfff55; }
+.info-measure span { position: absolute; z-index: 1; padding: 3px 7px; background: #080d14; white-space: nowrap; }
+.info-measure--width { left: 0; right: 0; bottom: -38px; height: 30px; }
+.info-measure--width i { left: 0; right: 0; top: 14px; height: 2px; }
+.info-measure--width i::before,
+.info-measure--width i::after { content: ''; position: absolute; top: -5px; width: 0; height: 0; border-block: 6px solid transparent; }
+.info-measure--width i::before { left: -1px; border-right: 11px solid currentColor; }
+.info-measure--width i::after { right: -1px; border-left: 11px solid currentColor; }
+.info-measure--width span { left: 50%; top: 4px; transform: translateX(-50%); }
+.info-measure--height { top: 0; bottom: 0; right: -48px; width: 36px; }
+.info-measure--height i { top: 0; bottom: 0; left: 17px; width: 2px; }
+.info-measure--height i::before,
+.info-measure--height i::after { content: ''; position: absolute; left: -5px; width: 0; height: 0; border-inline: 6px solid transparent; }
+.info-measure--height i::before { top: -1px; border-bottom: 11px solid currentColor; }
+.info-measure--height i::after { bottom: -1px; border-top: 11px solid currentColor; }
+.info-measure--height span { left: 50%; top: 50%; transform: translate(-50%,-50%); writing-mode: vertical-rl; }
 @media (min-width: 861px) and (max-width: 1250px) {
   #panel-info .panel-inner { grid-template-columns: minmax(0,.7fr) minmax(0,1.3fr); gap: 24px; padding-inline: 24px; }
   .info-card { padding: 17px; }
@@ -168,8 +194,8 @@
    própria, com os LEDs logo abaixo da foto. */
 @media (min-width: 861px) {
   #panel-info .info-led-band {
-    transform: translateY(-70px);
-    margin-bottom: -70px;
+    transform: translateY(-52px);
+    margin-bottom: -52px;
   }
   #panel-info .info-6sw-left .info-led-band {
     transform: none;
@@ -188,6 +214,10 @@
   .info-led-band { padding: 20px; gap: 14px; }
   .info-led-rings { width: 100%; }
   .info-led-copy p { font-size: .9rem; }
+  .info-measured-media { width: calc(100% - 40px); margin-right: 40px; margin-bottom: 40px; }
+  .info-measure { font-size: 1.3rem; }
+  .info-measure--height { right: -38px; width: 30px; }
+  .info-measure--height i { left: 14px; }
   #panel-info .panel-shot img { max-height: 280px; }
 }
 

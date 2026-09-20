@@ -61,6 +61,25 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .resource-nav .tab { flex: 1; font-variation-settings: normal; }
 .resource-nav .tab::before { display: none; }
 .resource-page { max-width: 960px; padding-top: 44px; padding-bottom: 52px; }
+.resource-quick-page { position: relative; display: flex; align-items: center; justify-content: center; min-height: 430px; overflow: hidden; }
+.resource-quick-page::before, .resource-quick-page::after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; filter: blur(2px); }
+.resource-quick-page::before { width: 360px; height: 180px; left: 8%; top: 22%; background: #2d79b51c; box-shadow: 440px 40px 0 #ff9e4b0d; }
+.resource-quick-page::after { width: 220px; height: 220px; right: 12%; bottom: -80px; background: #ff9e4b12; }
+.resource-quick-links { position: relative; z-index: 1; display: flex; justify-content: center; gap: clamp(28px,6vw,86px); }
+.resource-quick-link {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  width: 196px; height: 196px; color: #b9d2e8; text-decoration: none;
+  border: 1px solid #47718caa; border-radius: 30px;
+  background: radial-gradient(circle at 50% 22%,#274867aa,transparent 44%),linear-gradient(145deg,#192f45ed,#0c1826f2);
+  box-shadow: inset 0 1px 1px #d5eeff1e,0 22px 38px -26px #000,0 0 28px #2c7db51c;
+  transition: color .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.resource-quick-link .nav-icon { width: 58px; height: 58px; padding: 11px; color: #ffb266; border: 1px solid currentColor; border-radius: 17px; background: #ffad6812; filter: drop-shadow(0 0 9px #ff9d5c88); }
+.resource-quick-link span { font: 700 1.05rem/1 var(--font-display); letter-spacing: .04em; text-transform: uppercase; }
+.resource-quick-link:hover, .resource-quick-link:focus-visible {
+  color: #fff; border-color: #ffad68; transform: translateY(-7px); box-shadow: 0 0 32px #ff9a4b44, inset 0 1px 1px #fff2;
+}
+#resource-navigation { display: none !important; }
 .resource-heading { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin-bottom: 30px; }
 .resource-heading > .nav-icon { width: 40px; height: 40px; padding: 8px; box-sizing: content-box; color: #e6b989; border: 1px solid #c0916044; border-radius: 18px; background: #2d2926; }
 .resource-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 18px; }
@@ -182,6 +201,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 }
 @media (max-width: 860px) { .selector-zone { padding: 22px 20px 16px; } .view-nav { max-width: 600px; } .resource-nav { max-width: 510px; } }
 @media (max-width: 560px) { .selector { --pad: 6px; } .tab { min-height: 56px; padding: 14px 3px; font-size: .875rem; font-variation-settings: 'wdth' 100; } .gear-tab { width: 52px; height: 56px; padding: 0; } .gear-tab .nav-icon { width: 25px; height: 25px; } .view-nav { padding: 5px; border-radius: 26px; } .overview-link,.selector-sub .tab,.resource-nav .tab { padding: 9px 4px; min-height: 64px; border-radius: 20px; font-size: .875rem; } .nav-icon { width: 20px; height: 20px; } .resource-card { padding: 22px; } }
+@media (max-width: 560px) { .resource-quick-page { min-height: 300px; padding-inline: 16px; } .resource-quick-links { width: 100%; gap: 14px; } .resource-quick-link { width: min(42vw, 150px); height: min(42vw, 150px); border-radius: 20px; } .resource-quick-link .nav-icon { width: 44px; height: 44px; padding: 8px; border-radius: 13px; } .resource-quick-link span { font-size: .9rem; } }
 @media (max-width: 360px) { .selector-zone { padding-inline: 12px; } .view-nav { width: calc(100% - 24px); } .gear-tab { width: 44px; } }
 
 /* No celular, a vitrine assume a estrutura de um aplicativo: modelos no topo,
@@ -786,6 +806,15 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   #panel-info .spec-note { font-size: .9375rem; line-height: 1.45; }
   #panel-info .feat { gap: 14px; }
   #panel-info .feat-body,#panel-info .band-list li { font-size: 1rem; line-height: 1.55; }
+}
+
+/* HOME desktop: a controladora ganha presença e o nome desce um pouco. */
+@media (min-width: 861px) {
+  .panel-home .hero-stage .shot[data-i="0"] img { transform: translateY(64px) scale(1.5); transform-origin: center center; }
+  .panel-home .hero-stage .shot[data-i="2"] img { transform: translateY(90px) scale(1.45); transform-origin: center center; }
+  .panel-home .hero-stage .shot[data-i="1"] img,
+  .panel-home .hero-stage .shot[data-i="3"] img { transform: translateY(90px); }
+  .panel-home .hero-wordmark { margin-top: clamp(200px, 20vh, 280px); }
 }
 
 @media (max-width: 420px) {
