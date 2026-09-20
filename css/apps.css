@@ -54,4 +54,15 @@
 @media (max-width: 820px) { .apps-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 700px) { .apps-hero { flex-wrap: wrap; gap: 16px; } .apps-hero > div:nth-child(2) { flex: 1; } .apps-icon { width: 64px; height: 64px; border-radius: 16px; } .apps-help-button { margin-left: auto; } }
 @media (max-width: 560px) { .apps-page { padding-top: 28px; gap: 26px; } .apps-hero { gap: 12px; } .apps-hero h2 { font-size: 29px; } .apps-title-row { gap: 6px 12px; } .apps-pill { padding: 6px 12px; font-size: 14px; } .apps-grid { grid-template-columns: 1fr; } .apps-card { padding: 48px 22px 22px; gap: 20px; } .apps-dialog-head { padding: 18px; gap: 12px; } .apps-dialog-head h2 { font-size: 21px; } .apps-dialog-body { padding: 0 18px 18px; } .apps-note { padding: 16px; } }
+@media (max-width: 560px) {
+  .apps-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+  .apps-card { min-width: 0; padding: 42px 10px 14px; gap: 14px; border-radius: 16px; }
+  .apps-os { gap: 12px; }
+  .apps-os svg { width: 52px; height: 52px; }
+  .apps-os h3 { font-size: 17px; }
+  .apps-sub { font-size: 12px; line-height: 1.35; }
+  .apps-badge { top: 10px; right: 8px; font-size: 10px; padding: 3px 6px; }
+  .apps-page .apps-btn { min-height: 44px; padding: 9px 5px; font-size: 11px; }
+  .apps-btn svg { width: 15px; height: 15px; }
+}
 @media (prefers-reduced-motion: reduce) { .apps-card,.apps-btn { transition: none; } }
