@@ -467,6 +467,8 @@
     gear.setAttribute('aria-expanded', String(resources));
     var mobileApps = $('#mobile-apps-toggle');
     var mobileResources = $('#mobile-resources-toggle');
+    var mobileUtility = $('#mobile-utility-navigation');
+    if (mobileUtility) mobileUtility.hidden = view !== 'home';
     if (mobileApps) mobileApps.setAttribute('aria-pressed', String(appView));
     if (mobileResources) {
       mobileResources.setAttribute('aria-pressed', String(resources && !appView));
