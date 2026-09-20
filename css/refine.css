@@ -82,8 +82,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 #resource-navigation { display: none !important; }
 .mobile-utility-nav { display: none; }
 .mobile-utility-nav[hidden] { display: none !important; }
-.mobile-layout-tuner { display: none; }
-.mobile-layout-tuner[hidden] { display: none !important; }
 .resource-heading { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin-bottom: 30px; }
 .resource-heading > .nav-icon { width: 40px; height: 40px; padding: 8px; box-sizing: content-box; color: #e6b989; border: 1px solid #c0916044; border-radius: 18px; background: #2d2926; }
 .resource-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 18px; }
@@ -883,9 +881,9 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
    acessos secundários formam uma barra horizontal logo abaixo dele. */
 @media (max-width: 600px) {
   .app {
-    --mobile-name-y: -35px;
-    --mobile-action-height: 72px;
-    --mobile-action-width: 46%;
+    --mobile-name-y: -62px;
+    --mobile-action-height: 52px;
+    --mobile-action-width: 48%;
   }
   .selector-zone > .selector { --n: 4 !important; }
   .selector-zone > .selector .selector-track { grid-template-columns: repeat(4,minmax(0,1fr)); }
@@ -969,25 +967,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 
   .panel-home .hero-wordmark { transform: translateY(var(--mobile-name-y)); }
 
-  .app > #mobile-layout-tuner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 9px 12px;
-    width: calc(100% - 20px);
-    margin: 0 10px 14px;
-    padding: 14px;
-    border: 1px solid #6286a34d;
-    border-radius: 16px;
-    color: #c8d7e7;
-    background: linear-gradient(155deg,#17293aec,#0b1724f5);
-    box-shadow: inset 0 1px #d2eaff17,0 12px 26px -20px #000;
-  }
-  .mobile-layout-tuner > strong { grid-column: 1 / -1; font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; color: #ffb56f; }
-  .mobile-layout-tuner label { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; align-items: center; font-size: .78rem; }
-  .mobile-layout-tuner label output { color: #20c9ff; font-family: var(--font-mono); }
-  .mobile-layout-tuner input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: #ff8b45; }
-  #copy-mobile-layout { min-height: 38px; padding: 8px 14px; border: 1px solid #e6a061; border-radius: 12px; color: #321509; background: linear-gradient(155deg,#ffb765,#ff7838); font-weight: 700; }
-  .mobile-layout-copy-status { align-self: center; min-height: 1em; color: #8ec7a9; font-size: .72rem; }
 
   .app { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 }

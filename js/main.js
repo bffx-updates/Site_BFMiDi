@@ -468,9 +468,7 @@
     var mobileApps = $('#mobile-apps-toggle');
     var mobileResources = $('#mobile-resources-toggle');
     var mobileUtility = $('#mobile-utility-navigation');
-    var mobileTuner = $('#mobile-layout-tuner');
     if (mobileUtility) mobileUtility.hidden = view !== 'home';
-    if (mobileTuner) mobileTuner.hidden = view !== 'home';
     if (mobileApps) mobileApps.setAttribute('aria-pressed', String(appView));
     if (mobileResources) {
       mobileResources.setAttribute('aria-pressed', String(resources && !appView));
@@ -572,44 +570,6 @@
   overview.innerHTML = icon('home') + '<span>' + esc(C.ui.overview) + '</span>';
   overview.title = C.ui.overview;
 
-  var layoutRoot = $('#app');
-  var layoutInputs = Array.from(document.querySelectorAll('[data-layout-control]'));
-  function updateMobileLayout() {
-    var values = {};
-    layoutInputs.forEach(function (input) {
-      var key = input.getAttribute('data-layout-control');
-      values[key] = input.value;
-      var output = document.querySelector('[data-layout-output="' + key + '"]');
-      if (output) output.textContent = input.value + (key === 'width' ? '%' : 'px');
-    });
-    if (!layoutRoot) return values;
-    layoutRoot.style.setProperty('--mobile-name-y', values.name + 'px');
-    layoutRoot.style.setProperty('--mobile-action-height', values.height + 'px');
-    layoutRoot.style.setProperty('--mobile-action-width', values.width + '%');
-    return values;
-  }
-  layoutInputs.forEach(function (input) { input.addEventListener('input', updateMobileLayout); });
-  var copyLayout = $('#copy-mobile-layout');
-  if (copyLayout) copyLayout.addEventListener('click', function () {
-    var values = updateMobileLayout();
-    var text = 'Nome vertical: ' + values.name + 'px; botões: largura ' + values.width + '%, altura ' + values.height + 'px';
-    var status = $('#mobile-layout-copy-status');
-    function copied() { if (status) status.textContent = 'Valores copiados.'; }
-    function legacyCopy() {
-      var field = document.createElement('textarea');
-      field.value = text;
-      field.style.position = 'fixed';
-      field.style.opacity = '0';
-      document.body.appendChild(field);
-      field.select();
-      document.execCommand('copy');
-      field.remove();
-      copied();
-    }
-    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(copied, legacyCopy);
-    else legacyCopy();
-  });
-  updateMobileLayout();
   var start = fromHash();
   apply(start.model, start.view);
 })();
