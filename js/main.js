@@ -465,6 +465,13 @@
     track.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i === active ? 0 : -1; });
     var gear = $('#resources-toggle');
     gear.setAttribute('aria-expanded', String(resources));
+    var mobileApps = $('#mobile-apps-toggle');
+    var mobileResources = $('#mobile-resources-toggle');
+    if (mobileApps) mobileApps.setAttribute('aria-pressed', String(appView));
+    if (mobileResources) {
+      mobileResources.setAttribute('aria-pressed', String(resources && !appView));
+      mobileResources.setAttribute('aria-expanded', String(resources && !appView));
+    }
     modelNav.hidden = special;
     resourceNav.hidden = !resources;
     var vi = viewIndex(view);
