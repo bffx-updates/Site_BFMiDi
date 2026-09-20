@@ -3,6 +3,7 @@
   'use strict';
   var dialog = document.getElementById('ajuda-dialog');
   var open = document.getElementById('abrir-ajuda');
+  if (!dialog || !open) return;
   open.addEventListener('click', function () { dialog.showModal(); });
   dialog.querySelector('.apps-close-help').addEventListener('click', function () { dialog.close(); });
   dialog.addEventListener('click', function (event) {

@@ -6,12 +6,12 @@
 .apps-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 18px; }
 .apps-hero h2 { font: 700 clamp(30px,3.5vw,44px)/1.12 var(--font-body); letter-spacing: -.035em; margin: 0; }
 .apps-hero h2 span { color: #ff792f; }
-.apps-pill { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; padding: 8px 16px; border-radius: 999px; border: 1px solid #a6bedd24; background: #101722d9; color: #a3afc2; font-size: clamp(14px,1.3vw,17px); }
-.apps-pill b { color: #e8edf5; font-size: 1.25em; letter-spacing: -.02em; }
+.apps-pill { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; padding: 8px 16px; border-radius: 20px; border: 1px solid #a6bedd55; background: #162a3ed9; color: #e8edf5; font-size: clamp(14px,1.3vw,17px); }
+.apps-version-copy { display: flex; flex-direction: column; align-items: flex-start; font-weight: 800; line-height: 1.05; text-transform: uppercase; }
+.apps-version-copy > span:last-child { display: flex; align-items: center; gap: 6px; }
+.apps-pill b { color: #ff792f; font-size: 2.4em; line-height: .9; letter-spacing: -.05em; }
 .apps-dot { width: 9px; height: 9px; border-radius: 50%; background: #39d98a; box-shadow: 0 0 10px #39d98a; }
-.apps-help-button { margin-left: auto; display: inline-flex; align-items: center; gap: 9px; padding: 11px 16px; border: 1px solid #a6bedd24; border-radius: 14px; color: #e8edf5; background: #121c29d9; font: 600 14px/1.4 var(--font-body); cursor: pointer; flex-shrink: 0; }
-.apps-help-button span { display: grid; place-items: center; width: 24px; height: 24px; border: 1.5px solid #ffae70; color: #ffae70; border-radius: 50%; font: 700 16px/1 sans-serif; }
-.apps-help-button:hover,.apps-close-help:hover { background: #243247; border-color: #8091aa; }
+.apps-close-help:hover { background: #243247; border-color: #8091aa; }
 .apps-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 18px; }
 .apps-card { position: relative; display: flex; flex-direction: column; gap: 22px; padding: 56px 20px 22px; text-align: center; border: 1px solid #a6bedd24; border-radius: 20px; background: linear-gradient(180deg,#192332eb,#101722f0); box-shadow: 0 16px 40px #0003; transition: transform .18s,border-color .18s; }
 .apps-card.apps-ready { border-color: #ff8b4366; }
@@ -52,9 +52,17 @@
 .apps-links a:hover { border-color: #8091aa; }
 @media (max-width: 1180px) { .apps-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .apps-os h3 { font-size: 30px; } }
 @media (max-width: 820px) { .apps-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-@media (max-width: 700px) { .apps-hero { flex-wrap: wrap; gap: 16px; } .apps-hero > div:nth-child(2) { flex: 1; } .apps-icon { width: 64px; height: 64px; border-radius: 16px; } .apps-help-button { margin-left: auto; } }
+@media (max-width: 700px) { .apps-hero { gap: 16px; } .apps-hero > div:nth-child(2) { flex: 1; min-width: 0; } .apps-icon { width: 64px; height: 64px; border-radius: 16px; } }
 @media (max-width: 560px) { .apps-page { padding-top: 28px; gap: 26px; } .apps-hero { gap: 12px; } .apps-hero h2 { font-size: 29px; } .apps-title-row { gap: 6px 12px; } .apps-pill { padding: 6px 12px; font-size: 14px; } .apps-grid { grid-template-columns: 1fr; } .apps-card { padding: 48px 22px 22px; gap: 20px; } .apps-dialog-head { padding: 18px; gap: 12px; } .apps-dialog-head h2 { font-size: 21px; } .apps-dialog-body { padding: 0 18px 18px; } .apps-note { padding: 16px; } }
 @media (max-width: 560px) {
+  .apps-page { padding-inline: 12px; }
+  .apps-hero { display: grid; grid-template-columns: 58px minmax(0,1fr) auto; align-items: center; gap: 12px; }
+  .apps-hero > div:nth-child(2), .apps-title-row { display: contents; }
+  .apps-icon { width: 58px; height: 58px; border-radius: 15px; }
+  .apps-hero h2 { grid-column: 2; font-size: clamp(18px,5.3vw,23px); white-space: nowrap; }
+  .apps-pill { grid-column: 3; min-width: 118px; min-height: 64px; justify-content: center; gap: 7px; padding: 7px 9px; border-radius: 18px; font-size: 12px; }
+  .apps-pill b { font-size: 3.8em; }
+  .apps-dot { width: 10px; height: 10px; }
   .apps-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
   .apps-card { min-width: 0; padding: 42px 10px 14px; gap: 14px; border-radius: 16px; }
   .apps-os { gap: 12px; }
