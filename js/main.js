@@ -336,9 +336,9 @@
         '<p class="buy-price">' + esc(b.price) + '</p>' +
         '<p class="panel-lead">' + esc(b.lead) + '</p>' +
         listTag(b.list)) +
-      '<div class="hero-ctas">' + cta(b.primary, 'btn-primary') + cta(b.ghost, 'btn-ghost') + '</div>' +
+      '<div class="hero-ctas">' + cta(b.primary, 'btn-primary') + '</div>' +
       waitlist +
-      ((!b.primary.href || b.primary.href === '#' || !b.ghost.href || b.ghost.href === '#')
+      ((!b.primary.href || b.primary.href === '#')
         ? '<p class="buy-unavailable" id="buy-unavailable">' + esc(b.unavailable) + '</p>' : '') +
     '</div>';
   }
