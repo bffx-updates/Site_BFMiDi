@@ -352,6 +352,7 @@
     comprar: '<path d="M3 3h2l3 12h11l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
     apps: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
     downloads: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
+    backup: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Zm0 0v6h6"/><path d="M7 15s2-3 5-3 5 3 5 3-2 3-5 3-5-3-5-3Z"/><circle cx="12" cy="15" r="1"/>',
     manual: '<path d="M12 5C8 2 5 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-3-1-6-2-10 1Zm0 0v16"/>',
     system: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 14h2m4 0h2m-8 3h8"/>',
     gear: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/>'
@@ -362,9 +363,11 @@
       var manualItem = RES.find(function (entry) { return entry.key === 'manual'; });
       var manualLink = manualItem && manualItem.links && manualItem.links[0];
       var updaterLink = item.links && item.links[1];
+      var backupLink = item.links.find(function (link) { return link.key === 'backup'; });
       return '<div class="panel-inner resource-page resource-quick-page"><div class="resource-quick-links">' +
         '<a class="resource-quick-link" href="' + esc(manualLink.href) + '" target="_blank" rel="noopener noreferrer">' + icon('manual') + '<span>Manual</span></a>' +
         '<a class="resource-quick-link" href="' + esc(updaterLink.href) + '" target="_blank" rel="noopener noreferrer">' + icon('downloads') + '<span>Atualizador</span></a>' +
+        '<a class="resource-quick-link" href="' + esc(backupLink.href) + '" target="_blank" rel="noopener noreferrer" aria-label="Backup View (abre em nova aba)">' + icon('backup') + '<span>Backup View</span></a>' +
       '</div></div>';
     }
     return '<div class="panel-inner resource-page"><div class="resource-heading">' + icon(item.key) +

@@ -65,7 +65,7 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .resource-quick-page::before, .resource-quick-page::after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; filter: blur(2px); }
 .resource-quick-page::before { width: 360px; height: 180px; left: 8%; top: 22%; background: #2d79b51c; box-shadow: 440px 40px 0 #ff9e4b0d; }
 .resource-quick-page::after { width: 220px; height: 220px; right: 12%; bottom: -80px; background: #ff9e4b12; }
-.resource-quick-links { position: relative; z-index: 1; display: flex; justify-content: center; gap: clamp(28px,6vw,86px); }
+.resource-quick-links { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(28px,6vw,86px); }
 .resource-quick-link {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
   width: 196px; height: 196px; color: #b9d2e8; text-decoration: none;
