@@ -92,134 +92,404 @@
     <section class="panel" id="panel-conects" role="tabpanel" aria-labelledby="subtab-conects" aria-hidden="true"></section>
     <section class="panel" id="panel-comprar" role="tabpanel" aria-labelledby="subtab-comprar" aria-hidden="true"></section>
     <section class="panel" id="panel-software" role="tabpanel" aria-labelledby="software-toggle" aria-hidden="true" inert></section>
-    <section class="panel" id="panel-apps" role="tabpanel" aria-labelledby="subtab-apps" aria-hidden="true" inert><div class="apps-page">
+    <section class="panel" id="panel-apps" role="tabpanel" aria-labelledby="subtab-apps" aria-hidden="true" inert><div class="apps-page" id="apps-page" data-focus="desk" data-plat="none">
+  <div class="ap-wrap">
 
-  <header class="apps-hero">
-    <div class="apps-icon" role="img" aria-label="Ícone do BFMiDi Editor"></div>
-    <div>
-      <div class="apps-title-row">
-        <h2>BFMiDi <span>Editor</span></h2>
-        <div class="apps-pill"><span class="apps-version-copy"><span>Versão</span><span><i class="apps-dot"></i>Atual</span></span><b>14</b></div>
+  <!-- PALCO. A ordem do HTML é a ordem de leitura em todas as larguras:
+       cabeçalho → dock → cartão com o botão → aparelhos. No desktop o
+       texto vira a coluna da esquerda e o palco a da direita. -->
+  <div class="ap-hero">
+    <div class="ap-copy">
+      <p class="ap-eyebrow">
+        <img class="ap-eyebrow__icon" src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="44px" width="256" height="256" alt="" loading="lazy" decoding="async">
+        <span class="ap-eyebrow__name">BFMiDi Editor</span>
+        <span class="ap-eyebrow__ver"><i aria-hidden="true"></i>Versão 14</span>
+      </p>
+      <h2 class="ap-title" id="apps-title">
+        <span class="ap-title__line">Controle total,</span>
+        <span class="ap-title__line ap-title__line--hot">em qualquer tela.</span>
+      </h2>
+      <p class="ap-lead">O mesmo editor da sua BFMIDI no navegador, no Windows, no Mac, no iPhone e no iPad.</p>
+
+      <div class="ap-get" role="group" aria-labelledby="apps-get-label">
+        <div class="ap-get__head">
+          <p class="ap-label" id="apps-get-label">Escolha onde usar</p>
+          <button class="ap-help-btn" id="abrir-ajuda" type="button" commandfor="ajuda-dialog" command="show-modal" aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.3a2.7 2.7 0 0 1 5.2 1c0 1.8-2.6 2.4-2.6 3.9"/><path d="M12 17.3h.01"/></svg>
+            <span>Ajuda<span class="ap-help-more"> para instalar</span></span>
+          </button>
+        </div>
+
+        <!-- Dock: vira seletor de abas com JS. Sem JS fica oculto e as cinco
+             plataformas aparecem numa lista compacta, cada uma com o botão. -->
+        <div class="ap-dock" role="tablist" aria-label="Plataformas do BFMiDi Editor" hidden>
+          <button class="ap-key" type="button" role="tab" id="ap-tab-online" aria-controls="ap-plat-online" aria-selected="false" tabindex="-1" data-plat="online" data-focus="desk">
+            <span class="ap-key__cap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M2.9 9.2h18.2M2.9 14.8h18.2"/><path d="M12 2.8c2.5 2.5 3.9 5.7 3.9 9.2s-1.4 6.7-3.9 9.2c-2.5-2.5-3.9-5.7-3.9-9.2S9.5 5.3 12 2.8z"/></svg></span>
+            <span class="ap-key__name">Online</span>
+            <span class="ap-key__sub" aria-hidden="true"><span class="ap-lm">Navegador</span><span class="ap-s">Web</span></span>
+            <span class="ap-key__led" aria-hidden="true"></span>
+          </button>
+          <button class="ap-key" type="button" role="tab" id="ap-tab-windows" aria-controls="ap-plat-windows" aria-selected="false" tabindex="-1" data-plat="windows" data-focus="desk">
+            <span class="ap-key__cap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.4v7.1H3zm8.5-1.3L21 3v8.5h-9.5zM3 12.5h7.5v7.1L3 18.5zm8.5 0H21V21l-9.5-1.3z"/></svg></span>
+            <span class="ap-key__name">Windows</span>
+            <span class="ap-key__sub" aria-hidden="true"><span class="ap-l">Windows 10/11</span><span class="ap-m">Win 10/11</span><span class="ap-s">10/11</span></span>
+            <span class="ap-key__led" aria-hidden="true"></span>
+          </button>
+          <button class="ap-key" type="button" role="tab" id="ap-tab-mac" aria-controls="ap-plat-mac" aria-selected="false" tabindex="-1" data-plat="mac" data-focus="desk">
+            <span class="ap-key__cap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.9 1.2 1.9 2.6 3.2 2.5 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8 2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-3.9zM14 5.3c.7-.8 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4z"/></svg></span>
+            <span class="ap-key__name">Mac</span>
+            <span class="ap-key__sub" aria-hidden="true"><span class="ap-lm">macOS 14+</span><span class="ap-s">14+</span></span>
+            <span class="ap-key__led" aria-hidden="true"></span>
+          </button>
+          <button class="ap-key" type="button" role="tab" id="ap-tab-ios" aria-controls="ap-plat-ios" aria-selected="false" tabindex="-1" data-plat="ios" data-focus="mobile">
+            <span class="ap-key__cap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.6" y="4" width="12.4" height="16.6" rx="2"/><rect x="15.4" y="8.2" width="6.2" height="12.4" rx="1.7" fill="currentColor" fill-opacity=".18"/><path d="M7.6 17.9h2.4" stroke-linecap="round"/></svg></span>
+            <span class="ap-key__name">iPhone e iPad</span>
+            <span class="ap-key__sub" aria-hidden="true"><span class="ap-lm">iOS 17+</span><span class="ap-s">17+</span></span>
+            <span class="ap-key__led" aria-hidden="true"></span>
+          </button>
+          <button class="ap-key ap-key--soon" type="button" role="tab" id="ap-tab-android" aria-controls="ap-plat-android" aria-selected="false" tabindex="-1" data-plat="android" data-focus="phone">
+            <span class="ap-key__cap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.5H6.4v8.2c0 .7.5 1.2 1.2 1.2h1.1v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.4v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.1c.7 0 1.2-.5 1.2-1.2V9.5zM3.9 9.7a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zm16.2 0a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zM15.4 3.6l1-1.7c.1-.1 0-.3-.1-.3-.1-.1-.3 0-.3.1l-1 1.8a6.6 6.6 0 0 0-6 0l-1-1.8c-.1-.1-.3-.2-.4-.1-.1.1-.1.2-.1.3l1 1.7A5.9 5.9 0 0 0 6.4 8.7h11.2a5.9 5.9 0 0 0-2.2-5.1zM9.3 6.6a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2zm5.4 0a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2z"/></svg></span>
+            <span class="ap-key__name">Android</span>
+            <span class="ap-key__sub">Em breve</span>
+            <span class="ap-key__led" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="ap-plats">
+
+          <!-- Online -->
+          <article class="ap-plat" id="ap-plat-online" aria-labelledby="ap-plat-online-h" data-plat="online">
+            <div class="ap-plat__top">
+              <div class="ap-plat__flags"><span class="ap-rec" hidden><span>Recomendado<span class="ap-rec__more"> para este dispositivo</span></span></span></div>
+              <span class="ap-plat__icon" aria-hidden="true"><img src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="56px" width="256" height="256" alt="" loading="lazy" decoding="async"></span>
+              <div class="ap-plat__id">
+                <h3 id="ap-plat-online-h">Online <span class="ap-plat__sub">no navegador</span></h3>
+                <p class="ap-plat__req"><svg class="ap-plat__os" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M2.9 9.2h18.2M2.9 14.8h18.2"/><path d="M12 2.8c2.5 2.5 3.9 5.7 3.9 9.2s-1.4 6.7-3.9 9.2c-2.5-2.5-3.9-5.7-3.9-9.2S9.5 5.3 12 2.8z"/></svg><span>Chrome ou Edge no computador</span></p>
+              </div>
+            </div>
+            <div class="ap-plat__act">
+              <a class="ap-cta" href="https://bffx-updates.github.io/Editor_BFMiDi_v14/" target="_blank" rel="noopener noreferrer">
+                <span>Abrir no navegador</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-8 8M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg>
+                <span class="sr-only">(abre em nova aba)</span>
+              </a>
+              <p class="ap-plat__file ap-plat__meta" aria-hidden="true">Sem instalar · abre em nova aba</p>
+              <button class="ap-link-btn js-help" type="button" data-help="ajuda-sem" commandfor="ajuda-dialog" command="show-modal" aria-haspopup="dialog">Ou use o editor do próprio pedal, pelo Wi‑Fi dele</button>
+            </div>
+            <p class="ap-plat__text"><span class="ap-plat__t1">Nada para instalar: conecta pelo cabo USB e, sem o cabo, abre no modo offline.</span><span class="ap-plat__t2"> Dá para montar os presets mesmo sem o pedal conectado.</span></p>
+            <ul class="ap-tags" aria-label="Formas de conexão">
+              <li>Cabo USB</li>
+              <li>Modo offline</li>
+            </ul>
+          </article>
+
+          <!-- Windows -->
+          <article class="ap-plat" id="ap-plat-windows" aria-labelledby="ap-plat-windows-h" data-plat="windows">
+            <div class="ap-plat__top">
+              <div class="ap-plat__flags"><span class="ap-rec" hidden><span>Recomendado<span class="ap-rec__more"> para este dispositivo</span></span></span></div>
+              <span class="ap-plat__icon" aria-hidden="true"><img src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="56px" width="256" height="256" alt="" loading="lazy" decoding="async"></span>
+              <div class="ap-plat__id">
+                <h3 id="ap-plat-windows-h">Windows</h3>
+                <p class="ap-plat__req"><svg class="ap-plat__os" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.4v7.1H3zm8.5-1.3L21 3v8.5h-9.5zM3 12.5h7.5v7.1L3 18.5zm8.5 0H21V21l-9.5-1.3z"/></svg><span>Windows 10 e 11 (64 bits)</span></p>
+              </div>
+            </div>
+            <div class="ap-plat__act">
+              <a class="ap-cta" href="assets/apps/BFMiDi-Editor-14.0.260919-Setup.exe" download>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                <span>Baixar para Windows</span>
+              </a>
+              <p class="ap-plat__file">Setup.exe · 5,3 MB</p>
+              <button class="ap-link-btn js-help" type="button" data-help="ajuda-win" commandfor="ajuda-dialog" command="show-modal" aria-haspopup="dialog">Como instalar no Windows</button>
+            </div>
+            <p class="ap-plat__text"><span class="ap-plat__t1">Conecta pelo Wi‑Fi do pedal, pela rede de casa ou pelo cabo USB, e abre para editar mesmo sem o pedal.</span><span class="ap-plat__t2"> Instala por usuário, sem pedir senha de administrador.</span></p>
+            <ul class="ap-tags" aria-label="Formas de conexão">
+              <li>Wi‑Fi</li>
+              <li>Rede</li>
+              <li>USB</li>
+              <li>Offline</li>
+            </ul>
+          </article>
+
+          <!-- Mac -->
+          <article class="ap-plat" id="ap-plat-mac" aria-labelledby="ap-plat-mac-h" data-plat="mac">
+            <div class="ap-plat__top">
+              <div class="ap-plat__flags"><span class="ap-rec" hidden><span>Recomendado<span class="ap-rec__more"> para este dispositivo</span></span></span></div>
+              <span class="ap-plat__icon" aria-hidden="true"><img src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="56px" width="256" height="256" alt="" loading="lazy" decoding="async"></span>
+              <div class="ap-plat__id">
+                <h3 id="ap-plat-mac-h">Mac</h3>
+                <p class="ap-plat__req"><svg class="ap-plat__os" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.9 1.2 1.9 2.6 3.2 2.5 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8 2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-3.9zM14 5.3c.7-.8 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4z"/></svg><span>macOS 14 ou mais recente</span></p>
+              </div>
+            </div>
+            <div class="ap-plat__act">
+              <a class="ap-cta" href="https://apps.apple.com/br/app/bfmidi-editor/id6810756556" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.9 1.2 1.9 2.6 3.2 2.5 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8 2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-3.9zM14 5.3c.7-.8 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4z"/></svg>
+                <span>Baixar na App Store</span>
+                <span class="sr-only">(abre em nova aba)</span>
+              </a>
+              <p class="ap-plat__file ap-plat__meta">App Store · app universal</p>
+              <button class="ap-link-btn ap-plat__jump js-jump" type="button" data-jump="apps-conn-title">Como conectar ao pedal</button>
+            </div>
+            <p class="ap-plat__text"><span class="ap-plat__t1">Conecta pelo Wi‑Fi do pedal, pela rede de casa ou pelo cabo USB, e abre para editar mesmo sem o pedal por perto.</span></p>
+            <ul class="ap-tags" aria-label="Formas de conexão">
+              <li>Wi‑Fi</li>
+              <li>Rede</li>
+              <li>USB</li>
+              <li>Offline</li>
+            </ul>
+          </article>
+
+          <!-- iPhone e iPad -->
+          <article class="ap-plat" id="ap-plat-ios" aria-labelledby="ap-plat-ios-h" data-plat="ios">
+            <div class="ap-plat__top">
+              <div class="ap-plat__flags"><span class="ap-rec" hidden><span>Recomendado<span class="ap-rec__more"> para este dispositivo</span></span></span></div>
+              <span class="ap-plat__icon" aria-hidden="true"><img src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="56px" width="256" height="256" alt="" loading="lazy" decoding="async"></span>
+              <div class="ap-plat__id">
+                <h3 id="ap-plat-ios-h">iPhone e iPad</h3>
+                <p class="ap-plat__req"><svg class="ap-plat__os" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="2.6" y="4" width="12.4" height="16.6" rx="2"/><rect x="15.4" y="8.2" width="6.2" height="12.4" rx="1.7"/></svg><span>iOS e iPadOS 17 ou mais recente</span></p>
+              </div>
+            </div>
+            <div class="ap-plat__act">
+              <a class="ap-cta" href="https://apps.apple.com/br/app/bfmidi-editor/id6810756556" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.9 1.2 1.9 2.6 3.2 2.5 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8 2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-3.9zM14 5.3c.7-.8 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4z"/></svg>
+                <span>Baixar na App Store</span>
+                <span class="sr-only">(abre em nova aba)</span>
+              </a>
+              <p class="ap-plat__file ap-plat__meta">App Store · app universal</p>
+              <button class="ap-link-btn ap-plat__jump js-jump" type="button" data-jump="apps-conn-title">Como conectar ao pedal</button>
+            </div>
+            <p class="ap-plat__text"><span class="ap-plat__t1">Conecta pelo Wi‑Fi do pedal ou pela rede de casa, e abre para editar mesmo sem o pedal.</span><span class="ap-plat__t2"> O mesmo download serve o iPhone e o iPad.</span></p>
+            <ul class="ap-tags" aria-label="Formas de conexão">
+              <li>Wi‑Fi</li>
+              <li>Rede</li>
+              <li>Offline</li>
+            </ul>
+          </article>
+
+          <!-- Android: o app ainda não existe na loja. O caminho real no celular
+               hoje é o editor que vem do próprio pedal, pelo Wi‑Fi dele. -->
+          <article class="ap-plat ap-plat--soon" id="ap-plat-android" aria-labelledby="ap-plat-android-h" data-plat="android">
+            <div class="ap-plat__top">
+              <div class="ap-plat__flags"><span class="ap-rec ap-rec--mine" hidden>Seu dispositivo</span><span class="ap-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l3 2"/></svg><span>Em breve<span class="ap-soon__more"> no Google Play</span></span></span></div>
+              <span class="ap-plat__icon" aria-hidden="true"><img src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="56px" width="256" height="256" alt="" loading="lazy" decoding="async"></span>
+              <div class="ap-plat__id">
+                <h3 id="ap-plat-android-h">Android</h3>
+                <p class="ap-plat__req"><svg class="ap-plat__os" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.5H6.4v8.2c0 .7.5 1.2 1.2 1.2h1.1v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.4v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.1c.7 0 1.2-.5 1.2-1.2V9.5zM3.9 9.7a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zm16.2 0a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zM15.4 3.6l1-1.7c.1-.1 0-.3-.1-.3-.1-.1-.3 0-.3.1l-1 1.8a6.6 6.6 0 0 0-6 0l-1-1.8c-.1-.1-.3-.2-.4-.1-.1.1-.1.2-.1.3l1 1.7A5.9 5.9 0 0 0 6.4 8.7h11.2a5.9 5.9 0 0 0-2.2-5.1zM9.3 6.6a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2zm5.4 0a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2z"/></svg><span>Android 7 ou mais recente</span></p>
+              </div>
+            </div>
+            <div class="ap-plat__act">
+              <div class="ap-path">
+                <p class="ap-path__k">Use agora, pelo Wi‑Fi do pedal</p>
+                <ol class="ap-path__steps">
+                  <li><span class="ap-path__n" aria-hidden="true">1</span><p class="ap-path__net">Com o pedal ligado e o Wi‑Fi dele ativo, conecte o celular à rede <b>BFMIDI_WIFI</b> (senha <b>bfmidi@editor</b>).</p></li>
+                  <li><span class="ap-path__n" aria-hidden="true">2</span><p class="ap-path__go"><span class="ap-path__verb">Abra</span> <a class="ap-path__addr" href="http://192.168.4.1" target="_blank" rel="noopener noreferrer">http://192.168.4.1<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr-only"> (abre em nova aba)</span></a></p></li>
+                </ol>
+              </div>
+            </div>
+            <p class="ap-plat__text"><span class="ap-plat__t1">O app está em teste fechado no Google Play.</span><span class="ap-plat__t2"> O link entra aqui quando ele for liberado.</span></p>
+          </article>
+
+        </div>
       </div>
     </div>
-  </header>
 
-  <section class="apps-grid" aria-label="Onde usar o editor">
-
-    <!-- Online / navegador -->
-    <article class="apps-card apps-ready">
-      <span class="apps-badge apps-new">Disponível</span>
-      <div class="apps-os">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#ff9d5c" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M2.9 9.2h18.2M2.9 14.8h18.2"/><path d="M12 2.8c2.5 2.5 3.9 5.7 3.9 9.2s-1.4 6.7-3.9 9.2c-2.5-2.5-3.9-5.7-3.9-9.2S9.5 5.3 12 2.8z"/></svg>
-        <h3>Online</h3>
+    <div class="ap-stage">
+      <div class="ap-lights" aria-hidden="true">
+        <i class="ap-light ap-light--haze"></i>
+        <i class="ap-light ap-light--rim"></i>
+        <i class="ap-light ap-light--beam ap-light--beam-c"></i>
+        <i class="ap-light ap-light--beam ap-light--beam-l"></i>
+        <i class="ap-light ap-light--beam ap-light--beam-r"></i>
       </div>
-      <p class="apps-sub">Chrome, Edge ou Safari</p>
-      <a class="apps-btn" href="https://bffx-updates.github.io/Editor_BFMiDi_v14/" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-8 8M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg>
-        Abrir no navegador
-      </a>
+      <div class="ap-stage__floor" aria-hidden="true"></div>
 
-    </article>
+      <figure class="ap-dev ap-mac" data-dev="desk">
+        <div class="ap-dev__in">
+          <div class="ap-mac__lid">
+            <span class="ap-mac__cam" aria-hidden="true"></span>
+            <!-- Barra da janela: troca com a plataforma escolhida no dock. -->
+            <div class="ap-chrome" aria-hidden="true">
+              <div class="ap-chrome__v ap-chrome--web">
+                <span class="ap-chrome__nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6-6 6 6 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9.5 6 6 6-6 6"/></svg></span>
+                <span class="ap-chrome__tab"><i></i><svg class="ap-chrome__txt" viewBox="0 0 95 20" width="95" height="20"><text x="0" y="15.4" textLength="94.7" lengthAdjust="spacingAndGlyphs">BFMiDi Editor</text></svg></span>
+                <span class="ap-chrome__url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.4"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg><svg class="ap-chrome__txt" viewBox="0 0 294 20" width="294" height="20"><text x="0" y="15.4" textLength="293.8" lengthAdjust="spacingAndGlyphs">bffx-updates.github.io/Editor_BFMiDi_v14</text></svg></span>
+              </div>
+              <div class="ap-chrome__v ap-chrome--mac">
+                <span class="ap-chrome__lights"><i></i><i></i><i></i></span>
+                <svg class="ap-chrome__txt" viewBox="0 0 49 20" width="49" height="20"><text x="0" y="15.4" textLength="48.5" lengthAdjust="spacingAndGlyphs">BFMiDi</text></svg>
+              </div>
+              <div class="ap-chrome__v ap-chrome--win">
+                <i class="ap-chrome__app"></i>
+                <svg class="ap-chrome__txt" viewBox="0 0 95 20" width="95" height="20"><text x="0" y="15.4" textLength="94.7" lengthAdjust="spacingAndGlyphs">BFMiDi Editor</text></svg>
+                <span class="ap-chrome__ctrls"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 12h12"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6.5" y="6.5" width="11" height="11" rx="1.2"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m6.5 6.5 11 11m0-11-11 11"/></svg></span>
+              </div>
+            </div>
+            <div class="ap-screen">
+              <img src="assets/apps/editor-mac-live.webp" srcset="assets/apps/editor-mac-live-720.webp 720w, assets/apps/editor-mac-live.webp 1440w" sizes="(max-width: 860px) 78vw, 45vw" width="1440" height="900" loading="lazy" decoding="async"
+                   alt="BFMiDi Editor no computador, no modo LIVE: os seis footswitches do preset Classic Rock, cada um com ícone e cor próprios, e o footswitch 4 em edição no modo stomp.">
+            </div>
+          </div>
+          <div class="ap-mac__base" aria-hidden="true"></div>
+        </div>
+        <span class="ap-dev__glow" aria-hidden="true"></span>
+      </figure>
 
-    <!-- Windows -->
-    <article class="apps-card apps-ready">
-      <span class="apps-badge apps-new">Disponível</span>
-      <div class="apps-os">
-        <svg viewBox="0 0 24 24" fill="#4cc2ff" aria-hidden="true"><path d="M3 5.5 10.5 4.4v7.1H3zm8.5-1.3L21 3v8.5h-9.5zM3 12.5h7.5v7.1L3 18.5zm8.5 0H21V21l-9.5-1.3z"/></svg>
-        <h3>Windows</h3>
+      <figure class="ap-dev ap-ipad" data-dev="mobile">
+        <div class="ap-dev__in">
+          <div class="ap-ipad__body">
+            <span class="ap-ipad__cam" aria-hidden="true"></span>
+            <div class="ap-screen">
+              <img src="assets/apps/editor-ipad-preset.webp" srcset="assets/apps/editor-ipad-preset-450.webp 450w, assets/apps/editor-ipad-preset.webp 900w" sizes="(max-width: 860px) 22vw, 16vw" width="900" height="1200" loading="lazy" decoding="async"
+                   alt="BFMiDi Editor no iPad: preset A1 Classic Rock com a imagem de fundo da tela, a lista de footswitches e o menu de configurações.">
+            </div>
+          </div>
+        </div>
+        <span class="ap-dev__glow" aria-hidden="true"></span>
+      </figure>
+
+      <figure class="ap-dev ap-phone" data-dev="mobile phone">
+        <div class="ap-dev__in">
+          <div class="ap-phone__body">
+            <div class="ap-screen">
+              <img src="assets/apps/editor-iphone-preset.webp" srcset="assets/apps/editor-iphone-preset-300.webp 300w, assets/apps/editor-iphone-preset.webp 600w" sizes="(max-width: 860px) 24vw, 10vw" width="600" height="1304" loading="lazy" decoding="async"
+                   alt="BFMiDi Editor no iPhone: o console do banco A1 Classic Rock, com as teclas de 1 a 6 e os atalhos para modo amigável, footswitches, bancos, Wi‑Fi, host e atualização.">
+              <span class="ap-phone__island" aria-hidden="true"></span>
+              <span class="ap-phone__hole" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+        <span class="ap-dev__glow" aria-hidden="true"></span>
+      </figure>
+    </div>
+  </div>
+
+  <!-- ABAIXO DA DOBRA: o que o editor faz e como ele conecta. -->
+  <div class="ap-more">
+    <section class="ap-perks" aria-labelledby="apps-perks-title">
+      <div class="ap-sec-head">
+        <div class="ap-sec-head__t">
+          <p class="ap-kicker" aria-hidden="true">No editor</p>
+          <h3 id="apps-perks-title">O que você controla</h3>
+        </div>
+        <p class="ap-sec-lead">Presets, footswitches, tela e LEDs da sua BFMIDI, tudo num lugar só.</p>
       </div>
-      <p class="apps-sub">Windows 10 e 11 (64 bits)</p>
-      <a class="apps-btn" href="assets/apps/BFMiDi-Editor-14.0.260919-Setup.exe" download>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-        Baixar para Windows
-      </a>
+      <ul class="ap-perks__list">
+        <li class="ap-perk" style="--c:#4c8dff">
+          <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></span>
+          <h4 class="ap-perk__k">Bancos e presets</h4>
+          <p class="ap-perk__big">10 × 6</p>
+          <p class="ap-perk__p">Dez bancos, de A a J, com seis presets cada.</p>
+        </li>
+        <li class="ap-perk" style="--c:#ff8a3d">
+          <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12h4l2.6-6.5 5 13 2.6-6.5h4.8"/></svg></span>
+          <h4 class="ap-perk__k">Modo LIVE</h4>
+          <p class="ap-perk__big">Pé a pé</p>
+          <p class="ap-perk__p">Cada footswitch com o seu comportamento: stomp, tap tempo, macros e mais.</p>
+        </li>
+        <li class="ap-perk" style="--c:#b57bff">
+          <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M8.5 20h7M12 16.5V20"/><path d="m6.5 13 3.2-3.4 2.3 2.2 2-1.9 3.5 3.1"/></svg></span>
+          <h4 class="ap-perk__k">Tela e LEDs</h4>
+          <p class="ap-perk__big">A sua cara</p>
+          <p class="ap-perk__p">Ícones, cores e imagens na tela da controladora, e a cor do anel de LED de cada footswitch.</p>
+        </li>
+        <li class="ap-perk" style="--c:#3ddc84">
+          <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.6V4.5A1.5 1.5 0 0 1 4.5 3h7.1l9.1 9.1-8.6 8.6L3 11.6Z"/><circle cx="7.7" cy="7.7" r="1.5"/></svg></span>
+          <h4 class="ap-perk__k">Modo amigável</h4>
+          <p class="ap-perk__big">Nomes, não números</p>
+          <p class="ap-perk__p">CC e PC com o nome certo para dezenas de pedais e processadores: Kemper, Valeton GP‑5, Ampero…</p>
+        </li>
+      </ul>
+    </section>
 
-    </article>
-
-    <!-- Mac -->
-    <article class="apps-card apps-ready">
-      <span class="apps-badge apps-new">Disponível</span>
-      <div class="apps-os">
-        <svg viewBox="0 0 24 24" fill="#e8edf5" aria-hidden="true"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.3 10.1.9 1.2 1.9 2.6 3.2 2.5 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8 2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.8-3.9zM14 5.3c.7-.8 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4z"/></svg>
-        <h3>Mac</h3>
+    <section class="ap-conn" id="apps-conn" aria-labelledby="apps-conn-title">
+      <div class="ap-sec-head">
+        <div class="ap-sec-head__t">
+          <p class="ap-kicker" aria-hidden="true">Conexão</p>
+          <h3 id="apps-conn-title">Conecte do seu jeito</h3>
+        </div>
+        <p class="ap-sec-lead">Wi‑Fi do pedal, rede de casa ou cabo USB — e até sem o pedal.</p>
       </div>
-      <p class="apps-sub">macOS 14+</p>
-      <a class="apps-btn" href="https://apps.apple.com/br/app/bfmidi-editor/id6810756556" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-        Baixar na App Store
-      </a>
+      <ul class="ap-conn__list">
+        <li class="ap-conn__cell" style="--c:#ff8a3d">
+          <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">Wi‑Fi</span><h4>Wi‑Fi do pedal</h4></div>
+          <code>http://192.168.4.1</code>
+          <p>Rede <b>BFMIDI_WIFI</b>, senha <b>bfmidi@editor</b></p>
+        </li>
+        <li class="ap-conn__cell" style="--c:#4c8dff">
+          <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">Rede</span><h4>Rede de casa</h4></div>
+          <code>http://bfmidi.local</code>
+          <p>Pedal e aparelho na mesma rede</p>
+        </li>
+        <li class="ap-conn__cell" style="--c:#3ddc84">
+          <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">USB</span><h4>Cabo USB</h4></div>
+          <code>Chrome ou Edge</code>
+          <p>No computador, e nos apps de Windows e Mac</p>
+        </li>
+        <li class="ap-conn__cell" style="--c:#b57bff">
+          <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">Offline</span><h4>Sem pedal</h4></div>
+          <code>Modo offline</code>
+          <p>Nos apps e no editor online</p>
+        </li>
+      </ul>
+    </section>
 
-    </article>
+    <div class="ap-foot">
+      <p class="ap-compat"><span class="ap-compat__k">Para</span> 8SW+, 6SW+, NANO+ e MICRO <span class="ap-compat__dot" aria-hidden="true">·</span> <span>Backup dos presets e atualização do firmware no próprio editor</span></p>
+      <button class="ap-link-btn js-help" type="button" commandfor="ajuda-dialog" command="show-modal" aria-haspopup="dialog">Guia de instalação e ajuda</button>
+    </div>
+  </div>
 
-    <!-- iPhone / iPad -->
-    <article class="apps-card apps-ready">
-      <span class="apps-badge apps-new">Disponível</span>
-      <div class="apps-os">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#e8edf5" stroke-width="1.8" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M10 18.5h4" stroke-linecap="round"/></svg>
-        <h3>iPhone e iPad</h3>
-      </div>
-      <p class="apps-sub">iOS / iPadOS 17+</p>
-      <a class="apps-btn" href="https://apps.apple.com/br/app/bfmidi-editor/id6810756556" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-        Baixar na App Store
-      </a>
+  </div>
 
-    </article>
-
-    <!-- Android -->
-    <article class="apps-card">
-      <span class="apps-badge">Em breve</span>
-      <div class="apps-os">
-        <svg viewBox="0 0 24 24" fill="#3ddc84" aria-hidden="true"><path d="M17.6 9.5H6.4v8.2c0 .7.5 1.2 1.2 1.2h1.1v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.4v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.1c.7 0 1.2-.5 1.2-1.2V9.5zM3.9 9.7a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zm16.2 0a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zM15.4 3.6l1-1.7c.1-.1 0-.3-.1-.3-.1-.1-.3 0-.3.1l-1 1.8a6.6 6.6 0 0 0-6 0l-1-1.8c-.1-.1-.3-.2-.4-.1-.1.1-.1.2-.1.3l1 1.7A5.9 5.9 0 0 0 6.4 8.7h11.2a5.9 5.9 0 0 0-2.2-5.1zM9.3 6.6a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2zm5.4 0a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2z"/></svg>
-        <h3>Android</h3>
-      </div>
-      <p class="apps-sub">Android 7+</p>
-      <span class="apps-btn apps-soon" aria-disabled="true">Em breve</span>
-
-    </article>
-
-  </section>
-
-
-
-
-
-
-
-<dialog id="ajuda-dialog" aria-labelledby="ajuda-titulo">
-  <div class="apps-dialog-head"><div><span class="apps-dialog-label">BFMiDi Editor</span><h2 id="ajuda-titulo">Como podemos ajudar?</h2></div><button class="apps-close-help" type="button" aria-label="Fechar ajuda" autofocus>×</button></div>
+<dialog id="ajuda-dialog" aria-labelledby="ajuda-titulo" closedby="any">
+  <div class="apps-dialog-head">
+    <img class="apps-dialog-icon" src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="46px" width="256" height="256" alt="" loading="lazy" decoding="async">
+    <div class="apps-dialog-titles">
+      <span class="apps-dialog-label"><span class="apps-dialog-brand">BFMiDi Editor</span> · <span class="apps-dialog-ver">Versão 14</span></span>
+      <h2 id="ajuda-titulo">Como podemos ajudar?</h2>
+    </div>
+    <button class="apps-close-help" type="button" aria-label="Fechar ajuda" commandfor="ajuda-dialog" command="close" autofocus>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
   <div class="apps-dialog-body">
-      <section class="apps-section">
-    <h3>Sem instalar nada</h3>
-    <div class="apps-note">
-      O editor também roda direto no navegador: com o pedal ligado e o Wi‑Fi dele ativo, abra
-      <b>http://192.168.4.1</b> (rede <b>BFMIDI_WIFI</b>, senha <b>bfmidi@editor</b>) ou <b>http://bfmidi.local</b> na rede de casa.
-      No computador, o Chrome ou o Edge também conectam pelo cabo USB pelo
-      <a href="https://bffx-updates.github.io/Editor_BFMiDi_v14/" target="_blank" rel="noopener noreferrer">editor online</a>.
-    </div>
-  </section>
-  <section class="apps-section">
-    <h3>Instalando no Windows</h3>
-    <div class="apps-note">
-      <ol>
+    <section class="apps-section" id="ajuda-sem" aria-labelledby="ajuda-sem-h">
+      <h3 id="ajuda-sem-h"><span class="apps-step" aria-hidden="true">01</span>Sem instalar nada</h3>
+      <p class="apps-p">O editor também abre direto no navegador, sem instalar nada, de três jeitos:</p>
+      <ul class="apps-reads">
+        <li><span>Wi‑Fi do pedal</span><a href="http://192.168.4.1" target="_blank" rel="noopener noreferrer">http://192.168.4.1<span class="sr-only"> (abre em nova aba)</span></a><small>Com o pedal ligado e o Wi‑Fi dele ativo: rede <b>BFMIDI_WIFI</b>, senha <b>bfmidi@editor</b>. O editor vem do próprio pedal.</small></li>
+        <li><span>Rede de casa</span><a href="http://bfmidi.local" target="_blank" rel="noopener noreferrer">http://bfmidi.local<span class="sr-only"> (abre em nova aba)</span></a><small>Pedal e aparelho na mesma rede. O editor vem do próprio pedal.</small></li>
+        <li><span>Cabo USB</span><b>Chrome ou Edge</b><small>No computador, pelo <a href="https://bffx-updates.github.io/Editor_BFMiDi_v14/" target="_blank" rel="noopener noreferrer">editor online<span class="sr-only"> (abre em nova aba)</span></a></small></li>
+      </ul>
+    </section>
+    <section class="apps-section" id="ajuda-win" aria-labelledby="ajuda-win-h">
+      <h3 id="ajuda-win-h"><span class="apps-step" aria-hidden="true">02</span>Instalando no Windows</h3>
+      <ol class="apps-steps">
         <li>Baixe o <b>Setup.exe</b> e abra.</li>
-        <li>Se o Windows mostrar <b>“O Windows protegeu o seu PC”</b>, clique em <b>Mais informações</b> e depois em <b>Executar assim mesmo</b>. O aviso aparece porque o instalador ainda não tem certificado de assinatura; o app é o mesmo dos outros sistemas.</li>
+        <li>Se aparecer <b>“O Windows protegeu o seu PC”</b>, clique em <b>Mais informações</b> e depois em <b>Executar assim mesmo</b>. O aviso aparece porque o instalador ainda não tem certificado de assinatura; o app é o mesmo dos outros sistemas.</li>
         <li>O componente <b>WebView2</b> (motor do Edge) é instalado automaticamente se faltar.</li>
         <li>Para atualizar, baixe o Setup novo e instale por cima. As preferências ficam guardadas.</li>
       </ol>
-    </div>
-  </section>
-  <section class="apps-section">
-    <h3>Ajuda</h3>
-    <div class="apps-links">
-      <a href="https://bffx-updates.github.io/Manual_BFMiDI_v13/" target="_blank" rel="noopener noreferrer">📖 Manual da BFMiDi</a>
-      <a href="https://bffx-updates.github.io/Update_BFMiDi_v14/" target="_blank" rel="noopener noreferrer">⬆️ Atualizar o firmware do pedal</a>
-      <a href="https://bffx-updates.github.io/Editor_BFMiDi_v14/privacy.html" target="_blank" rel="noopener noreferrer">🔒 Política de privacidade</a>
-    </div>
-  </section>
-    <section class="apps-section"><h3>Sobre as versões</h3><div class="apps-note"><p><b>Windows</b><br>Setup.exe · 5,3 MB · instala por usuário, sem senha de administrador. Inclui Wi‑Fi automático e conexão por cabo USB.</p><p><b>Mac</b><br>Disponível na App Store. Requer macOS 14 ou mais recente.</p><p><b>iPhone e iPad</b><br>Disponível na App Store. Requer iOS ou iPadOS 17 ou mais recente.</p><p><b>Android</b><br>Em teste fechado no Google Play. O link público entra aqui quando o app for liberado.</p></div></section>
+    </section>
+    <section class="apps-section" id="ajuda-links" aria-labelledby="ajuda-links-h">
+      <h3 id="ajuda-links-h"><span class="apps-step" aria-hidden="true">03</span>Links úteis</h3>
+      <ul class="apps-links">
+        <li><a href="https://bffx-updates.github.io/Manual_BFMiDI_v13/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3.5 5v13.5c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5V20"/></svg>Manual da BFMIDI<span class="sr-only"> (abre em nova aba)</span></a></li>
+        <li><a href="https://bffx-updates.github.io/Update_BFMiDi_v14/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>Atualizar o firmware do pedal<span class="sr-only"> (abre em nova aba)</span></a></li>
+        <li><a href="https://bffx-updates.github.io/Editor_BFMiDi_v14/privacy.html" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>Política de privacidade<span class="sr-only"> (abre em nova aba)</span></a></li>
+      </ul>
+    </section>
+    <section class="apps-section" id="ajuda-versoes" aria-labelledby="ajuda-versoes-h">
+      <h3 id="ajuda-versoes-h"><span class="apps-step" aria-hidden="true">04</span>Sobre as versões</h3>
+      <dl class="apps-versions">
+        <div><dt>Windows</dt><dd>Setup.exe · 5,3 MB · instala por usuário, sem senha de administrador. Inclui Wi‑Fi automático e conexão por cabo USB.</dd></div>
+        <div><dt>Mac</dt><dd>Disponível na App Store. Requer macOS 14 ou mais recente.</dd></div>
+        <div><dt>iPhone e iPad</dt><dd>Disponível na App Store. Requer iOS ou iPadOS 17 ou mais recente.</dd></div>
+        <div><dt>Android</dt><dd>Em teste fechado no Google Play. O link público entra aqui quando o app for liberado.</dd></div>
+      </dl>
+    </section>
   </div>
-</dialog></div></section>
+</dialog>
+</div></section>
     <section class="panel" id="panel-downloads" role="tabpanel" aria-labelledby="subtab-downloads" aria-hidden="true" inert></section>
     <section class="panel" id="panel-manual" role="tabpanel" aria-labelledby="subtab-manual" aria-hidden="true" inert></section>
   </main>
