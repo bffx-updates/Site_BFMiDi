@@ -445,7 +445,7 @@ window.BF_CONTENT = (function () {
           links: [
             { title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
             { title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/Update_BFMiDi_v14/' },
-            { key: 'backup', title: 'Backup View', description: 'Visualize e edite as configurações globais de um backup BFMiDi.', label: 'Abrir Backup View', href: 'backup-view/index.html' }
+            { key: 'backup', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' }
           ] },
         { key: 'manual', label: 'Manual', eyebrow: 'Manual', title: 'Manual BFMIDI',
           lead: 'Consulte as instruções de configuração e uso da controladora.',

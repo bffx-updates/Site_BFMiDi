@@ -6,271 +6,255 @@
 <title>BFMiDi · Backup View</title>
 <style>
   :root {
-    --bg: #141617; --screen: #1B1D1F; --card: #26292E; --card2: #2E3238; --card3: #3A3E43;
-    --text: #E9EBED; --muted: #8C9298; --faint: #878D94; --ghost: #44484E;
-    --hair: rgba(255,255,255,0.055); --hair2: rgba(255,255,255,0.10);
-    --accent: #FC6337; --accent2: #FF8A4C; --ok: #22cc44; --warn: #ffcc20; --bad: #ff3030;
-    --r: 14px;
+    --bg: #0C1016;
+    --card-a: #1B2029; --card-b: #141820;
+    --line: rgba(255,255,255,.075); --line2: rgba(255,255,255,.13);
+    --text: #F2F4F7; --soft: #C9CFD6; --muted: #8E97A3; --faint: #5F6873;
+    --accent: #FC6337; --accent2: #FF8A4C; --ok: #2BD65B;
+    --r: 1.1rem;
   }
+  /* Tudo em rem: 16px numa janela de 1728px (a largura da imagem de referência),
+     escalando junto com a janela até 11px. A composição mantém a proporção. */
+  html { font-size: clamp(11px, calc(100vw / 108), 16px); }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--text);
-    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  body { min-height: 100vh; }
+  html, body { margin: 0; }
+  body { min-height: 100vh; color: var(--text); font-size: .95rem; line-height: 1.35;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(40rem 28rem at -4% 104%, rgba(252,99,55,.22), transparent 70%),
+      radial-gradient(52rem 18rem at 62% 108%, rgba(252,99,55,.10), transparent 70%),
+      radial-gradient(70rem 36rem at 50% -12%, rgba(64,92,140,.16), transparent 70%),
+      var(--bg);
+    background-attachment: fixed; }
   ::selection { background: rgba(252,99,55,.35); }
+  button { font: inherit; color: inherit; }
 
   /* ── topo ── */
-  .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-    padding: 12px 20px; background: linear-gradient(180deg, #1c1f22, #17191b); border-bottom: 1px solid var(--hair2);
-    box-shadow: 0 6px 24px rgba(0,0,0,.35); }
-  .brand { font-weight: 800; letter-spacing: .06em; font-size: 15px; text-transform: uppercase; }
-  .brand b { color: var(--accent); }
-  .brand span { color: var(--muted); font-weight: 500; letter-spacing: .12em; font-size: 11px; margin-left: 8px; }
-  .filebtn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; cursor: pointer;
-    background: linear-gradient(180deg, var(--accent2), var(--accent)); color: #1b0c05; font-weight: 800; letter-spacing: .08em;
-    font-size: 12px; text-transform: uppercase; box-shadow: 0 4px 14px rgba(252,99,55,.35), inset 0 1px 0 rgba(255,255,255,.35); }
-  .filebtn:hover { filter: brightness(1.07); }
+  .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+    min-height: 4.9rem; padding: .9rem 2.5rem; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(16,20,26,.97), rgba(11,14,19,.97)); }
+  .brand { display: flex; align-items: center; gap: 1.2rem; white-space: nowrap; }
+  .brand .name { font-size: 1.55rem; font-weight: 600; letter-spacing: .01em; }
+  .brand b { color: var(--accent); font-weight: 900; }
+  .brand .sep { width: 1px; height: 1.7rem; background: var(--line2); }
+  .brand .sub { font-size: 1.05rem; font-weight: 600; letter-spacing: .05em; color: var(--muted); text-transform: uppercase; }
+  .filebtn { margin-left: .7rem; display: inline-flex; align-items: center; gap: .75rem; height: 2.65rem; padding: 0 1.35rem; border-radius: .7rem; cursor: pointer;
+    background: linear-gradient(180deg, #FF8B50, #F1602A); color: #1A0B04; font-size: .95rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase;
+    box-shadow: 0 0 1.6rem -.2rem rgba(252,99,55,.6), inset 0 1px 0 rgba(255,255,255,.35); }
+  .filebtn svg { width: 1.2rem; height: 1.2rem; }
+  .filebtn:hover { filter: brightness(1.06); }
   .filebtn input { display: none; }
-  .fileinfo { color: var(--muted); font-size: 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; min-width: 0; }
-  .fileinfo .fname { color: var(--text); font-weight: 600; max-width: 34vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .seg { margin-left: auto; display: inline-flex; background: var(--screen); border: 1px solid var(--hair2); border-radius: 12px; padding: 4px; gap: 4px; }
-  .seg button { border: 0; background: transparent; color: var(--muted); font-weight: 800; letter-spacing: .1em; font-size: 12px;
-    padding: 9px 22px; border-radius: 9px; cursor: pointer; text-transform: uppercase; transition: .15s; }
-  .seg button.on { background: linear-gradient(180deg, var(--card3), var(--card2)); color: var(--accent2);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 2px 8px rgba(0,0,0,.35); }
-  .seg button:disabled { opacity: .35; cursor: default; }
+  .fileinfo { margin-left: auto; display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; color: var(--muted); font-size: .95rem; font-weight: 700; }
+  .fileinfo .fname { color: var(--text); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; max-width: 30vw;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  /* ── conteúdo ── */
-  main { padding: 20px; max-width: 1500px; margin: 0 auto; }
-  .empty { margin: 8vh auto; max-width: 560px; text-align: center; padding: 46px 30px; border: 2px dashed var(--ghost); border-radius: 22px;
-    color: var(--muted); transition: .2s; }
-  .empty.over { border-color: var(--accent); background: rgba(252,99,55,.06); color: var(--text); }
-  .empty h2 { margin: 0 0 8px; color: var(--text); letter-spacing: .04em; }
-  .empty p { margin: 6px 0; }
+  main { max-width: 108rem; margin: 0 auto; padding: 1.5rem 2.75rem 2.5rem; }
+  .empty { margin: 10vh auto; max-width: 38rem; text-align: center; padding: 3rem 2rem; border-radius: 1.4rem; border: 2px dashed rgba(255,255,255,.14);
+    background: linear-gradient(180deg, rgba(27,32,41,.6), rgba(20,24,32,.6)); color: var(--muted); font-size: 1.05rem; transition: .2s; }
+  .empty.over { border-color: var(--accent); background: rgba(252,99,55,.07); color: var(--text); }
+  .empty h2 { margin: 0 0 .6rem; color: var(--text); font-size: 1.7rem; font-weight: 900; letter-spacing: .02em; }
+  .empty p { margin: .4rem 0; }
   .empty .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent2); }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; align-items: start; }
-  .grid .span2 { grid-column: span 2; }
-  @media (max-width: 760px) { .grid .span2 { grid-column: span 1; } }
-  .card { background: linear-gradient(180deg, var(--card2), var(--card)); border: 1px solid var(--hair2); border-radius: var(--r);
-    box-shadow: 0 10px 30px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.05); overflow: hidden; }
-  .card > h3 { margin: 0; padding: 12px 16px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent2);
-    border-bottom: 1px solid var(--hair); display: flex; align-items: center; gap: 10px; }
-  .card > h3 .sub { margin-left: auto; color: var(--muted); letter-spacing: .04em; font-weight: 500; text-transform: none; font-size: 11px; }
-  .card .body { padding: 12px 16px 14px; }
-  .kv { display: grid; grid-template-columns: minmax(120px, 42%) 1fr; gap: 6px 12px; align-items: center; }
-  .kv .k { color: var(--muted); font-size: 12px; letter-spacing: .03em; }
-  .kv .v { font-weight: 600; min-width: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .kv .v.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 500; }
-  .hr { height: 1px; background: var(--hair); margin: 10px 0; }
-  .note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: .6rem; height: 2.65rem; padding: 0 1.2rem; border-radius: 999px; font-size: .95rem; font-weight: 900;
+    letter-spacing: .065em; text-transform: uppercase; white-space: nowrap; color: var(--text); background: rgba(12,15,20,.75); border: 1px solid var(--line2); }
+  .chip svg { width: 1.3rem; height: 1.3rem; }
+  .chip .dot { width: .7rem; height: .7rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 .6rem currentColor; }
+  .chip.ok { color: #3BE377; border-color: rgba(43,214,91,.6); background: rgba(43,214,91,.08); }
+  .chip.acc { color: var(--accent2); border-color: rgba(252,99,55,.7); background: rgba(252,99,55,.08); box-shadow: 0 0 1rem -.35rem rgba(252,99,55,.6); }
+  .chip.bad { color: #FF8A8A; border-color: rgba(255,72,72,.55); background: rgba(255,72,72,.08); }
+  .chip.warn { color: #FFD766; border-color: rgba(255,204,32,.5); background: rgba(255,204,32,.08); }
 
-  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700;
-    letter-spacing: .05em; background: var(--card3); border: 1px solid var(--hair2); color: var(--text); white-space: nowrap; }
-  .chip.ok { color: #7cf0a0; border-color: rgba(34,204,68,.4); background: rgba(34,204,68,.10); }
-  .chip.off { color: var(--faint); background: transparent; }
-  .chip.acc { color: var(--accent2); border-color: rgba(252,99,55,.5); background: rgba(252,99,55,.12); }
-  .chip.warn { color: #ffd766; border-color: rgba(255,204,32,.45); background: rgba(255,204,32,.10); }
-  .chip.bad { color: #ff8a8a; border-color: rgba(255,48,48,.45); background: rgba(255,48,48,.10); }
+  /* superfície comum dos cards */
+  .console, .principal, .row, details.boot, .phead {
+    background: linear-gradient(180deg, var(--card-a), var(--card-b)); border: 1px solid var(--line); border-radius: var(--r);
+    box-shadow: 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.045); }
 
-  .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex: none; border: 1px solid rgba(0,0,0,.4);
-    box-shadow: 0 0 8px var(--c, transparent), inset 0 0 3px rgba(255,255,255,.25); background: var(--c, #444); }
-  .sw { width: 22px; height: 14px; border-radius: 4px; display: inline-block; flex: none; border: 1px solid rgba(255,255,255,.18); background: #000; }
-  .swname { font-size: 12px; color: var(--muted); font-weight: 500; }
+  /* ── linha de cima: console · modelo · principal ── */
+  .hero { display: grid; grid-template-columns: 29.8rem minmax(0, 1fr) 29.75rem; gap: 1.4rem; align-items: stretch; margin-bottom: 1.4rem; }
+  .console { align-self: start; display: flex; align-items: center; gap: 1.05rem; padding: 1rem 1rem 1rem 1.1rem; }
+  .display { position: relative; flex: none; width: 11.45rem; height: 10.1rem; border-radius: .95rem; cursor: pointer; user-select: none;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: radial-gradient(120% 80% at 50% 0%, #131820 0%, #06080B 65%);
+    border: 1px solid rgba(255,255,255,.07); border-bottom: 2px solid var(--accent);
+    box-shadow: inset 0 .2rem .9rem rgba(0,0,0,.9), 0 .7rem 1.3rem -.7rem rgba(252,99,55,.85); }
+  .display .bk { font-size: 4.4rem; font-weight: 900; line-height: .9; letter-spacing: -.015em; color: #fff; }
+  .display .sub { margin-top: .2rem; font-size: 1.2rem; font-weight: 700; letter-spacing: .02em; color: #D9DEE4; }
+  .display .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 1.4rem; height: 2.6rem; padding: 0; border: 0; background: transparent;
+    color: var(--muted); cursor: pointer; font-size: 1.4rem; font-weight: 900; opacity: 0; transition: .15s; }
+  .display .nav.l { left: .2rem; } .display .nav.r { right: .2rem; }
+  .display:hover .nav { opacity: .9; }
+  .display .nav:hover { color: var(--accent2); }
+  .display .nav:disabled { visibility: hidden; }
+  .keys { display: grid; grid-template-columns: repeat(3, 4.5rem); grid-auto-rows: 4.4rem; gap: .875rem .9rem; }
+  .keys.k2 { grid-template-columns: repeat(2, 4.5rem); }
+  .key { border-radius: .85rem; border: 1px solid rgba(255,255,255,.075); background: linear-gradient(180deg, #242B35, #181D25); color: #E9EDF2;
+    font-size: 2.35rem; font-weight: 800; cursor: pointer; transition: .12s;
+    box-shadow: 0 .35rem .8rem -.2rem rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05); }
+  .key:hover:not(:disabled) { border-color: rgba(252,99,55,.45); }
+  .key.on { color: #fff; border-color: rgba(255,178,130,.55); background: linear-gradient(180deg, #FF8D55, #F25D26);
+    box-shadow: 0 0 1.7rem -.1rem rgba(252,99,55,.6), inset 0 1px 0 rgba(255,255,255,.35); }
+  .key:disabled { cursor: not-allowed; }
+  .key.off:not(.on) { opacity: .5; }
 
-  table.t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  table.t th { text-align: left; color: var(--muted); font-weight: 600; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
-    padding: 6px 8px; border-bottom: 1px solid var(--hair2); }
-  table.t td { padding: 6px 8px; border-bottom: 1px solid var(--hair); vertical-align: middle; }
-  table.t tr:last-child td { border-bottom: 0; }
-  table.t td.n { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
-  table.t tr.dim td { color: var(--faint); }
+  .model { position: relative; overflow: hidden; container-type: inline-size; min-width: 0; border-radius: var(--r);
+    display: flex; flex-direction: column; justify-content: center; padding: 1.8rem 2.6rem;
+    background: radial-gradient(55% 95% at 90% 18%, rgba(252,99,55,.24), transparent 70%),
+      radial-gradient(40% 70% at 100% 100%, rgba(252,99,55,.14), transparent 70%), linear-gradient(180deg, #1B1F27, #11141A);
+    border: 1px solid rgba(252,99,55,.6);
+    box-shadow: 0 0 0 1px rgba(252,99,55,.12), 0 0 2.4rem -.3rem rgba(252,99,55,.4), inset 0 0 2.2rem rgba(252,99,55,.07), 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85); }
+  .model > :not(.dev) { position: relative; z-index: 1; }
+  .model small { font-size: 1.05rem; font-weight: 900; letter-spacing: .3em; color: var(--accent); }
+  .model .name { margin: .55rem 0 1.15rem; font-size: min(3.9rem, 9.6cqw); font-weight: 900; line-height: 1.05; letter-spacing: .005em; white-space: nowrap;
+    text-shadow: 0 .2rem 1.2rem rgba(0,0,0,.6); }
+  .model .tags { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+  .model .tags .chip { font-size: 1.05rem; padding: 0 1.3rem; }
+  .model .dev { position: absolute; z-index: 0; right: -4.5rem; top: .25rem; width: 50%; pointer-events: none;
+    -webkit-mask-image: linear-gradient(100deg, transparent 16%, #000 44%); mask-image: linear-gradient(100deg, transparent 16%, #000 44%); }
+  .model .dev text { font-family: inherit; }
+  @container (max-width: 30rem) { .model .dev { opacity: .35; } }
 
-  /* letras A..J */
-  .letters { display: flex; gap: 6px; flex-wrap: wrap; }
-  .letter { width: 46px; height: 46px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; font-weight: 800; background: var(--card3); border: 1px solid var(--hair2); }
-  .letter.off { opacity: .35; }
-  .letter .dot { width: 10px; height: 10px; }
+  /* ── card PRINCIPAL (o header do preset: PC, canal e extras), no visual do editor ── */
+  .principal { container-type: inline-size; min-width: 0; padding: .8rem 1.25rem 1rem; }
+  .pbanner { height: 3.15rem; border-radius: .9rem; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, #05070A, #0B0E12); border: 1px solid rgba(255,255,255,.08); box-shadow: inset 0 .25rem .7rem rgba(0,0,0,.9);
+    font-size: 2rem; font-weight: 900; letter-spacing: .03em; }
+  .pfields { display: grid; gap: .7rem; margin-top: 1.05rem; }
+  .fld { display: flex; height: 3.5rem; min-width: 0; border-radius: .8rem; overflow: hidden;
+    background: linear-gradient(180deg, #161A21, #10141A); border: 1px solid rgba(255,255,255,.08); }
+  .fld .ftag { width: 5.5rem; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem;
+    color: #fff; font-size: .85rem; font-weight: 900; letter-spacing: .05em; }
+  .fld .ftag svg { width: 1.4rem; height: 1.4rem; }
+  .fld.pc .ftag { background: linear-gradient(180deg, #3D8DFF, #1B5CE3); }
+  .fld.ch .ftag { background: linear-gradient(180deg, #FF8C50, #EF5E27); }
+  .fld.ch { height: 3.6rem; border-color: rgba(252,99,55,.75); box-shadow: 0 0 1.1rem -.35rem rgba(252,99,55,.55); }
+  .fld .fval { flex: 1; min-width: 0; display: flex; align-items: center; gap: .95rem; padding: 0 1rem 0 1.25rem; font-size: 1.9rem; font-weight: 800; }
+  .fld .fval small { font-size: .95rem; font-weight: 700; letter-spacing: .03em; color: #D5DAE0; text-transform: uppercase;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fld .chev { margin-left: auto; flex: none; color: var(--muted); }
+  .fld .chev svg { width: 1.2rem; height: 1.2rem; }
+  .fld.ch .fval { color: #FF7C47; font-size: 2rem; font-weight: 600; }
+  .fld.off .fval { color: var(--muted); }
+  .chrow { display: flex; gap: .8rem; min-width: 0; }
+  .chrow .fld { flex: 1; }
+  .xbtn { position: relative; flex: none; width: 7.3rem; height: 3.6rem; border-radius: .8rem; cursor: pointer; border: 1px solid rgba(255,255,255,.1);
+    background: linear-gradient(180deg, #1D232C, #151A21); color: #E6EAEE; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: .25rem; font-size: .82rem; font-weight: 900; letter-spacing: .08em; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+  .xbtn svg { width: 1.35rem; height: 1.35rem; }
+  .xbtn:hover:not(:disabled) { border-color: rgba(252,99,55,.6); }
+  .xbtn:disabled { cursor: default; }
+  .xbtn.on { color: var(--accent2); border-color: rgba(252,99,55,.7); }
+  .xbtn .cnt { position: absolute; top: -.45rem; right: -.45rem; min-width: 1.4rem; height: 1.4rem; padding: 0 .35rem; border-radius: .7rem; background: var(--accent);
+    color: #1b0c05; font-size: .8rem; font-weight: 900; display: flex; align-items: center; justify-content: center; letter-spacing: 0; }
+  .xlist { margin-top: .8rem; display: grid; gap: .45rem; }
+  .xlist .xi { display: flex; align-items: center; gap: .6rem; padding: .55rem .8rem; border-radius: .7rem; background: #10141A; border: 1px solid var(--line);
+    font-weight: 800; font-size: 1rem; text-transform: uppercase; min-width: 0; }
+  .xlist .xi span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .xlist .xi .k { flex: none; font-size: .75rem; padding: .15rem .45rem; border-radius: .35rem; color: #fff; }
+  .xlist .xi .k.pc { background: #1B5CE3; } .xlist .xi .k.cc { background: #3a3f46; }
+  .xlist .xi .c { margin-left: auto; flex: none; color: var(--muted); font-size: .85rem; }
+  /* Largo (card ocupando a linha toda): PC e CANAL lado a lado. */
+  @container (min-width: 44rem) { .pfields { grid-template-columns: 1fr 1.3fr; } }
 
-  /* placa (hero) — sem desenho da controladora (removido em set/2026) */
-  .hero { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: center; }
-  .hero .name { font-size: 26px; font-weight: 900; letter-spacing: .02em; line-height: 1.1; }
-  .hero .name small { display: block; font-size: 11px; color: var(--accent2); letter-spacing: .18em; font-weight: 700; margin-bottom: 4px; }
-  .hero .tags { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  /* ── cabeçalho do preset ── */
+  .phead { display: inline-flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; padding: .6rem 1.1rem .6rem 1.3rem; margin-bottom: .9rem;
+    background: linear-gradient(180deg, #141820, #0F1318); }
+  .phead .tag { display: flex; align-items: center; justify-content: center; height: 3.25rem; min-width: 5.05rem; padding: 0 .9rem; border-radius: .8rem;
+    font-size: 2rem; font-weight: 900; color: var(--accent2);
+    background: linear-gradient(180deg, rgba(252,99,55,.30), rgba(252,99,55,.14)); border: 1px solid rgba(252,99,55,.65); box-shadow: 0 0 1.1rem -.35rem rgba(252,99,55,.6); }
+  .phead .big { font-size: 2.45rem; font-weight: 900; line-height: 1; letter-spacing: .005em; }
+  .phead .chip { height: 2.75rem; padding: 0 1.35rem; font-size: 1rem; }
+  .phead .chip.acc { padding: 0 1.65rem; }
+  .layerseg { display: inline-flex; gap: .3rem; padding: .2rem; border-radius: .95rem; background: rgba(8,10,14,.8); border: 1px solid var(--line); }
+  .layerseg button { height: 2.75rem; padding: 0 1.65rem; border-radius: .75rem; border: 1px solid transparent; background: transparent; cursor: pointer;
+    color: #AEB5BE; font-size: 1.1rem; font-weight: 900; letter-spacing: .05em; }
+  .layerseg button.on { color: var(--accent2); border-color: rgba(252,99,55,.7); background: linear-gradient(180deg, rgba(252,99,55,.24), rgba(252,99,55,.1));
+    box-shadow: 0 0 1.1rem -.35rem rgba(252,99,55,.65); }
 
-  /* prévia de tela */
-  .screen { aspect-ratio: 3/2; width: min(480px, 100%); container-type: inline-size; background: #000; border-radius: 6px; position: relative; overflow: hidden;
-    border: 4px solid #2b2f33; box-shadow: 0 0 0 1px #000, 0 14px 30px rgba(0,0,0,.5); font-family: "Helvetica Neue", Arial, sans-serif; }
-  .screen .bgimg { position: absolute; inset: 0; background-size: cover; background-position: center; }
-  .screen .pname { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-weight: 800; letter-spacing: .02em; font-size: calc(var(--fs) * 1cqw); }
-  .screen .ptag { position: absolute; left: 3%; top: 3%; font-size: 3.6cqw; font-weight: 800; }
-  .screen .strip { position: absolute; left: 0; right: 0; top: 0; height: 15%; display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 4.2cqw; letter-spacing: .04em; background: rgba(0,0,0,.35); }
-  .screen .tiles { position: absolute; left: 2%; right: 2%; top: 17%; bottom: 3%; display: grid; gap: 2.5%; }
-  .screen .tiles.c3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; --ts: 24cqw; }
-  .screen .tiles.c4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; --ts: 21cqw; }
-  .screen .tiles.c2 { grid-template-columns: repeat(2, 1fr); grid-template-rows: 1fr 1fr; --ts: 28cqw; }
-  .screen .tiles .tile { --s: var(--ts); border-width: 0.6cqw; }
-  .screen .tiles .tile .sg { font-size: calc(var(--ts) * .15 * var(--k, 1)); }
-  .screen .tiles .tile .sg.big { font-size: calc(var(--ts) * .26); }
-  .screenwrap { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; flex: 1 1 300px; min-width: 240px; max-width: 480px; }
-  .screenwrap .cap { font-size: 11px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  /* ── lista dos SWs (2 colunas: 1-2-3 | 4-5-6) ── */
+  .swlist { display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; gap: .8rem 1.7rem; }
+  .row { display: grid; grid-template-columns: 2.6rem .32rem 3.75rem minmax(0, 1fr) auto; align-items: center; column-gap: 1.3rem;
+    min-height: 6.95rem; padding: .85rem 1.3rem .85rem 1.45rem; }
+  .row .n { font-size: 4rem; font-weight: 900; line-height: 1; text-align: center; letter-spacing: -.02em; }
+  .row .bar { width: .32rem; height: 3.5rem; border-radius: .2rem; background: var(--c, #3a3e44);
+    box-shadow: 0 0 .8rem var(--c, transparent), 0 0 .25rem var(--c, transparent); }
+  .row .txt { min-width: 0; display: flex; flex-direction: column; gap: .75rem; }
+  /* A célula do modo é container: nome longo (MOMENTARY, TAP TEMPO) encolhe até caber. */
+  .row .mode { min-width: 0; container-type: inline-size; }
+  .row .mode span { display: block; font-size: clamp(1.1rem, calc(100cqw / (var(--len, 6) * .8)), 2.15rem); font-weight: 900; line-height: .95;
+    letter-spacing: .01em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row .midi { font-size: 1.2rem; font-weight: 700; letter-spacing: .01em; line-height: 1.15; text-transform: uppercase; color: #E9EDF2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .midi .more { margin-left: .6rem; font-size: .85rem; color: var(--accent2); letter-spacing: .04em; }
+  .row .midi .ch { color: var(--muted); }
+  .row .midi.none { color: var(--muted); font-size: 1rem; letter-spacing: .08em; }
+  .opts { display: flex; gap: .6rem; padding: .5rem; border-radius: .95rem; background: linear-gradient(180deg, #0E1217, #0A0D11);
+    border: 1px solid rgba(255,255,255,.05); box-shadow: inset 0 .2rem .6rem rgba(0,0,0,.7); }
+  .opt { width: 4.15rem; height: 3.9rem; border-radius: .7rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .38rem;
+    background: linear-gradient(180deg, #1B2029, #151920); border: 1px solid rgba(255,255,255,.07); color: #E9EDF2; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+  .opt svg { width: 1.6rem; height: 1.6rem; }
+  .opt i { font-style: normal; font-size: .68rem; font-weight: 800; letter-spacing: .07em; line-height: 1; color: var(--soft); text-transform: uppercase; }
+  .opt.on { color: var(--accent2); border-color: rgba(252,99,55,.8); background: linear-gradient(180deg, rgba(252,99,55,.26), rgba(252,99,55,.12));
+    box-shadow: 0 0 1.1rem -.3rem rgba(252,99,55,.6), inset 0 1px 0 rgba(255,200,170,.15); }
+  .opt.on i { color: var(--accent2); }
 
   /* tile do SW (porte simplificado do icon_tile_render) */
-  .tile { position: relative; border-radius: 12%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    overflow: hidden; gap: 4%; width: var(--s, 84px); height: var(--s, 84px); flex: none; border: 3px solid transparent; }
+  .tile { position: relative; border-radius: 18%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden; gap: 4%; width: var(--s, 3.75rem); height: var(--s, 3.75rem); flex: none; border: .16rem solid transparent; }
   .tile.circle { border-radius: 50%; }
   .tile.octagon { clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%); }
-  .tile .ico { width: 58%; height: 58%; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
+  .tile .ico { width: 62%; height: 62%; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
   .tile img.ico { -webkit-mask: none; mask: none; object-fit: contain; }
-  .tile .sg { font-size: calc(var(--s, 84px) * .15 * var(--k, 1)); font-weight: 800; letter-spacing: .03em; line-height: 1; max-width: 92%; overflow: hidden;
+  .tile .sg { font-size: calc(var(--s, 3.75rem) * .15 * var(--k, 1)); font-weight: 800; letter-spacing: .03em; line-height: 1; max-width: 92%; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap; }
-  .tile .sg.big { font-size: calc(var(--s, 84px) * .26); }
-  .tile .miss { font-size: 20px; color: #777; }
-  .tile.bare { border-color: #3a3e43; }
+  .tile .sg.big { font-size: calc(var(--s, 3.75rem) * .26); }
+  .tile .miss { font-size: 1.2rem; color: #777; }
+  .tile.bare { border-color: #8C939C; background: #0F1318 !important; }
 
-  /* presets: seletor */
-  .pbar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
-  .pgroup { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .pgroup .pl { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 900;
-    background: var(--card3); border: 1px solid var(--hair2); flex: none; }
-  .pgroup .pl.off { opacity: .35; }
-  .pbtn { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border-radius: 10px; border: 1px solid var(--hair2);
-    background: linear-gradient(180deg, var(--card2), var(--card)); color: var(--text); cursor: pointer; font-weight: 600; font-size: 12.5px;
-    max-width: 240px; transition: .12s; }
-  .pbtn:hover { border-color: var(--accent); }
-  .pbtn.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 6px 18px rgba(252,99,55,.25); }
-  .pbtn.off { opacity: .45; }
-  .pbtn .tg { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 800; color: var(--accent2);
-    background: rgba(252,99,55,.12); padding: 3px 6px; border-radius: 6px; }
-  .pbtn .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .pbtn .sw { width: 16px; height: 11px; }
+  /* ── log de boot (barra de largura total) ── */
+  details.boot { margin-top: 1.1rem; background: linear-gradient(180deg, #151920, #10141A); }
+  details.boot summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 1.9rem; flex-wrap: wrap; min-height: 4.05rem;
+    padding: .55rem 2.25rem; font-size: 1rem; font-weight: 800; letter-spacing: .2em; color: #AAB2BC; text-transform: uppercase; }
+  details.boot summary::-webkit-details-marker { display: none; }
+  details.boot summary::before { content: ''; flex: none; width: .62rem; height: .62rem; margin-right: .1rem; border-top: .2rem solid var(--accent);
+    border-right: .2rem solid var(--accent); transform: rotate(45deg); transition: transform .15s; filter: drop-shadow(0 0 .3rem rgba(252,99,55,.7)); }
+  details.boot[open] summary::before { transform: rotate(135deg); }
+  details.boot summary .chips { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+  details.boot pre { margin: 0 1.2rem 1.2rem; background: #0B0E12; border: 1px solid var(--line2); border-radius: .8rem; padding: 1rem; font-size: .85rem;
+    overflow: auto; max-height: 30rem; color: #C9CED3; }
+  details.boot .note { padding: 0 2.25rem 1.2rem; color: var(--muted); font-size: .95rem; }
 
-  .phead { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
-  .phead .big { font-size: 28px; font-weight: 900; letter-spacing: .01em; }
-  .phead .tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 20px; font-weight: 800; color: var(--accent2);
-    background: rgba(252,99,55,.12); padding: 6px 12px; border-radius: 10px; }
-  .layerseg { display: inline-flex; gap: 4px; background: var(--screen); border: 1px solid var(--hair2); border-radius: 10px; padding: 3px; }
-  .layerseg button { border: 0; background: transparent; color: var(--muted); font-weight: 800; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; }
-  .layerseg button.on { background: var(--card3); color: var(--accent2); }
-
-  /* cards de SW */
-  .swgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin-top: 16px; }
-  .swcard h3 .num { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #1b0c05; display: inline-flex; align-items: center;
-    justify-content: center; font-weight: 900; font-size: 12px; }
-  .swcard h3 .mode { color: var(--text); letter-spacing: .08em; }
-  .states { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-  .state { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-  .state .cap { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
-  .sec { border: 1px solid var(--hair); border-radius: 10px; padding: 8px 10px; margin-top: 8px; background: rgba(0,0,0,.12); }
-  .sec .sh { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .sec .sh .dot { width: 11px; height: 11px; }
-  .msg { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; flex-wrap: wrap; }
-  .msg .kind { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 5px;
-    background: var(--card3); color: var(--accent2); }
-  .msg .ch { font-size: 11px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .msg .nm { font-weight: 600; }
-  .msg .val { margin-left: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text); }
-  .flags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-
-  /* mídia */
-  .media { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
-  .media .it { background: #0f1113; border: 1px solid var(--hair2); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
-  .media .it .im { aspect-ratio: 3/2; background: #000 center / cover no-repeat; display: flex; align-items: center; justify-content: center; }
-  .media .it .im.ic { aspect-ratio: 1; background-size: contain; background-color: #1a1c1f; }
-  .media .it .cp { font-size: 10.5px; padding: 5px 7px; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
-  .media .it .cp b { color: var(--text); }
-
-  details.raw { margin-top: 20px; }
-  details.raw summary { cursor: pointer; color: var(--muted); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; padding: 8px 0; }
-  details.raw pre { background: #0f1113; border: 1px solid var(--hair2); border-radius: 10px; padding: 12px; font-size: 11.5px; overflow: auto;
-    max-height: 420px; color: #c9ced3; }
-  .warnbox { padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,204,32,.45); background: rgba(255,204,32,.08); color: #ffd766; margin-bottom: 16px; font-weight: 600; }
-  .custom { position: relative; aspect-ratio: 3/2; background: #000; border-radius: 6px; border: 2px solid #2b2f33; overflow: hidden; }
-  .custom .ci { position: absolute; transform: translate(-50%, -50%); border-radius: 12%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 800; color: var(--accent2); background: rgba(252,99,55,.12); }
-  .custom .ci.x { opacity: .3; border-style: dashed; }
-  .pill { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; background: var(--card3); border-radius: 6px; padding: 2px 7px; }
-  h2.sect { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; }
-
-  /* ── modo de edição (global_config) ── */
-  .acts { display: inline-flex; gap: 8px; }
-  .btn { border: 1px solid var(--hair2); background: linear-gradient(180deg, var(--card3), var(--card2)); color: var(--text); font-weight: 800;
-    letter-spacing: .08em; font-size: 12px; text-transform: uppercase; padding: 9px 16px; border-radius: 10px; cursor: pointer; transition: .15s; }
-  .btn:hover { border-color: var(--accent); }
-  .btn:disabled { opacity: .35; cursor: default; border-color: var(--hair2); }
-  .btn.on { border-color: var(--accent); color: var(--accent2); box-shadow: 0 0 0 1px var(--accent), 0 4px 14px rgba(252,99,55,.25); }
-  .btn.exp { border: 0; background: linear-gradient(180deg, #4ce27a, #22cc44); color: #062a10; box-shadow: 0 4px 14px rgba(34,204,68,.3), inset 0 1px 0 rgba(255,255,255,.35); }
-  .btn.exp:hover { filter: brightness(1.07); }
-  .btn.sm { padding: 6px 12px; font-size: 11px; }
-  .ed { font: inherit; font-size: 12.5px; font-weight: 600; color: var(--text); background: #0f1113; border: 1px solid var(--hair2); border-radius: 8px;
-    padding: 5px 8px; max-width: 100%; }
-  .ed:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px rgba(252,99,55,.4); }
-  .ed.chg { border-color: var(--warn); box-shadow: 0 0 0 1px rgba(255,204,32,.45); }
-  input.ed[type=number] { width: 78px; }
-  input.ed[type=text] { width: 120px; }
-  select.ed { max-width: 280px; }
-  label.edc { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 700; user-select: none; }
-  label.edc input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
-  label.edc.chg { color: var(--warn); }
-  .edrow { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .editbox { padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(252,99,55,.5); background: rgba(252,99,55,.08); margin-bottom: 16px;
-    display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 13px; }
-  .editbox b { color: var(--accent2); letter-spacing: .1em; }
-  .editbox .chglist { flex-basis: 100%; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--muted); line-height: 1.7; }
-  .editbox .chglist i { color: var(--warn); font-style: normal; }
-  table.t td .ed { font-size: 12px; padding: 3px 6px; }
-  table.t td input.ed[type=number] { width: 64px; }
-
-  /* Visão de leitura: banco, envios e switches no mesmo painel. */
-  .view-intro { margin: 12px 0 22px; }
-  .view-intro h1 { margin: 0 0 5px; font-size: clamp(24px,3vw,34px); }
-  .view-intro p { margin: 0; color: var(--muted); }
-  .preset-selector { padding: 18px; border: 1px solid var(--hair2); border-radius: 18px; background: #1b1f23; margin-bottom: 20px; }
-  .bank-row, .preset-row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .selector-label { display: block; margin: 0 0 10px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-  .preset-row { margin-top: 16px; }
-  .bank-btn { padding: 10px 17px; border: 1px solid var(--hair2); background: var(--card); color: var(--text); border-radius: 10px; cursor: pointer; font-weight: 800; }
-  .bank-btn.on, .preset-row .pbtn.on { border-color: var(--accent); background: #fc633719; color: var(--accent2); }
-  .bank-btn.off { color: var(--muted); border-style: dashed; }
-  .preset-row .pbtn { flex: 1 1 140px; min-height: 62px; max-width: 230px; }
-  .preset-overview { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(0,1fr); gap: 16px; }
-  .preset-overview .sec { margin-top: 0; }
-  .swgrid { grid-template-columns: repeat(3,minmax(0,1fr)); align-items: start; }
-  .swcard { min-width: 0; }
-  .swcard .states { padding: 10px 0; border-bottom: 1px solid var(--hair2); margin-bottom: 12px; }
-  .swcard h3 .num { white-space: nowrap; width: auto; min-width: 46px; padding: 0 8px; border-radius: 8px; flex-shrink: 0; }
-  .section-note { margin: -7px 0 18px; color: var(--muted); font-size: 13px; }
-  .more { margin-top: 22px; border: 1px solid var(--hair2); border-radius: 14px; padding: 16px; background: #191c20; }
-  .more > summary { cursor: pointer; font-weight: 700; color: var(--accent2); }
-  .more[open] > summary { margin-bottom: 18px; }
-  .grid, .preset-overview { min-width: 0; }
-  .grid { grid-template-columns: repeat(auto-fit,minmax(min(100%,340px),1fr)); }
-  button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent2); outline-offset: 4px; }
-  @media (max-width: 1000px) { .swgrid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-  @media (max-width: 640px) {
-    main { padding: 14px; } .top { position: static; padding: 14px; } .brand span { display: none; }
-    .seg { width: 100%; margin-left: 0; } .seg button { flex: 1; padding: 13px; }
-    .preset-overview, .swgrid { grid-template-columns: minmax(0,1fr); }
-    .grid .span2 { grid-column: span 1; } .card .body { overflow-x: auto; }
-    .phead { flex-wrap: wrap; } .phead .big { overflow-wrap: anywhere; }
-    .msg { flex-wrap: wrap; } .bank-btn { padding: 10px 14px; }
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: auto minmax(0, 1fr); }
+    .hero > .principal { grid-column: 1 / -1; }
+  }
+  @media (max-width: 1000px) {
+    .swlist { grid-template-columns: 1fr; grid-auto-flow: row; }
+  }
+  @media (max-width: 720px) {
+    html { font-size: 11px; }
+    .top { padding: .8rem 1.1rem; gap: .8rem; }
+    .brand .sep, .brand .sub { display: none; }
+    .filebtn { margin-left: 0; }
+    .fileinfo { margin-left: 0; width: 100%; }
+    main { padding: 1.1rem 1.1rem 2rem; }
+    .hero { grid-template-columns: 1fr; }
+    .console { justify-self: center; }
+    .phead { display: flex; gap: 1rem; }
+    .phead .big { font-size: 2rem; }
+    .row { grid-template-columns: 2.4rem .32rem 3.75rem minmax(0, 1fr); grid-template-areas: "n b t x" "o o o o"; row-gap: .9rem; padding: 1rem 1.1rem 1.1rem; }
+    .row .n { grid-area: n; font-size: 3.4rem; } .row .bar { grid-area: b; } .row .tile { grid-area: t; } .row .txt { grid-area: x; }
+    .row .opts { grid-area: o; justify-self: start; }
+    .row .midi { font-size: 1.3rem; }
+    .opt i { font-size: .78rem; }
   }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>BFMiDi</b> Backup View <span>visualizador de backup</span></div>
-  <label class="filebtn">Abrir backup <input id="file" type="file" accept=".json,application/json"></label>
+  <div class="brand"><span class="name"><b>BFMIDI</b> BACKUP VIEW</span><i class="sep"></i><span class="sub">Visualizador de backup</span></div>
+  <label class="filebtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h3.6l2 2h7.4A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>Abrir backup <input id="file" type="file" accept=".json,application/json"></label>
   <div class="fileinfo" id="fileinfo">Nenhum arquivo aberto</div>
-  <nav class="seg">
-    <button data-view="global" class="on" aria-pressed="true">Global</button>
-    <button data-view="presets" aria-pressed="false">Preset</button>
-  </nav>
-  <div class="acts">
-    <button id="edit" class="btn" disabled title="Editar as configurações globais deste backup (a placa, o modo amigável, LEDs…)">Editar</button>
-    <button id="export" class="btn exp" disabled title="Baixar o backup com as alterações (o arquivo original não é tocado)">Exportar</button>
-  </div>
 </header>
 <main id="main"></main>
 
@@ -279,6 +263,7 @@
 'use strict';
 // ─────────────────────────────────────────────────────────────────────────────
 // TABELAS — espelhos do webApp/app.jsx e do firmware. Índice = valor persistido.
+// (A versão anterior, com GLOBAIS/PRESETS e edição, ficou em index_completo.html.)
 // ─────────────────────────────────────────────────────────────────────────────
 const D = window.BV_DATA || { icons: {}, PC_LABELS: {}, CC_LABELS: {}, KEMPER_NRPN: [], GP5_PARAMS: [], iconCount: 0, colorIconIds: [] };
 
@@ -317,7 +302,6 @@ for (const [n, h] of BASE_COLORS) PAL.push({ name: 'G1 ' + n, type: 'g1', hex: h
 for (const [n, h] of BASE_COLORS) PAL.push({ name: 'G2 ' + n, type: 'g2', hex: h });
 for (const [n, h] of BASE_COLORS) PAL.push({ name: 'Custom ' + n, type: 'custom', hex: h });
 for (const [n, a, b, c, d] of MISC) PAL.push({ name: n, type: 'misc', hex: a, mid: b, end: c, dir: d });
-const IMAGE_SLOT_FIRST_ID = PAL.length;
 for (let i = 1; i <= IMAGE_SLOT_COUNT; i++) PAL.push({ name: 'Imagem ' + i, type: 'img', slot: i - 1 });
 
 const MODELS = [
@@ -339,28 +323,19 @@ const MODEL_LEGACY_IDS = { 'BFMIDI-3 6S': 'BFMIDI-3 6SW+', 'BFMIDI-3 7SW+V2': 'B
   'BFMIDI-3 8SW+': 'BFMIDI-S3 8SW+', 'BFMIDI-3 NANO+ V2': 'BFMIDI-S3 NANO+' };
 const boardCanonical = (n) => MODEL_LEGACY_IDS[n] || n;
 const boardIs4 = (n) => /4S|MICRO/.test(n || '');
-// BFMIDI-3 e BFMIDI-S3 = display 480x320 (fora a MICRO, tratada à parte onde importa).
-const boardIsFam3 = (n) => /BFMIDI-S?3/.test(n || '');
 
 // SW_MODE_IDS (BANK_MEMORY.h) — índice = o que vai em sw_modes do preset.
 const SW_MODE_IDS = ['mute','fx1','fx2','fx3','spin','ramp','momentary','favorite','macros','tap_tempo','single','steps','control'];
-const SW_MODE_TITLE = { mute: 'MUTE', fx1: 'STOMP', fx2: 'STOMP-2 (legado)', fx3: 'STOMP-3 (legado)', spin: 'SPIN', ramp: 'RAMP',
-  momentary: 'MOMENTARY', favorite: 'FAVORITE (legado)', macros: 'MACROS', tap_tempo: 'TAP TEMPO', single: 'SINGLE', steps: 'STEPS', control: 'CONTROL' };
-
-const ACTIONS = ['NENHUM','CHAMAR PRESET','STANDBY','ENTRAR EM MODO LIVE','SUBIR BANCO','DESCER BANCO','SUBIR BANCO (STANDBY)',
-  'DESCER BANCO (STANDBY)','SUBIR PRESET','DESCER PRESET','LIGAR/DESLIGAR WI-FI','SW_LIVE','SAIR PRO BANK','TROCAR LAYER','IR PARA PRESET FIXO'];
+const SW_MODE_TITLE = { mute: 'MUTE', fx1: 'STOMP', fx2: 'STOMP-2', fx3: 'STOMP-3', spin: 'SPIN', ramp: 'RAMP',
+  momentary: 'MOMENTARY', favorite: 'FAVORITE', macros: 'MACROS', tap_tempo: 'TAP TEMPO', single: 'SINGLE', steps: 'STEPS', control: 'CONTROL' };
 
 const SPECIAL_CCS = { 128: 'UP BANK', 129: 'DOWN BANK', 130: 'UP PRESET', 131: 'DOWN PRESET', 132: 'OUT LIVE MODE', 133: 'TO LAYER', 134: 'SW_LIVE',
   135: 'UP BANK STANDBY', 136: 'DOWN BANK STANDBY' };
 const KEMPER = Object.fromEntries(D.KEMPER_NRPN || []);
 const GP5 = Object.fromEntries(D.GP5_PARAMS || []);
 
-const MATCH_MODE_OPTIONS = ['MULTIPLE MODE','AMPERO AS2','AMPERO MINI','HX STOMP','A. STAGE 2','GP-200LT','Valeton GP-5','POCKET MASTER','TONEX ONE',
-  'KEMPER PLAYER','AMPERO MP350','MX5','NANO CORTEX','QUAD CORTEX','SYNERGY AMPS','BigSky','BlueSky','TimeLine','ELCAPISTAN','FLINT','HX-ONE',
-  'VTR NARCISO','VTR LOKI','VTR KAILANI','BFMiDi - Keyboard','CUSTOM',"UAFX Ruby '63","UAFX Enigmatic '82","UAFX Lion '68","UAFX Dream '65",
-  'FRACTAL VP4','FRACTAL VP4+','TONEX ONE+','VTR IGNIS','VTR HELIOS','VTR VENATOR','HEADRUSH FLEX PRIME','Valeton GP-50','TONEX PEDAL',
-  'PLETHORA X5/X3','PANTHEON DELUXE','GT-1000 / CORE','BOSS MS-3','EVENTIDE H90','USER 1','USER 2','USER 3','SEPIA DELAY','COSMOS REVERB',
-  'BOSS SL-2','WAVELENGTH','SCARLETT LOVE OD','Valeton GP-150','Valeton GP-180','LINE 6 M5','LINE 6 M9'];
+// MATCH_MODE_PEDAL: [chave PC_LABELS, chave CC_LABELS] por índice de MATCH_MODE_OPTIONS
+// (app.jsx). Só as tabelas de nome são necessárias aqui. Append-only.
 const MATCH_MODE_PEDAL = [
   null, ['AS2','AMPEROST2'], ['AMPERO_MINI','AMPERO_MINI'], ['HX_STOMP','HX_STOMP'], ['ASTG2','AMPEROST2'], ['GP200LT','GP200LT'],
   ['VALETON_GP5','VALETON_GP5'], ['POCKET_MASTER','POCKET_MASTER'], ['TONEX_ONE','TONEX'], ['KEMPER_PLAYER','KEMPER_PLAYER'],
@@ -373,18 +348,12 @@ const MATCH_MODE_PEDAL = [
   ['SEPIA','SEPIA'], ['COSMOS','COSMOS'], [null,'SL2'], ['WAVELENGTH','WAVELENGTH'], [null,'SCARLETT_OD'], ['VALETON_GP150','VALETON_GP150'],
   ['VALETON_GP150','VALETON_GP180'], ['LINE6_M5','LINE6_M5'],
 ];
-const STEP_FIGS = ['1/1','1/2','1/2 T','1/4 .','1/4','1/4 T','1/8 .','1/8','1/8 T','1/16 .','1/16','1/16 T','1/32'];
-const PRESET_LAYOUTS = ['CLÁSSICO','L1','L2','L3','L4','LISTA','CUSTOM'];
-const LIVE_LAYOUTS = ['—','L1','L2','L3','L4','CUSTOM'];
-const ICON_SHAPES = ['PADRÃO','CÍRCULO','OCTÓGONO'];
-const FAV_MODES = ['PRESET', 'LIVE'];
+const LETTERS = 'ABCDEFGHIJ';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ESTADO
 // ─────────────────────────────────────────────────────────────────────────────
-// edit = modo de edição ligado; orig = cópia do global_config como veio no
-// arquivo (pra marcar o que mudou e pro "desfazer tudo").
-const S = { backup: null, name: '', view: 'global', tag: null, layer: 1, edit: false, orig: null };
+const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false };
 let LED = LED_DEFAULT.map(([n, rgb]) => ({ name: n, rgb }));
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -406,63 +375,8 @@ function parseKv(str, sep) {
 const gc = () => (S.backup && S.backup.global_config) || {};
 const g = (k, d = '') => { const v = gc()[k]; return v === undefined || v === null ? d : String(v); };
 const gi = (k, d = 0) => num(g(k), d);
-const onoff = (v) => num(v) ? '<span class="chip ok">LIGADO</span>' : '<span class="chip off">DESLIGADO</span>';
-const yes = (v) => num(v) ? '<span class="chip ok">SIM</span>' : '<span class="chip off">NÃO</span>';
+const ledCss = (i) => rgbCss((LED[num(i)] || { rgb: [80, 80, 80] }).rgb);
 
-// ── MODO DE EDIÇÃO (só global_config) ─────────────────────────────────────
-// Cada controle carrega data-k = chave do global_config. O `change` delegado
-// em $main grava a string no S.backup.global_config (mesmo formato que o
-// editor manda no POST /config/global: tudo texto) e re-renderiza. A chave
-// só passa a existir no arquivo quando o usuário mexe nela.
-const E = () => S.edit;
-const isChg = (k) => !!S.orig && String(gc()[k] ?? '') !== String(S.orig[k] ?? '');
-function chgKeys() {
-  const cur = gc(), o = S.orig || {};
-  return [...new Set([...Object.keys(cur), ...Object.keys(o)])].filter((k) => String(cur[k] ?? '') !== String(o[k] ?? '')).sort();
-}
-const edCls = (k) => `ed${isChg(k) ? ' chg' : ''}`;
-const optsHtml = (opts, cur) => opts.map(([v, l]) => `<option value="${esc(v)}"${String(v) === String(cur) ? ' selected' : ''}>${esc(l)}</option>`).join('');
-const edSel = (k, opts, d = 0) => `<select class="${edCls(k)}" data-k="${k}">${optsHtml(opts, g(k, d))}</select>`;
-const edNum = (k, min, max, d = 0) => `<input class="${edCls(k)}" type="number" data-k="${k}" min="${min}" max="${max}" value="${esc(g(k, d))}">`;
-const edTxt = (k, max = 8) => `<input class="${edCls(k)}" type="text" data-k="${k}" maxlength="${max}" value="${esc(g(k))}">`;
-const edChk = (k, d = 0, lbl = ['SIM', 'NÃO']) => `<label class="edc${isChg(k) ? ' chg' : ''}"><input type="checkbox" data-k="${k}" data-bool="1"${gi(k, d) ? ' checked' : ''}>${gi(k, d) ? lbl[0] : lbl[1]}</label>`;
-const edLed = (k, d = 0) => `<span class="edrow">${ledDot(g(k, d), false)}${edSel(k, LED.map((c, i) => [i, c.name]), d)}</span>`;
-const edPal = (k, d = 0) => `<span class="edrow"><span class="sw" style="background:${palCss(g(k, d))}"></span>${edSel(k, PAL.map((p, i) => [i, p.name]), d)}</span>`;
-const edAct = (k, d = 0) => edSel(k, ACTIONS.map((a, i) => [i, a]), d);
-const edLetter = (k, d = 0) => edSel(k, 'ABCDEFGHIJ'.split('').map((L, i) => [i, L]), d);
-// leitura x edição: mesmo valor, controle só quando o modo está ligado
-const vYes = (k, d = 0) => E() ? edChk(k, d) : yes(g(k, d));
-const vOnOff = (k, d = 0) => E() ? edChk(k, d, ['LIGADO', 'DESLIGADO']) : onoff(g(k, d));
-const vLed = (k, d = 0) => E() ? edLed(k, d) : ledDot(g(k, d));
-const vSel = (k, opts, d, html) => E() ? edSel(k, opts, d) : html;
-const vNum = (k, min, max, d, html) => E() ? edNum(k, min, max, d) : html;
-const idx = (arr) => arr.map((a, i) => [i, a]);
-function setKey(k, v) {
-  if (!S.backup) return;
-  if (!S.backup.global_config) S.backup.global_config = {};
-  S.backup.global_config[k] = String(v);
-}
-function undoAll() {
-  if (!S.backup || !S.orig) return;
-  S.backup.global_config = JSON.parse(JSON.stringify(S.orig));
-  render(true); updateInfo();
-}
-function exportBackup() {
-  if (!S.backup) return;
-  const base = (S.name || 'bfmidi-backup.json').replace(/\.json$/i, '').replace(/-editado(-\d+)?$/i, '');
-  const fname = `${base}-editado.json`;
-  // Mesmo formato do editor: JSON numa linha só. Estrutura intacta (presets,
-  // sw_params, imagens, ícones, user_pedals) — só o global_config muda.
-  const blob = new Blob([JSON.stringify(S.backup)], { type: 'application/json' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-}
-
-function ledDot(idx, withName = true) {
-  const c = LED[num(idx)] || { name: '?', rgb: [80, 80, 80] };
-  return `<span class="dot" style="--c:${rgbCss(c.rgb)}"></span>${withName ? `<span class="swname">${esc(c.name)}</span>` : ''}`;
-}
 function palCss(id) {
   const p = PAL[num(id)]; if (!p) return 'transparent';
   switch (p.type) {
@@ -482,13 +396,6 @@ function palCss(id) {
   }
   return 'transparent';
 }
-function palName(id) { const p = PAL[num(id)]; return p ? p.name : `#${id}`; }
-function palTextColor(id) { const p = PAL[num(id)]; if (!p) return '#fff'; if (p.type === 'none' || p.type === 'img') return '#fff'; return hex6(p.hex); }
-function dispSwatch(id, label) {
-  const p = PAL[num(id)];
-  const cls = p && p.type === 'none' ? 'style="background:repeating-linear-gradient(45deg,#333 0 4px,#222 4px 8px)"' : `style="background:${palCss(id)}"`;
-  return `<span class="sw" ${cls}></span><span class="swname">${esc(label ? label + ': ' : '')}${esc(palName(id))}</span>`;
-}
 
 // ── nomes de CC/PC pelo MODO AMIGÁVEL ─────────────────────────────────────
 function pedalIdxFor(ch) {
@@ -497,38 +404,23 @@ function pedalIdxFor(ch) {
   const c = num(ch); if (c < 1 || c > 16) return 0;
   return gi('match_channel_' + (c - 1), 0);
 }
-function pedalNameOf(idx) {
-  const i = num(idx); if (i <= 0) return null;
-  const m = MATCH_MODE_PEDAL[i];
-  if (m && m[0] === 'user') { const up = S.backup.user_pedals && S.backup.user_pedals[String(m[1])]; return (up && up.name) || MATCH_MODE_OPTIONS[i]; }
-  return MATCH_MODE_OPTIONS[i] || `#${i}`;
-}
+const userPedal = (slot) => S.backup.user_pedals && S.backup.user_pedals[String(slot)];
 function ccLabel(ch, n) {
   n = num(n);
   if (SPECIAL_CCS[n]) return SPECIAL_CCS[n];
   if (n >= 200 && n <= 321 && KEMPER[n]) return KEMPER[n];
   if (n >= 400 && n <= 504 && GP5[n]) return GP5[n];
-  const idx = pedalIdxFor(ch); const m = MATCH_MODE_PEDAL[idx];
+  const m = MATCH_MODE_PEDAL[pedalIdxFor(ch)];
   if (!m) return '';
-  if (m[0] === 'user') { const up = S.backup.user_pedals && S.backup.user_pedals[String(m[1])]; return (up && up.cc && up.cc[String(n)]) || ''; }
+  if (m[0] === 'user') { const up = userPedal(m[1]); return (up && up.cc && up.cc[String(n)]) || ''; }
   const t = m[1] && D.CC_LABELS[m[1]]; return (t && t[String(n)]) || '';
 }
 function pcLabel(ch, n) {
   n = num(n);
-  const idx = pedalIdxFor(ch); const m = MATCH_MODE_PEDAL[idx];
+  const m = MATCH_MODE_PEDAL[pedalIdxFor(ch)];
   if (!m) return '';
-  if (m[0] === 'user') { const up = S.backup.user_pedals && S.backup.user_pedals[String(m[1])]; return (up && up.pc && up.pc[String(n)]) || ''; }
+  if (m[0] === 'user') { const up = userPedal(m[1]); return (up && up.pc && up.pc[String(n)]) || ''; }
   const t = m[0] && D.PC_LABELS[m[0]]; return (t && t[n]) || '';
-}
-function ccMsg(ch, n, valHtml, extraCls) {
-  const nm = ccLabel(ch, n); const special = num(n) >= 128;
-  return `<div class="msg ${extraCls || ''}"><span class="kind">${special ? 'CMD' : 'CC'}</span>` +
-    `${special ? '' : `<span class="n">${num(n)}</span>`}${nm ? `<span class="nm">${esc(nm)}</span>` : ''}` +
-    `<span class="ch">CH ${num(ch)}</span>${valHtml !== undefined ? `<span class="val">${valHtml}</span>` : ''}</div>`;
-}
-function pcMsg(ch, n) {
-  const nm = pcLabel(ch, n);
-  return `<div class="msg"><span class="kind">PC</span><span class="n">${num(n)}</span>${nm ? `<span class="nm">${esc(nm)}</span>` : ''}<span class="ch">CH ${num(ch)}</span></div>`;
 }
 
 // ── display blob (porte de parseSwDisplayOne) ────────────────────────────
@@ -536,8 +428,7 @@ function defDisp() {
   const sub = (on) => ({ icon_id: 1, mode: 'icon', sigla: '', sg: -1, ic: on ? 15 : 3, bg: 0, br: on ? 15 : 3 });
   return { icon_id: 1, mode: 'icon', sigla: '', ic_off: 3, ic_on: 15, bg_off: 0, bg_on: 0, br_off: 3, br_on: 15, sg_off: -1, sg_on: -1, font: 0,
     spin: [0, 1, 2].map(() => ({ icon_id: 1, sigla: '', mode: 'icon', ic_on: 15, bg_on: 0, br_on: 15 })),
-    stomp: [sub(false), sub(true), sub(false), sub(true)], tap: [sub(true), sub(false), sub(true)],
-    spinlp: { icon_id: 1, mode: 'icon', sigla: '', ic_off: 3, ic_on: 15, bg_off: 0, bg_on: 0, br_off: 3, br_on: 15 } };
+    stomp: [sub(false), sub(true), sub(false), sub(true)], tap: [sub(true), sub(false), sub(true)] };
 }
 const LONGK = { i: 'icon_id', a: 'ic_off', A: 'ic_on', b: 'bg_off', B: 'bg_on', c: 'br_off', C: 'br_on', g: 'sg_off', G: 'sg_on', f: 'font' };
 function parseDisp(blob) {
@@ -565,11 +456,7 @@ function parseDisp(blob) {
         if (base === 'i') sb.icon_id = num(v, 1) || 1; else if (base === 'm') sb.mode = v === '0' ? 'text' : 'icon';
         else if (base === 'A') sb.ic = num(v); else if (base === 'B') sb.bg = num(v); else if (base === 'C') sb.br = num(v);
         continue; }
-      if (t === 'p') { const sb = out.spinlp;
-        if (base === 'i') sb.icon_id = num(v, 1) || 1; else if (base === 's') sb.sigla = v; else if (base === 'm') sb.mode = v === '0' ? 'text' : 'icon';
-        else if (base === 'a') sb.ic_off = num(v); else if (base === 'A') sb.ic_on = num(v); else if (base === 'b') sb.bg_off = num(v);
-        else if (base === 'B') sb.bg_on = num(v); else if (base === 'c') sb.br_off = num(v); else if (base === 'C') sb.br_on = num(v);
-        continue; }
+      if (t === 'p') continue; // long-press do SPIN: não aparece na lista
     }
     const lk = LONGK[k] || k;
     if (lk in out && typeof out[lk] === 'number') { const n = parseInt(v, 10); if (Number.isFinite(n)) { out[lk] = n; if (lk === 'sg_off' && out.sg_on === -1) out.sg_on = n; } }
@@ -577,7 +464,6 @@ function parseDisp(blob) {
   return out;
 }
 
-// Tile: {icon_id, mode, sigla, ic, bg, br, sg}
 function iconHtml(id, colorCss) {
   id = num(id);
   if (id >= ICON_UPLOAD_FIRST_ID) {
@@ -594,15 +480,19 @@ function tileHtml(t, size, shape) {
   const isText = t.mode === 'text';
   const sig = t.sigla || '';
   const k = Math.min(1, 4.6 / Math.max(1, sig.length)).toFixed(2);
-  const br = PAL[num(t.br)] && PAL[num(t.br)].type !== 'none' ? palCss(t.br) : 'transparent';
+  // border-color não aceita gradiente: borda em cor sólida (a cor base da entrada).
+  const pb = PAL[num(t.br)];
+  const br = !pb || pb.type === 'none' ? 'transparent' : pb.type === 'img' ? '#555' : hex6(pb.hex);
+  const bare = br === 'transparent' && palCss(t.bg) === 'transparent';
   const shapeCls = shape === 1 ? 'circle' : shape === 2 ? 'octagon' : '';
-  return `<div class="tile ${shapeCls} ${br === 'transparent' && palCss(t.bg) === 'transparent' ? 'bare' : ''}" style="--s:${size}px;--k:${k};background:${palCss(t.bg)};border-color:${br}">` +
-    (isText ? `<div class="sg big" style="background:${sgCss};-webkit-background-clip:text;background-clip:text;color:transparent">${esc(sig || '—')}</div>`
-            : `${iconHtml(t.icon_id, icCss)}${sig ? `<div class="sg" style="background:${sgCss};-webkit-background-clip:text;background-clip:text;color:transparent">${esc(sig)}</div>` : ''}`) +
+  const clip = `-webkit-background-clip:text;background-clip:text;color:transparent`;
+  return `<div class="tile ${shapeCls} ${bare ? 'bare' : ''}" style="--s:${typeof size === 'number' ? size + 'px' : size};--k:${k};background:${palCss(t.bg)};${bare ? '' : `border-color:${br}`}">` +
+    (isText ? `<div class="sg big" style="background:${sgCss};${clip}">${esc(sig || '—')}</div>`
+            : `${iconHtml(t.icon_id, icCss)}${sig ? `<div class="sg" style="background:${sgCss};${clip}">${esc(sig)}</div>` : ''}`) +
     `</div>`;
 }
 const mainState = (d, on) => ({ icon_id: d.icon_id, mode: d.mode, sigla: d.sigla, ic: on ? d.ic_on : d.ic_off, bg: on ? d.bg_on : d.bg_off, br: on ? d.br_on : d.br_off, sg: on ? d.sg_on : d.sg_off });
-const subState = (d, sb, siglaFallback = true) => ({ icon_id: sb.icon_id, mode: sb.mode, sigla: sb.sigla || (siglaFallback ? d.sigla : ''), ic: sb.ic, bg: sb.bg, br: sb.br, sg: sb.sg });
+const subState = (d, sb) => ({ icon_id: sb.icon_id, mode: sb.mode, sigla: sb.sigla || d.sigla, ic: sb.ic, bg: sb.bg, br: sb.br, sg: sb.sg });
 
 // ── params ────────────────────────────────────────────────────────────────
 function parseParams(blob) {
@@ -615,10 +505,12 @@ function parseParams(blob) {
   return out;
 }
 const P = (p, k, d = 0) => (p[k] === undefined || p[k] === '' ? d : (typeof p[k] === 'number' ? p[k] : num(p[k], d)));
-const splitSlots = (s, n) => String(s || '').split(',').map((x) => x.split(':').map((y) => num(y)));
+const splitSlots = (s) => String(s || '').split(',').filter((x) => x !== '').map((x) => x.split(':').map((y) => num(y)));
+const validCh = (c) => c >= 1 && c <= 16;
+const hasCh = (p, s = '') => validCh(P(p, 'ch' + s));
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PRESET (parse de uma tag)
+// PRESET
 // ─────────────────────────────────────────────────────────────────────────────
 function presetOf(tag) {
   const b = S.backup;
@@ -636,539 +528,296 @@ function presetOf(tag) {
     sws[1].push({ n, mode: m1, p: parseParams(lines[`sw${n}.${m1}`]), d: parseDisp(lines[`swdisp${n}`]) });
     sws[2].push({ n, mode: m2, p: parseParams(lines[`sw${n}L2.${m2}`]), d: parseDisp(lines[`swdisp${n}L2`]) });
   }
-  // extras: chave nova `extras`, senão migra de extra_pcs/extra_ccs
+  // extras: chave nova `extras` (p:ch:num / c:ch:num:val), senão os legados extra_pcs/extra_ccs.
   const extras = [];
   if (hdr.extras !== undefined && hdr.extras !== '') {
-    for (const it of hdr.extras.split(',')) { const q = it.split(':'); if (q[0] === 'p') extras.push({ t: 'pc', ch: num(q[1]), n: num(q[2]) }); else if (q[0] === 'c') extras.push({ t: 'cc', ch: num(q[1]), n: num(q[2]), v: num(q[3]) }); }
+    for (const it of hdr.extras.split(',')) { const q = it.split(':');
+      if (q[0] === 'p') extras.push({ t: 'PC', ch: num(q[1]), n: num(q[2]) });
+      else if (q[0] === 'c') extras.push({ t: 'CC', ch: num(q[1]), n: num(q[2]), v: num(q[3]) }); }
   } else if (hdr.extras === undefined) {
-    for (const it of String(hdr.extra_pcs || '').split(',')) { const q = it.split(':'); if (q.length >= 2 && num(q[0]) > 0) extras.push({ t: 'pc', ch: num(q[0]), n: num(q[1]) }); }
-    for (const it of String(hdr.extra_ccs || '').split(',')) { const q = it.split(':'); if (q.length >= 3 && num(q[0]) > 0) extras.push({ t: 'cc', ch: num(q[0]), n: num(q[1]), v: num(q[2]) }); }
+    for (const it of String(hdr.extra_pcs || '').split(',')) { const q = it.split(':'); if (q.length >= 2 && num(q[0]) > 0) extras.push({ t: 'PC', ch: num(q[0]), n: num(q[1]) }); }
+    for (const it of String(hdr.extra_ccs || '').split(',')) { const q = it.split(':'); if (q.length >= 3 && num(q[0]) > 0) extras.push({ t: 'CC', ch: num(q[0]), n: num(q[1]), v: num(q[2]) }); }
   }
-  return { tag, hdr, lines, sws, extras };
+  return { tag, hdr, sws, extras: extras.filter((e) => validCh(e.ch)) };
 }
-function presetTags() {
-  const tags = Object.keys(S.backup.presets || {});
-  return tags.sort((a, b) => a[0] === b[0] ? num(a.slice(1)) - num(b.slice(1)) : a[0].localeCompare(b[0]));
-}
-function presetSwitchCount() { return boardIs4(g('board')) ? 4 : 6; }
+const hasPreset = (tag) => !!(S.backup && S.backup.presets && S.backup.presets[tag] !== undefined);
+const swCount = () => boardIs4(g('board')) ? 4 : 6;
+// Bancos que o backup realmente traz, na ordem A..J.
+const banksInBackup = () => LETTERS.split('').filter((L) => Object.keys(S.backup.presets || {}).some((t) => t[0] === L));
 
-// ─────────────────────────────────────────────────────────────────────────────
-// RENDER — GLOBAIS
-// ─────────────────────────────────────────────────────────────────────────────
-const card = (title, body, cls = '', sub = '') => `<section class="card ${cls}"><h3>${title}${sub ? `<span class="sub">${sub}</span>` : ''}</h3><div class="body">${body}</div></section>`;
-const kv = (rows) => `<div class="kv">${rows.map(([k, v]) => `<div class="k">${k}</div><div class="v">${v}</div>`).join('')}</div>`;
-
-
-function renderGlobal() {
-  const b = S.backup; const rawName = g('board', '—'); const name = boardCanonical(rawName); const model = MODELS.find((m) => m.id === name);
-  const fam = model ? model.fam : (name.split(' ')[0] || '—');
-  const swN = presetSwitchCount();
-  const parts = [];
-  const letters = 'ABCDEFGHIJ'.split('');
-
-  // CAIXA DO MODO DE EDIÇÃO
-  let editBox = '';
-  if (E()) {
-    const ch = chgKeys();
-    editBox = `<div class="editbox"><b>MODO DE EDIÇÃO</b><span>Altere os campos e clique em <b>EXPORTAR</b>. O arquivo original não é tocado; só o <span class="pill">global_config</span> é editável.</span>
-      <span class="chip ${ch.length ? 'warn' : 'off'}">${ch.length} ALTERA${ch.length === 1 ? 'ÇÃO' : 'ÇÕES'}</span>
-      ${ch.length ? `<button class="btn sm" id="undo">Desfazer tudo</button><div class="chglist">${ch.map((k) => `${esc(k)}: ${esc(S.orig[k] ?? '∅')} → <i>${esc(gc()[k] ?? '∅')}</i>`).join(' &nbsp;·&nbsp; ')}</div>` : ''}</div>`;
-  } else if (S.orig && chgKeys().length) {
-    editBox = `<div class="warnbox">Este backup tem ${chgKeys().length} alteração(ões) ainda não exportada(s). Clique em <b>EXPORTAR</b> pra baixar o arquivo editado.</div>`;
-  }
-
-  // PLACA
-  let boardCtl = '';
-  if (E()) {
-    // Placa de OUTRO chip que o do backup: o firmware recusa em silêncio
-    // (boardIsForThisChip -> 200 OK sem aplicar). Dá pra escolher, mas avisa.
-    const chipOf = (m) => (m && m.chip ? 's3' : 's2');
-    const origModel = MODELS.find((m) => m.id === boardCanonical(S.orig.board || ''));
-    const origChip = chipOf(origModel);
-    const same = MODELS.filter((m) => chipOf(m) === origChip), other = MODELS.filter((m) => chipOf(m) !== origChip);
-    const opt = (m) => `<option value="${esc(m.id)}"${m.id === name ? ' selected' : ''}>${esc(m.id)} · ${m.sw} SW</option>`;
-    boardCtl = `<div class="edrow" style="margin-top:10px"><select class="${edCls('board')}" data-k="board" data-board="1">
-        ${!model ? `<option value="${esc(rawName)}" selected>${esc(rawName)} (não catalogada)</option>` : ''}
-        <optgroup label="Mesmo chip do backup (${origChip.toUpperCase()})">${same.map(opt).join('')}</optgroup>
-        <optgroup label="Outro chip — o pedal vai ignorar ao restaurar">${other.map(opt).join('')}</optgroup></select>
-      ${model && chipOf(model) !== origChip ? '<span class="chip bad">CHIP DIFERENTE DO BACKUP · o pedal ignora esta placa</span>' : ''}
-      ${model && origModel && model.sw !== origModel.sw ? `<span class="chip warn">${model.sw} SW · o backup foi feito numa placa de ${origModel.sw}</span>` : ''}</div>`;
-  }
-  parts.push(card('Placa configurada', `<div class="hero"><div>
-      <div class="name"><small>MODELO</small>${esc(name)}</div>${boardCtl}
-      <div class="tags"><span class="chip acc">${esc(fam)}</span><span class="chip">${model ? model.sw : '?'} FOOTSWITCHES</span>
-        <span class="chip">${esc(model ? model.size : '—')}</span><span class="chip">${model && model.chip ? model.chip : 'ESP32-S2'}</span>
-        ${boardIs4(name) ? '<span class="chip warn">4 PRESETS POR BANCO</span>' : ''}
-        ${!model ? '<span class="chip bad">MODELO NÃO CATALOGADO</span>' : ''}
-        ${rawName !== name ? `<span class="chip" title="nome gravado no backup">NO BACKUP: ${esc(rawName)}</span>` : ''}</div>
-      <div class="note">Backup v${esc(b.version)} · ${presetTags().length} presets · ${Object.keys(b.images || {}).length} imagens · ${Object.keys(b.icons || {}).length} ícones enviados
-        ${num(b.truncated) ? ' · <b style="color:var(--warn)">TRUNCADO</b>' : ''}</div>
-    </div></div>`, 'span2'));
-
-  // LEDS
-  const ledLetters = E()
-    ? `<table class="t"><thead><tr><th>Banco</th><th>Ativo</th><th>Cor do LED</th></tr></thead><tbody>${letters.map((L, i) =>
-        `<tr class="${gi('bank_letter_enabled_' + i, 1) ? '' : 'dim'}"><td class="n">${L}</td><td>${edChk('bank_letter_enabled_' + i, 1, ['', ''])}</td><td>${edLed('letter_led_' + i)}</td></tr>`).join('')}</tbody></table>`
-    : `<div class="letters">${letters.map((L, i) =>
-        `<div class="letter ${gi('bank_letter_enabled_' + i, 1) ? '' : 'off'}" title="${esc(LED[gi('letter_led_' + i)] ? LED[gi('letter_led_' + i)].name : '')}">${L}${ledDot(g('letter_led_' + i), false)}</div>`).join('')}</div>`;
-  const ledSwitches = E()
-    ? `<table class="t"><tbody>${Array.from({ length: swN }, (_, i) => `<tr><td class="n">SW${i + 1}</td><td>${edLed('switch_led_' + i)}</td></tr>`).join('')}</tbody></table>`
-    : `<div class="letters">${Array.from({ length: swN }, (_, i) => `<div class="letter">${i + 1}${ledDot(g('switch_led_' + i), false)}</div>`).join('')}</div>`;
-  parts.push(card('LEDs', kv([
-    ['Brilho', vNum('led_brightness', 0, 255, 0, `<span class="pill">${gi('led_brightness')}</span>`) + ' <span class="swname">/ 255</span>'],
-    ['LED no modo BANK', vLed('bank_led_color')],
-    ['LED no modo LIVE', vLed('live_led_color')],
-    ['LED da layer 2', vLed('layer2_led_color')],
-    ['Cor dos bancos por', vSel('led_color_mode', [[0, 'LETRAS (por banco)'], [1, 'NÚMEROS (por switch)']], 0, gi('led_color_mode') === 1 ? 'NÚMEROS (por switch)' : 'LETRAS (por banco)')],
-    ['Prévia do LIVE em BANK', vOnOff('led_preview_live_mode') + ' ' + vNum('led_preview_live_level', 0, 255, 0, `<span class="pill">${gi('led_preview_live_level')}</span>`)],
-  ]) + `<div class="hr"></div><div class="k swname" style="margin-bottom:6px">COR POR LETRA DE BANCO</div>${ledLetters}
-    <div class="k swname" style="margin:10px 0 6px">COR POR SWITCH</div>${ledSwitches}`));
-
-  // BANCOS + INÍCIO
-  const enabled = letters.filter((_, i) => gi('bank_letter_enabled_' + i, 1));
-  parts.push(card('Bancos e início automático', kv([
-    ['Bancos ativos', E() ? `<span class="edrow">${letters.map((L, i) => edChk('bank_letter_enabled_' + i, 1, [L, L])).join('')}</span>` : `<span class="chip ok">${enabled.join(' · ') || '—'}</span>`],
-    ...(E() ? [] : [['Bancos desligados', letters.filter((L) => !enabled.includes(L)).join(' · ') || '<span class="swname">nenhum</span>']]),
-    ['Início automático', vOnOff('auto_start_enabled')],
-    ['Preset inicial', E()
-      ? `<span class="edrow">${edLetter('auto_start_bank')}${edNum('auto_start_preset', 1, swN, 1)}${edSel('auto_start_mode', [[0, 'MODO BANK'], [1, 'MODO LIVE']])}</span>`
-      : `<span class="pill">${letters[gi('auto_start_bank')] || '?'}${gi('auto_start_preset', 1)}</span> ${gi('auto_start_mode') === 1 ? '<span class="chip acc">MODO LIVE</span>' : '<span class="chip">MODO BANK</span>'}`],
-    ['Operação dos switches', E()
-      ? `<span class="edrow">${edSel('switch_operation_mode', [[0, 'NORMAL (BANK / LIVE)'], [1, 'HÍBRIDO']])}${gi('switch_operation_mode') === 1 ? `<span class="swname">layout</span>${edNum('hybrid_switch_layout', 1, 4, 1)}` : ''}</span>`
-      : gi('switch_operation_mode') === 1 ? `<span class="chip acc">HÍBRIDO</span> <span class="swname">layout ${gi('hybrid_switch_layout', 1)}</span>` : 'NORMAL (BANK / LIVE)'],
-    ['SW6 como SW GLOBAL', vYes('nano_sw6_global')],
-    ['LIVE como SW GLOBAL 2', vYes('live_pin_global2')],
-    ['Remap MICRO', vYes('micro_remap')],
-    ['Inverter display', vYes('display_invert')],
-  ])));
-
-  // CHAMADA DE PRESETS
-  const hasReclick = gc()['preset_call_reclick_0'] !== undefined;
-  parts.push(card('Chamada de presets por gesto', `<table class="t"><thead><tr><th>SW</th><th>Click curto</th><th>Click longo</th>${hasReclick ? '<th>Reclick</th>' : ''}</tr></thead><tbody>${
-    Array.from({ length: swN }, (_, i) => { const s = gi('preset_call_short_' + i, 1), l = gi('preset_call_long_' + i, 3), r = gi('preset_call_reclick_' + i, 4);
-      const a = (v) => `<span class="${v === 0 ? 'swname' : ''}">${ACTIONS[v] || '#' + v}</span>`;
-      if (E()) return `<tr><td class="n">SW${i + 1}</td><td>${edAct('preset_call_short_' + i, 1)}</td><td>${edAct('preset_call_long_' + i, 3)}</td>${hasReclick ? `<td>${edAct('preset_call_reclick_' + i, 4)}</td>` : ''}</tr>`;
-      return `<tr><td class="n">SW${i + 1}</td><td>${a(s)}</td><td>${a(l)}</td>${hasReclick ? `<td>${a(r)}</td>` : ''}</tr>`; }).join('')}</tbody></table>`, '', 'modo BANK'));
-
-  // COMBOS
-  const combos = Object.keys(gc()).map((k) => /^combo_(\d)_(\d)_tap$/.exec(k)).filter(Boolean).map((m) => [num(m[1]), num(m[2])]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-  if (combos.length) {
-    parts.push(card('Combos de footswitch', `<table class="t"><thead><tr><th>Par</th><th>Ação</th></tr></thead><tbody>${combos.map(([a, b2]) => {
-      const k = `combo_${a}_${b2}`; const act = gi(k + '_tap'); const gb = gi(k + '_goto_bank'), gp = gi(k + '_goto_preset');
-      if (E()) return `<tr><td class="n">SW${a} + SW${b2}</td><td><span class="edrow">${edAct(k + '_tap')}${act === 14 ? `${edLetter(k + '_goto_bank')}${edSel(k + '_goto_preset', Array.from({ length: swN }, (_, i) => [i, i + 1]))}` : ''}</span></td></tr>`;
-      return `<tr class="${act ? '' : 'dim'}"><td class="n">SW${a} + SW${b2}</td><td>${ACTIONS[act] || '#' + act}${act === 14 ? ` <span class="pill">${letters[gb] || '?'}${gp + 1}</span>` : ''}</td></tr>`; }).join('')}</tbody></table>`, '', 'modo BANK'));
-  }
-
-  // TELA
-  const customStage = (key, cap) => { const items = String(g(key)).split(';').map((s) => s.split(':').map((x) => num(x)));
-    return `<div class="screenwrap"><span class="cap">${cap}</span><div class="custom" style="width:240px">${items.map((it, i) => it.length < 4 ? '' :
-      `<div class="ci ${it[0] ? '' : 'x'}" style="left:${it[1]}%;top:${it[2]}%;width:${it[3] * 0.66}%;height:${it[3]}%">${i < 6 ? 'SW' + (i + 1) : 'G' + (i - 5)}</div>`).join('')}</div></div>`; };
-  const GIG_VIEWS = ['PADRÃO', 'PRESET', 'LIVE'];
-  parts.push(card('Tela', kv([
-    ['Layout no LIVE', vSel('live_layout', idx(LIVE_LAYOUTS).slice(1), 1, `<span class="chip acc">${LIVE_LAYOUTS[gi('live_layout', 1)] || '?'}</span>`)],
-    ['Layout no PRESET', vSel('preset_layout', idx(PRESET_LAYOUTS), 0, `<span class="chip acc">${PRESET_LAYOUTS[gi('preset_layout', 0)] || '?'}</span>`)],
-    ['Formato dos ícones', E() ? `<span class="edrow"><span class="swname">LIVE</span>${edSel('icon_shape', idx(ICON_SHAPES))}<span class="swname">PRESET</span>${edSel('preset_icon_shape', idx(ICON_SHAPES))}</span>`
-      : `LIVE: ${ICON_SHAPES[gi('icon_shape')] || '?'} · PRESET: ${ICON_SHAPES[gi('preset_icon_shape')] || '?'}`],
-    ['Nome do preset', `LIVE ${vYes('name_preset_live', 1)} &nbsp; BANK ${vYes('name_preset_bank', 1)}`],
-    ['Gig view', vSel('gig_view', idx(GIG_VIEWS), 0, GIG_VIEWS[gi('gig_view')] || '?')],
-    ['Nomes dos presets do banco', vYes('preset_bank_names') + (gi('preset_bank_names') ? (E()
-      ? `<span class="edrow"><span class="swname">ativo</span>${edPal('preset_bank_selected_color')}<span class="swname">outros</span>${edPal('preset_bank_unselected_color')}${edNum('preset_bank_font_size', 1, 40)}<span class="swname">pt</span></span>`
-      : ` ${dispSwatch(g('preset_bank_selected_color'), 'ativo')} ${dispSwatch(g('preset_bank_unselected_color'), 'outros')} <span class="pill">${gi('preset_bank_font_size')}pt</span>`) : '')],
-    ['Card de BPM (tap)', E() ? `<span class="edrow">${edNum('bpm_card_secs', 0, 60)}<span class="swname">s (0 = desligado)</span>${edSel('bpm_card_avg', [[0, '2 últimos taps'], [1, 'média da sequência']])}</span>`
-      : gi('bpm_card_secs') ? `<span class="pill">${gi('bpm_card_secs')} s</span> ${gi('bpm_card_avg') ? 'média da sequência' : '2 últimos taps'}` : '<span class="chip off">DESLIGADO</span>'],
-    ['CUSTOM: somente atual', vYes('custom_live_only') + (gi('custom_live_only') ? (E()
-      ? `<span class="edrow"><span class="swname">x</span>${edNum('custom_only_x', 0, 100)}<span class="swname">y</span>${edNum('custom_only_y', 0, 100)}<span class="swname">s</span>${edNum('custom_only_size', 1, 100)}</span>`
-      : ` <span class="pill">x${gi('custom_only_x')} y${gi('custom_only_y')} s${gi('custom_only_size')}</span>`) : '')],
-  ]) + ((gi('live_layout') === 5 || gi('preset_layout') === 6) ? `<div class="hr"></div><div style="display:flex;gap:14px;flex-wrap:wrap">${gi('live_layout') === 5 ? customStage('custom_live', 'Custom LIVE') : ''}${gi('preset_layout') === 6 ? customStage('custom_preset', 'Custom PRESET') : ''}</div>` : '')));
-
-  // MIDI / MODO AMIGÁVEL
-  const mm = gi('match_mode');
-  const pedalOpts = MATCH_MODE_OPTIONS.map((_, i) => [i, i === 0 ? 'MULTIPLE MODE' : pedalNameOf(i)]);
-  let midiBody = kv([
-    ['Modo amigável', E() ? edSel('match_mode', pedalOpts) : mm === 0 ? '<span class="chip acc">MULTIPLE MODE</span> <span class="swname">um aparelho por canal</span>' : `<span class="chip acc">${esc(pedalNameOf(mm))}</span>`],
-    ['Omitir CC sem nome', vYes('match_omit_unnamed', 1)],
-    ['MIDI reverso (USB host)', vYes('host_reverse_midi')],
-    ['MIDI Control Host', vYes('host_ctrl_enabled')],
-  ]);
-  if (mm === 0) {
-    const rows = []; for (let c = 1; c <= 16; c++) { const i = c - 1; const pIdx = gi('match_channel_' + i); const lcc = gi('match_live_cc_' + i);
-      if (E()) { rows.push(`<tr class="${pIdx || lcc ? '' : 'dim'}"><td class="n">CH ${c}</td><td>${edSel('match_channel_' + i, [[0, '—'], ...pedalOpts.slice(1)])}</td>` +
-        `<td><span class="edrow">${edNum('match_live_cc_' + i, 0, 127)}<span class="swname">on</span>${edNum('match_live_cc_on_' + i, 0, 127, 127)}<span class="swname">off</span>${edNum('match_live_cc_off_' + i, 0, 127)}</span></td></tr>`); continue; }
-      if (!pIdx && !lcc) continue; rows.push(`<tr><td class="n">CH ${c}</td><td>${pIdx ? esc(pedalNameOf(pIdx)) : '<span class="swname">—</span>'}</td><td class="n">${lcc ? `CC ${lcc} · ${gi('match_live_cc_on_' + i, 127)}/${gi('match_live_cc_off_' + i)}` : '<span class="swname">—</span>'}</td></tr>`); }
-    midiBody += `<div class="hr"></div>` + (rows.length ? `<table class="t"><thead><tr><th>Canal</th><th>Aparelho</th><th>CC de LIVE${E() ? ' <span class="swname">(0 = nenhum)</span>' : ''}</th></tr></thead><tbody>${rows.join('')}</tbody></table>` : '<div class="note">Nenhum canal com aparelho atribuído.</div>');
-  }
-  parts.push(card('MIDI · modo amigável', midiBody, E() && mm === 0 ? 'span2' : ''));
-
-  // As configurações principais permanecem abertas; os recursos adicionais ficam agrupados.
-  const primaryCount = parts.length;
-
-  // KEMPER (só se relevante)
-  const usesKemper = mm === 9 || Array.from({ length: 16 }, (_, i) => gi('match_channel_' + i)).includes(9);
-  const TUNER_STYLES = ['CLÁSSICO', 'AGULHA', 'BARRA'];
-  if (usesKemper) parts.push(card('Kemper Player', kv([
-    ['Nome do rig na tela', vYes('kemper_get_names')], ['Seguir o Kemper (PC)', vYes('kemper_follow_pc')],
-    ['Estilo do afinador', vSel('kemper_tuner_style', idx(TUNER_STYLES), 0, TUNER_STYLES[gi('kemper_tuner_style')] || `#${gi('kemper_tuner_style')}`)],
-    ['Velocidade do afinador', vNum('kemper_tuner_speed', 0, 255, 0, `<span class="pill">${gi('kemper_tuner_speed')}</span>`)],
-    ['LED no afinador', vYes('kemper_tuner_led', 1) + ` <span class="swname">escopo</span> ` + vNum('kemper_tuner_led_scope', 0, 9, 0, `<span class="pill">${gi('kemper_tuner_led_scope')}</span>`)],
-    ['Cores do afinador', E() ? `<span class="edrow"><span class="swname">afinado</span>${edLed('kemper_tuner_color_in')}<span class="swname">perto</span>${edLed('kemper_tuner_color_near')}<span class="swname">longe</span>${edLed('kemper_tuner_color_off')}</span>`
-      : `${ledDot(g('kemper_tuner_color_in'))} ${ledDot(g('kemper_tuner_color_near'))} ${ledDot(g('kemper_tuner_color_off'))}`],
-  ])));
-
-  // SW GLOBAL 1/2
-  for (const [pfx, title] of [['sw_global', 'SW Global 1'], ['sw_global2', 'SW Global 2']]) {
-    if (gc()[pfx + '_mode'] === undefined) continue;
-    const mode = g(pfx + '_mode', 'mute'); const p = parseParams(g(pfx + '_params')); const d = parseDisp(g(pfx + '_display'));
-    parts.push(card(title, `<div class="states">${statesHtml(mode, p, d, 64, gi('icon_shape'))}</div>${paramsHtml(mode, p)}<div class="flags">${P(p, 'reset_on_preset') ? '<span class="chip">RESET AO TROCAR PRESET</span>' : ''}</div>`, '', SW_MODE_TITLE[mode] || mode));
-  }
-
-  // EXTERNAL SW 1/2 + indicadores
-  for (const i of [1, 2]) {
-    if (gc()[`ext${i}_mode`] === undefined) continue;
-    const mode = g(`ext${i}_mode`, 'mute'); const p = parseParams(g(`ext${i}_params`));
-    const ind = gi(`ext_indic_show${i}`); const IND = ['DESLIGADO', 'LIVE', 'PRESET', 'AMBAS'];
-    parts.push(card(`External SW ${i}`, (mode === 'mute' ? '<div class="note">Sem função (MUTE).</div>' : paramsHtml(mode, p)) + `<div class="flags">${P(p, 'reset_on_preset') || gi(`ext${i}_reset_on_preset`) ? '<span class="chip">RESET AO TROCAR PRESET</span>' : ''}</div>` +
-      `<div class="hr"></div>` + kv([['Indicador na tela', vSel(`ext_indic_show${i}`, idx(IND), 0, IND[ind] || `#${ind}`)],
-        ...(ind ? [['Sigla', E() ? `<span class="edrow">${edTxt(`ext_indic_sigla${i}`, 8)}${edNum(`ext_indic_font_size${i}`, 1, 40)}<span class="swname">pt · x</span>${edNum(`ext_indic_x${i}`, 0, 100)}<span class="swname">y</span>${edNum(`ext_indic_y${i}`, 0, 100)}</span>`
-            : `<span class="pill">${esc(g(`ext_indic_sigla${i}`))}</span> <span class="swname">${gi(`ext_indic_font_size${i}`)}pt · x${gi(`ext_indic_x${i}`)} y${gi(`ext_indic_y${i}`)}</span>`],
-          ['Cores ON / OFF', E() ? `<span class="edrow">${edPal(`ext_indic_on_color${i}`)}${edPal(`ext_indic_off_color${i}`)}</span>` : `${dispSwatch(g(`ext_indic_on_color${i}`))} ${dispSwatch(g(`ext_indic_off_color${i}`))}`]] : [])]),
-      '', SW_MODE_TITLE[mode] || mode));
-  }
-
-  // EXPRESSION
-  if (gc().exp_enabled !== undefined) parts.push(card('Pedal de expressão', kv([
-    ['Ativo', vOnOff('exp_enabled')],
-    ['Destino', E() ? `<span class="edrow"><span class="swname">CC</span>${edNum('exp_cc', 0, 127, 11)}<span class="swname">canal</span>${edNum('exp_channel', 1, 16, 1)}<span class="swname">${esc(ccLabel(gi('exp_channel', 1), gi('exp_cc', 11)))}</span></span>` : ccMsg(gi('exp_channel', 1), gi('exp_cc', 11))],
-    ['Calibração', E() ? `<span class="edrow">${edNum('exp_cal_min', 0, 4095)}<span class="swname">→</span>${edNum('exp_cal_max', 0, 4095, 4095)}</span>` : `<span class="pill">${gi('exp_cal_min')} → ${gi('exp_cal_max', 4095)}</span>`],
-  ]) + '<div class="note">Um preset com um EXTRA de valor EXP substitui este destino enquanto estiver ativo.</div>'));
-
-  // USER PEDALS
-  const up = b.user_pedals || {};
-  const upSlots = Object.keys(up).filter((k) => up[k] && (up[k].name || Object.keys(up[k].cc || {}).length || Object.keys(up[k].pc || {}).length));
-  if (upSlots.length) parts.push(card('Aparelhos personalizados (USER 1/2/3)', upSlots.map((k) => { const u = up[k];
-    const tbl = (obj, kind) => Object.keys(obj || {}).length ? `<table class="t"><thead><tr><th>${kind}</th><th>Nome</th></tr></thead><tbody>${Object.keys(obj).sort((a, c) => num(a) - num(c)).map((n) => `<tr><td class="n">${n}</td><td>${esc(obj[n])}</td></tr>`).join('')}</tbody></table>` : '';
-    return `<div class="sec"><div class="sh">USER ${k} · <span style="color:var(--text)">${esc(u.name || '(sem nome)')}</span></div>${tbl(u.cc, 'CC')}${tbl(u.pc, 'PC')}${!Object.keys(u.cc || {}).length && !Object.keys(u.pc || {}).length ? '<div class="note">Sem rótulos.</div>' : ''}</div>`; }).join(''), 'span2'));
-
-  // MÍDIA
-  const imgs = Object.keys(b.images || {}).sort((a, c) => num(a) - num(c)); const ics = Object.keys(b.icons || {}).sort((a, c) => num(a) - num(c));
-  if (imgs.length || ics.length) {
-    const useMap = mediaUsage();
-    const im = imgs.map((s) => `<div class="it"><div class="im" style="background-image:url(data:image/jpeg;base64,${b.images[s]})"></div><div class="cp"><b>Imagem ${num(s) + 1}</b><span>${(useMap.img[s] || []).join(' ') || '<i>sem uso</i>'}</span></div></div>`).join('');
-    const ic = ics.map((s) => `<div class="it"><div class="im ic" style="background-image:url(data:image/png;base64,${b.icons[s]})"></div><div class="cp"><b>Ícone ${num(s) + 1}</b><span>${(useMap.ico[s] || []).join(' ') || '<i>sem uso</i>'}</span></div></div>`).join('');
-    parts.push(card('Mídia no backup', (imgs.length ? `<div class="k swname" style="margin-bottom:6px">IMAGENS DE FUNDO (${imgs.length})</div><div class="media">${im}</div>` : '') +
-      (ics.length ? `<div class="k swname" style="margin:12px 0 6px">ÍCONES ENVIADOS (${ics.length})</div><div class="media">${ic}</div>` : ''), 'span2', 'presets que usam cada item'));
-  }
-
-  // LED palette custom
-  if (gc().color_0 !== undefined) parts.push(card('Paleta de LED', `<div class="letters">${LED.map((c, i) => `<div class="letter" title="${esc(c.name)}" style="width:auto;padding:0 10px;gap:6px;flex-direction:row;height:34px;font-size:11px">${ledDot(i, false)}${esc(c.name)}</div>`).join('')}</div><div class="note">Valores RGB gravados no backup (chaves color_N).</div>`, 'span2'));
-
-  // LOG DE BOOT (backup gravado por editor >= 13.7): o que o pedal imprimiu
-  // na serial desde o power-on, na hora em que o backup foi feito. E' o que o
-  // suporte olha quando o cliente relata problema: a 2a linha ("reset: ...")
-  // diz se o pedal reiniciou sozinho (BROWNOUT/PANIC/*_WDT) e o resto mostra
-  // placa, LittleFS, PSRAM, display, WiFi e RECURSOS.
-  let bootLogBox = '';
-  if (typeof b.boot_log === 'string' && b.boot_log) {
-    const m = /reset: ([A-Z_\/]+)/.exec(b.boot_log);
-    const reason = m ? m[1] : '';
-    const bad = /^(BROWNOUT|PANIC|INT_WDT|TASK_WDT|WDT)$/.test(reason);
-    const truncated = b.boot_log.indexOf('[log truncado') >= 0;
-    const chips = (reason ? `<span class="chip ${bad ? 'bad' : 'ok'}">RESET: ${esc(reason)}</span>` : '')
-      + (truncated ? ' <span class="chip warn">LOG TRUNCADO</span>' : '')
-      + ` <span class="chip">${b.boot_log.split('\n').filter(Boolean).length} LINHAS</span>`;
-    bootLogBox = `<details class="raw"${bad ? ' open' : ''}><summary>Log de boot do pedal ${chips}</summary><pre>${esc(b.boot_log)}</pre></details>`;
-  } else {
-    bootLogBox = `<details class="raw"><summary>Log de boot do pedal <span class="chip">AUSENTE</span></summary><div class="note">Este backup nao traz o log de boot (editor/firmware anteriores ao 13.7).</div></details>`;
-  }
-
-  const raw = Object.keys(gc()).map((k) => `${k}=${gc()[k]}`).join('\n');
-  return `<div class="view-intro"><h1>Global</h1><p>Configurações principais salvas pelo usuário neste backup.</p></div>${!Object.keys(gc()).length ? '<div class="warnbox">Este backup não contém configurações globais. Os valores abaixo são padrões de referência.</div>' : ''}${editBox}<div class="grid">${[parts[0], parts[primaryCount - 1], ...parts.slice(1, primaryCount - 1)].join('')}</div><details class="more"${E() ? ' open' : ''}><summary>Mais configurações · switches globais, expressão e mídia</summary><div class="grid">${parts.slice(primaryCount).join('')}</div></details>${bootLogBox}<details class="raw"><summary>Todas as chaves do global_config (${Object.keys(gc()).length})</summary><pre>${esc(raw)}</pre></details>`;
-}
-
-function mediaUsage() {
-  const img = {}, ico = {};
-  for (const tag of presetTags()) {
-    const pr = presetOf(tag);
-    for (const k of ['bg_color', 'back_layers_color']) { const id = num(pr.hdr[k]); if (id >= IMAGE_SLOT_FIRST_ID) (img[String(id - IMAGE_SLOT_FIRST_ID)] ||= []).push(tag); }
-    const ids = new Set();
-    for (const L of [1, 2]) for (const sw of pr.sws[L]) { const d = sw.d; [d.icon_id, ...d.spin.map((x) => x.icon_id), ...d.stomp.map((x) => x.icon_id), ...d.tap.map((x) => x.icon_id), d.spinlp.icon_id].forEach((i) => ids.add(i)); }
-    for (const i of ids) if (i >= ICON_UPLOAD_FIRST_ID) (ico[String(i - ICON_UPLOAD_FIRST_ID)] ||= []).push(tag);
-  }
-  return { img, ico };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SW: estados (tiles) e parâmetros por modo
-// ─────────────────────────────────────────────────────────────────────────────
-const hasCh = (p, s = '') => P(p, 'ch' + s) >= 1 && P(p, 'ch' + s) <= 16;
-function stompTier(p) { const hasB = hasCh(p, '2') || P(p, 'fav2'); const hasC = hasCh(p, '3') || P(p, 'fav3'); return { hasB, hasC }; }
-function st(cap, tile) { return `<div class="state"><span class="cap">${cap}</span>${tile}</div>`; }
-function statesHtml(mode, p, d, size, shape) {
-  const T = (t) => tileHtml(t, size, shape);
-  if (mode === 'fx1' || mode === 'fx2' || mode === 'fx3') {
-    const { hasB, hasC } = mode === 'fx1' ? stompTier(p) : { hasB: true, hasC: mode === 'fx3' };
-    let h = st('Curto OFF', T(mainState(d, false))) + st('Curto ON', T(mainState(d, true)));
-    if (hasB) h += st('Longo OFF', T(subState(d, d.stomp[0]))) + st('Longo ON', T(subState(d, d.stomp[1])));
-    if (hasC) h += st('Reclick OFF', T(subState(d, d.stomp[2]))) + st('Reclick ON', T(subState(d, d.stomp[3])));
-    return h;
-  }
-  if (mode === 'spin') {
-    let h = [0, 1, 2].map((i) => st(`Posição ${i + 1}`, T({ ...d.spin[i], ic: d.spin[i].ic_on, bg: d.spin[i].bg_on, br: d.spin[i].br_on, sg: -1 }))).join('');
-    if (hasCh(p, 'lp_')) h += st('Long OFF', T({ ...d.spinlp, ic: d.spinlp.ic_off, bg: d.spinlp.bg_off, br: d.spinlp.br_off, sg: -1 })) + st('Long ON', T({ ...d.spinlp, ic: d.spinlp.ic_on, bg: d.spinlp.bg_on, br: d.spinlp.br_on, sg: -1 }));
-    return h;
-  }
-  if (mode === 'tap_tempo') {
-    let h = st('TAP', T(subState(d, d.tap[0])));
-    if (hasCh(p, 'lp_')) h += st('Long OFF', T(subState(d, d.tap[1]))) + st('Long ON', T(subState(d, d.tap[2])));
-    return h;
-  }
-  if (mode === 'control') return st('FX 1', T({ ...d.spin[0], ic: d.spin[0].ic_on, bg: d.spin[0].bg_on, br: d.spin[0].br_on, sg: d.sg_off })) + st('FX 2', T({ ...d.spin[1], ic: d.spin[1].ic_on, bg: d.spin[1].bg_on, br: d.spin[1].br_on, sg: d.sg_on }));
-  if (mode === 'mute') return st('Tile', T(mainState(d, false)));
-  return st('OFF', T(mainState(d, false))) + st('ON', T(mainState(d, true)));
-}
-const flag = (cond, label, cls = '') => cond ? `<span class="chip ${cls}">${label}</span>` : '';
-const secHead = (label, colorIdx) => `<div class="sh">${colorIdx !== undefined ? ledDot(colorIdx, false) : ''}${label}</div>`;
-function favHtml(p, s) {
-  if (!P(p, 'fav' + s)) return '';
-  const letters = 'ABCDEFGHIJ';
-  return `<div class="msg"><span class="kind">FAV</span><span class="nm">vai para ${letters[P(p, 'fav_bank' + s)] || '?'}${P(p, 'fav_preset' + s, 1)}</span><span class="ch">${FAV_MODES[P(p, 'fav_mode' + s)] || ''}${P(p, 'fav_layer' + s) ? ' · L2' : ''}</span></div>`;
-}
-function stompSection(p, s, label, showEmpty) {
-  const ch = P(p, 'ch' + s);
-  if (!(ch >= 1 && ch <= 16) && !P(p, 'fav' + s)) return showEmpty ? `<div class="sec">${secHead(label)}<div class="note">Sem canal — seção inativa.</div></div>` : '';
-  const custom = P(p, 'custom' + s);
-  const on = custom ? P(p, 'on' + s, 127) : 127, off = custom ? P(p, 'off' + s, 0) : 0;
-  return `<div class="sec">${secHead(label, P(p, 'color' + s, 1))}${ch >= 1 ? ccMsg(ch, P(p, 'num' + s), `ON ${on} · OFF ${off}`) : ''}${favHtml(p, s)}<div class="flags">` +
-    flag(true, P(p, 'start' + s) ? 'COMEÇA LIGADO' : 'COMEÇA DESLIGADO', P(p, 'start' + s) ? 'ok' : 'off') + flag(P(p, 'at_preset' + s, 1), 'DISPARA NA CHAMADA') +
-    flag(custom, 'VALORES CUSTOM') + flag(P(p, 'inv' + s), 'LED INVERTIDO') + flag(s && P(p, 'bka' + s), 'VOLTAR AO CURTO') + `</div></div>`;
-}
-function slotList(str, kind) {
-  // kind: 'single' t:ch:num:val | 'macro' t:ch:num:on:off | 'mom' ch:num:on:off | 'tap' ch:num:mode | 'spin' ch:num:v1:v2:v3
-  const rows = [];
-  for (const q of splitSlots(str)) {
-    if (kind === 'single') { const [t, ch, n, v] = q; if (!(ch >= 1)) continue; rows.push(t === 1 ? pcMsg(ch, n) : ccMsg(ch, n, v === 128 ? 'EXP' : v)); }
-    else if (kind === 'macro') { const [t, ch, n, on, off] = q; if (!(ch >= 1)) continue; rows.push(t === 1 ? pcMsg(ch, n) : ccMsg(ch, n, `ON ${on < 0 ? '—' : on} · OFF ${off < 0 ? '—' : off}`)); }
-    else if (kind === 'mom') { const [ch, n, on, off] = q; if (!(ch >= 1)) continue; rows.push(ccMsg(ch, n, `press ${on} · solta ${off}`)); }
-    else if (kind === 'tap') { const [ch, n, m] = q; if (!(ch >= 1)) continue; rows.push(ccMsg(ch, n, m === 2 ? '127 → 0 (pulso)' : '127')); }
-    else if (kind === 'spin') { const [ch, n, v1, v2, v3] = q; if (!(ch >= 1)) continue; rows.push(ccMsg(ch, n, `${v1} · ${v2} · ${v3}`)); }
-  }
-  return rows.join('');
-}
-function lpHtml(p, label = 'Long press') {
-  if (!hasCh(p, 'lp_')) return '';
-  return `<div class="sec">${secHead(label, P(p, 'lp_color', 1))}${ccMsg(P(p, 'lp_ch'), P(p, 'lp_num'), `ON ${P(p, 'lp_on', 127)} · OFF ${P(p, 'lp_off')}`)}<div class="flags">${flag(true, P(p, 'lp_start') ? 'COMEÇA LIGADO' : 'COMEÇA DESLIGADO', P(p, 'lp_start') ? 'ok' : 'off')}${flag(P(p, 'lp_at_preset'), 'DISPARA NA CHAMADA')}</div></div>`;
-}
-function paramsHtml(mode, p) {
-  const emptyNote = '<div class="note">Nenhum envio configurado.</div>';
+// ── mensagens MIDI de um SW (a 1ª vai pra linha; todas vão pro tooltip) ──
+function swMessages(mode, p) {
+  const out = [];
+  const cc = (ch, n) => { if (validCh(ch)) out.push({ t: num(n) >= 128 ? 'CMD' : 'CC', ch, n: num(n) }); };
+  const pc = (ch, n) => { if (validCh(ch)) out.push({ t: 'PC', ch, n: num(n) }); };
   switch (mode) {
-    case 'mute': return '<div class="note">Sem função (MUTE).</div>';
-    case 'fx1': case 'fx2': case 'fx3': {
-      const { hasB, hasC } = mode === 'fx1' ? stompTier(p) : { hasB: true, hasC: mode === 'fx3' };
-      const tier = hasC ? 3 : hasB ? 2 : 1;
-      return `<div class="flags" style="margin:0 0 4px"><span class="chip acc">TIER ${tier}</span>${flag(P(p, 'ledu'), 'ANEL ÚNICO')}</div>` + stompSection(p, '', 'Click curto (A)', true) + (hasB ? stompSection(p, '2', 'Click longo (B)') : '') + (hasC ? stompSection(p, '3', 'Reclick (C)') : '');
-    }
+    case 'fx1': case 'fx2': case 'fx3':
+      for (const s of ['', '2', '3']) if (hasCh(p, s)) cc(P(p, 'ch' + s), P(p, 'num' + s));
+      break;
+    case 'macros':
+      for (const s of ['', '2', '3']) for (const [t, ch, n] of splitSlots(p['mslots' + s])) (t === 1 ? pc : cc)(ch, n);
+      break;
     case 'single': {
-      const main = slotList(p.sslots, 'single') || (hasCh(p) ? (P(p, 'as_pc') ? pcMsg(P(p, 'ch'), P(p, 'pc')) : ccMsg(P(p, 'ch'), P(p, 'num'), P(p, 'on', 127))) : '');
-      const long = slotList(p.lslots, 'single'), re = slotList(p.rslots, 'single');
-      return `<div class="sec">${secHead('Click', P(p, 'color', 1))}${main || emptyNote}</div>` + (long ? `<div class="sec">${secHead('Long press', P(p, 'lp_color', 5))}${long}</div>` : '') + (re ? `<div class="sec">${secHead('Reclick', P(p, 'rc_color', 9))}${re}</div>` : '') +
-        `<div class="flags">${flag(P(p, 'at_preset', 1), 'DISPARA NA CHAMADA')}${flag(P(p, 'remember_state'), 'LEMBRA ESTADO')}</div>`;
-    }
-    case 'macros': {
-      let h = '';
-      for (const [s, label] of [['', 'Click curto (A)'], ['2', 'Click longo (B)'], ['3', 'Reclick (C)']]) {
-        const rows = slotList(p['mslots' + s], 'macro'); if (!rows && s) continue;
-        h += `<div class="sec">${secHead(label, P(p, 'color' + s, 1))}${rows || emptyNote}<div class="flags">${flag(true, P(p, 'start' + s) ? 'COMEÇA LIGADO' : 'COMEÇA DESLIGADO', P(p, 'start' + s) ? 'ok' : 'off')}${flag(P(p, 'at_preset' + s, 1), 'DISPARA NA CHAMADA')}${flag(P(p, 'inv' + s), 'LED INVERTIDO')}${flag(s && P(p, 'bka' + s), 'VOLTAR AO CURTO')}</div></div>`;
-      }
-      return `<div class="flags" style="margin:0 0 4px">${flag(P(p, 'ledu'), 'ANEL ÚNICO')}</div>` + h;
+      const slots = [...splitSlots(p.sslots), ...splitSlots(p.lslots), ...splitSlots(p.rslots)];
+      if (slots.length) for (const [t, ch, n] of slots) (t === 1 ? pc : cc)(ch, n);
+      else if (hasCh(p)) (P(p, 'as_pc') ? pc(P(p, 'ch'), P(p, 'pc')) : cc(P(p, 'ch'), P(p, 'num')));
+      break;
     }
     case 'momentary': {
-      const rows = slotList(p.mom_slots, 'mom') || (hasCh(p) ? ccMsg(P(p, 'ch'), P(p, 'num'), `press ${P(p, 'on', 127)} · solta ${P(p, 'off')}`) : '');
-      return `<div class="sec">${secHead('Enquanto pisado', P(p, 'color', 1))}${rows || emptyNote}</div><div class="flags">${flag(P(p, 'led_tog'), 'ON/OFF SIMULADO')}${flag(P(p, 'fade_on') || P(p, 'fade_off'), `FADE ${P(p, 'fade_on')}/${P(p, 'fade_off')} ms`)}</div>`;
+      const sl = splitSlots(p.mom_slots);
+      if (sl.length) for (const [ch, n] of sl) cc(ch, n); else cc(P(p, 'ch'), P(p, 'num'));
+      break;
     }
-    case 'tap_tempo': {
-      const rows = slotList(p.tslots, 'tap');
-      return `<div class="sec">${secHead('Tap (a cada batida)', P(p, 'color', 1))}${rows || emptyNote}</div>` + lpHtml(p);
-    }
+    case 'tap_tempo':
+      for (const [ch, n] of splitSlots(p.tslots)) cc(ch, n);
+      cc(P(p, 'lp_ch'), P(p, 'lp_num'));
+      break;
     case 'spin': {
-      const rows = slotList(p.spin_slots, 'spin') || (hasCh(p) ? ccMsg(P(p, 'ch'), P(p, 'num'), `${P(p, 'val1')} · ${P(p, 'val2', 64)} · ${P(p, 'val3', 127)}`) : '');
-      return `<div class="sec"><div class="sh">${ledDot(P(p, 'color', 1), false)}${ledDot(P(p, 'color2', 2), false)}${ledDot(P(p, 'color3', 0), false)} Posições 1 · 2 · 3</div>${rows || emptyNote}<div class="flags">${flag(P(p, 'at_preset', 1), 'DISPARA NA CHAMADA')}${flag(P(p, 'ledu'), 'ANEL EM 3 CORES')}</div></div>` + lpHtml(p);
+      const sl = splitSlots(p.spin_slots);
+      if (sl.length) for (const [ch, n] of sl) cc(ch, n); else cc(P(p, 'ch'), P(p, 'num'));
+      cc(P(p, 'lp_ch'), P(p, 'lp_num'));
+      break;
     }
-    case 'ramp': {
-      const curve = ['LINEAR', 'EXP', 'LOG', 'SINE'][P(p, 'curve')] || '?';
-      return `<div class="sec">${secHead('Varredura', P(p, 'color', 1))}${hasCh(p) ? ccMsg(P(p, 'ch'), P(p, 'num'), `${P(p, 'min_val')} → ${P(p, 'max_val', 127)}`) : emptyNote}<div class="flags"><span class="chip">SOBE ${P(p, 'up_ms', 1000)} ms</span><span class="chip">DESCE ${P(p, 'down_ms', 1000)} ms</span><span class="chip">${curve}</span><span class="chip">passo ${P(p, 'step_ms', 25)} ms</span>${flag(P(p, 'start_on'), 'COMEÇA NO MÁXIMO')}${flag(P(p, 'trigger'), 'GATILHO ' + P(p, 'trigger'))}</div></div>`;
-    }
-    case 'steps': {
-      const vals = String(p.svals || '').split(':').filter((x) => x !== ''); const sync = P(p, 'sync');
-      const figs = String(p.sfigs || '').split(':'), mss = String(p.smss || '').split(':');
-      const stepsTbl = `<table class="t"><thead><tr><th>Step</th><th>Valor</th><th>${sync ? 'Figura' : 'Tempo'}</th></tr></thead><tbody>${vals.map((v, i) => `<tr><td class="n">${i + 1}</td><td class="n">${v}</td><td class="n">${sync ? (STEP_FIGS[num(figs[i], 4)] || '?') : (mss[i] !== undefined ? mss[i] + ' ms' : P(p, 'step_ms', 500) + ' ms')}</td></tr>`).join('')}</tbody></table>`;
-      return `<div class="sec">${secHead('Sequência', P(p, 'color', 1))}${hasCh(p) ? ccMsg(P(p, 'ch'), P(p, 'num', 21)) : emptyNote}${stepsTbl}<div class="flags"><span class="chip acc">${sync ? (P(p, 'bsrc') ? `SYNC · BPM MANUAL ${P(p, 'bpm', 120)}` : 'SYNC · TAP') : 'TEMPO MANUAL'}</span>${flag(P(p, 'trig'), 'MOMENTÂNEO')}${flag(P(p, 'inv'), 'LED INVERTIDO')}</div></div>` +
-        (P(p, 'eff_ch') >= 1 ? `<div class="sec">${secHead('Efeito ON/OFF')}${ccMsg(P(p, 'eff_ch'), P(p, 'eff_num', 20), P(p, 'eff_custom') ? `ON ${P(p, 'eff_on', 127)} · OFF ${P(p, 'eff_off')}` : 'ON 127 · OFF 0')}</div>` : '');
-    }
-    case 'control':
-      return `<div class="sec">${secHead('FX 1', P(p, 'color', 1))}${hasCh(p) ? ccMsg(P(p, 'ch'), P(p, 'num'), '127 / 0') : emptyNote}</div><div class="sec">${secHead('FX 2', P(p, 'color2', 5))}${hasCh(p, '2') ? ccMsg(P(p, 'ch2'), P(p, 'num2'), '127 / 0') : emptyNote}</div><div class="flags"><span class="chip">COMEÇA EM FX ${P(p, 'start') ? 2 : 1}</span>${flag(P(p, 'at_preset', 1), 'DISPARA NA CHAMADA')}</div>`;
-    default: {
-      const keys = Object.keys(p); if (!keys.length) return emptyNote;
-      return `<div class="kv">${keys.map((k) => `<div class="k">${esc(k)}</div><div class="v mono">${esc(p[k])}</div>`).join('')}</div>`;
-    }
+    case 'steps': cc(P(p, 'ch'), P(p, 'num', 21)); cc(P(p, 'eff_ch'), P(p, 'eff_num', 20)); break;
+    case 'control': cc(P(p, 'ch'), P(p, 'num')); cc(P(p, 'ch2'), P(p, 'num2')); break;
+    case 'ramp': cc(P(p, 'ch'), P(p, 'num')); break;
   }
+  for (const m of out) m.name = m.t === 'PC' ? pcLabel(m.ch, m.n) : ccLabel(m.ch, m.n);
+  return out;
+}
+
+// ── ícones das opções (traço, pintam com currentColor) ────────────────────
+function ringSvg(colors) {
+  // Anel do LED. Mesma cor nos 3 pixels = anel inteiro; cores diferentes
+  // (STOMP em tier 2/3, SPIN em 3 cores) = 3 arcos de 120°, um por pixel.
+  const r = 9.6, c = 12;
+  const glow = (col) => `style="filter:drop-shadow(0 0 3px ${col})"`;
+  if (colors[0] === colors[1] && colors[1] === colors[2])
+    return `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><circle cx="${c}" cy="${c}" r="${r}" stroke="${colors[0]}" ${glow(colors[0])}/></svg>`;
+  const pt = (deg) => `${(c + r * Math.cos(deg * Math.PI / 180)).toFixed(2)} ${(c + r * Math.sin(deg * Math.PI / 180)).toFixed(2)}`;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.6">` +
+    [150, 270, 30].map((deg, i) => `<path d="M${pt(deg - 60)} A${r} ${r} 0 0 1 ${pt(deg + 60)}" stroke="${colors[i]}" ${glow(colors[i])}/>`).join('') + `</svg>`;
+}
+const ICONS = {
+  bolt: '<path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/>',
+  power: '<path d="M12 3v8"/><path d="M6.6 6.8a7 7 0 1 0 10.8 0"/>',
+  invert: '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>',
+  memory: '<path d="M7 3h10v18l-5-4-5 4z"/>',
+  sync: '<path d="M20 11a8 8 0 0 0-14.5-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.5 4.5L20 16"/><path d="M20 20v-4h-4"/>',
+  toggle: '<rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="16" cy="12" r="3" fill="currentColor"/>',
+  ring: '<circle cx="7" cy="12" r="2.4" fill="currentColor"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/><circle cx="17" cy="12" r="2.4" fill="currentColor"/>',
+};
+const ico = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`;
+const opt = (svg, label, on, title) => `<div class="opt${on ? ' on' : ''}" title="${esc(title || label)}${on ? ' · LIGADO' : ' · DESLIGADO'}">${svg}<i>${label}</i></div>`;
+function ledOpt(mode, p) {
+  const c1 = ledCss(P(p, 'color', 1));
+  let cols = [c1, c1, c1];
+  if (mode === 'fx1') {
+    const hasB = hasCh(p, '2') || P(p, 'fav2'), hasC = hasCh(p, '3') || P(p, 'fav3');
+    if (!P(p, 'ledu')) { if (hasC) cols = [c1, ledCss(P(p, 'color2', 5)), ledCss(P(p, 'color3', 9))]; else if (hasB) cols = [c1, ledCss(P(p, 'color2', 5)), c1]; }
+  } else if (mode === 'spin' && P(p, 'ledu')) cols = [c1, ledCss(P(p, 'color2', P(p, 'color', 1))), ledCss(P(p, 'color3', P(p, 'color', 1)))];
+  const name = (LED[P(p, 'color', 1)] || {}).name || '?';
+  return `<div class="opt" title="LED: ${esc(name)}">${ringSvg(cols)}<i>LED</i></div>`;
+}
+function optsHtml(mode, p) {
+  if (mode === 'mute') return '';
+  const o = [ledOpt(mode, p)];
+  const dispara = () => opt(ico('bolt'), 'DISPARA', P(p, 'at_preset', 1), 'Dispara na chamada do preset');
+  const comeca = (k = 'start') => opt(ico('power'), 'COMEÇA', P(p, k), 'Começa ligado');
+  const inverte = () => opt(ico('invert'), 'INVERTE', P(p, 'inv'), 'LED invertido');
+  switch (mode) {
+    case 'fx1': case 'fx2': case 'fx3': case 'macros': o.push(dispara(), comeca(), inverte()); break;
+    case 'single': o.push(dispara(), opt(ico('memory'), 'LEMBRA', P(p, 'remember_state'), 'Lembra o estado')); break;
+    case 'spin': o.push(dispara(), opt(ico('ring'), '3 CORES', P(p, 'ledu'), 'Anel em 3 cores')); break;
+    case 'control': o.push(dispara(), opt(ico('power'), 'FX 2', P(p, 'start'), 'Começa em FX 2')); break;
+    case 'momentary': o.push(opt(ico('toggle'), 'ON/OFF', P(p, 'led_tog'), 'ON/OFF simulado')); break;
+    case 'ramp': o.push(comeca('start_on')); break;
+    case 'steps': o.push(opt(ico('sync'), 'SYNC', P(p, 'sync'), 'Sincronizado ao tempo'), inverte()); break;
+  }
+  return `<div class="opts">${o.join('')}</div>`;
+}
+
+// Tile no estado em que o switch NASCE na chamada do preset.
+function initialTile(sw, shape) {
+  const d = sw.d, p = sw.p; let t;
+  if (sw.mode === 'spin' || sw.mode === 'control') { const s = d.spin[sw.mode === 'control' && P(p, 'start') ? 1 : 0]; t = { ...s, ic: s.ic_on, bg: s.bg_on, br: s.br_on, sg: -1 }; }
+  else if (sw.mode === 'tap_tempo') t = subState(d, d.tap[0]);
+  else t = mainState(d, !!P(p, 'start'));
+  return tileHtml(t, '3.75rem', shape);
+}
+
+function swRowHtml(sw, shape) {
+  const modeTitle = SW_MODE_TITLE[sw.mode] || sw.mode;
+  const msgs = sw.mode === 'mute' ? [] : swMessages(sw.mode, sw.p);
+  const first = msgs[0];
+  let midi;
+  if (!first) midi = `<div class="midi none">${sw.mode === 'mute' ? 'SEM FUNÇÃO' : 'SEM ENVIO MIDI'}</div>`;
+  else {
+    const more = msgs.length > 1 ? `<span class="more">+${msgs.length - 1}</span>` : '';
+    // Uma linha: "CC : 42 - NOME AMIGÁVEL"; sem nome, o canal no lugar dele.
+    const head = first.t === 'CMD' ? 'CMD' : `${first.t} : ${first.n}`;
+    const tail = first.name ? esc(first.name) : `<span class="ch">CANAL ${first.ch}</span>`;
+    midi = `<div class="midi">${esc(head)} - ${tail}${more}</div>`;
+  }
+  const tip = msgs.map((m) => `${m.t === 'CMD' ? 'CMD' : m.t + ' ' + m.n}${m.name ? ' · ' + m.name : ''} · CH ${m.ch}`).join('\n');
+  const bar = sw.mode === 'mute' ? '#3a3e44' : ledCss(P(sw.p, 'color', 1));
+  return `<div class="row" title="${esc(tip)}"><div class="n">${sw.n}</div><div class="bar" style="--c:${bar}"></div>${initialTile(sw, shape)}` +
+    `<div class="txt"><div class="mode"><span style="--len:${modeTitle.length}">${esc(modeTitle)}</span></div>${midi}</div>${optsHtml(sw.mode, sw.p)}</div>`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RENDER — PRESETS
+// RENDER
 // ─────────────────────────────────────────────────────────────────────────────
-function renderPresets() {
-  const tags = presetTags();
-  if (!tags.length) return '<div class="empty"><h2>Sem presets</h2><p>Este backup não traz presets.</p></div>';
-  if (!S.tag || !tags.includes(S.tag)) S.tag = tags[0];
-  const groups = {}; for (const t of tags) (groups[t[0]] ||= []).push(t);
-  const bank = S.tag[0];
-  const bankOn = (letter) => gi('bank_letter_enabled_' + 'ABCDEFGHIJ'.indexOf(letter), 1);
-  const bar = '<div class="view-intro"><h1>Preset</h1><p>Escolha o banco e o preset para conferir seus envios e as funções de cada switch.</p></div>' +
-    '<section class="preset-selector" aria-label="Seletor de banco e preset"><span class="selector-label">Banco</span><div class="bank-row">' +
-    Object.keys(groups).sort().map(L => '<button class="bank-btn ' + (L === bank ? 'on ' : '') + (bankOn(L) ? '' : 'off') + '" data-bank="' + esc(L) + '" aria-pressed="' + (L === bank) + '" aria-label="Banco ' + esc(L) + (bankOn(L) ? '' : ' desativado') + '">' + esc(L) + '</button>').join('') +
-    '</div><div class="preset-row" aria-label="Presets do banco ' + esc(bank) + '">' + groups[bank].map(t => {
-      const h = parseKv(S.backup.presets[t], '|');
-      return '<button class="pbtn ' + (t === S.tag ? 'on ' : '') + (num(h.enabled, 1) ? '' : 'off') + '" data-tag="' + esc(t) + '" aria-pressed="' + (t === S.tag) + '"><span class="tg">' + esc(t) + '</span><span class="sw" style="background:' + palCss(h.bg_color) + '"></span><span class="nm">' + esc(h.name || '(sem nome)') + (num(h.enabled, 1) ? '' : ' · desativado') + '</span></button>';
-    }).join('') + '</div>' + (bankOn(bank) ? '' : '<p class="note">Este banco está desativado nas configurações globais.</p>') + '</section>';
-  return bar + renderPresetDetail(presetOf(S.tag));
+function renderConsole() {
+  const n = swCount(); const banks = banksInBackup(); const bi = banks.indexOf(S.bank);
+  const keys = Array.from({ length: n }, (_, i) => { const tag = S.bank + (i + 1); const ok = hasPreset(tag);
+    const en = ok && num(parseKv(S.backup.presets[tag], '|').enabled, 1);
+    return `<button class="key${S.pi === i + 1 ? ' on' : ''}${ok && !en ? ' off' : ''}" data-pi="${i + 1}"${ok ? '' : ' disabled'} title="${ok ? esc(S.bank + (i + 1) + ' · ' + (parseKv(S.backup.presets[tag], '|').name || '(sem nome)')) : 'não está no backup'}">${i + 1}</button>`; }).join('');
+  return `<div class="console"><div class="display" id="bankNext" title="Clique para o próximo banco (← → no teclado)">` +
+    `<button class="nav l" data-bank="-1"${banks.length > 1 ? '' : ' disabled'} title="Banco anterior">‹</button>` +
+    `<span class="bk">${S.bank}${S.pi}</span><span class="sub">SET BANK</span>` +
+    `<button class="nav r" data-bank="1"${banks.length > 1 ? '' : ' disabled'} title="Próximo banco">›</button></div>` +
+    `<div class="keys${n === 4 ? ' k2' : ''}">${keys}</div></div>`;
 }
-
-function friendlySummary() {
-  if (!Object.keys(gc()).length) return '<p class="note">Modo amigável indisponível: este backup não traz configurações globais.</p>';
-  const mm = gi('match_mode');
-  if (mm) return '<span class="chip acc">' + esc(pedalNameOf(mm)) + '</span><p class="note">Os nomes dos comandos abaixo seguem este aparelho.</p>';
-  const rows = [];
-  for (let ch = 1; ch <= 16; ch++) {
-    const pedal = pedalIdxFor(ch);
-    if (pedal) rows.push(['Canal ' + ch, esc(pedalNameOf(pedal))]);
-  }
-  return '<span class="chip acc">MULTIPLE MODE</span><p class="note">Um aparelho por canal MIDI.</p>' + (rows.length ? kv(rows) : '<p class="note">Nenhum aparelho atribuído aos canais.</p>');
+// Ilustração DECORATIVA do pedal no card MODELO (não é foto do produto):
+// caixa em 3/4 com aro laranja, knob e o nome da placa impresso na face.
+function deviceSvg(name) {
+  const m = /^BFMIDI-?\s*(.*)$/i.exec(name || '');
+  const l2 = (m && m[1] ? m[1] : '').trim();
+  const fs2 = l2.length > 8 ? 15 : 19;
+  return `<svg class="dev" viewBox="0 0 360 260" aria-hidden="true"><defs>` +
+    `<linearGradient id="dvFace" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B313B"/><stop offset=".5" stop-color="#171B22"/><stop offset="1" stop-color="#0B0E12"/></linearGradient>` +
+    `<linearGradient id="dvSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141820"/><stop offset="1" stop-color="#06080B"/></linearGradient>` +
+    `<linearGradient id="dvRim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB07A"/><stop offset=".3" stop-color="#FC6337" stop-opacity=".7"/>` +
+      `<stop offset=".65" stop-color="#FC6337" stop-opacity=".06"/><stop offset="1" stop-color="#FC6337" stop-opacity=".55"/></linearGradient>` +
+    `<radialGradient id="dvCap" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#5B636E"/><stop offset="1" stop-color="#171B21"/></radialGradient>` +
+    `<filter id="dvBlur" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter></defs>` +
+    `<g transform="rotate(-24 190 140)">` +
+    `<rect x="64" y="74" width="262" height="158" rx="24" fill="#FC6337" opacity=".30" filter="url(#dvBlur)"/>` +
+    `<rect x="64" y="88" width="262" height="158" rx="24" fill="url(#dvSide)" stroke="#FC6337" stroke-opacity=".3"/>` +
+    `<rect x="64" y="74" width="262" height="158" rx="24" fill="url(#dvFace)" stroke="url(#dvRim)" stroke-width="2.4"/>` +
+    `<rect x="78" y="88" width="234" height="130" rx="16" fill="none" stroke="#fff" stroke-opacity=".05"/>` +
+    `<path d="M168 50v22a20 7 0 0 0 40 0V50z" fill="#0E1116"/>` +
+    `<ellipse cx="188" cy="72" rx="20" ry="7" fill="none" stroke="#FC6337" stroke-opacity=".5" stroke-width="2"/>` +
+    `<ellipse cx="188" cy="50" rx="20" ry="7" fill="url(#dvCap)" stroke="#FC6337" stroke-width="2"/>` +
+    `<text x="200" y="156" text-anchor="middle" font-size="28" font-weight="900" fill="#E0622F" fill-opacity=".85" letter-spacing="1">BFMIDI</text>` +
+    (l2 ? `<text x="200" y="186" text-anchor="middle" font-size="${fs2}" font-weight="800" fill="#7E8792" letter-spacing="1.5">${esc(l2)}</text>` : '') +
+    `</g></svg>`;
 }
-
-function screenPreset(pr) {
-  const h = pr.hdr; const bg = num(h.bg_color); const nameCol = palTextColor(h.name_color); const borderCol = PAL[num(h.name_border_color)] && PAL[num(h.name_border_color)].type !== 'none' ? palTextColor(h.name_border_color) : null;
-  const fs = num(h.font_size, 24); const cq = (fs * 1.15 / 480 * 100).toFixed(2);
-  const x = h.name_x !== undefined ? num(h.name_x) : 50, y = h.name_y !== undefined ? num(h.name_y) : 50;
-  const tagCol = PAL[num(h.tag_color)] && PAL[num(h.tag_color)].type !== 'none' ? palTextColor(h.tag_color) : '#aaa';
-  return `<div class="screen"><div class="bgimg" style="background:${palCss(bg)}"></div><div class="ptag" style="color:${tagCol}">${pr.tag}</div>` +
-    `<div class="pname" style="left:${x}%;top:${y}%;--fs:${cq};color:${nameCol};${num(h.font_bold, 1) ? '' : 'font-weight:500;'}${borderCol ? `-webkit-text-stroke:1px ${borderCol};` : ''}">${esc(h.name || '')}</div></div>`;
+function renderModel() {
+  const rawName = g('board', '—'); const name = boardCanonical(rawName); const model = MODELS.find((m) => m.id === name);
+  const fam = model ? model.fam : (name.split(' ')[0] || '—');
+  return `<div class="model">${deviceSvg(name)}<small>MODELO</small><div class="name">${esc(name)}</div><div class="tags">` +
+    `<span class="chip acc">${esc(fam)}</span><span class="chip">${model && model.chip ? model.chip : 'ESP32-S2'}</span>` +
+    (!model ? '<span class="chip bad">NÃO CATALOGADO</span>' : '') + `</div></div>`;
 }
-function screenLive(pr, layer) {
-  const h = pr.hdr; const swN = presetSwitchCount(); const shape = gi('icon_shape');
-  const sws = pr.sws[layer];
-  const tile = (i) => { const sw = sws[i - 1]; const p = sw.p, d = sw.d;
-    let t;
-    if (sw.mode === 'spin' || sw.mode === 'control') t = { ...d.spin[0], ic: d.spin[0].ic_on, bg: d.spin[0].bg_on, br: d.spin[0].br_on, sg: -1 };
-    else if (sw.mode === 'tap_tempo') t = subState(d, d.tap[0]);
-    else t = mainState(d, !!P(p, 'start'));
-    return `<div style="display:flex;align-items:center;justify-content:center;min-width:0">${tileHtml(t, 62, shape)}</div>`; };
-  const order = swN === 4 ? [3, 4, 1, 2] : [4, 5, 6, 1, 2, 3];
-  const cls = swN === 4 ? 'c2' : 'c3';
-  return `<div class="screen"><div class="bgimg" style="background:${palCss(h.back_layers_color)}"></div>` +
-    (gi('name_preset_live', 1) ? `<div class="strip" style="color:${palTextColor(h.name_color)}">${esc(h.name || '')}${layer === 2 ? ' · L2' : ''}</div>` : '') +
-    `<div class="tiles ${cls}">${order.map(tile).join('')}</div></div>`;
+function renderBootLog() {
+  const b = S.backup;
+  if (typeof b.boot_log !== 'string' || !b.boot_log)
+    return `<details class="boot"><summary><span class="lbl">Log de boot do pedal</span><span class="chips"><span class="chip">AUSENTE</span></span></summary><div class="note">Este backup não traz o log de boot (editor/firmware anteriores ao 13.7).</div></details>`;
+  const m = /reset: ([A-Z_\/]+)/.exec(b.boot_log);
+  const reason = m ? m[1] : '';
+  const bad = /^(BROWNOUT|PANIC|INT_WDT|TASK_WDT|WDT)$/.test(reason);
+  const chips = (reason ? `<span class="chip ${bad ? 'bad' : 'ok'}">RESET: ${esc(reason)}</span>` : '')
+    + (b.boot_log.indexOf('[log truncado') >= 0 ? '<span class="chip warn">LOG TRUNCADO</span>' : '')
+    + `<span class="chip">${b.boot_log.split('\n').filter(Boolean).length} LINHAS</span>`;
+  return `<details class="boot"${bad ? ' open' : ''}><summary><span class="lbl">Log de boot do pedal</span><span class="chips">${chips}</span></summary><pre>${esc(b.boot_log)}</pre></details>`;
 }
-
-function renderPresetDetail(pr) {
-  const h = pr.hdr; const swN = presetSwitchCount(); const letters = 'ABCDEFGHIJ';
+const PC_ICON = '<path d="M4 5h16v10H4z"/><path d="M9 19h6M12 15v4"/>';
+const CH_ICON = '<rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9.5" cy="9.5" r="1" fill="currentColor"/><circle cx="14.5" cy="9.5" r="1" fill="currentColor"/><circle cx="9.5" cy="14.5" r="1" fill="currentColor"/><circle cx="14.5" cy="14.5" r="1" fill="currentColor"/>';
+const PLUS_ICON = '<path d="M12 5v14M5 12h14"/>';
+const CHEV_R = '<path d="m9 6 6 6-6 6"/>';
+const CHEV_D = '<path d="m6 9 6 6 6-6"/>';
+const SLIDERS_ICON = '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>';
+const svgi = (inner) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+// Card PRINCIPAL: o que sai na chamada do preset (PC principal no canal do
+// preset + os envios EXTRAS), no mesmo desenho do card do editor.
+function renderPrincipal() {
+  const tag = S.bank + S.pi;
+  const pr = hasPreset(tag) ? presetOf(tag) : null;
+  const ch = pr ? num(pr.hdr.channel) : 0, pcn = pr ? num(pr.hdr.bank) : 0, on = validCh(ch);
+  const pcName = on ? pcLabel(ch, pcn) : '';
+  const ex = pr ? pr.extras : [];
+  if (!ex.length) S.showExtras = false;
+  const two = (n) => String(n).padStart(2, '0');
+  const list = S.showExtras ? `<div class="xlist">${ex.map((e) => { const nm = e.t === 'PC' ? pcLabel(e.ch, e.n) : ccLabel(e.ch, e.n);
+      const val = e.t === 'CC' ? ` = ${e.v === 128 ? 'EXP' : e.v}` : '';
+      return `<div class="xi"><span class="k ${e.t.toLowerCase()}">${e.t}</span><span>${e.n}${nm ? ' - ' + esc(nm) : ''}${val}</span><span class="c">CH ${two(e.ch)}</span></div>`; }).join('')}</div>` : '';
+  return `<div class="principal"><div class="pbanner">PRINCIPAL</div><div class="pfields">` +
+    `<div class="fld pc${on ? '' : ' off'}" title="Program Change enviado na chamada do preset"><div class="ftag">${svgi(PC_ICON)}PC</div>` +
+      `<div class="fval">${pr ? pcn : '—'}${pcName ? `<small>${esc(pcName)}</small>` : ''}<span class="chev">${svgi(CHEV_R)}</span></div></div>` +
+    `<div class="chrow"><div class="fld ch${on ? '' : ' off'}" title="Canal do PC principal (OFF = não envia)"><div class="ftag">${svgi(CH_ICON)}CANAL</div>` +
+      `<div class="fval">${on ? 'CH ' + two(ch) : 'OFF'}<span class="chev">${svgi(CHEV_D)}</span></div></div>` +
+      `<button class="xbtn${S.showExtras ? ' on' : ''}" id="extras"${ex.length ? '' : ' disabled'} title="${ex.length ? 'Ver os envios extras do preset' : 'Sem envios extras'}">` +
+      `${svgi(PLUS_ICON)}EXTRAS${ex.length ? `<span class="cnt">${ex.length}</span>` : ''}</button></div>` +
+    `</div>${list}</div>`;
+}
+function renderPreset() {
+  const tag = S.bank + S.pi;
+  if (!hasPreset(tag)) return `<div class="phead"><span class="tag">${tag}</span><span class="big none">não está no backup</span></div>`;
+  const pr = presetOf(tag); const h = pr.hdr;
   const hasL2 = num(h.l2) === 1; if (!hasL2) S.layer = 1;
-  const head = `<div class="phead"><span class="tag">${pr.tag}</span><span class="big">${esc(h.name || '(sem nome)')}</span>${num(h.enabled, 1) ? '<span class="chip ok">ATIVO</span>' : '<span class="chip bad">DESATIVADO</span>'}` +
-    (hasL2 ? `<span class="chip acc">LAYER 2</span><div class="layerseg"><button data-layer="1" class="${S.layer === 1 ? 'on' : ''}">LAYER 1</button><button data-layer="2" class="${S.layer === 2 ? 'on' : ''}">LAYER 2</button></div>` : '') + `</div>`;
-
-  const chamada = `<div class="sec"><div class="sh">Na chamada do preset</div>${(num(h.channel) >= 1 && num(h.channel) <= 16) ? pcMsg(h.channel, h.bank) : '<div class="note">Sem PC principal (canal 0).</div>'}` +
-    pr.extras.map((e) => e.t === 'pc' ? pcMsg(e.ch, e.n) : ccMsg(e.ch, e.n, e.v === 128 ? '<span class="chip acc">EXP</span>' : e.v)).join('') + `</div>`;
-  const layoutOv = (v, list) => (v === '' || v === undefined || num(v) < 0) ? '<span class="swname">herda o global</span>' : `<span class="chip acc">${list[num(v)] || '#' + v}</span>`;
-  const info = card('Preset', kv([
-    ['Program Change', `<span class="pill">PC ${num(h.bank)}</span> <span class="swname">canal ${num(h.channel)}</span>`],
-    ['Fundo (PRESET)', dispSwatch(h.bg_color)],
-    ['Fundo (LIVE)', dispSwatch(h.back_layers_color)],
-    ['Cor do nome', `${dispSwatch(h.name_color)} ${PAL[num(h.name_border_color)] && PAL[num(h.name_border_color)].type !== 'none' ? '· borda ' + dispSwatch(h.name_border_color) : ''}`],
-    ['Fonte do nome', `<span class="pill">${num(h.font_size, 24)}pt</span> ${num(h.font_bold, 1) ? 'NEGRITO' : 'REGULAR'} <span class="swname">x${h.name_x ?? '—'} y${h.name_y ?? '—'}</span>`],
-    ['Cor da tag', dispSwatch(h.tag_color)],
-    ['Layer 2', yes(h.l2)],
-    ['Indicadores ESW', yes(h.esw ?? 1)],
-    ['Layout PRESET', layoutOv(h.plyt, PRESET_LAYOUTS)],
-    ['Layout LIVE', layoutOv(h.llyt, LIVE_LAYOUTS)],
-    ['Envios extras', `<span class="pill">${pr.extras.length}</span>`],
-  ]));
-  const screens = card('Prévia da tela', `<div style="display:flex;gap:18px;flex-wrap:wrap"><div class="screenwrap"><span class="cap">Modo PRESET</span>${screenPreset(pr)}</div><div class="screenwrap"><span class="cap">Modo LIVE${hasL2 ? ' · layer ' + S.layer : ''}</span>${screenLive(pr, S.layer)}</div></div><div class="note">Prévia aproximada (layout L1, estado inicial de cada switch).</div>`, 'span2');
-
-  const shape = gi('icon_shape');
-  const sws = pr.sws[S.layer].slice(0, swN).map((sw) => {
-    const ledIdx = sw.mode === 'spin' ? P(sw.p, 'color', 1) : P(sw.p, 'color', 1);
-    return `<section class="card swcard"><h3><span class="num">SW ${sw.n}</span><span class="mode">${SW_MODE_TITLE[sw.mode] || sw.mode}</span><span class="sub">${sw.mode !== 'mute' ? ledDot(ledIdx) : ''}</span></h3><div class="body">` +
-      `<div class="states">${statesHtml(sw.mode, sw.p, sw.d, 74, shape)}</div>${sw.d.font ? `<div class="flags" style="margin:-4px 0 6px"><span class="chip">FONTE ${['AUTO', '9pt', '12pt', '18pt', '24pt'][sw.d.font] || '?'}</span></div>` : ''}${paramsHtml(sw.mode, sw.p)}</div></section>`;
-  }).join('');
-
-  const rawLines = Object.keys(pr.lines).map((k) => `${k}: ${pr.lines[k]}`).join('\n');
-  return head + `<div class="preset-overview">${card('Preset chamado · PC e envios extras', chamada + '<p class="note">Os envios automáticos dos switches estão identificados nos cartões abaixo como “Dispara na chamada”.</p>')}${card('Modo amigável', friendlySummary())}</div><h2 class="sect">${swN} switches · modo LIVE${hasL2 ? ' · layer ' + S.layer : ''}</h2><p class="section-note">Comandos separados por gesto e estado. ON / OFF indicam os valores enviados ao ativar e desativar cada função.</p><div class="swgrid">${sws}</div><details class="more"><summary>Aparência e prévia da tela do preset</summary><div class="grid">${info}${screens}</div></details>` +
-    `<details class="raw"><summary>Dados crus do preset ${pr.tag}</summary><pre>${esc(S.backup.presets[pr.tag])}\n\n${esc(rawLines)}</pre></details>`;
+  const bankOn = gi('bank_letter_enabled_' + LETTERS.indexOf(S.bank), 1);
+  const head = `<div class="phead"><span class="tag">${tag}</span><span class="big${h.name ? '' : ' none'}">${esc(h.name || '(sem nome)')}</span>` +
+    (num(h.enabled, 1) ? '<span class="chip ok"><i class="dot"></i>ATIVO</span>' : '<span class="chip bad">DESATIVADO</span>') +
+    (bankOn ? '' : '<span class="chip warn">BANCO DESLIGADO</span>') +
+    (hasL2 ? `<span class="chip acc">LAYER 2</span><div class="layerseg"><button data-layer="1" class="${S.layer === 1 ? 'on' : ''}">LAYER 1</button><button data-layer="2" class="${S.layer === 2 ? 'on' : ''}">LAYER 2</button></div>` : '') +
+    `</div>`;
+  const n = swCount(); const shape = gi('icon_shape');
+  const rows = pr.sws[S.layer].slice(0, n).map((sw) => swRowHtml(sw, shape)).join('');
+  return `${head}<div class="swlist" style="grid-template-rows:repeat(${Math.ceil(n / 2)}, auto)">${rows}</div>`;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// APP
-// ─────────────────────────────────────────────────────────────────────────────
 const $main = document.getElementById('main');
 const $info = document.getElementById('fileinfo');
-const $edit = document.getElementById('edit');
-const $export = document.getElementById('export');
-// keepScroll: re-render depois de uma edição não pula pro topo.
-function render(keepScroll = false) {
+function render() {
   if (!S.backup) {
-    $main.innerHTML = `<div class="empty" id="drop"><h2>${S.view === 'global' ? 'Global · configurações do usuário' : 'Preset · bancos e switches'}</h2><p>Abra um backup da BFMiDi para começar.</p><p>Arraste o arquivo <span class="k">bfmidi-backup-*.json</span> aqui ou use o botão <b>ABRIR BACKUP</b>.</p><p>Nada é enviado a lugar nenhum — tudo é lido no seu navegador.</p><p>Com o arquivo aberto, <b>EDITAR</b> libera a troca de placa, modo amigável, LEDs etc. e <b>EXPORTAR</b> baixa o backup alterado.</p></div>`;
+    $main.innerHTML = `<div class="empty" id="drop"><h2>Abra um backup da BFMiDi</h2><p>Arraste o arquivo <span class="k">bfmidi-backup-*.json</span> aqui ou use o botão <b>ABRIR BACKUP</b>.</p><p>Nada é enviado a lugar nenhum — tudo é lido no seu navegador.</p></div>`;
     return;
   }
-  const y = window.scrollY;
-  $main.innerHTML = S.view === 'global' ? renderGlobal() : renderPresets();
-  window.scrollTo({ top: keepScroll ? y : 0 });
+  const bootOpen = !!document.querySelector('details.boot[open]');
+  $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderPreset()}${renderBootLog()}`;
+  if (bootOpen) { const d = document.querySelector('details.boot'); if (d) d.open = true; }
 }
-function setView(v) { S.view = v; document.querySelectorAll('.seg button').forEach((b) => { b.classList.toggle('on', b.dataset.view === v); b.setAttribute('aria-pressed', String(b.dataset.view === v)); }); $edit.hidden = v !== 'global'; render(); }
 function updateInfo() {
   const b = S.backup; if (!b) return;
-  const gcOk = !!(b.global_config && Object.keys(b.global_config).length);
-  const ch = S.orig ? chgKeys().length : 0;
-  $info.innerHTML = `<span class="fname" title="${esc(S.name)}">${esc(S.name)}</span><span class="chip">v${esc(b.version)}</span>${gcOk ? `<span class="chip acc">${esc(boardCanonical(b.global_config.board) || 'placa ?')}</span>` : '<span class="chip warn">SEM GLOBAL_CONFIG</span>'}${num(b.truncated) ? '<span class="chip bad">TRUNCADO</span>' : ''}${ch ? `<span class="chip warn" title="${esc(chgKeys().join(', '))}">MODIFICADO · ${ch}</span>` : ''}`;
+  $info.innerHTML = `<span class="fname" title="${esc(S.name)}">${esc(S.name.replace(/\.json$/i, ''))}</span><span class="chip">V${esc(b.version)}</span>` +
+    `<span class="chip">${svgi(SLIDERS_ICON)}${Object.keys(b.presets || {}).length} PRESETS</span>${num(b.truncated) ? '<span class="chip bad">TRUNCADO</span>' : ''}`;
 }
-function setEdit(on) {
-  S.edit = !!on; $edit.classList.toggle('on', S.edit);
-  if (S.edit && S.view !== 'global') setView('global'); else render(true);
+function stepBank(dir) {
+  const banks = banksInBackup(); if (banks.length < 2) return;
+  const i = banks.indexOf(S.bank);
+  S.bank = banks[((i < 0 ? 0 : i) + dir + banks.length) % banks.length];
+  if (!hasPreset(S.bank + S.pi)) { const first = Array.from({ length: swCount() }, (_, k) => k + 1).find((k) => hasPreset(S.bank + k)); if (first) S.pi = first; }
+  S.layer = 1; render();
 }
 function load(text, name) {
   let b;
   try { b = JSON.parse(text); } catch (e) { alert('Arquivo não é um JSON válido.'); return; }
   if (!b || typeof b !== 'object' || !b.presets) { alert('Este JSON não parece um backup da BFMiDi (sem "presets").'); return; }
-  S.backup = b; S.name = name; S.tag = null; S.layer = 1; S.edit = false; $edit.classList.remove('on');
+  S.backup = b; S.name = name; S.layer = 1;
   // paleta de LED do próprio backup (color_N), quando presente
   LED = LED_DEFAULT.map(([n, rgb], i) => { const v = b.global_config && b.global_config['color_' + i]; const q = v ? String(v).split(',').map((x) => num(x)) : null; return { name: n, rgb: q && q.length === 3 ? q : rgb }; });
-  const gcOk = !!(b.global_config && Object.keys(b.global_config).length);
-  S.orig = gcOk ? JSON.parse(JSON.stringify(b.global_config)) : null;
-  updateInfo();
-  document.querySelectorAll('.seg button').forEach((x) => { x.disabled = false; });
-  $edit.disabled = !gcOk; $export.disabled = false;
-  setView(S.view);
+  // Abre no preset inicial do backup (início automático), senão no primeiro que existir.
+  const tags = Object.keys(b.presets).sort();
+  const autoTag = (LETTERS[gi('auto_start_bank')] || 'A') + gi('auto_start_preset', 1);
+  const start = hasPreset(autoTag) ? autoTag : tags[0];
+  S.bank = start[0]; S.pi = num(start.slice(1), 1);
+  updateInfo(); render();
 }
 document.getElementById('file').addEventListener('change', (e) => { const f = e.target.files[0]; if (!f) return; f.text().then((t) => load(t, f.name)); e.target.value = ''; });
-document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => setView(b.dataset.view)));
-$edit.addEventListener('click', () => setEdit(!S.edit));
-$export.addEventListener('click', exportBackup);
 $main.addEventListener('click', (e) => {
-  if (e.target.closest('#undo')) { if (confirm('Desfazer TODAS as alterações e voltar ao que está no arquivo?')) undoAll(); return; }
-  const bank = e.target.closest('[data-bank]'); if (bank) { S.tag = presetTags().find(t => t[0] === bank.dataset.bank); S.layer = 1; render(); return; }
-  const pb = e.target.closest('.pbtn'); if (pb) { S.tag = pb.dataset.tag; S.layer = 1; render(); return; }
+  const nav = e.target.closest('[data-bank]'); if (nav) { e.stopPropagation(); stepBank(num(nav.dataset.bank, 1)); return; }
+  if (e.target.closest('#bankNext')) { stepBank(1); return; }
+  if (e.target.closest('#extras')) { S.showExtras = !S.showExtras; render(); return; }
+  const k = e.target.closest('.key'); if (k && !k.disabled) { S.pi = num(k.dataset.pi, 1); S.layer = 1; render(); return; }
   const lb = e.target.closest('.layerseg button'); if (lb) { S.layer = num(lb.dataset.layer, 1); render(); }
 });
-// Edição: qualquer controle com data-k grava no global_config e re-renderiza
-// (o card pode mudar de forma — ex.: MULTIPLE MODE abre a tabela de canais).
-$main.addEventListener('change', (e) => {
-  const el = e.target.closest('[data-k]'); if (!el || !S.edit) return;
-  const k = el.dataset.k; let v;
-  if (el.dataset.bool) v = el.checked ? '1' : '0';
-  else if (el.type === 'number') { const n = num(el.value, num(el.min)); v = String(Math.min(num(el.max, 1e9), Math.max(num(el.min, -1e9), n))); }
-  else v = el.value;
-  // Placa: escolher o MESMO modelo que já estava (só com o nome novo) não é
-  // alteração — mantém a grafia gravada no arquivo.
-  if (el.dataset.board && boardCanonical(v) === boardCanonical(S.orig.board || '')) v = S.orig.board;
-  setKey(k, v);
-  render(true); updateInfo();
+document.addEventListener('keydown', (e) => {
+  if (!S.backup || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input, select, textarea'))) return;
+  if (e.key === 'ArrowRight') stepBank(1);
+  else if (e.key === 'ArrowLeft') stepBank(-1);
+  else if (/^[1-6]$/.test(e.key) && num(e.key) <= swCount() && hasPreset(S.bank + e.key)) { S.pi = num(e.key); S.layer = 1; render(); }
 });
 document.addEventListener('dragover', (e) => { e.preventDefault(); const d = document.getElementById('drop'); if (d) d.classList.add('over'); });
 document.addEventListener('dragleave', () => { const d = document.getElementById('drop'); if (d) d.classList.remove('over'); });
