@@ -1,4 +1,11 @@
-/* Poeira luminosa decorativa. Pausa fora de cena e respeita movimento reduzido. */
+/* Poeira luminosa decorativa. Pausa fora de cena (aba oculta), depois de 20 s
+   sem ninguém mexer na página (volta no primeiro movimento, rolagem ou
+   tecla) e fica parada para quem prefere movimento reduzido.
+
+   O redimensionamento só SORTEIA os pontos de novo quando a LARGURA muda. No
+   celular a barra de endereço aparece e some durante a rolagem e dispara
+   `resize` mudando só a altura: ali o canvas acompanha e os pontos ficam —
+   senão a poeira inteira "pulava" de lugar a cada rolagem. */
 (function () {
   'use strict';
   var canvas = document.getElementById('particle-field');
@@ -7,6 +14,7 @@
   if (!ctx) return;
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var width = 0, height = 0, points = [], frame = 0, last = 0;
+  var IDLE_MS = 20000, idleTimer = 0, running = false, lastWake = 0;
 
   /* Desfoque pré-renderizado: bordas suaves sem recalcular filtros por quadro. */
   var softDot = document.createElement('canvas');
@@ -24,12 +32,14 @@
   }
 
   function resize() {
+    var widthChanged = window.innerWidth !== width;
     width = window.innerWidth;
     height = window.innerHeight;
     var ratio = Math.min(window.devicePixelRatio || 1, 1.5);
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if (!widthChanged && points.length) { draw(0); return; }
     var count = Math.min(100, Math.max(30, Math.round(width * height / 12000)));
     points = Array.from({ length: count }, function () {
       return { x: Math.random() * width, y: Math.random() * height,
@@ -75,6 +85,7 @@
   }
 
   function tick(now) {
+    if (!running) return;
     if (now - last >= 1000 / 30) {
       draw(last ? Math.min((now - last) / 1000, .1) : 0);
       last = now;
@@ -82,15 +93,46 @@
     frame = requestAnimationFrame(tick);
   }
 
-  function sync() {
+  /* A página inteira descansa junto com a poeira: `is-idle` no <html>
+     pausa as luzes em laço infinito dos painéis (css/pages.css), para
+     nada ficar se mexendo sozinho depois de 20 s sem interação. */
+  var root = document.documentElement;
+  function stop() {
+    running = false;
     cancelAnimationFrame(frame);
     frame = 0;
-    last = 0;
-    if (!document.hidden && !reduced.matches) frame = requestAnimationFrame(tick);
+    root.classList.add('is-idle');
+  }
+
+  /* Acorda a animação e rearma o relógio de ociosidade. Chamado a cada
+     movimento, então o rearme é limitado a uma vez por segundo. */
+  function wake() {
+    if (document.hidden || reduced.matches) return;
+    var now = Date.now();
+    if (running && now - lastWake < 1000) return;
+    lastWake = now;
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(stop, IDLE_MS);
+    if (!running) {
+      running = true;
+      root.classList.remove('is-idle');
+      last = 0;
+      frame = requestAnimationFrame(tick);
+    }
+  }
+
+  function sync() {
+    stop();
+    clearTimeout(idleTimer);
+    lastWake = 0;
+    if (!document.hidden && !reduced.matches) wake();
     else draw(0);
   }
 
   window.addEventListener('resize', resize, { passive: true });
+  ['pointermove', 'pointerdown', 'wheel', 'scroll', 'keydown', 'touchstart'].forEach(function (type) {
+    window.addEventListener(type, wake, { passive: true });
+  });
   document.addEventListener('visibilitychange', sync);
   reduced.addEventListener('change', sync);
   resize();

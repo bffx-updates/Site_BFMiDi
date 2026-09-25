@@ -1,39 +1,55 @@
 /* ============================================================
    BFMIDI — VITRINE · PAINÉIS DOWNLOADS E MANUAL
    ------------------------------------------------------------
-   Os dois painéis de Extras com o mesmo desenho, na linguagem
-   da vitrine dos Apps: cabeçalho pg-head (micro-rótulo, título
-   em duas linhas com a segunda em laranja, lead) e cartões
-   grafite com o anel de LED de 3 arcos, cada um aceso numa das
-   quatro cores dos Apps. O botão de cada cartão estica a área
-   de clique para o cartão inteiro (::after); link externo abre
-   em nova aba e diz isso à vista ("Abre em nova aba"), link
-   interno troca o painel sem sair do site ("Neste site").
+   Os dois painéis de recursos com o mesmo desenho, falando a
+   linguagem comum (css/pages.css):
+   · cabeçalho pgHead() ancorado no topo — o micro-rótulo cai na
+     mesma altura do INFO, IN/OUT e SHOP, e à esquerda em toda
+     largura, como neles;
+   · título, lead, respiros e raios nos tokens da escala única
+     (--t-page, --t-card, --gap-*, --pad-card, --r-*);
+   · cartão = .pg-card (a marcação leva as duas classes). A cor
+     do ASSUNTO (DL_COLORS no main.js, tabela --led-* do
+     tokens.css) mora só no anel e no brilho de canto; o rótulo
+     é .pg-label e o botão é .pg-ghost, os dois neutros;
+   · na grade de 2 colunas, as quatro linhas de cada cartão
+     (topo, título, descrição, rodapé) são SUBGRID da grade: o
+     título que quebra em duas linhas empurra a descrição dos
+     dois vizinhos junto, e nada desalinha na fileira.
 
-   Marcação em renderResource() (js/main.js). Escopado em
-   #panel-downloads e #panel-manual. As manchas antigas do
-   `.resource-quick-page` (refine.css) não se aplicam: a classe
-   não é mais usada — e, se voltar, as regras do fim deste
-   arquivo as apagam. Layout por CONTAINER QUERY (`pg`).
+   O botão de cada cartão estica a área de clique para o cartão
+   inteiro (::after); link externo abre em nova aba e diz isso à
+   vista ("Nova aba"), link interno troca o painel sem sair do
+   site ("Neste site").
+
+   Marcação em renderResource()/dlCard() (js/main.js). Escopado
+   em #panel-downloads e #panel-manual. Layout por CONTAINER
+   QUERY (`pg`, declarado no .panel-inner). A moldura (--frame) e
+   o respiro de cima (--pg-top) são do sistema; aqui só o lateral
+   e o de baixo.
    ============================================================ */
 
 :is(#panel-downloads, #panel-manual) .panel-inner.pg {
-  max-width: 1720px;
-  padding: 14px 16px 28px;
+  padding-inline: 16px;
+  padding-bottom: 28px;
 }
 @media (min-width: 601px) {
-  :is(#panel-downloads, #panel-manual) .panel-inner.pg { padding: 24px 28px 40px; }
+  :is(#panel-downloads, #panel-manual) .panel-inner.pg { padding-inline: 28px; padding-bottom: 40px; }
 }
 @media (min-width: 861px) {
-  :is(#panel-downloads, #panel-manual) .panel-inner.pg { padding: 10px 48px 44px; }
+  :is(#panel-downloads, #panel-manual) .panel-inner.pg { padding-inline: 48px; padding-bottom: 44px; }
 }
 
+/* A caixa do painel: cabeçalho e cartões numa coluna só; a partir de
+   1400px de container, lado a lado. Os dois alinhados em CIMA — nada
+   aqui centra na vertical. */
 :is(#panel-downloads, #panel-manual) .dl {
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: 24px;
+  align-items: start;
+  row-gap: var(--gap-section);
   min-width: 0;
 }
 
@@ -93,123 +109,118 @@
   50% { opacity: .8; }
 }
 
-/* ---------- cartões ----------------------------------------- */
+/* ---------- cartões -----------------------------------------
+   Material, raio, padding e brilho de canto vêm do .pg-card; aqui só
+   a anatomia. Quatro linhas: [anel | rótulo], [anel | título],
+   [descrição], [rodapé]. Cada cartão ocupa 4 linhas da grade e as
+   herda por subgrid — é isso que alinha a fileira. O gap da grade
+   (--gap-grid) separa os cartões; o do cartão, as linhas dentro dele. */
 
 :is(#panel-downloads, #panel-manual) .dl-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
+  grid-auto-rows: auto;
+  gap: var(--gap-grid);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 :is(#panel-downloads, #panel-manual) .dl-card {
-  --c: #4c8dff;
-  position: relative;
+  --ring: 46px;
+  --dl-colgap: 14px;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-rows: auto auto 1fr auto;
-  grid-template-areas: "ring k" "ring t" "p p" "foot foot";
-  column-gap: 14px;
-  row-gap: 3px;
-  min-width: 0;
-  padding: 16px 16px 14px;
-  border: 1px solid #ffffff0d;
-  border-radius: 20px;
-  background:
-    radial-gradient(70% 60% at 0% 0%, color-mix(in srgb, var(--c) 12%, transparent), transparent 70%),
-    linear-gradient(180deg, #19212ccc, #121820cc);
-  box-shadow: inset 0 1px 0 #ffffff0f, 0 16px 30px -24px #000;
-  transition: transform .2s var(--ease, ease);
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  grid-template-columns: var(--ring) minmax(0, 1fr);
+  column-gap: var(--dl-colgap);
+  row-gap: 4px;
+  transition: transform .2s var(--ease);
 }
-/* Filete aceso no topo, na cor do anel (como os cartões de INFO). */
-:is(#panel-downloads, #panel-manual) .dl-card::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 18%;
-  right: 18%;
-  height: 1px;
-  pointer-events: none;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c) 80%, #fff), transparent);
-  opacity: .7;
+@supports not (grid-template-rows: subgrid) {
+  :is(#panel-downloads, #panel-manual) .dl-card { grid-row: auto; grid-template-rows: auto auto 1fr auto; }
 }
 :is(#panel-downloads, #panel-manual) .dl-card__top { display: contents; }
-:is(#panel-downloads, #panel-manual) .dl-card .pg-ring { grid-area: ring; align-self: center; width: 46px; }
+/* O anel fica em pé ao lado do rótulo e do título, preso ao alto das
+   duas linhas: quando o título do vizinho quebra, a linha cresce para
+   baixo e o anel continua na altura do rótulo — anéis e rótulos
+   seguem alinhados na fileira. */
+:is(#panel-downloads, #panel-manual) .dl-card .pg-ring {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  width: var(--ring);
+}
 :is(#panel-downloads, #panel-manual) .dl-card__k {
-  grid-area: k;
+  grid-column: 2;
+  grid-row: 1;
   align-self: end;
   margin: 0;
-  color: color-mix(in srgb, var(--c) 50%, #fff);
-  font: 600 var(--pg-min)/1.3 var(--font-mono);
-  letter-spacing: .14em;
-  text-transform: uppercase;
 }
 :is(#panel-downloads, #panel-manual) .dl-card__t {
-  grid-area: t;
+  grid-column: 2;
+  grid-row: 2;
   align-self: start;
   margin: 0;
-  color: #f5f8fc;
+  color: var(--title-ink);
   font-family: var(--font-display);
   font-weight: 800;
-  font-variation-settings: 'wdth' 108;
-  font-size: 22px;
-  line-height: 1.15;
+  font-variation-settings: 'wdth' var(--wdth-title);
+  font-size: var(--t-card);
+  line-height: 1.12;
   letter-spacing: -.02em;
+  text-wrap: balance;
 }
 :is(#panel-downloads, #panel-manual) .dl-card__p {
-  grid-area: p;
+  grid-column: 1 / -1;
+  grid-row: 3;
   margin: 10px 0 0;
   color: var(--pg-ink-2);
-  font-size: 14.5px;
+  font-size: 15px;
   line-height: 1.5;
   text-wrap: pretty;
 }
 :is(#panel-downloads, #panel-manual) .dl-card__foot {
-  grid-area: foot;
-  align-self: end;
+  grid-column: 1 / -1;
+  grid-row: 4;
+  /* O filete fica no começo da linha da grade, igual nos vizinhos; se o
+     rodapé do lado quebrar em duas linhas, a sobra cai embaixo. */
+  align-self: stretch;
   display: flex;
   align-items: center;
+  align-content: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px 12px;
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 10px;
+  padding-top: 14px;
   border-top: 1px solid var(--pg-line);
 }
+/* O botão é o secundário do sistema (.pg-ghost: 48/56px CSS, raio 14,
+   fundo e borda neutros); aqui só o encaixe do texto e da seta. */
 :is(#panel-downloads, #panel-manual) .dl-card__go {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 44px;
-  padding: 9px 14px 9px 16px;
-  border: 1px solid color-mix(in srgb, var(--c) 42%, #ffffff14);
-  border-radius: 13px;
-  background: color-mix(in srgb, var(--c) 12%, #0f1824);
-  color: var(--pg-ink);
-  font: 700 15px/1.2 var(--font-body);
-  text-decoration: none;
+  justify-content: flex-start;
+  padding-inline: 18px 16px;
 }
 /* O cartão inteiro é a área de clique do botão. */
 :is(#panel-downloads, #panel-manual) .dl-card__go::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 20px;
+  border-radius: var(--r-card);
 }
-:is(#panel-downloads, #panel-manual) .dl-card__arrow {
+:is(#panel-downloads, #panel-manual) .dl-card__go .dl-card__arrow {
   width: 18px;
   height: 18px;
   flex: none;
-  color: color-mix(in srgb, var(--c) 45%, #fff);
-  transition: transform .2s var(--ease, ease);
+  color: var(--pg-ink-2);
+  transition: transform .2s var(--ease);
 }
 :is(#panel-downloads, #panel-manual) .dl-card__dest {
   margin-left: auto;
   color: var(--pg-ink-3);
   white-space: nowrap;
   font: 500 var(--pg-min)/1.3 var(--font-mono);
-  letter-spacing: .06em;
+  letter-spacing: var(--ls-micro);
   text-transform: uppercase;
 }
 @media (hover: hover) {
@@ -220,13 +231,13 @@
 /* Foco por teclado: o anel contorna o CARTÃO, que é a área de clique. */
 :is(#panel-downloads, #panel-manual) .dl-card__go:focus-visible { outline: none; }
 :is(#panel-downloads, #panel-manual) .dl-card:has(.dl-card__go:focus-visible) {
-  outline: 3px solid var(--pg-focus);
-  outline-offset: 4px;
+  outline: var(--focus-w) solid var(--focus);
+  outline-offset: var(--focus-offset);
 }
 
 /* Entrada em cascata ao abrir o painel (display none → grid reinicia a
    animação). Só transform e opacity. */
-:is(#panel-downloads, #panel-manual) .dl-card { animation: dl-rise .6s var(--ease, ease) backwards; }
+:is(#panel-downloads, #panel-manual) .dl-card { animation: dl-rise .6s var(--ease) backwards; }
 :is(#panel-downloads, #panel-manual) .dl-card:nth-child(2) { animation-delay: .06s; }
 :is(#panel-downloads, #panel-manual) .dl-card:nth-child(3) { animation-delay: .12s; }
 :is(#panel-downloads, #panel-manual) .dl-card:nth-child(4) { animation-delay: .18s; }
@@ -235,27 +246,41 @@
   to { opacity: 1; transform: none; }
 }
 
-/* ---------- larguras ---------------------------------------- */
+/* ---------- larguras ----------------------------------------
+   O degrau m/l dos tokens (--t-card, --gap-*, --pad-card) já chega
+   resolvido pelo pages.css; aqui só o que não é token: o anel, o vão
+   do anel e o corpo de texto do cartão. */
 
-@container pg (min-width: 620px) {
-  :is(#panel-downloads, #panel-manual) .dl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  :is(#panel-downloads, #panel-manual) .dl-card { padding: 20px 20px 16px; }
-  :is(#panel-downloads, #panel-manual) .dl-card .pg-ring { width: 50px; }
-  :is(#panel-downloads, #panel-manual) .dl-card__t { font-size: 24px; }
+/* Celular estreito (320): o botão mais longo e o "Nova aba" ainda
+   cabem na mesma linha. */
+@container pg (max-width: 379px) {
+  :is(#panel-downloads, #panel-manual) .dl-card__go { padding-inline: 14px 12px; gap: 8px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__foot { column-gap: 8px; }
 }
-/* Tablet: o cabeçalho centraliza, como na vitrine dos Apps. */
-@container pg (min-width: 700px) and (max-width: 1399px) {
-  :is(#panel-downloads, #panel-manual) .dl > .pg-head { justify-items: center; text-align: center; }
-  :is(#panel-downloads, #panel-manual) .pg-kicker { justify-content: center; }
-  :is(#panel-downloads, #panel-manual) .dl { row-gap: 34px; }
+/* Duas colunas já a partir de 560px: numa coluna só, o cartão de
+   600px vira uma faixa rala de uma linha de texto. */
+@container pg (min-width: 560px) {
+  :is(#panel-downloads, #panel-manual) .dl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-/* Desktop largo: cabeçalho à esquerda, cartões à direita. Abaixo disso
-   (janela de 1024) os cartões ficariam estreitos demais ao lado do
-   título, e o layout de tablet — cabeçalho centrado em cima — vale. */
+@container pg (min-width: 700px) {
+  :is(#panel-downloads, #panel-manual) .dl-card { --ring: 52px; --dl-colgap: 16px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__p { margin-top: 12px; font-size: 16px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__foot { margin-top: 14px; padding-top: 16px; }
+}
+/* Sem subgrid, o título ocupa sempre duas linhas na grade de 2 colunas:
+   é o que segura a descrição na mesma altura dos dois lados. */
+@supports not (grid-template-rows: subgrid) {
+  @container pg (min-width: 560px) {
+    :is(#panel-downloads, #panel-manual) .dl-card__t { min-height: 2.24em; }
+  }
+}
+
+/* Desktop largo: cabeçalho à esquerda, cartões à direita, os dois
+   presos em cima. Abaixo disso (janela de 1024) os cartões ficariam
+   estreitos demais ao lado do título, e o cabeçalho vai para cima. */
 @container pg (min-width: 1400px) {
   :is(#panel-downloads, #panel-manual) .dl {
     grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
-    align-items: center;
     column-gap: 4.5cqi;
   }
   /* O feixe desce sobre os cartões (o palco desta página) e pousa numa
@@ -291,22 +316,20 @@
     pointer-events: none;
     background: radial-gradient(ellipse 55% 50% at 40% 50%, #1f33505c 0%, #14223533 45%, transparent 75%);
   }
-  :is(#panel-downloads, #panel-manual) .pg-title { font-size: clamp(56px, 4.4cqi, 84px); }
-  :is(#panel-downloads, #panel-manual) .dl-grid { gap: 16px; }
-  :is(#panel-downloads, #panel-manual) .dl-card { column-gap: 20px; row-gap: 4px; padding: 28px 28px 20px; border-radius: 22px; }
-  :is(#panel-downloads, #panel-manual) .dl-card__go::after { border-radius: 22px; }
-  :is(#panel-downloads, #panel-manual) .dl-card .pg-ring { width: 64px; }
-  :is(#panel-downloads, #panel-manual) .dl-card__p { margin-top: 14px; }
-  :is(#panel-downloads, #panel-manual) .dl-card__foot { margin-top: 18px; padding-top: 16px; }
-  :is(#panel-downloads, #panel-manual) .dl-card__t { font-size: 30px; }
-  :is(#panel-downloads, #panel-manual) .dl-card__p { font-size: 17px; }
-  :is(#panel-downloads, #panel-manual) .dl-card__go { min-height: 48px; font-size: 16px; }
-}
+  :is(#panel-downloads, #panel-manual) .dl-card { --ring: 64px; --dl-colgap: 20px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__p { margin-top: 14px; font-size: 17px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__foot { margin-top: 18px; padding-top: 18px; }
 
-/* As manchas do layout antigo (refine.css, `.resource-quick-page`) não
-   voltam nem se a classe reaparecer na marcação. */
-:is(#panel-downloads, #panel-manual) .resource-quick-page::before,
-:is(#panel-downloads, #panel-manual) .resource-quick-page::after { content: none; display: none; }
+  /* MANUAL: são só dois destinos. Lado a lado eles viravam uma faixa
+     baixa com a tela vazia embaixo; empilhados numa coluna de 720px,
+     presa à borda direita da moldura (a mesma borda dos cartões de
+     Downloads), ocupam a altura da grade 2×2 de lá. A luz acompanha o
+     centro da coluna. */
+  #panel-manual .dl { grid-template-columns: minmax(0, 1fr) minmax(0, 720px); }
+  #panel-manual .dl-grid { grid-template-columns: minmax(0, 1fr); }
+  #panel-manual .dl-lights { --lx: calc(100% - 360px); }
+  #panel-manual .dl::after { left: calc(100% - 720px); right: 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   :is(#panel-downloads, #panel-manual) :is(.dl-lights, .dl-card) { animation: none; }

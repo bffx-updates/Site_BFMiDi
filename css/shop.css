@@ -1,40 +1,45 @@
 /* ============================================================
    BFMIDI — VITRINE · PAINEL SHOP (COMPRAR)
    ------------------------------------------------------------
-   A mesma linguagem da vitrine dos Apps (css/apps.css) e das
-   peças comuns (css/pages.css): cabeçalho pg-head com o nome
-   do modelo, a foto num PALCO iluminado como a controladora é
-   fotografada na home — feixe âmbar vindo de cima, contraluz
-   azul fria atrás, sombra de contato e a linha do chão —, a
-   ficha em números, as etiquetas de porta do chassi e o cartão
-   de compra, com o WhatsApp do grupo de espera no mesmo
-   acabamento do botão.
+   A mesma língua de INFO e IN/OUT (css/pages.css): o cabeçalho
+   pgHead com a etiqueta branca do modelo, a foto num PALCO
+   iluminado como a controladora é fotografada na home — feixe
+   âmbar vindo de cima, contraluz azul atrás, sombra de contato e
+   a linha do chão —, o cartão de compra, a ficha em números e as
+   etiquetas de porta do chassi.
+
+   Tudo que é escala vem do sistema e NÃO é redefinido aqui:
+   · título de página = --t-page (o SHOP não tem título maior);
+   · botão de compra = .pg-cta (--btn-h 52/64, --r-btn 14);
+   · números da ficha = .pg-readout ('wdth' 115/800, tabular-nums),
+     rótulos = .pg-label (mono neutro, .14em);
+   · cartão = --r-card / --pad-card; foco = o anel único do .pg.
+   O verde do WhatsApp é a exceção documentada do código de cor
+   (--led-whatsapp): mora no anel, no brilho de canto e na borda,
+   nunca no texto.
 
    Marcação em renderComprar() (js/main.js). Ordem do HTML =
    ordem de leitura no celular: cabeçalho → palco → cartão de
    compra → ficha → conexões. No desktop o texto vira a coluna
-   da esquerda (cabeçalho, ficha, conexões e o cartão por
-   último, como a vitrine dos Apps) e o palco a da direita.
+   da esquerda (cabeçalho, ficha, conexões e o cartão por último,
+   como a vitrine dos Apps) e o palco a da direita, centrado na
+   própria coluna — o cabeçalho fica ancorado no topo, na mesma
+   altura de INFO e IN/OUT.
 
    Escopado em #panel-comprar. Layout por CONTAINER QUERY (`pg`,
    declarado no .panel-inner.pg): no desktop o site aplica
    `html { zoom: .8 }` e quem manda é a largura do layout.
-   Texto pequeno sai de `--pg-min` (11px no celular, 14px no
-   desktop = 11,2px renderizados).
    ============================================================ */
 
-/* A caixa do painel: mesma largura útil e mesma margem de INFO e
-   APPS (1720px, 48px no desktop), então trocar de aba não desloca
-   o conteúdo. Vence o `.panel-inner` do refine.css por id. */
-#panel-comprar .panel-inner.pg {
-  max-width: 1720px;
-  padding: 10px 16px 28px;
-}
+/* A caixa do painel: a moldura (--frame) e o respiro de cima
+   (--pg-top) são do sistema (pages.css, ancoragem). Aqui só o
+   respiro lateral e o de baixo, os mesmos de INFO e IN/OUT. */
+#panel-comprar .panel-inner.pg { padding-inline: 16px; padding-bottom: 28px; }
 @media (min-width: 601px) {
-  #panel-comprar .panel-inner.pg { padding: 18px 28px 36px; }
+  #panel-comprar .panel-inner.pg { padding-inline: 28px; padding-bottom: 36px; }
 }
 @media (min-width: 861px) {
-  #panel-comprar .panel-inner.pg { padding: 6px 48px 36px; }
+  #panel-comprar .panel-inner.pg { padding-inline: 48px; }
 }
 
 #panel-comprar .shop {
@@ -47,13 +52,13 @@
   min-width: 0;
 }
 #panel-comprar .shop > .pg-head { grid-area: head; }
-/* O título é o nome do modelo: duas palavras curtas, então sai maior que
-   o dos outros painéis desde o celular. */
-#panel-comprar .pg-title { font-size: clamp(36px, 11.5cqi, 60px); line-height: .98; }
 #panel-comprar .shop-stage { grid-area: stage; }
 #panel-comprar .shop-buy { grid-area: buy; }
 #panel-comprar .shop-facts { grid-area: facts; }
 #panel-comprar .shop-ports { grid-area: ports; }
+/* Depois do cartão de compra começa outra seção (o que a
+   controladora é): o respiro dobra, 16 + 16 = 32 (--gap-section s). */
+#panel-comprar .shop-facts { margin-top: 16px; }
 
 /* ---------- 1. PALCO ---------------------------------------- */
 
@@ -158,55 +163,54 @@
 
 /* ---------- 2. CARTÃO DE COMPRA ----------------------------- */
 
-/* O mesmo acabamento do cartão de plataforma dos Apps (.ap-plat). */
+/* O cartão grafite do sistema com o brilho de canto no laranja do
+   CTA — é o único cartão da vitrine cuja cor é a da ação. */
 #panel-comprar .shop-buy {
   display: grid;
   gap: 10px;
   min-width: 0;
-  padding: 14px;
-  border: 1px solid #ffb07047;
-  border-radius: 22px;
+  padding: var(--pad-card);
+  border: 1px solid #ffb0703d;
+  border-radius: var(--r-card);
   background:
     radial-gradient(120% 90% at 0% 0%, #ff8a3d14 0%, transparent 46%),
-    linear-gradient(180deg, #1a2433f2 0%, #111925f5 60%, #0d141ef7 100%);
-  box-shadow: inset 0 1px 0 #ffffff12, 0 26px 60px -34px #000;
+    var(--surface);
+  box-shadow: var(--card-shadow), 0 26px 60px -34px #000;
 }
-#panel-comprar .shop-cta {
-  width: 100%;
-  min-height: 58px;
-  padding: 14px 22px;
-  border-radius: 16px;
-  border-color: #ffc17e;
-  font-size: 17px;
-  letter-spacing: .005em;
-  box-shadow: inset 0 1px 1px #ffe3bd, inset 0 -2px 0 #b8401433, 0 12px 30px -10px #ff6a1f80;
-}
-#panel-comprar .shop-cta svg { width: 20px; height: 20px; }
+
+/* O botão de compra é o .pg-cta do sistema (altura, raio, fonte,
+   material). Aqui só a largura toda e a seta que anda no hover. */
+#panel-comprar .shop-cta { width: 100%; }
+/* O nome do modelo nunca quebra: "Comprar / 6SW+" em duas linhas
+   dobrava a altura do botão a 320. */
+#panel-comprar .shop-cta__label { white-space: nowrap; }
 #panel-comprar .shop-cta__go { transition: transform .2s var(--ease, ease); }
 @media (hover: hover) {
   #panel-comprar a.shop-cta:hover .shop-cta__go { transform: translateX(3px); }
 }
-#panel-comprar a.shop-cta:active { transform: translateY(1px); }
 
-/* Sem loja: estado inativo inequívoco — tracejado, apagado, sem cara de
-   botão (não recebe foco nem reage ao mouse), com a ficha "Em breve". */
+/* Sem loja: estado inativo inequívoco — tracejado, rebaixado no poço,
+   sem cara de botão (não recebe foco nem reage ao mouse), com a ficha
+   "Em breve". A altura é a do CTA, para o cartão não mudar de forma
+   de um modelo para o outro. */
 #panel-comprar .shop-cta.is-off {
   cursor: not-allowed;
   border: 1.5px dashed #a6bedd5c;
-  background: #111925;
-  color: var(--pg-ink-2);
-  box-shadow: inset 0 1px 0 #ffffff08;
+  background: var(--well);
+  color: var(--ink-2);
+  box-shadow: inset 0 1px 3px #0006;
   filter: none;
   transform: none;
 }
-#panel-comprar .shop-cta.is-off .shop-cta__ico { color: var(--pg-ink-3); }
+#panel-comprar .shop-cta.is-off .shop-cta__ico { color: var(--ink-3); }
+/* Ficha de status: a única pílula do painel. */
 #panel-comprar .shop-soon {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   padding: 4px 9px 3px;
   border: 1px solid #ffb07047;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: #ffb07014;
   color: #ffc79d;
   font: 600 var(--pg-min)/1.2 var(--font-mono);
@@ -224,22 +228,33 @@
   box-shadow: 0 0 8px #ffb070;
 }
 
-/* Para onde o botão leva, à vista (o endereço sai do próprio link). */
+/* Para onde o botão leva, à vista (o endereço sai do próprio link).
+   O cadeado fica preso à primeira linha: se o texto quebrar, só o
+   texto desce — nunca o ícone sozinho numa linha. */
 #panel-comprar .shop-dest {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 8px;
+  gap: 8px;
   margin: 0;
   color: var(--pg-ink-2);
   font: 500 var(--pg-min)/1.4 var(--font-mono);
   letter-spacing: .02em;
-  text-align: center;
+  text-align: left;
 }
 #panel-comprar .shop-dest > span { min-width: 0; }
-#panel-comprar .shop-dest b { color: var(--pg-ink); font-weight: 600; white-space: nowrap; }
-#panel-comprar .shop-dest__ico { flex: none; width: 15px; height: 15px; color: var(--pg-ok); }
+#panel-comprar .shop-dest b { color: var(--pg-ink); font-weight: 600; }
+/* O endereço e o separador andam juntos: numa quebra, a linha de
+   baixo nunca começa por um ponto solto. */
+#panel-comprar .shop-dest__host { white-space: nowrap; }
+#panel-comprar .shop-dest__sep { margin-inline: .15em; color: var(--pg-ink-3); }
+#panel-comprar .shop-dest__ico {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  margin-top: calc((1.4em - 15px) / 2);
+  color: var(--pg-ok);
+}
 #panel-comprar .shop-dest.is-off {
   font: 500 14px/1.45 var(--font-body);
   letter-spacing: 0;
@@ -247,22 +262,25 @@
 }
 #panel-comprar .shop-dest.is-off .shop-dest__ico { color: #ffc79d; }
 
-/* Divisória com o nome do bloco seguinte. */
+/* Divisória com o nome do bloco seguinte: o rótulo de cartão do
+   sistema (mono, .14em, neutro) entre dois filetes. */
 #panel-comprar .shop-sep {
   display: flex;
   align-items: center;
   gap: 12px;
   margin: 6px 0 0;
-  color: var(--pg-ink-3);
+  color: var(--pg-ink-2);
   font: 600 var(--pg-min)/1.3 var(--font-mono);
-  letter-spacing: .16em;
+  letter-spacing: var(--ls-micro);
   text-transform: uppercase;
   white-space: nowrap;
 }
 #panel-comprar .shop-sep::before,
 #panel-comprar .shop-sep::after { content: ''; flex: 1; height: 1px; background: var(--pg-line-2); }
 
-/* WhatsApp do grupo de espera: tecla grafite com anel de LED verde. */
+/* WhatsApp do grupo de espera: tecla grafite rebaixada, com o anel de
+   LED verde (--led-whatsapp). O verde fica no anel, no brilho de canto
+   e na borda; o texto é neutro, como todo botão secundário. */
 #panel-comprar .shop-wa {
   position: relative;
   display: grid;
@@ -271,11 +289,11 @@
   column-gap: 14px;
   min-height: 64px;
   padding: 12px 14px 12px 12px;
-  border: 1px solid #39d98a42;
-  border-radius: 16px;
+  border: 1px solid #39d98a3d;
+  border-radius: var(--r-btn);
   background:
     radial-gradient(90% 140% at 0% 50%, #39d98a14 0%, transparent 60%),
-    #0c1118e6;
+    var(--well);
   box-shadow: inset 0 1px 0 #ffffff0a, inset 0 1px 3px #0006;
   color: var(--pg-ink);
   text-decoration: none;
@@ -284,12 +302,13 @@
 }
 #panel-comprar .shop-wa .pg-ring { width: 42px; }
 #panel-comprar .shop-wa__txt { display: grid; gap: 2px; min-width: 0; }
-#panel-comprar .shop-wa__txt strong { color: #8ef0b8; font: 700 16px/1.25 var(--font-body); }
+#panel-comprar .shop-wa__txt strong { color: var(--pg-ink); font: 700 16px/1.25 var(--font-body); }
 #panel-comprar .shop-wa__txt > span { color: var(--pg-ink-2); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
-#panel-comprar .shop-wa__go { width: 20px; height: 20px; color: #8ef0b8; transition: transform .2s var(--ease, ease); }
+#panel-comprar .shop-wa__go { width: 20px; height: 20px; color: var(--pg-ink-2); transition: transform .2s var(--ease, ease), color .15s; }
+#panel-comprar .shop-wa:active { transform: translateY(1px); }
 @media (hover: hover) {
   #panel-comprar .shop-wa:hover { border-color: #39d98a8c; }
-  #panel-comprar .shop-wa:hover .shop-wa__go { transform: translate(2px, -2px); }
+  #panel-comprar .shop-wa:hover .shop-wa__go { transform: translate(2px, -2px); color: var(--pg-ink); }
 }
 /* Sem loja, o WhatsApp é o caminho ativo: ganha o destaque. */
 #panel-comprar .shop.is-off .shop-wa {
@@ -301,10 +320,11 @@
 #panel-comprar .shop-details { display: grid; gap: 8px; padding: 0 4px 6px; }
 #panel-comprar .shop-price {
   margin: 0;
-  color: #f5f8fc;
+  color: var(--title-ink);
   font-family: var(--font-display);
   font-weight: 800;
-  font-variation-settings: 'wdth' 110;
+  font-variation-settings: 'wdth' var(--wdth-readout);
+  font-variant-numeric: tabular-nums;
   font-size: 26px;
   line-height: 1.1;
 }
@@ -313,16 +333,18 @@
 /* ---------- 3. FICHA EM NÚMEROS ----------------------------- */
 
 /* Poço escuro dividido por filetes de 1px (o gap deixa aparecer o fundo
-   claro do <dl>). O valor vem ANTES do rótulo na tela, mas o <dt> vem
-   antes no HTML — o leitor de tela lê "Footswitches: 8". */
+   claro do <dl>). Os números são a leitura de instrumento do INFO
+   (.pg-readout) e os rótulos, o rótulo de cartão (.pg-label). O valor
+   vem ANTES do rótulo na tela, mas o <dt> vem antes no HTML — o leitor
+   de tela lê "Footswitches: 8". */
 #panel-comprar .shop-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
-  margin: 0;
+  margin-bottom: 0;
   padding: 0;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: var(--r-well);
   background: #ffffff12;
   box-shadow: inset 0 0 0 1px #ffffff0c, 0 16px 30px -24px #000;
 }
@@ -330,54 +352,48 @@
   display: flex;
   flex-direction: column-reverse;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
   padding: 14px 16px 15px;
   background: linear-gradient(180deg, #121a24, #0c1118);
 }
 #panel-comprar .shop-fact dd {
   margin: 0;
-  color: #f5f8fc;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-variation-settings: 'wdth' 110;
+  color: var(--title-ink);
   font-size: 30px;
-  line-height: 1;
-  letter-spacing: -.02em;
 }
-#panel-comprar .shop-fact dt {
-  color: var(--pg-ink-2);
-  font: 500 14px/1.3 var(--font-body);
-  text-wrap: balance;
-}
+#panel-comprar .shop-fact dt { text-wrap: balance; }
 
 /* ---------- 4. CONEXÕES ------------------------------------- */
 
 #panel-comprar .shop-ports { display: grid; gap: 10px; min-width: 0; }
-#panel-comprar .shop-label {
-  margin: 0;
-  color: var(--pg-ink-3);
-  font: 600 var(--pg-min)/1.3 var(--font-mono);
-  letter-spacing: .16em;
-  text-transform: uppercase;
-}
+#panel-comprar .shop-label { margin: 0; }
 #panel-comprar .shop-ports .pg-tags li { position: relative; }
 
 /* ---------- 5. LARGURAS ------------------------------------- */
 
-/* Celular estreito (320): o WhatsApp não pode virar uma torre de texto. */
+/* Celular estreito (320): o WhatsApp não vira uma torre de texto, a
+   ficha "Em breve" cabe ao lado do nome e o endereço da loja desce
+   inteiro para a linha de baixo, sem o separador. */
 @container pg (max-width: 359px) {
-  #panel-comprar .shop-buy { padding: 12px; }
   #panel-comprar .shop-cta { padding-inline: 16px; }
+  #panel-comprar .shop-cta.is-off { gap: 8px; }
+  #panel-comprar .shop-soon { gap: 5px; padding-inline: 7px; letter-spacing: .06em; }
   #panel-comprar .shop-wa { column-gap: 10px; padding: 10px 10px 10px 8px; }
   #panel-comprar .shop-wa .pg-ring { width: 34px; }
   #panel-comprar .shop-wa__txt strong { font-size: 15px; }
   #panel-comprar .shop-wa__go { width: 18px; height: 18px; }
   #panel-comprar .shop-fact { padding: 12px 12px 13px; }
-  #panel-comprar .shop-fact dd { font-size: 26px; }
+  #panel-comprar .shop-fact dd { font-size: 28px; }
+}
+@container pg (max-width: 329px) {
+  #panel-comprar .shop-dest__host { display: block; }
+  #panel-comprar .shop-dest__sep { display: none; }
 }
 
-@container pg (min-width: 520px) {
+/* Quatro números numa linha só a partir de 600px de container: abaixo
+   disso "COMPORTAMENTOS" não cabe na célula no tamanho do rótulo. */
+@container pg (min-width: 600px) {
   #panel-comprar .shop-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   #panel-comprar .shop-fact { padding: 16px 16px 17px; }
 }
@@ -392,38 +408,57 @@
     row-gap: 22px;
     align-items: center;
   }
-  #panel-comprar .shop-stage { aspect-ratio: 1.3; }
+  #panel-comprar .shop-facts { margin-top: 10px; }
   #panel-comprar .shop-stage__shot { left: 3%; right: 3%; }
-  #panel-comprar .pg-title { font-size: clamp(48px, 8cqi, 72px); }
-  #panel-comprar .shop-buy { padding: 16px; }
+  #panel-comprar .shop-fact dd { font-size: 34px; }
 }
 
 /* Desktop: texto à esquerda, palco à direita, como a vitrine dos Apps.
-   As duas faixas `1fr` vazias centralizam o texto na altura do palco. */
+   O texto (cabeçalho, ficha, cartão de compra) é ANCORADO no topo: o
+   micro-rótulo cai na mesma altura de INFO e IN/OUT. A coluna da
+   direita é o palco com as conexões como legenda embaixo; o palco
+   ocupa as linhas do texto (a faixa `1fr` absorve a sobra quando ele é
+   o mais alto) e assenta na legenda (align-self: end), então os dois
+   nunca se separam. Com a ficha e o cartão sozinhos na esquerda, o
+   cartão inteiro cabe acima da barra de baixo de 1024×768 a 1440×900. */
 @container pg (min-width: 1040px) {
   #panel-comprar .shop {
     grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
-    grid-template-rows: 1fr auto auto auto auto 1fr;
-    grid-template-areas: ". stage" "head stage" "facts stage" "ports stage" "buy stage" ". stage";
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas: "head stage" "facts stage" "buy stage" ". stage" ". ports";
     column-gap: 4cqi;
     row-gap: 0;
     align-items: start;
   }
-  #panel-comprar .shop > .pg-head { gap: 14px; margin-bottom: 30px; }
-  #panel-comprar .pg-title { font-size: clamp(56px, 5cqi, 96px); line-height: .98; }
-  #panel-comprar .shop-stage { align-self: center; aspect-ratio: 1.2; }
+  #panel-comprar .shop > .pg-head { margin-bottom: 32px; }
+  #panel-comprar .shop-stage { align-self: end; aspect-ratio: 1.2; }
   #panel-comprar .shop-stage__shot { left: 4%; right: 4%; }
-  #panel-comprar .shop-facts { margin-bottom: 24px; }
-  #panel-comprar .shop-fact { padding: 16px 14px 17px; }
-  #panel-comprar .shop-fact dd { font-size: 36px; }
-  #panel-comprar .shop-fact dt { font-size: 14px; }
-  #panel-comprar .shop-ports { margin-bottom: 30px; }
-  #panel-comprar .shop-buy {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    padding: 18px;
+  /* A ficha vira uma placa 2 × 2 com o número À ESQUERDA do rótulo:
+     numa linha de quatro, "COMPORTAMENTOS" no tamanho mínimo do
+     desktop (14px CSS) não cabe na célula. A primeira coluna tem a
+     largura do número mais largo ("3,5″" = 2em na leitura de
+     instrumento), então os rótulos das duas células de cada coluna
+     começam na mesma vertical. */
+  #panel-comprar .shop-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0 0 24px;
   }
-  #panel-comprar .shop-cta { min-height: 66px; font-size: 19px; }
+  #panel-comprar .shop-fact {
+    --num: 42px;
+    display: grid;
+    grid-template-columns: calc(var(--num) * 2.1) minmax(0, 1fr);
+    align-items: center;
+    column-gap: 18px;
+    padding: 16px 20px;
+  }
+  #panel-comprar .shop-fact dd { grid-area: 1 / 1; font-size: var(--num); }
+  #panel-comprar .shop-fact dt { grid-area: 1 / 2; }
+  /* As conexões viram a legenda do palco: sobem para dentro da faixa do
+     chão (os 12% de baixo, onde a foto não chega). Margem em % = da
+     largura da coluna, a mesma medida que dá a altura do palco. */
+  #panel-comprar .shop-ports { justify-items: center; margin-top: -6%; text-align: center; }
+  #panel-comprar .shop-ports .pg-tags { justify-content: center; }
+  #panel-comprar .shop-buy { gap: 12px; }
   #panel-comprar .shop-cta svg { width: 22px; height: 22px; }
   #panel-comprar .shop-wa { min-height: 76px; padding: 14px 18px 14px 14px; column-gap: 16px; }
   #panel-comprar .shop-wa .pg-ring { width: 48px; }
@@ -432,15 +467,26 @@
   #panel-comprar .shop-dest.is-off { font-size: 15px; }
 }
 
-/* Janela de 1024 (layout de ~1180px): a coluna do texto ganha metade da
-   largura, senão "Comportamentos" não cabe na célula da ficha. */
+/* Janela de 1024 (layout de ~1180px): o texto e o palco dividem a
+   largura em partes iguais, senão a placa 2 × 2 aperta. */
 @container pg (min-width: 1040px) and (max-width: 1399px) {
   #panel-comprar .shop { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 3cqi; }
+  #panel-comprar .shop-fact { --num: 38px; padding: 16px 16px; column-gap: 12px; }
 }
-@container pg (min-width: 1400px) {
-  #panel-comprar .shop-fact { padding: 18px 20px 19px; }
-  #panel-comprar .shop-fact dd { font-size: 40px; }
-  #panel-comprar .shop-fact dt { font-size: 15px; }
+
+/* Celular BAIXO: o palco fica mais baixo e os respiros apertam, para o
+   botão de compra terminar acima da barra fixa e do véu já na primeira
+   dobra. Dois degraus: janelas de 701–780px de altura (360×740, e o
+   Safari de um iPhone comum com as barras à vista) e as de até 700px
+   (iPhone SE/8 a 375×667, Androids de 640px). A 6SW+ já tem palco
+   baixo (2:1) e fica fora dos dois. */
+@media (max-width: 600px) and (min-height: 701px) and (max-height: 780px) {
+  #panel-comprar .shop-stage { aspect-ratio: 1.55; }
+}
+@media (max-width: 600px) and (max-height: 700px) {
+  #panel-comprar .shop { row-gap: 12px; }
+  #panel-comprar .shop-stage { aspect-ratio: 1.9; }
+  #panel-comprar .shop-stage__shot { top: 3%; }
 }
 
 /* Desktop BAIXO (1366×768, 1280×720): a coluna do texto aperta os
@@ -448,17 +494,31 @@
    rodapé já na primeira dobra. A largura não muda nada disso. */
 @media (min-width: 861px) and (max-height: 820px) {
   @container pg (min-width: 1040px) {
-    #panel-comprar .shop > .pg-head { gap: 10px; margin-bottom: 20px; }
-    #panel-comprar .pg-title { font-size: clamp(52px, 4.2cqi, 72px); }
-    #panel-comprar .shop-facts { margin-bottom: 16px; }
-    #panel-comprar .shop-fact { padding-block: 13px 14px; }
-    #panel-comprar .shop-fact dd { font-size: 32px; }
-    #panel-comprar .shop-ports { gap: 8px; margin-bottom: 20px; }
+    #panel-comprar .shop > .pg-head { margin-bottom: 22px; }
+    #panel-comprar .shop-facts { margin-bottom: 18px; }
+    #panel-comprar .shop-fact { --num: 34px; padding-block: 12px; }
+    #panel-comprar .shop-ports { gap: 8px; }
     #panel-comprar .shop-buy { gap: 9px; padding: 14px 16px; }
-    #panel-comprar .shop-cta { min-height: 58px; }
     #panel-comprar .shop-sep { margin-top: 2px; }
     #panel-comprar .shop-wa { min-height: 64px; padding-block: 10px; }
     #panel-comprar .shop-wa .pg-ring { width: 42px; }
+    /* O palco baixa junto (1,2 → 1,45): com ele alto, a legenda das
+       conexões (a última faixa do palco) descia para dentro do véu da
+       barra de baixo. Assim ela fica onde a da 6SW+ já ficava, legível e
+       acima das pílulas. A regra da 6SW+ (1,35) continua valendo. */
+    #panel-comprar .shop-stage { aspect-ratio: 1.45; }
+  }
+}
+/* Mais baixo ainda (1280×720): mais um aperto nos respiros, e o cartão
+   de compra E a legenda das conexões terminam acima da barra de baixo.
+   O palco acompanha sozinho (ele assenta na base do cartão). */
+@media (min-width: 861px) and (max-height: 740px) {
+  @container pg (min-width: 1040px) {
+    #panel-comprar .shop > .pg-head { margin-bottom: 16px; }
+    #panel-comprar .shop-facts { margin-bottom: 12px; }
+    #panel-comprar .shop-fact { padding-block: 9px; }
+    #panel-comprar .shop-buy { gap: 7px; padding-block: 12px; }
+    #panel-comprar .shop-wa { min-height: 58px; padding-block: 8px; }
   }
 }
 
@@ -472,8 +532,12 @@
   #panel-comprar .shop--6sw { grid-template-areas: "head head" "stage stage" "buy buy" "facts facts" "ports ports"; }
   #panel-comprar .shop--6sw .shop-stage { aspect-ratio: 2.5; }
 }
+/* No desktop a coluna do palco tem a altura do texto ao lado: a 6SW+
+   continua pousada no chão com a largura toda, e o que sobra em cima é
+   o feixe de luz caindo nela — o mesmo recorte das outras, sem buraco
+   entre o aparelho e a legenda das conexões. */
 @container pg (min-width: 1040px) {
-  #panel-comprar .shop--6sw .shop-stage { aspect-ratio: 1.7; }
+  #panel-comprar .shop--6sw .shop-stage { aspect-ratio: 1.35; }
 }
 
 @media (prefers-reduced-motion: reduce) {

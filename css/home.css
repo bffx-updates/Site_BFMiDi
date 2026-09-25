@@ -1,0 +1,277 @@
+/* ============================================================
+   BFMIDI — VITRINE · HOME/hero — área home
+   ------------------------------------------------------------
+   A HOME (#panel-home) é um PALCO composto por DADOS: nenhuma
+   regra aqui cita um modelo pelo índice. Carregado logo depois
+   de css/pages.css, lê os tokens (css/tokens.css) e o primitivo
+   de luz `.bf-stage` de lá. Vence style.css/refine.css pela
+   especificidade de `#panel-home` / `#hero-stage`, sem editar
+   aqueles arquivos.
+
+   COMO A CONTA FUNCIONA
+   O palco (#hero-stage) é um container de TAMANHO. Cada <figure>
+   recebe do main.js (HOME_MEDIA + models[].dimensions):
+     --home-ar   proporção do CORPO do pedal (a borda transparente
+                 do arquivo já descontada)
+     --home-rel  profundidade do modelo ÷ a do mais fundo (8SW+,
+                 14 cm) — a escala real entre os quatro
+     --crop-*    o recuo do corpo dentro do arquivo, em %
+   A caixa do corpo pousa no FUNDO do palco, logo acima do nome.
+   No desktop o palco fica no teto (--home-cap) e o corpo tem
+   altura min(palco × rel, largura ÷ ar): os quatro pedais dividem
+   a mesma linha de chão e o nome não se mexe na troca. Até 860px
+   o palco tem a altura do MAIS ALTO dos quatro naquela largura
+   (--home-tall, do main.js) e cada pedal o tamanho dele, pousado no
+   mesmo chão (ver a seção 2). A luz (.bf-stage) vem por figura — contraluz e chão
+   acompanham o tamanho de cada pedal — e o feixe âmbar mora uma
+   vez só no palco, então não pisca na troca.
+
+   A PÁGINA CABE NA JANELA. Com a HOME à vista o .app tem a altura
+   exata da janela; o .hero é uma coluna que ocupa o painel
+   inteiro, e o palco é o único item que ENCOLHE (flex-shrink).
+   Sobrou altura, o conjunto centra.
+
+   A luz do NOME (--wm-*, refine.css) está travada no desktop e
+   NÃO é tocada aqui. Abaixo de 900px ela passa a acompanhar a
+   largura da palavra (--wm-w, medida pelo main.js).
+   ============================================================ */
+
+
+/* ---------- 1. a página cabe na janela ---------------------- */
+
+/* Com a HOME à vista o .app tem a altura EXATA da janela (a dobra,
+   já descontado o zoom do desktop), e não só um piso: com min-height
+   ele crescia junto com o conteúdo e o palco nunca encolhia — em
+   1280×720 a página rolava 33px, e no celular deitado, até 200px. A
+   folga de baixo do .app (barra fixa + assinatura) continua dentro
+   dessa altura, porque todo o site é box-sizing: border-box.
+   O .panels do celular tinha ainda um piso próprio (100dvh − barras)
+   que, somado à barra utilitária, rolava ~110px para o vazio. */
+.app:has(#panel-home.is-on) {
+  min-height: 0;
+  height: var(--fold, 100svh);
+}
+/* O painel é item de grid do .panels: com o min-height automático a
+   trilha não descia abaixo do conteúdo, e o palco não encolhia. */
+#panel-home.is-on { min-height: 0; }
+@media (max-width: 600px) {
+  .app:has(#panel-home.is-on) { height: 100dvh; }
+  .app:has(#panel-home.is-on) > .panels { min-height: 0; }
+}
+
+#panel-home .hero {
+  --home-top: 8px;          /* do topo do painel ao palco        */
+  --home-bottom: 12px;      /* do micro-rótulo ao fim do painel  */
+  --home-name-gap: 16px;    /* do chão (base do pedal) ao nome   */
+  --home-kick-gap: 10px;    /* do nome ao micro-rótulo           */
+  --home-cap: clamp(200px, 40dvh, 360px);   /* teto do palco     */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  container: home-hero / inline-size;
+  width: 100%;
+  max-width: var(--frame);
+  min-height: 0;
+  margin-inline: auto;
+  padding: var(--home-top) var(--gutter) var(--home-bottom);
+  text-align: center;
+}
+@media (min-width: 601px) {
+  #panel-home .hero {
+    --home-top: 20px;
+    --home-bottom: 16px;
+    --home-name-gap: 18px;
+    --home-kick-gap: 14px;
+    --home-cap: clamp(280px, 46svh, 540px);
+  }
+}
+/* Desktop (zoom .8): as medidas são px CSS. O teto acompanha a
+   altura da janela — 54% dela, em px renderizados — para a
+   controladora ter presença de 1280×720 a 2560×1440. */
+@media (min-width: 861px) {
+  #panel-home .hero {
+    --home-top: 32px;
+    --home-bottom: 20px;
+    --home-name-gap: clamp(18px, 2.6vh, 30px);
+    --home-kick-gap: 16px;
+    --home-cap: clamp(420px, calc(54svh / var(--zoom, .8)), 1000px);
+  }
+}
+
+
+/* ---------- 2. o palco -------------------------------------- */
+
+/* DUAS REGRAS, uma por faixa:
+
+   · até 860px o palco tem a altura do pedal MAIS ALTO naquela largura
+     (--home-tall: o maior, entre os quatro, de "teto × escala real" e
+     "largura ÷ proporção"). Cada pedal fica com o tamanho que teria
+     sozinho e pousa no chão do palco: trocar de modelo não move o chão,
+     o nome nem o micro-rótulo — antes o palco assumia a altura do pedal
+     à vista e o nome pulava até 113px a cada troca. Os largos (6SW+)
+     ganham céu em cima, como no desktop. Sem o main.js, vale a conta
+     do modelo à vista (a 8SW+ do HTML);
+   · a partir de 861px o palco fica NO TETO e cada pedal ocupa a
+     fração real dele: o chão e o nome não se mexem na troca, e a
+     MICRO aparece menor que a 8SW+ porque é menor. */
+#panel-home .hero-stage {
+  --stage-reach: var(--home-top);   /* o feixe nasce no alto do painel */
+  flex: 0 1 var(--home-tall, min(calc(var(--home-cap) * var(--home-on-rel, 1)), calc(100cqw / var(--home-on-ar, 1.3927))));
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  container-type: size;
+}
+@media (min-width: 861px) {
+  #panel-home .hero-stage { flex-basis: var(--home-cap); }
+}
+/* A luz antiga do palco (halo azul com aresta dura no celular e a
+   sombra atrás da foto) sai: quem ilumina agora é o .bf-stage. */
+#panel-home .hero-stage::before,
+#panel-home .hero-stage::after { display: none; }
+
+#hero-stage > .shot {
+  /* Altura do corpo: até 860px, a do pedal sozinho (teto × escala real,
+     sem passar da largura) e nunca mais que o palco; no desktop, a
+     fração real do palco. */
+  --home-bh: min(100cqh, calc(var(--home-cap) * var(--home-rel, 1)), calc(100cqw / var(--home-ar, 1.5)));
+  --home-bw: calc(var(--home-bh) * var(--home-ar, 1.5));
+  /* O primitivo de luz, preso ao pedal desta figura. */
+  --stage-w: var(--home-bw);
+  --stage-base: 100%;
+  --stage-mid: calc(100% - var(--home-bh) / 2);
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform: none;
+  opacity: 0;
+  visibility: hidden;
+  /* A que SAI some de uma vez e a que entra acende (keyframes abaixo):
+     nunca as duas a meio tom, uma sobre a outra. Um fade de saída
+     também mostraria a foto velha mudando de tamanho, porque numa tela
+     estreita o palco já assumiu a altura do modelo novo. */
+  transition: none;
+}
+@media (min-width: 861px) {
+  #hero-stage > .shot { --home-bh: min(calc(100cqh * var(--home-rel, 1)), calc(100cqw / var(--home-ar, 1.5))); }
+}
+#hero-stage > .shot.is-on:not(.is-pending),
+#hero-stage > .shot.is-hold {
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+}
+/* Troca de modelo com a HOME à vista (data-swap, pelo main.js): a
+   foto nova chega do lado do modelo escolhido (--dir = ±1). */
+#hero-stage[data-swap] > .shot.is-on:not(.is-pending):not(.is-hold) {
+  animation: bf-home-in .5s var(--ease) both;
+}
+@keyframes bf-home-in {
+  from { opacity: 0; transform: translateX(calc(var(--dir, 1) * 18px)); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* A caixa do CORPO: pousa no chão, centrada. */
+#hero-stage .shot-body {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - var(--home-bw) / 2);
+  width: var(--home-bw);
+  height: var(--home-bh);
+}
+/* O arquivo inteiro, deslocado para o corpo ocupar a caixa. */
+#hero-stage .shot-body > img {
+  position: absolute;
+  left: calc(var(--crop-l, 0) / (100 - var(--crop-l, 0) - var(--crop-r, 0)) * -100%);
+  top: calc(var(--crop-t, 0) / (100 - var(--crop-t, 0) - var(--crop-b, 0)) * -100%);
+  width: calc(100% * 100 / (100 - var(--crop-l, 0) - var(--crop-r, 0)));
+  height: calc(100% * 100 / (100 - var(--crop-t, 0) - var(--crop-b, 0)));
+  max-width: none;
+  object-fit: fill;
+  transform: none;
+  /* A sombra de contato é do chão (.bf-stage__floor); aqui fica só
+     o descolamento curto e a aresta fria de cima, do desenho antigo. */
+  filter: drop-shadow(0 12px 14px #000a) drop-shadow(0 -1px 1px #a6c6ff18);
+}
+/* Modelo sem foto: o mapa de footswitches pousa no mesmo chão. */
+#hero-stage > .shot > .shot-map {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  height: min(100%, 300px);
+}
+
+
+/* ---------- 3. o nome e o micro-rótulo ---------------------- */
+
+#panel-home .hero-wordmark {
+  flex: none;
+  margin: var(--home-name-gap) 0 0;
+}
+/* Sem JS e sem texto, a luz sozinha seria um clarão sem sentido. */
+#panel-home .hero-wordmark:has(.hero-wordmark-text:empty) { display: none; }
+
+/* "CONTROLADORAS MIDI DE PALCO" + etiqueta do chassi (a gramática do
+   micro-rótulo de página, .bf-kicker em pages.css). A altura é
+   reservada antes de o texto chegar, para nada pular. */
+#panel-home .hero-kicker {
+  flex: none;
+  justify-content: center;
+  min-height: calc(var(--t-min) * 1.3 + 7px);
+  margin: var(--home-kick-gap) 0 0;
+  position: relative;       /* acima do campo de luz do nome */
+}
+#panel-home .hero-kicker:empty { visibility: hidden; }
+/* Abaixo de ~352px o rótulo quebra em duas linhas (a etiqueta desce):
+   a reserva acompanha, para o conjunto não subir quando o texto chega. */
+@container home-hero (max-width: 352px) {
+  #panel-home .hero-kicker:empty { min-height: calc(var(--t-min) * 2.6 + 13px); }
+}
+/* O rótulo fica sobre o brilho do nome: um halo da cor do fundo em
+   volta das letras segura o contraste (≥ 4,5:1) onde a luz é mais
+   forte, sem caixa nem fundo atrás. */
+#panel-home .hero-kicker > span {
+  text-shadow: 0 0 2px var(--bg), 0 0 6px var(--bg), 0 0 12px var(--bg), 0 0 22px #080b10b3;
+}
+
+/* Os raios do nome só giram com a HOME em cena. (Painel fora de cena
+   já é display:none; a regra segura o caso de ele continuar pintado
+   por uma transição.) */
+.app:not(:has(#panel-home.is-on)) #panel-home :is(.hero-rays, .hero-rays-field, .hero-rays-field > i) {
+  animation-play-state: paused;
+}
+
+
+/* ---------- 4. nome legível abaixo de 900px ------------------
+   O campo de luz tinha lado fixo (150px, com teto de 34vw) e a
+   ponta das palavras largas caía no escuro: a 768, "MICRO" lia
+   "ICR". Aqui o lado do campo sai da largura da palavra (--wm-w),
+   então a luz cobre o nome inteiro em qualquer modelo. Os valores
+   do desktop não passam por aqui. */
+@media (max-width: 900px) {
+  #panel-home .hero-wordmark {
+    --wm-field: calc(var(--wm-w, 300px) / var(--wm-stretch) * 4);
+  }
+  #panel-home .hero-rays { width: var(--wm-field); }
+}
+@media (max-width: 600px) {
+  #panel-home .hero-wordmark {
+    --wm-font: min(18vw, 88px);
+    transform: none;          /* o nome não sobe mais sobre o palco */
+  }
+}
+
+
+/* ---------- 5. celular deitado -------------------------------
+   A palavra já sai de cena (refine.css). O palco fica com a altura
+   que sobra e o micro-rótulo, que diz o que é aquilo, continua. */
+@media (max-height: 500px) and (orientation: landscape) {
+  #panel-home .hero {
+    --home-top: 4px;
+    --home-bottom: 4px;
+    --home-kick-gap: 8px;
+  }
+}

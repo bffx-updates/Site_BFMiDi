@@ -1,158 +1,253 @@
 /* ============================================================
    BFMIDI — VITRINE · PAINEL INFO (Detalhes)
    ------------------------------------------------------------
-   A mesma língua da página de Apps (css/apps.css) e das peças
-   comuns (css/pages.css): cabeçalho `.pg-head`, a controladora
-   no PALCO — luz âmbar vindo de cima, contraluz azul fria
-   atrás — com as cotas em desenho técnico, os quatro números
-   da ficha em cartões grafite com o anel de LED de 3 arcos, e
-   a faixa dos anéis de LED como o momento de destaque.
+   A língua comum dos painéis (css/pages.css) aplicada à ficha
+   do modelo: cabeçalho `pgHead`, a controladora no ESTÚDIO ÚNICO
+   (`.bf-stage` — feixe âmbar de cima, contraluz azul atrás, poça
+   e sombra de contato no chão) com as cotas em desenho técnico,
+   os quatro números da ficha lidos como painel de instrumento,
+   o cartão dos anéis de LED e o cartão de PRÓXIMO PASSO.
 
-   Marcação em js/main.js (`renderInfo` e vizinhos). Um template
-   para os quatro modelos; `.inf--wide` (a 6SW+, 26 × 9 cm) só
-   troca a composição.
+   Marcação em js/main.js (`renderInfo` e vizinhos). UM template
+   para os quatro modelos, sempre na mesma ordem:
+
+     coluna do texto ...... cabeçalho → nota "Recursos da …"
+                            (quando existe) → cartão dos anéis
+     coluna da foto ....... a controladora no estúdio
+     embaixo .............. os quatro números → próximo passo
+
+   `.inf--wide` (a 6SW+, 26 × 9 cm) só dá mais largura à coluna
+   da foto. As duas colunas TERMINAM JUNTAS: a base do último
+   bloco da coluna do texto encosta na base da foto (o espaço
+   das cotas embaixo da foto vira margem do bloco, --room-b).
+
+   Notebook (janela ≥ 861px e baixa): a primeira dobra precisa
+   mostrar a fileira de números acima das pílulas da barra de
+   baixo. Quando a coluna do texto não cabe nisso, o cartão dos
+   anéis desce para depois dos números, na largura toda (com
+   nota: abaixo de 1000px de altura; sem nota, abaixo de 900).
+   A foto encolhe com a altura da janela (--shot-h sai de
+   --fold).
 
    O layout é decidido por CONTAINER QUERY (`pg`, o
    .panel-inner) — no desktop o site aplica `html { zoom: .8 }`
    e a largura que importa é a do layout. A grade mora no filho
    `.inf-grid`, porque um container não responde à própria
-   consulta. Texto pequeno sai de `--pg-min` (11px no celular,
-   14px no desktop = 11,2px renderizados).
+   consulta. Tamanhos, raios, ritmo e cor saem de tokens.css;
+   o respiro de cima do painel é do sistema (--pg-top).
 
-   As regras antigas de #panel-info no refine.css (spec-strip,
-   split, panel-shot) não casam mais com nada: este painel não
-   usa .split, .split-media nem .panel-shot.
+   COR = ASSUNTO: footswitches var(--led-midi), presets
+   var(--led-presets), tela e anéis de LED var(--led-screen),
+   LIVE var(--led-live). A cor mora só no anel, no brilho de
+   canto do cartão (--c) e na arte; rótulos ficam neutros. As
+   cores dos footswitches da faixa de LED são as do PRODUTO (o
+   que as fotos mostram acesas), não código de assunto.
    ============================================================ */
 
 #panel-info .panel-inner.inf {
   width: 100%;
-  max-width: 1720px;
   margin-inline: auto;
-  padding: 18px 16px 30px;
+  padding-inline: 16px;
+  padding-bottom: 30px;
+}
+@media (min-width: 601px) {
+  #panel-info .panel-inner.inf { padding-inline: 28px; padding-bottom: 40px; }
 }
 @media (min-width: 861px) {
-  #panel-info .panel-inner.inf { padding: 30px 48px 44px; }
-}
-@media (min-width: 861px) and (max-width: 1100px) {
-  #panel-info .panel-inner.inf { padding-inline: 36px; }
+  #panel-info .panel-inner.inf { padding-inline: 48px; padding-bottom: 44px; }
 }
 
 /* ---------- grade ------------------------------------------- */
 
 #panel-info .inf-grid {
+  --room-r: 44px;             /* espaço da cota vertical, à direita */
+  --room-b: 44px;             /* espaço da cota horizontal, embaixo */
+  --dim-x: 22px;              /* onde corre a linha de cota vertical */
+  --dim-y: 22px;              /* onde corre a linha de cota horizontal */
+  /* Teto de altura da foto (px de layout). Sai da altura da janela: o
+     que sobra depois do topo, das cotas, do respiro e de uma espiada na
+     fileira de números. Em tela alta fica em 560. */
+  --shot-h: clamp(280px, calc(var(--fold) - 606px), 560px);
+  /* Largura da coluna da foto, para o estúdio achar a ALTURA da foto
+     (css não mede, mas a grade é conhecida): coluna única = o container
+     inteiro; desktop = a fração da coluna depois do vão. */
+  --col-w: 100cqi;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "head" "stage" "specs" "led";
-  gap: 30px;
+  row-gap: var(--gap-section);
   min-width: 0;
 }
-#panel-info .inf-head { grid-area: head; min-width: 0; }
+#panel-info .inf-grid:has(> .inf-stage:not(.has-dims)) { --room-r: 0px; --room-b: 0px; }
+#panel-info .inf-head { min-width: 0; }
 
-/* Desktop, foto "em pé" (8SW+, NANO+, MICRO): o texto e a faixa de LED
-   na coluna da esquerda, a controladora no palco à direita — a mesma
-   leitura da página de Apps — e os quatro números numa fileira embaixo. */
+/* Coluna única, na ordem do DOM (cabeçalho, foto, nota, números, anéis,
+   próximo passo) — sem áreas nomeadas: uma área vazia (a 8SW+ não tem
+   nota) somaria dois vãos. A nota é a legenda da foto, logo embaixo das
+   cotas, e os cartões (números e anéis) formam uma pilha só, no passo da
+   grade. */
+#panel-info .inf-note { margin-top: calc(18px - var(--gap-section)); }
+#panel-info .inf-led { margin-top: calc(var(--gap-grid) - var(--gap-section)); }
+
+/* Desktop: texto à esquerda, a controladora no estúdio à direita. A
+   figura ocupa a altura inteira da coluna do texto e a foto fica no PÉ
+   dela: a base da foto encosta na base do último bloco do texto, e o que
+   sobra em cima é o feixe de luz do estúdio caindo no pedal. */
 @container pg (min-width: 1100px) {
   #panel-info .inf-grid {
+    --room-r: 76px;
+    --room-b: 60px;
+    --dim-x: 34px;
+    --dim-y: 32px;
+    --col-gap: clamp(40px, 4cqi, 80px);
+    --col-w: calc((100cqi - var(--col-gap)) * .55);
     grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto auto;
     grid-template-areas:
       "head  stage"
+      "note  stage"
       "led   stage"
-      "specs specs";
-    column-gap: clamp(40px, 4cqi, 80px);
-    row-gap: 36px;
-  }
-  #panel-info .inf-head { align-self: end; }
-  #panel-info .inf-led { align-self: start; }
-  #panel-info .inf-stage { align-self: center; }
-
-  /* 6SW+: a foto é três vezes mais larga que alta. Ao lado do título ela
-     ganha a coluna maior; a faixa de LED desce e atravessa a página. */
-  #panel-info .inf--wide .inf-grid {
-    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      "head  stage"
       "specs specs"
-      "led   led";
-    align-items: center;
+      "next  next";
+    column-gap: var(--col-gap);
+    row-gap: 0;
   }
-  #panel-info .inf--wide .inf-head { align-self: center; }
+  #panel-info .inf--wide .inf-grid {
+    --col-w: calc((100cqi - var(--col-gap)) * .61);
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  }
+  #panel-info .inf-head { grid-area: head; align-self: start; }
+  #panel-info .inf-note { grid-area: note; align-self: start; margin-top: 28px; }
+  /* O cartão dos anéis desce até a base da FOTO: a margem de baixo é o
+     espaço das cotas, que a foto tem embaixo dela. */
+  #panel-info .inf-led { grid-area: led; align-self: end; margin: 28px 0 var(--room-b); }
+  #panel-info .inf-stage { grid-area: stage; align-self: stretch; }
+  #panel-info .inf-specs { grid-area: specs; margin-top: var(--gap-section); }
+  #panel-info .inf-next { grid-area: next; margin-top: var(--gap-section); }
 }
 
-/* ---------- palco + cotas ----------------------------------- */
+/* Notebook: a primeira dobra precisa mostrar a fileira de números acima
+   das pílulas da barra de baixo. Quando a coluna do texto não cabe nisso
+   ao lado da foto, o cartão dos anéis passa para depois dos números, na
+   largura toda, e a nota fica logo abaixo do cabeçalho (28px), como na
+   6SW+ — no pé da coluna ela ficava solta, com ~100px de vazio entre o
+   lead e ela, e a coluna mudava de desenho a cada modelo; a sobra de
+   altura vai para baixo da nota. Com nota (6SW+, NANO+, MICRO) isso vale abaixo de
+   1000px de altura; sem nota (8SW+: cabeçalho + anéis cabem ao lado da
+   foto de 900 para cima), abaixo de 900px. A ordem das peças é a mesma. */
+@media (min-width: 861px) and (max-height: 999px) {
+  @container pg (min-width: 1100px) {
+    #panel-info .inf.has-note .inf-grid {
+      grid-template-rows: auto 1fr auto auto auto;
+      grid-template-areas:
+        "head  stage"
+        "note  stage"
+        "specs specs"
+        "led   led"
+        "next  next";
+    }
+    /* O respiro de baixo é o mesmo de cima: quando a nota é mais alta que
+       a foto (a 6SW+, larga e baixa), é ela que encosta nos números.
+       A margem de cima dos números não vale aqui (a regra base dos
+       .inf-specs, mais abaixo, a zera). */
+    #panel-info .inf.has-note .inf-note { align-self: start; margin: 28px 0 28px; }
+    #panel-info .inf.has-note .inf-led {
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      align-self: stretch;
+      column-gap: 48px;
+      margin: var(--gap-grid) 0 0;
+    }
+  }
+}
+@media (min-width: 861px) and (max-height: 899px) {
+  @container pg (min-width: 1100px) {
+    #panel-info .inf .inf-grid {
+      grid-template-rows: auto 1fr auto auto auto;
+      grid-template-areas:
+        "head  stage"
+        "note  stage"
+        "specs specs"
+        "led   led"
+        "next  next";
+    }
+    #panel-info .inf .inf-note { align-self: start; margin: 28px 0 28px; }
+    #panel-info .inf .inf-led {
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      align-self: stretch;
+      column-gap: 48px;
+      margin: var(--gap-grid) 0 0;
+    }
+  }
+}
 
+/* ---------- estúdio + foto + cotas -------------------------- */
+
+/* A figura é a caixa do estúdio: a coluna inteira. A moldura `.inf-shot`
+   (a foto + o espaço das cotas) fica centrada no pé dela. */
 #panel-info .inf-stage {
-  --room-r: 56px;             /* espaço da cota vertical, à direita */
-  --room-b: 46px;             /* espaço da cota horizontal, embaixo */
-  --dim-x: 26px;              /* onde corre a linha de cota vertical */
-  --dim-y: 24px;              /* onde corre a linha de cota horizontal */
-  --shot-h: 560px;            /* teto de altura da foto (layout) */
-  --dim-line: #b9c7d8a6;
-  grid-area: stage;
   position: relative;
   isolation: isolate;
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   min-width: 0;
   margin: 0;
-  padding-top: 8px;
-}
-#panel-info .inf-stage:not(.has-dims) { --room-r: 0px; --room-b: 0px; }
-
-/* Luz. Duas camadas, só gradiente, dentro da caixa do palco: o feixe
-   âmbar vindo de cima (os mesmos degraus do feixe da página de Apps) e a
-   névoa azul fria atrás do corpo. Nada aqui sai da caixa na horizontal. */
-#panel-info .inf-stage__lights { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-#panel-info .inf-stage__lights::before,
-#panel-info .inf-stage__lights::after { content: ''; position: absolute; inset: 0; }
-#panel-info .inf-stage__lights::before {
-  --bw: 44deg;
-  --b0: calc(180deg - var(--bw) / 2);
-  background:
-    radial-gradient(ellipse 30% 9% at 50% 6%, #ffc48a2e 0%, transparent 70%),
-    conic-gradient(from var(--b0) at 50% -30%,
-      transparent 0deg,
-      #ffae6a14 calc(var(--bw) * .184),
-      #ffc48a33 calc(var(--bw) * .368),
-      #ffd3a247 calc(var(--bw) * .5),
-      #ffc48a33 calc(var(--bw) * .632),
-      #ffae6a14 calc(var(--bw) * .816),
-      transparent var(--bw));
-  -webkit-mask-image: linear-gradient(180deg, #0000 0%, #000 8%, #000 58%, transparent 96%);
-          mask-image: linear-gradient(180deg, #0000 0%, #000 8%, #000 58%, transparent 96%);
-}
-#panel-info .inf-stage__lights::after {
-  background:
-    radial-gradient(ellipse 52% 40% at 50% 52%, #3d8bff33 0%, #3d8bff14 48%, transparent 74%),
-    radial-gradient(ellipse 30% 22% at 82% 36%, #3d8bff1a 0%, transparent 72%),
-    radial-gradient(ellipse 44% 10% at 50% 94%, #ff8a3d17 0%, transparent 72%);
-}
-
-#panel-info .inf-shot,
-#panel-info .inf-note {
-  width: min(100%, calc(var(--shot-h) * var(--arn, 1.4) + var(--room-r)));
 }
 #panel-info .inf-shot {
   position: relative;
+  width: min(100%, calc(var(--shot-h) * var(--arn, 1.4) + var(--room-r)));
+  margin-inline: auto;
   padding: 0 var(--room-r) var(--room-b) 0;
 }
+
+/* O ESTÚDIO ÚNICO (`.bf-stage`, css/pages.css) atrás da foto. A caixa
+   cobre a figura, um pouco acima dela (--st-t) e abaixo da base da foto
+   (--st-e, onde a sombra de contato se espalha), e as variáveis do
+   primitivo ACHAM o pedal dentro dela, sem JS:
+     largura .... a mesma conta da moldura, menos o espaço da cota
+     centro x ... meio da coluna, menos meia cota (a moldura é centrada)
+     base ....... --st-e acima do fim da caixa
+     altura ..... --ph, a largura da foto dividida pela proporção
+   O feixe âmbar cobre a caixa inteira, então no desktop ele desce do
+   alto da coluna até o pedal. A contraluz é presa à FOTO (a caixa dela é
+   a altura da foto e mais metade, centrada no pedal): numa caixa alta, o
+   raio de 50% da caixa inteira viraria uma coluna azul. Tudo fica dentro
+   da coluna na horizontal: nada vaza da página. */
+#panel-info .inf-studio {
+  --st-t: 20px;
+  --st-e: calc(var(--room-b) + 28px);
+  --stage-w: calc(min(100%, var(--shot-h) * var(--arn, 1.4) + var(--room-r)) - var(--room-r));
+  --ph: calc((min(var(--col-w), var(--shot-h) * var(--arn, 1.4) + var(--room-r)) - var(--room-r)) / var(--arn, 1.4));
+  --stage-x: calc(50% - var(--room-r) / 2);
+  --stage-base: calc(100% - var(--st-e));
+  --stage-mid: calc(100% - var(--st-e) - var(--ph) / 2);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--st-t) * -1);
+  bottom: calc(var(--room-b) - var(--st-e));
+  pointer-events: none;
+}
+#panel-info .inf-studio > .bf-stage__rim {
+  --stage-mid: 50%;
+  top: auto;
+  bottom: calc(var(--st-e) - var(--ph) * .25);
+  height: calc(var(--ph) * 1.5);
+}
+
 /* A caixa tem a proporção do CORPO do pedal (main.js); a imagem, maior
    que ela, leva as margens transparentes do arquivo para fora do recorte.
-   A sombra é da caixa: ela é o retângulo do chassi. */
+   A luz é do estúdio; aqui fica só o filete de cima pegando o feixe âmbar
+   e a sombra curta do chassi. */
 #panel-info .inf-shot__photo {
   position: relative;
   overflow: hidden;
   border-radius: 1.4% / 2%;
-  /* Chão, contraluz azul fria em volta do chassi e a borda de cima
-     pegando a luz âmbar que vem do alto. */
   box-shadow:
-    0 34px 48px -26px #000,
-    0 0 90px -18px #3d8bff4d,
-    0 -18px 60px -34px #ffb56a66,
-    0 -1px 0 #ffd9b02e;
+    0 -1px 0 #ffd9b033,
+    0 0 0 1px #ffffff0a,
+    0 22px 30px -24px #000;
 }
 #panel-info .inf-shot__img { position: absolute; display: block; }
 #panel-info .inf-shot__img img,
@@ -166,8 +261,9 @@
 #panel-info .inf-shot__photo.is-free { overflow: visible; box-shadow: none; }
 
 /* Cotas: linhas de chamada que partem do chassi, linha de cota com setas
-   e a medida numa etiqueta branca de serigrafia no meio da linha. */
-#panel-info .inf-dim { position: absolute; color: var(--dim-line); pointer-events: none; }
+   e a medida numa etiqueta branca de serigrafia no meio da linha. Ficam
+   por cima da luz (a moldura vem depois do estúdio na ordem de pintura). */
+#panel-info .inf-dim { position: absolute; color: #b9c7d8a6; pointer-events: none; }
 #panel-info .inf-dim i { position: absolute; display: block; background: currentColor; }
 #panel-info .inf-dim i::before,
 #panel-info .inf-dim i::after { content: ''; position: absolute; width: 0; height: 0; }
@@ -176,13 +272,13 @@
 #panel-info .inf-dim b {
   position: absolute;
   padding: 5px 7px 4px;
-  border-radius: 3px;
-  background: #e6eaf0;
-  color: #0b0d11;
-  font: 700 12px/1 var(--font-mono);
+  border-radius: var(--r-tag);
+  background: var(--tag-bg);
+  color: var(--tag-ink);
+  font: 700 var(--pg-min)/1 var(--font-mono);
   letter-spacing: .04em;
   white-space: nowrap;
-  box-shadow: 0 1px 0 #000a, 0 0 0 4px #0a0e14, inset 0 -1px 0 #0000001f;
+  box-shadow: 0 1px 0 #000a, 0 0 0 4px var(--bg), inset 0 -1px 0 #0000001f;
 }
 
 #panel-info .inf-dim--w { left: 0; right: var(--room-r); bottom: 0; height: var(--room-b); }
@@ -212,7 +308,7 @@
 /* Celular estreito: a medida vertical gira e corre junto da linha, como
    no desenho técnico — são ~20px a mais de foto numa tela de 320. */
 @container pg (max-width: 519px) {
-  #panel-info .inf-stage { --room-r: 38px; --dim-x: 20px; }
+  #panel-info .inf-grid { --room-r: 34px; --dim-x: 18px; }
   #panel-info .inf-dim--h b {
     padding: 7px 5px 6px;
     writing-mode: vertical-rl;
@@ -220,50 +316,47 @@
   }
 }
 
-/* Nota do modelo ("Recursos da …") como legenda da foto. Sem nota, a
-   legenda existe só para o leitor de tela ouvir as medidas. */
+/* Modelo sem foto: o mapa de footswitches no mesmo palco. */
+#panel-info .inf-stage--map .shot-map { width: min(100%, 520px); margin-inline: auto; border-radius: var(--r-well); }
+
+/* ---------- nota do modelo ("Recursos da …") ---------------- */
+
 #panel-info .inf-note {
-  justify-self: center;
-  margin: 0;
-  padding: 2px var(--room-r) 0 16px;
-  border-left: 2px solid #ff792f8c;
-}
-#panel-info .inf-note.is-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  border: 0;
+  min-width: 0;
+  max-width: 40em;
+  padding: 2px 0 2px 16px;
+  border-left: 2px solid var(--line-2);
 }
 #panel-info .inf-note__title {
-  margin: 0 0 6px;
-  color: #ffc196;
+  margin: 0 0 8px;
+  color: var(--ink-2);
   font: 600 var(--pg-min)/1.3 var(--font-mono);
-  letter-spacing: .14em;
+  letter-spacing: var(--ls-micro);
   text-transform: uppercase;
 }
 #panel-info .inf-note__body {
   margin: 0;
-  color: var(--pg-ink-2);
+  color: var(--ink-2);
   font-size: 15px;
   line-height: 1.55;
   text-wrap: pretty;
 }
 
-/* Modelo sem foto: o mapa de footswitches no mesmo palco. */
-#panel-info .inf-stage--map .shot-map { width: min(100%, 520px); border-radius: 18px; }
-
 /* ---------- os quatro números ------------------------------- */
 
+/* Cada cartão ocupa QUATRO linhas da grade da fileira (rótulo, número,
+   frase, descrição) e as herda por subgrid: as quatro linhas de uma
+   fileira têm a mesma altura em todos os cartões, então os números e as
+   frases ficam alinhados como os mostradores de um rack. A distância
+   entre cartões de cima e de baixo é a margem de cada um (a grade tem
+   row-gap 0, senão o vão cairia também entre as linhas internas); a
+   margem negativa da lista devolve a da última fileira. */
 #panel-info .inf-specs {
-  grid-area: specs;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 14px;
-  margin: 0;
+  column-gap: var(--gap-grid);
+  row-gap: 0;
+  margin: 0 0 calc(var(--gap-grid) * -1);
   padding: 0;
   list-style: none;
 }
@@ -271,91 +364,103 @@
   #panel-info .inf-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 /* Quatro numa fileira só com folga (layout ≥ 1400px): abaixo disso os
-   rótulos longos ("Comportamentos em LIVE") quebram e os cartões perdem o
-   alinhamento das cabeças. */
-@container pg (min-width: 1100px) {
-  #panel-info .inf-specs { gap: 18px; }
-}
+   rótulos longos ("Comportamentos em LIVE") quebram. */
 @container pg (min-width: 1400px) {
   #panel-info .inf-specs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
+/* O cartão NÃO pode ser container (`container-type`): a contenção de
+   layout que ele traz faz o subgrid valer `none`. */
 #panel-info .inf-spec {
-  container: infspec / inline-size;
+  --art-h: 68px;
+  grid-row: span 4;
   display: grid;
+  grid-template-rows: subgrid;
   grid-template-columns: auto minmax(0, 1fr);
   grid-template-areas:
     "label label"
     "value art"
     "title title"
     "desc  desc";
-  align-items: end;
+  row-gap: 0;
   column-gap: 12px;
-  padding: 18px 20px 22px;
-  border-radius: 22px;
+  margin: 0 0 var(--gap-grid);
+}
+@supports not (grid-template-rows: subgrid) {
+  #panel-info .inf-spec { grid-row: auto; grid-template-rows: none; }
 }
 #panel-info .inf-spec__label {
   grid-area: label;
+  align-self: start;
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
   margin: 0;
-  color: var(--pg-ink-2);
-  font: 600 var(--pg-min)/1.3 var(--font-mono);
-  letter-spacing: .12em;
-  text-transform: uppercase;
 }
 #panel-info .inf-spec__label .pg-ring { width: 38px; }
 #panel-info .inf-spec__value {
   grid-area: value;
-  margin: 18px 0 0;
-  color: #f6f9fc;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-variation-settings: 'wdth' 112;
-  font-size: clamp(56px, 25cqi, 108px);
-  line-height: .86;
-  letter-spacing: -.045em;
+  align-self: end;
+  margin: 12px 0 0;
+  color: var(--ink);
+  font-size: 64px;
   white-space: nowrap;
-  text-shadow: 0 0 34px color-mix(in srgb, var(--c) 34%, transparent);
+  text-shadow: 0 0 30px color-mix(in srgb, var(--c) 30%, transparent);
 }
+/* A arte mora numa caixa de altura fixa, rente à base do número: a linha
+   do número tem a mesma altura com a arte que for. */
 #panel-info .inf-spec__art {
   grid-area: art;
-  justify-self: end;
   align-self: end;
-  width: min(100%, clamp(84px, 36cqi, 156px));
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  min-width: 0;
+  height: var(--art-h);
+  margin-top: 14px;
   color: var(--c);
 }
-#panel-info .inf-spec__art svg { display: block; width: 100%; height: auto; overflow: visible; }
+#panel-info .inf-spec__art svg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  overflow: visible;
+}
 #panel-info .inf-spec__title {
   grid-area: title;
-  margin: 18px 0 0;
-  color: var(--pg-ink);
+  align-self: start;
+  margin: 16px 0 0;
+  color: var(--ink);
   font: 700 19px/1.22 var(--font-display);
+  font-variation-settings: 'wdth' var(--wdth-phrase);
   letter-spacing: -.012em;
   text-wrap: balance;
 }
 #panel-info .inf-spec__desc,
-#panel-info .inf-spec__tags { grid-area: desc; margin: 8px 0 0; }
+#panel-info .inf-spec__tags { grid-area: desc; align-self: start; margin: 8px 0 0; }
 #panel-info .inf-spec__desc {
-  color: var(--pg-ink-2);
+  color: var(--ink-2);
   font-size: 15px;
   line-height: 1.5;
   text-wrap: pretty;
 }
-#panel-info .inf-spec__tags { margin-top: 14px; gap: 7px 6px; }
+#panel-info .inf-spec__tags { margin-top: 10px; gap: 7px 6px; }
 
 /* Artes. O footswitch pende um pouco, como na foto de catálogo. */
-#panel-info .inf-spec--switches .inf-spec__art { width: min(100%, clamp(76px, 28cqi, 120px)); }
 #panel-info .inf-spec--switches .inf-sw { transform: rotate(-10deg); filter: drop-shadow(0 12px 10px #000b); }
 
+#panel-info .inf-matrix { width: min(100%, 150px); height: auto; max-height: 100%; }
+#panel-info .inf-spec__art .inf-matrix { height: auto; }
 #panel-info .inf-matrix rect { fill: #ffffff10; stroke: #ffffff1c; stroke-width: 1; }
 #panel-info .inf-matrix rect.is-bank { fill: color-mix(in srgb, var(--c) 30%, #0000); stroke: color-mix(in srgb, var(--c) 55%, #0000); }
 #panel-info .inf-matrix rect.is-on { fill: var(--c); stroke: #fff6; filter: drop-shadow(0 0 5px var(--c)); }
 
 #panel-info .inf-screen {
   display: block;
+  height: 100%;
+  max-width: 100%;
   padding: 5px;
   border-radius: 10px;
   background: #06090d;
@@ -363,6 +468,8 @@
 }
 #panel-info .inf-screen__glass {
   display: block;
+  height: 100%;
+  max-width: 100%;
   border-radius: 6px;
   background-color: #000;
   background-repeat: no-repeat;
@@ -370,33 +477,30 @@
 
 #panel-info .inf-wave { filter: drop-shadow(0 0 7px color-mix(in srgb, var(--c) 55%, transparent)); }
 
-/* ---------- faixa dos anéis de LED -------------------------- */
+/* ---------- cartão dos anéis de LED ------------------------- */
 
 #panel-info .inf-led {
-  --c: #2f8cff;
-  grid-area: led;
+  --c: var(--led-screen);
   container: infled / inline-size;
   display: grid;
-  gap: 18px;
-  padding: 22px 20px 20px;
-  border-radius: 24px;
+  gap: 16px;
 }
 #panel-info .inf-led__copy { min-width: 0; }
 #panel-info .inf-led__title {
   margin: 0;
-  color: #f5f8fc;
+  color: var(--title-ink);
   font-family: var(--font-display);
   font-weight: 800;
-  font-variation-settings: 'wdth' 108;
-  font-size: clamp(24px, 7cqi, 30px);
+  font-variation-settings: 'wdth' var(--wdth-title);
+  font-size: var(--t-card);
   line-height: 1.08;
   letter-spacing: -.03em;
   text-wrap: balance;
 }
 #panel-info .inf-led__text {
   max-width: 36em;
-  margin: 10px 0 0;
-  color: var(--pg-ink-2);
+  margin: 8px 0 0;
+  color: var(--ink-2);
   font-size: 15px;
   line-height: 1.55;
   text-wrap: pretty;
@@ -405,26 +509,28 @@
   display: grid;
   grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
   justify-items: center;
-  gap: 12px 8px;
+  gap: 10px 8px;
   margin: 0;
-  padding: 16px 12px;
+  padding: 12px;
   list-style: none;
 }
-#panel-info .inf-led__row li { width: 100%; max-width: 96px; }
-#panel-info .inf-led__row .inf-sw { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 8px #000a); }
-#panel-info .inf-sw__ring--off { opacity: .5; }
+#panel-info .inf-led__row li { width: 100%; max-width: 76px; }
 @container infled (min-width: 440px) {
-  #panel-info .inf-led__row { grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); padding: 18px 16px; }
-}
-/* Faixa inteira (6SW+ no desktop): texto e anéis lado a lado. A regra
-   pergunta ao `pg` e não ao `infled`: a faixa é o próprio container, e um
-   container não responde à própria consulta. */
-@container pg (min-width: 1100px) {
-  #panel-info .inf--wide .inf-led { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: center; column-gap: 48px; padding: 28px 32px; }
+  #panel-info .inf-led__row { grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); padding: 14px 16px; }
+  #panel-info .inf-led__row li { max-width: 84px; }
 }
 
+/* O footswitch em duas camadas (main.js, switchArt): o SVG de base e o
+   <span> com o anel aceso por cima, que é o que apaga e acende. */
+#panel-info .inf-sw-stack { position: relative; display: block; }
+#panel-info .inf-sw-stack > .inf-sw { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 8px #000a); }
+#panel-info .inf-sw__lit { position: absolute; inset: 0; display: block; }
+#panel-info .inf-sw__glow { display: block; width: 100%; height: 100%; overflow: visible; }
+#panel-info .inf-sw__ring--off { opacity: .5; }
+
 /* Cada footswitch apaga e acende na cor de desligado, um depois do
-   outro: o intervalo divide o ciclo pela quantidade de pés. Só opacidade. */
+   outro: o intervalo divide o ciclo pela quantidade de pés. Só opacidade
+   de elemento HTML (vai para o compositor). */
 @keyframes inf-led-toggle {
   0%, 14%   { opacity: 1; }
   19%, 45%  { opacity: 0; }
@@ -438,93 +544,33 @@
   #panel-info .inf-led .inf-sw__lit { animation: none; }
 }
 
-/* ---------- desktop (layout ≥ 700px de container) ----------- */
+/* ---------- próximo passo ----------------------------------- */
 
+
+/* ---------- degraus ----------------------------------------- */
+
+@container pg (min-width: 430px) {
+  #panel-info .inf-spec { --art-h: 88px; }
+  #panel-info .inf-spec__value { font-size: 76px; }
+}
 @container pg (min-width: 700px) {
-  #panel-info .inf-grid { gap: 36px; }
-  #panel-info .inf-spec { padding: 22px 24px 26px; }
-  #panel-info .inf-spec__title { font-size: 21px; }
+  #panel-info .inf-spec__label .pg-ring { width: 42px; }
+  #panel-info .inf-spec__title { font-size: 20px; }
   #panel-info .inf-spec__desc { font-size: 16px; }
-  #panel-info .inf-led { padding: 26px 26px 24px; }
-  #panel-info .inf-led__title { font-size: clamp(26px, 5cqi, 40px); }
+  #panel-info .inf-led__text { font-size: 16px; }
+  #panel-info .inf-note__body { font-size: 16px; }
+}
+@media (min-width: 861px) {
+  #panel-info .inf-spec { --art-h: 96px; }
+  #panel-info .inf-spec__value { font-size: 88px; margin-top: 16px; }
+  #panel-info .inf-spec__art { margin-top: 16px; }
+  #panel-info .inf-spec__title { font-size: var(--t-card-sub); margin-top: 18px; }
+  #panel-info .inf-spec__desc { font-size: 17px; }
   #panel-info .inf-led__text { font-size: 17px; }
   #panel-info .inf-note__body { font-size: 17px; }
-  #panel-info .inf-dim b { font-size: 14px; }
 }
 @container pg (min-width: 1100px) {
-  #panel-info .inf-stage { --room-r: 76px; --room-b: 60px; --dim-x: 34px; --dim-y: 32px; }
-  #panel-info .inf-dim b { font-size: 16px; padding: 6px 9px 5px; }
   #panel-info .inf-spec__label .pg-ring { width: 44px; }
-  #panel-info .inf-spec__title { font-size: 22px; }
-  #panel-info .inf-spec__desc { font-size: 17px; }
   #panel-info .inf-led__text { font-size: 18px; }
   #panel-info .inf-note__body { font-size: 18px; }
-}
-@container pg (min-width: 1400px) {
-  #panel-info .inf-led__text { font-size: 19px; }
-}
-
-/* ============================================================
-   SHOP — bloco herdado, NÃO é do painel INFO. Estas regras de
-   #panel-comprar já moravam neste arquivo e ficam intactas aqui
-   até migrarem para o arquivo do SHOP; o refino do INFO não
-   mexeu em nenhuma delas.
-   ============================================================ */
-/* SHOP: o produto e as ações precisam ter a mesma presença das conexões. */
-@media (min-width: 861px) {
-  #panel-comprar .buy {
-    width: min(100%, 1100px);
-    max-width: 1100px;
-    padding-top: 34px;
-    gap: 22px;
-  }
-  #panel-comprar .buy-thumb {
-    width: min(100%, 650px);
-    max-height: none;
-    margin-bottom: 6px;
-  }
-  #panel-comprar .buy-thumb img {
-    width: 560px;
-    max-width: 100%;
-    max-height: 360px;
-  }
-  #panel-comprar .hero-ctas { gap: 16px; margin-top: 10px; }
-  #panel-comprar .hero-ctas .btn {
-    min-height: 60px;
-    padding: 15px 32px;
-    font-size: 1.125rem;
-  }
-  #panel-comprar .whatsapp-waitlist {
-    width: min(100%, 760px);
-    margin-top: 0;
-    padding: 18px 24px;
-    gap: 17px;
-    border-radius: 18px;
-  }
-  #panel-comprar .whatsapp-waitlist svg { width: 36px; height: 36px; }
-  #panel-comprar .whatsapp-waitlist span { font-size: 1rem; line-height: 1.45; }
-  #panel-comprar .whatsapp-waitlist strong { font-size: 1.1rem; }
-}
-
-@media (min-width: 861px) and (max-width: 1100px) {
-  #panel-comprar .buy-thumb img { width: 470px; max-height: 300px; }
-  #panel-comprar .hero-ctas .btn { min-height: 54px; padding-inline: 26px; font-size: 1rem; }
-  #panel-comprar .whatsapp-waitlist { width: min(100%, 650px); padding: 15px 18px; }
-}
-
-@media (max-width: 860px) {
-  #panel-comprar .buy-thumb {
-    width: 100%;
-    height: clamp(250px,68vw,320px);
-    max-height: none;
-    margin-bottom: 0;
-  }
-  #panel-comprar .buy-thumb img {
-    width: 100%;
-    height: 100%;
-    max-height: none;
-    object-fit: contain;
-  }
-  #panel-comprar .hero-ctas .btn { min-height: 54px; font-size: 1rem; }
-  #panel-comprar .whatsapp-waitlist { padding: 16px 18px; }
 }

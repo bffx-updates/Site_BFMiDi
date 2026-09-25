@@ -1,7 +1,7 @@
 /* ============================================================
    BFMIDI — VITRINE · PAINEL IN/OUT (CONEXÕES)
    ------------------------------------------------------------
-   Duas peças, na mesma ordem em qualquer largura:
+   Três peças, na mesma ordem em qualquer largura:
 
    1. PALCO — o cabeçalho `.pg-head` (css/pages.css) e a foto
       traseira do modelo, iluminada como a controladora da home e
@@ -9,16 +9,21 @@
       contraluz azul fria atrás e sombra de contato no chão. Sob
       a foto, as etiquetas brancas do chassi caem em cima de cada
       conector (posição em % da largura da foto, medida no
-      arquivo — ver `silk` nas bandas do content.js), alternando
-      em duas alturas como as chamadas de um desenho técnico.
+      arquivo — ver `silk` nas bandas do content.js), em duas
+      alturas como as chamadas de um desenho técnico. A fileira de
+      cada etiqueta sai do main.js (cxSilkLayout), calculada na
+      pior largura: vizinhas nunca se encostam.
       Celular: cabeçalho em cima, foto embaixo. Desktop: texto à
       esquerda, palco à direita, como nos Apps.
 
    2. PAINEL DE CONEXÕES — uma placa grafite escovada, com rebites
       nos cantos, e as portas agrupadas por família (Saídas MIDI ·
       USB · Sem fio · Entradas). Cada família abre com o anel de
-      LED dela e uma etiqueta de serigrafia em colchete; cada porta
-      é um poço com a arte dela, a etiqueta branca do chassi, o
+      LED do ASSUNTO (os --led-* de tokens.css, os mesmos dos Apps
+      e dos Downloads) e o nome dela em rótulo NEUTRO; a cor mora
+      só no anel. Cada porta é um poço com a miniatura dela — o
+      conector recortado, sem moldura e sem legenda, ou o glifo de
+      traço de Bluetooth e Wi-Fi —, a etiqueta branca do chassi, o
       nome e a função numa frase.
         celular ........ famílias empilhadas, portas em linha
         ≥700 (layout) .. famílias 2 × 2
@@ -26,7 +31,15 @@
         ≥1400 .......... UMA fileira, como um patch bay: as
                          famílias dividem a placa na proporção
                          das portas (`--k`), e cada porta fica em
-                         pé, com a arte em cima
+                         pé, com a miniatura em cima
+
+   3. PRÓXIMO PASSO — o cartão `.pg-next` de pages.css (baixar o
+      editor · comprar), desenhado só quando `C.ui.next` existe.
+
+   O topo é do SISTEMA: o micro-rótulo cai a --pg-top do topo do
+   painel, na mesma altura do INFO e do SHOP (pages.css, âncora).
+   Este arquivo cuida só do respiro lateral e de baixo, e o ritmo
+   entre as peças é --gap-section (32 / 48 / 64 por container).
 
    O layout é decidido por CONTAINER QUERY (`pg`, no .panel-inner),
    não por media query: no desktop o site aplica `html { zoom: .8 }`
@@ -41,25 +54,27 @@
 
 #panel-conects .panel-inner.cx {
   width: 100%;
-  max-width: 1720px;
-  margin: 0 auto;
-  padding: 14px 16px 40px;
+  margin-inline: auto;
+  padding-inline: 16px;
+  padding-bottom: 40px;
   display: flex;
   flex-direction: column;
-  gap: 26px;
   /* A luz do palco se abre além da coluna; quem corta é a borda do
      painel, nunca uma caixa no meio da tela. */
   overflow-x: clip;
 }
 @media (min-width: 601px) {
-  #panel-conects .panel-inner.cx { padding: 22px 28px 44px; gap: 34px; }
+  #panel-conects .panel-inner.cx { padding-inline: 28px; padding-bottom: 44px; }
 }
 @media (min-width: 861px) {
-  #panel-conects .panel-inner.cx { margin-block: auto; padding: 12px 32px 48px; gap: 40px; }
+  #panel-conects .panel-inner.cx { padding-inline: 48px; padding-bottom: 48px; }
 }
-@media (min-width: 1101px) {
-  #panel-conects .panel-inner.cx { padding-inline: 48px; }
-}
+
+/* O ritmo: a placa e o cartão final descem --gap-section da peça de
+   cima. É margem nos FILHOS, e não `gap` na casca, porque o degrau do
+   token só chega resolvido aos filhos do container. */
+#panel-conects .cx-rack,
+#panel-conects .cx-next { margin-top: var(--gap-section); }
 
 /* ---------- 1. palco ---------------------------------------- */
 
@@ -69,7 +84,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   row-gap: 18px;
-  align-items: center;
+  align-items: start;
 }
 /* Celular: luz baixa e quente atrás do título, a mesma do topo da página
    de Apps — a primeira tela já tem clima de palco. */
@@ -82,23 +97,42 @@
   top: -60px;
   height: 460px;
   pointer-events: none;
+  /* As QUATRO bordas se dissolvem na máscara, como a luz do cabeçalho dos
+     Apps: sem ela a caixa terminava numa aresta reta ao lado da cápsula e
+     num corte vertical 12px antes da borda da tela (no tablet, com a
+     margem maior). O azul é `closest-side`, para caber inteiro na caixa. */
   background:
     radial-gradient(ellipse 70% 50% at 50% 0%, #ff8a3d26 0%, transparent 70%),
-    radial-gradient(ellipse 55% 55% at 88% 18%, #3d8bff1f 0%, transparent 72%);
+    radial-gradient(closest-side at 80% 30%, #3d8bff1f 0%, transparent 100%);
+  -webkit-mask-image:
+    linear-gradient(180deg, transparent 0, #000 110px, #000 62%, transparent 100%),
+    linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(180deg, transparent 0, #000 110px, #000 62%, transparent 100%),
+    linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+          mask-composite: intersect;
 }
 #panel-conects .cx-copy { position: relative; min-width: 0; }
 
 #panel-conects .cx-stage {
+  /* As chamadas do chassi: altura da etiqueta, distância do chão do
+     chassi à primeira fileira e entre as duas. A faixa que a foto
+     reserva embaixo (`--cx-rail`) sai da mesma conta. */
+  --tag-h: calc(var(--pg-min) + 9px);
+  --t1: 14px;
+  --t-row: 6px;
   --cx-rail: 0px;
   position: relative;
   isolation: isolate;
   display: grid;
   justify-items: center;
+  align-self: center;
   min-width: 0;
   margin: 0;
   padding: 30px 0 0;
 }
-#panel-conects .cx-stage.has-silk { --cx-rail: calc(var(--pg-min) * 2 + 44px); }
+#panel-conects .cx-stage.has-silk { --cx-rail: calc(var(--t1) + var(--tag-h) * 2 + var(--t-row) + 6px); }
 
 /* Luz. Só gradiente, zero blur; a caixa passa um pouco das bordas do
    palco e se dissolve nas pontas em vez de terminar num corte reto. */
@@ -175,9 +209,7 @@
    qualquer largura. A etiqueta fica abaixo da caixa da foto, na faixa que
    a margem de baixo da `.cx-shot` reserva (`--cx-rail`). */
 #panel-conects .cx-silk {
-  --tag-h: calc(var(--pg-min) + 9px);
-  --t1: 14px;
-  --t2: calc(var(--t1) + var(--tag-h) + 6px);
+  --t2: calc(var(--t1) + var(--tag-h) + var(--t-row));
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -204,11 +236,14 @@
   -webkit-mask-image: linear-gradient(180deg, #0005, #000 70%);
           mask-image: linear-gradient(180deg, #0005, #000 70%);
 }
+/* `--dx` é o empurrão lateral que o main.js dá à etiqueta apertada entre
+   duas vizinhas, em px do celular; cresce junto com a letra (--pg-min),
+   para o fio continuar no mesmo ponto dela no desktop. */
 #panel-conects .cx-silk .pg-tag {
   position: absolute;
   bottom: 0;
   left: 0;
-  transform: translateX(-50%);
+  transform: translateX(calc(-50% + var(--dx, 0) * var(--pg-min) / 11));
   font-weight: 800;
   letter-spacing: .06em;
 }
@@ -226,7 +261,7 @@
   min-width: 0;
   padding: 6px 16px 14px;
   border: 1px solid #ffffff10;
-  border-radius: 22px;
+  border-radius: var(--r-card);
   background:
     repeating-linear-gradient(90deg, #ffffff04 0 1px, transparent 1px 4px),
     radial-gradient(80% 60% at 50% 0%, #ffffff0a, transparent 70%),
@@ -258,17 +293,16 @@
 }
 #panel-conects .cx-group + .cx-group { border-top: 1px solid #ffffff10; }
 
-/* Etiqueta da família: o anel de LED dela e a serigrafia em colchete. */
+/* Etiqueta da família: o anel de LED do assunto, o nome em rótulo neutro
+   (.pg-label de pages.css: mono, .14em, --ink-2) e a serigrafia em
+   colchete. A cor fica no anel; o texto não se tinge. */
 #panel-conects .cx-group__head {
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
   margin: 0 0 12px;
-  color: color-mix(in srgb, var(--c) 42%, #ffffff);
-  font: 700 var(--pg-min)/1.2 var(--font-mono);
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 #panel-conects .cx-group__head .pg-ring { width: 34px; }
 #panel-conects .cx-group__head .pg-ring__glow { opacity: .6; }
@@ -305,21 +339,50 @@
   column-gap: 14px;
   height: 100%;
   padding: 8px 14px 8px 8px;
-  border-radius: 18px;
+  border-radius: var(--r-well);
   background: var(--pg-well);
-  box-shadow: inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c;
+  box-shadow: var(--well-shadow);
 }
-#panel-conects .cx-port__art { display: block; min-width: 0; aspect-ratio: 480 / 477; }
+
+/* A miniatura: o conector recortado, flutuando no poço com a própria
+   sombra — sem moldura, sem legenda, na mesma caixa quadrada para todas.
+   Um brilho frio e baixo atrás dele faz o papel da luz do palco, e é o
+   mesmo para as fotos e para os glifos, que assim leem como uma família. */
+#panel-conects .cx-port__art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  aspect-ratio: 1;
+}
+#panel-conects .cx-port__art::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, #a6c6ff17, #a6c6ff08 55%, transparent 100%);
+  pointer-events: none;
+}
 #panel-conects .cx-port__art img {
+  position: relative;
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 8px 10px #0009);
+  filter: drop-shadow(0 6px 7px #000b);
+}
+#panel-conects .cx-port__glyph {
+  position: relative;
+  display: block;
+  width: 68%;
+  height: 68%;
+  color: var(--ink);
+  filter: drop-shadow(0 6px 7px #000b);
 }
 #panel-conects .cx-port__txt { display: grid; align-content: center; gap: 6px; min-width: 0; }
 #panel-conects .cx-port__id { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; min-width: 0; }
 #panel-conects .cx-port__name {
-  color: #f5f8fc;
+  color: var(--title-ink);
   font: 700 16px/1.2 var(--font-display);
   font-variation-settings: 'wdth' 106;
   letter-spacing: -.01em;
@@ -349,6 +412,16 @@
   #panel-conects .cx-rack { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 26px; padding: 8px 24px 18px; }
   #panel-conects .cx-group + .cx-group { border-top: 0; }
   #panel-conects .cx-group:nth-child(n + 3) { border-top: 1px solid #ffffff10; }
+}
+/* Placa de TRÊS famílias (a MICRO: saída, USB, sem fio) na grade de duas
+   colunas: a primeira ocupa a linha de cima inteira, com as portas lado a
+   lado, e as outras duas dividem a de baixo. Sem isso a terceira caía
+   sozinha na segunda linha e sobrava um quadrante vazio dentro da placa.
+   Só a grade muda; a ordem do DOM (e a leitura) é a mesma. */
+@container pg (min-width: 700px) and (max-width: 999px) {
+  #panel-conects .cx-rack:has(> .cx-group:nth-child(3):last-child) > .cx-group:first-child { grid-column: 1 / -1; }
+  #panel-conects .cx-rack:has(> .cx-group:nth-child(3):last-child) > .cx-group:first-child .cx-ports { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #panel-conects .cx-rack:has(> .cx-group:nth-child(3):last-child) > .cx-group:nth-child(n + 2) { border-top: 1px solid #ffffff10; }
 }
 
 /* Desktop médio: texto e palco lado a lado; na placa, UMA coluna por
@@ -396,9 +469,26 @@
   #panel-conects .cx-port__role { font-size: 15.5px; }
 }
 
-/* Janela baixa (notebook de 768px de altura): a foto cede altura para a
-   placa de conexões aparecer mais cedo. Vem DEPOIS das container queries
-   para ganhar delas pela ordem. */
+/* Celular baixo (320×640, 375×667): as etiquetas do chassi são a peça que
+   dá nome à página e precisam aparecer acima do véu e da barra fixa na
+   primeira tela. O palco cede a folga da luz e as chamadas se apertam. */
+@media (max-width: 600px) and (max-height: 760px) {
+  #panel-conects .cx-hero { row-gap: 10px; }
+  #panel-conects .cx-stage { padding-top: 8px; --t1: 10px; --t-row: 4px; }
+  #panel-conects .pg-lead { line-height: 1.45; }
+}
+
+/* Notebook (até 960px de altura: 1440×900, 1280×800): com o cabeçalho
+   ancorado no topo, a placa de portas passava por baixo da barra fixa e
+   do véu — as descrições das portas sumiam no degradê. A foto cede 70px
+   CSS e a placa sobe para o degrau curto do ritmo (--gap-section-s).
+   Vem DEPOIS das container queries para ganhar delas pela ordem. */
+@media (min-width: 861px) and (max-height: 960px) {
+  #panel-conects .cx-stage { --cx-shot-h: 260px; }
+  #panel-conects .cx-rack { margin-top: var(--gap-section-s, 32px); }
+}
+/* Janela baixa (notebook de 768px de altura): a foto cede mais altura
+   para a placa de conexões aparecer mais cedo. */
 @media (min-width: 861px) and (max-height: 820px) {
   #panel-conects .cx-stage { --cx-shot-h: 250px; padding-top: 22px; }
 }

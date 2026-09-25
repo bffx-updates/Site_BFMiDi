@@ -1,120 +1,254 @@
 /* ============================================================
-   BFMIDI — VITRINE · LINGUAGEM COMPARTILHADA DOS PAINÉIS
+   BFMIDI — VITRINE · LINGUAGEM COMPARTILHADA
    ------------------------------------------------------------
-   As peças que os painéis do modelo (INFO, IN/OUT, SHOP) e o de
-   DOWNLOADS dividem com a vitrine dos Apps (css/apps.css): o
-   cabeçalho com micro-rótulo e título em Archivo expandido, a
-   etiqueta de porta branca do chassi, o cartão grafite com
-   filete, o anel de LED de 3 arcos e os botões.
+   As peças que os painéis do modelo (INFO, IN/OUT, SHOP), os de
+   DOWNLOADS/MANUAL e a vitrine dos Apps (css/apps.css) dividem.
+   Os VALORES moram em css/tokens.css; aqui só as regras.
 
-   Tudo vive dentro de `.pg`, a classe que cada painel põe no
-   seu `.panel-inner`. O layout é decidido por CONTAINER QUERY
-   (`pg`), não por media query: no desktop o site aplica
-   `html { zoom: .8 }`, e a largura que importa é a do layout.
-   Pelo mesmo motivo todo texto pequeno sai de `--pg-min`: 11px
-   no celular, 14px no desktop (14 × .8 = 11,2px renderizados).
+   1. CASCA `.pg` — a classe que cada painel põe no seu
+      `.panel-inner`. Declara o container `pg` e os apelidos
+      --pg-* (todos apontam para tokens.css; não guardam valor).
+      O layout é decidido por CONTAINER QUERY, não por media
+      query: no desktop o site aplica `html { zoom: .8 }`, e a
+      largura que importa é a do layout.
+
+   2. ESCALA POR CONTAINER — três degraus (s < 700px de
+      container, m ≥ 700, l ≥ 1400). Dentro de um container
+      `pg`, estes tokens já chegam resolvidos:
+        --t-page      título de página (Archivo 'wdth' 108/800)
+        --t-card      título de cartão: 22 / 26 / 30
+        --t-lead      lead: 15 / 17 / 19
+        --gap-section entre cabeçalho+palco e a faixa de cartões,
+                      e entre seções: 32 / 48 / 64
+        --gap-grid    entre cartões: 12 / 16 / 20
+        --pad-card    dentro do cartão: 16 / 20 / 24
+      Os Apps entram na mesma escala declarando `pg` também no
+      container deles (`container-name: aps pg`).
+      ATENÇÃO: o degrau chega aos FILHOS do container. No próprio
+      container (.panel-inner.pg, .ap-wrap) estes tokens valem s,
+      porque container query não enxerga a caixa que a declara —
+      use-os nos filhos. A escala é a mesma em todo painel: não
+      redefina o token; se um ponto precisa de outro tamanho, é
+      font-size/gap direto, com o motivo no comentário.
+
+   3. ANCORAGEM — nenhum painel é centrado na vertical. O
+      micro-rótulo cai sempre a --pg-top do topo do painel
+      (16 / 28 / 48px CSS por faixa), e a moldura é --frame
+      (1720px CSS) em qualquer tela. A mídia centra só dentro da
+      própria coluna (align-self: center).
+
+   4. GRAMÁTICA DE ABERTURA (pgHead() no main.js): micro-rótulo
+      (ponto laranja de 7px + palavra em mono pêssego + etiqueta
+      branca do chassi) → título em duas linhas (branca +
+      __hot em degradê laranja) → lead. 10px do micro-rótulo ao
+      título, 14px do título ao lead. INFO/IN/OUT/SHOP levam a
+      etiqueta com o modelo; Downloads/Manual não levam; nos Apps
+      um ícone de 20px pode substituir o ponto. Fora de `.pg`
+      (HOME, Apps) a mesma peça é `.bf-kicker`.
+
+   5. COR = ASSUNTO — a cor de um anel diz o que ele é, não onde
+      está. Passe a STRING do token ao ledRing() e ao --c:
+        MIDI, DIN5/TRS, footswitches, editor/app,
+        modo amigável ................................ var(--led-midi)
+        USB device/host, cabo USB, atualizador ........ var(--led-usb)
+        Bluetooth, Wi-Fi, rede de casa ................ var(--led-wireless)
+        EXP, 2SW (entradas) ........................... var(--led-input)
+        tela, tela e LEDs ............................. var(--led-screen)
+        presets, bancos, Backup View .................. var(--led-presets)
+        comportamentos do LIVE, modo LIVE ............. var(--led-live)
+        manual, sem pedal / offline ................... var(--led-doc)
+        WhatsApp (EXCEÇÃO: cor da marca) .............. var(--led-whatsapp)
+      A cor mora SÓ no anel, no brilho de canto do cartão (--c) e
+      nos pontos de LED. Rótulo de cartão (.pg-label), nome de
+      grupo e botão fantasma ficam neutros.
+
+   6. RAIOS E BOTÕES — cartão 22, poço 18, botão 14, etiqueta 3;
+      pílula só em chip de status. Primário .pg-cta (52 / 64px
+      CSS a partir de 861) e secundário .pg-ghost (48 / 56).
+
+   7. FOCO ÚNICO — --focus-w solid --focus, afastado 4px.
+
+   8. ESTÚDIO ÚNICO — `.bf-stage`, fora de `.pg` para a HOME e o
+      INFO usarem a mesma luz dos outros painéis (ver o bloco).
 
    Regras de cada painel ficam no arquivo dele (info.css,
-   conects.css, shop.css, downloads.css). Aqui só o que é comum.
+   conects.css, shop.css, downloads.css, apps.css, home.css).
    ============================================================ */
 
+
+/* ---------- 1. casca ---------------------------------------- */
+
 .pg {
-  --pg-ink: #eef3fa;
-  --pg-ink-2: #bdc8d8;
-  --pg-ink-3: #a4b0c2;
-  --pg-line: #a6bedd24;
-  --pg-line-2: #a6bedd3b;
-  --pg-orange: #ff792f;
-  --pg-cta: linear-gradient(155deg, #ffb765, #ff7838);
-  --pg-cta-ink: #391508;
-  --pg-ok: #39d98a;
-  --pg-focus: #ffd2a6;
-  --pg-min: 11px;
-  --pg-surface: linear-gradient(180deg, #19212ccc, #121820cc);
-  --pg-well: #0c1118e6;
+  --pg-ink: var(--ink);
+  --pg-ink-2: var(--ink-2);
+  --pg-ink-3: var(--ink-3);
+  --pg-line: var(--line);
+  --pg-line-2: var(--line-2);
+  --pg-orange: var(--orange);
+  --pg-cta: var(--cta);
+  --pg-cta-ink: var(--cta-ink);
+  --pg-ok: var(--ok);
+  --pg-focus: var(--focus);
+  --pg-min: var(--t-min);
+  --pg-surface: var(--surface);
+  --pg-well: var(--well);
   container: pg / inline-size;
   min-width: 0;
   color: var(--pg-ink);
 }
-@media (min-width: 861px) {
-  .pg { --pg-min: 14px; }
+.pg :is(a, button, [tabindex]):focus-visible {
+  outline: var(--focus-w) solid var(--focus);
+  outline-offset: var(--focus-offset);
 }
-.pg :is(a, button, [tabindex]):focus-visible { outline: 3px solid var(--pg-focus); outline-offset: 4px; }
 /* O véu fixo do rodapé cobre ~134px de baixo: o foco por Tab nunca pára ali. */
 .pg :is(a, button, [tabindex]) { scroll-margin: 96px 0 160px; }
-@media (min-width: 861px) {
-  .pg :is(a, button, [tabindex]):focus-visible { outline-width: 3.75px; }
+
+
+/* ---------- 2. escala por container -------------------------
+   O degrau s vem do :root (tokens.css). Os filhos diretos do
+   container recebem m e l; o resto herda. Especificidade zero
+   (:where) de propósito: não briga com regra nenhuma de painel. */
+
+@container pg (min-width: 700px) {
+  :where(.pg, .apps-page, .ap-wrap) > * {
+    --t-page: var(--t-page-m);
+    --t-card: var(--t-card-m);
+    --t-lead: var(--t-lead-m);
+    --gap-section: var(--gap-section-m);
+    --gap-grid: var(--gap-grid-m);
+    --pad-card: var(--pad-card-m);
+  }
+}
+@container pg (min-width: 1400px) {
+  :where(.pg, .apps-page, .ap-wrap) > * {
+    --t-page: var(--t-page-l);
+    --t-card: var(--t-card-l);
+    --t-lead: var(--t-lead-l);
+    --gap-section: var(--gap-section-l);
+    --gap-grid: var(--gap-grid-l);
+    --pad-card: var(--pad-card-l);
+  }
 }
 
-/* ---------- cabeçalho ------------------------------------- */
 
-.pg .pg-head { display: grid; gap: 10px; min-width: 0; }
-.pg .pg-kicker {
+/* ---------- 3. ancoragem ------------------------------------
+   A regra é do SISTEMA, e por isso vence (1,3,0) as caixas de
+   cada painel (#panel-x .panel-inner.y, 1,2,0) e as regras
+   antigas que centravam o painel com margin-block: auto. O
+   painel cuida do respiro lateral e de baixo; o de cima é
+   --pg-top, e quem precisar de outro valor troca o token no
+   próprio .panel-inner, nunca a margem nem o padding-top. */
+
+#panels > .panel > .panel-inner.pg {
+  max-width: var(--frame);
+  margin-block: 0 auto;
+  padding-top: var(--pg-top);
+}
+
+
+/* ---------- 4. cabeçalho ------------------------------------ */
+
+.pg .pg-head { display: grid; row-gap: 10px; min-width: 0; }
+
+/* Micro-rótulo: dentro de `.pg` é .pg-kicker; fora (HOME, Apps),
+   a mesma peça é .bf-kicker. Um ícone de 20px (.pg-kicker__ico)
+   antes da palavra toma o lugar do ponto. A linha tem SEMPRE a
+   altura da etiqueta branca do chassi (texto × 1,3 + os 7px de
+   respiro dela), com ou sem etiqueta: sem isso, Downloads e Manual
+   (sem etiqueta) tinham o título 6px mais alto que INFO e Apps. */
+.pg .pg-kicker,
+.bf-kicker {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px 9px;
+  min-height: calc(var(--t-min) * 1.3 + 7px);
   margin: 0;
-  color: #ffc196;
-  font: 600 var(--pg-min)/1.3 var(--font-mono);
-  letter-spacing: .16em;
+  color: var(--kicker-ink);
+  font: 600 var(--t-min)/1.3 var(--font-mono);
+  letter-spacing: var(--ls-kicker);
   text-transform: uppercase;
 }
-.pg .pg-kicker::before {
+.pg .pg-kicker::before,
+.bf-kicker::before {
   content: '';
   flex: none;
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--pg-orange);
-  box-shadow: 0 0 8px var(--pg-orange);
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
 }
-/* O nome do modelo no micro-rótulo: a etiqueta branca do chassi. */
-.pg .pg-kicker b {
+.pg .pg-kicker:has(> .pg-kicker__ico)::before,
+.bf-kicker:has(> .pg-kicker__ico)::before { display: none; }
+:is(.pg .pg-kicker, .bf-kicker) .pg-kicker__ico { width: 20px; height: 20px; flex: none; }
+/* A etiqueta branca do chassi: o nome do modelo (ou "Versão 14"). */
+.pg .pg-kicker b,
+.bf-kicker b {
   padding: 4px 6px 3px;
-  border-radius: 3px;
-  background: #e6eaf0;
-  color: #0b0d11;
+  border-radius: var(--r-tag);
+  background: var(--tag-bg);
+  color: var(--tag-ink);
   font-weight: 800;
   letter-spacing: .06em;
   box-shadow: 0 1px 0 #000a;
 }
+
 .pg .pg-title {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-variation-settings: 'wdth' 108;
-  font-size: clamp(28px, 8cqi, 44px);
-  line-height: 1.02;
-  letter-spacing: -.035em;
-  color: #f5f8fc;
+  font-variation-settings: 'wdth' var(--wdth-title);
+  font-size: var(--t-page);
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-title);
+  color: var(--title-ink);
   text-wrap: balance;
 }
 .pg .pg-title__line { display: block; }
 .pg .pg-title__hot {
-  color: #ff9a4c;
-  background: linear-gradient(100deg, #ffd9ad 0%, #ffb765 28%, #ff8a45 62%, #ff6a26 100%);
+  color: var(--hot-ink);
+  background: var(--hot);
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
   padding-bottom: .06em;   /* descendentes não são cortados pelo clip */
 }
+/* O salto de 10px da grade + 4px = 14px do título ao lead. */
 .pg .pg-lead {
   max-width: 36em;
-  margin: 0;
+  margin: 4px 0 0;
   color: var(--pg-ink-2);
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: var(--t-lead);
+  line-height: var(--lh-lead);
   text-wrap: pretty;
 }
-@container pg (min-width: 700px) {
-  .pg .pg-title { font-size: clamp(40px, 5.2cqi, 64px); }
-  .pg .pg-lead { font-size: 17px; }
+
+/* Rótulo de cartão: neutro, mono, .14em. A cor do assunto fica no
+   anel ao lado, nunca no texto. */
+.pg .pg-label {
+  font: 600 var(--pg-min)/1.3 var(--font-mono);
+  letter-spacing: var(--ls-micro);
+  text-transform: uppercase;
+  color: var(--ink-2);
 }
-@container pg (min-width: 1400px) {
-  .pg .pg-title { font-size: clamp(56px, 4cqi, 80px); }
-  .pg .pg-lead { font-size: 19px; }
+
+/* Leitura de instrumento: os números da ficha (INFO, SHOP) e o nome
+   do modelo. O tamanho fica com quem usa. */
+.pg .pg-readout {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'wdth' var(--wdth-readout);
+  font-variant-numeric: tabular-nums;
+  line-height: .9;
+  letter-spacing: -.04em;
 }
+.pg .pg-readout__unit {
+  font: 600 var(--pg-min)/1 var(--font-mono);
+  letter-spacing: var(--ls-micro);
+  color: var(--ink-2);
+}
+
 
 /* ---------- etiqueta de porta (serigrafia do chassi) -------- */
 
@@ -123,9 +257,9 @@
 .pg .pg-tag {
   display: inline-block;
   padding: 5px 7px 4px;
-  border-radius: 3px;
-  background: #e6eaf0;
-  color: #0b0d11;
+  border-radius: var(--r-tag);
+  background: var(--tag-bg);
+  color: var(--tag-ink);
   font: 700 var(--pg-min)/1 var(--font-mono);
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -133,37 +267,41 @@
   box-shadow: 0 1px 0 #000a, inset 0 -1px 0 #0000001f;
 }
 
+
 /* ---------- cartão grafite ---------------------------------- */
 
 .pg .pg-card {
   --c: #ffffff;
   position: relative;
   min-width: 0;
-  padding: 16px;
-  border: 1px solid #ffffff0d;
-  border-radius: 20px;
+  padding: var(--pad-card);
+  border: 1px solid var(--card-edge);
+  border-radius: var(--r-card);
   background:
     radial-gradient(70% 60% at 0% 0%, color-mix(in srgb, var(--c) 9%, transparent), transparent 70%),
     var(--pg-surface);
-  box-shadow: inset 0 1px 0 #ffffff0f, 0 16px 30px -24px #000;
+  box-shadow: var(--card-shadow);
 }
 .pg .pg-well {
-  border-radius: 18px;
+  border-radius: var(--r-well);
   background: var(--pg-well);
-  box-shadow: inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c;
+  box-shadow: var(--well-shadow);
 }
+
 
 /* ---------- anel de LED de 3 arcos --------------------------
    O mesmo desenho do anel dos footswitches (falhas às 12h, 4h
    e 8h). Marcação gerada por `ledRing()` no main.js:
-     <span class="pg-ring" style="--c:#hex">
+     <span class="pg-ring" style="--c:var(--led-usb)">
        <svg class="pg-ring__svg" viewBox="0 0 100 100">
-         <circle class="pg-ring__off" …/> <circle …/>
+         <circle class="pg-ring__off" … pathLength="360"/> <circle …/>
        </svg>
        <span class="pg-ring__glow"></span>
        [ícone opcional com class="pg-ring__ico"]
      </span>
-   O tamanho vem de `width` no contexto de quem usa. */
+   pathLength=360 faz o traço de 88 + a falha de 32 fecharem a
+   volta em três arcos iguais. O tamanho vem de `width` no
+   contexto de quem usa. */
 .pg .pg-ring {
   --c: #ffffff;
   position: relative;
@@ -194,46 +332,218 @@
 }
 .pg .pg-ring__ico { position: relative; width: 44%; height: 44%; color: #f5f7fa; }
 
-/* ---------- botões ------------------------------------------ */
+
+/* ---------- botões ------------------------------------------
+   Duas alturas, um raio, nenhuma pílula. */
 
 .pg .pg-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 52px;
-  padding: 12px 24px;
-  border: 1px solid #ffc17e99;
-  border-radius: 14px;
+  min-height: var(--btn-h);
+  padding: 12px var(--btn-px);
+  border: 1px solid var(--cta-edge);
+  border-radius: var(--r-btn);
   background: var(--pg-cta);
   color: var(--pg-cta-ink);
-  font: 700 16px/1.2 var(--font-body);
+  font: 700 var(--btn-fs)/1.2 var(--font-body);
   text-decoration: none;
-  box-shadow: inset 0 1px 1px #ffdfb2, 0 10px 28px -10px #ff6a1f88;
+  box-shadow: var(--cta-shadow);
   transition: filter .15s, transform .15s;
 }
 .pg .pg-cta svg { width: 19px; height: 19px; flex: none; }
+/* Sobre o laranja, o anel pêssego some: ali ele é branco. */
 .pg .pg-cta:focus-visible { outline-color: #fff; }
 .pg .pg-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  min-height: 48px;
+  min-height: var(--btn2-h);
   padding: 10px 20px;
   border: 1px solid var(--pg-line-2);
-  border-radius: 14px;
-  background: #0f1824cc;
+  border-radius: var(--r-btn);
+  background: var(--ghost-bg);
   color: var(--pg-ink);
-  font: 600 15px/1.2 var(--font-body);
+  font: 600 var(--btn2-fs)/1.2 var(--font-body);
   text-decoration: none;
   transition: border-color .15s, background-color .15s;
 }
 .pg .pg-ghost svg { width: 18px; height: 18px; flex: none; }
+.pg :is(.pg-cta, .pg-ghost):active { transform: translateY(1px); }
 @media (hover: hover) {
   .pg .pg-cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
-  .pg .pg-ghost:hover { border-color: #ffffff4d; background: #16212fcc; }
+  .pg .pg-ghost:hover { border-color: var(--ghost-edge-hover); background: var(--ghost-bg-hover); }
 }
+
+
+/* ---------- cartão de próximo passo ------------------------
+   O fim do INFO e do IN/OUT. Marcação:
+     <aside class="pg-card pg-next">
+       <p class="pg-kicker">Próximo passo</p>
+       <div class="pg-next__actions">
+         <a class="pg-ghost" …>secundário</a>
+         <a class="pg-cta" …>primário</a>
+       </div>
+     </aside>
+   O primário fica por último (à direita, onde o polegar e o
+   olho terminam). No container estreito os botões dividem a
+   linha inteira. */
+
+.pg .pg-next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+}
+/* Cada botão com a própria altura (o secundário é --btn2-h, e não a
+   do primário esticada). */
+.pg .pg-next__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+@container pg (max-width: 699px) {
+  .pg .pg-next__actions { width: 100%; }
+  .pg .pg-next__actions > * { flex: 1 1 auto; }
+}
+/* Celular: os dois botões SEMPRE empilhados, na largura toda. Lado a
+   lado, a forma dependia do comprimento do rótulo ("Grupo de espera",
+   da 6SW+, não cabia e empilhava; os outros não), e o último cartão
+   mudava de desenho ao trocar de modelo. */
+@container pg (max-width: 419px) {
+  .pg .pg-next__actions { flex-direction: column; align-items: stretch; }
+}
+/* Container largo: o cartão abraça o micro-rótulo e os botões e encosta
+   na borda DIREITA da moldura, onde a leitura termina — na largura toda
+   ele era uma faixa de ~900px vazios entre o rótulo e os botões. Funciona
+   como item de grade (INFO) e de coluna flex (IN/OUT): margem automática
+   à esquerda nos dois. */
+@container pg (min-width: 700px) {
+  .pg .pg-next {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline-start: auto;
+    gap: 16px 32px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pg .pg-cta, .pg .pg-ghost { transition: none; }
 }
+
+
+/* ---------- 8. ESTÚDIO ÚNICO --------------------------------
+   A luz de foto de produto que IN/OUT, SHOP, Downloads e Apps já
+   usam, como primitivo: a HOME e o INFO a vestem sem inventar
+   outro dialeto. Três camadas aria-hidden, inseridas por quem usa,
+   ANTES do objeto:
+
+     <div class="bf-stage" style="--stage-w: 64%; --stage-base: 88%">
+       <i class="bf-stage__key" aria-hidden="true"></i>
+       <i class="bf-stage__rim" aria-hidden="true"></i>
+       <i class="bf-stage__floor" aria-hidden="true"></i>
+       …a foto…
+     </div>
+
+   · key   — feixe âmbar (#ffb36a) vindo de cima, opacidade máxima
+             .12, dissolvido por máscara radial antes do chão;
+   · rim   — contraluz azul (#4c8dff, .14) atrás do objeto;
+   · floor — poça quente (#ff9a4c, .10) + sombra de contato (#000,
+             .55): uma elipse achatada, 70% da largura do objeto e
+             6% da altura do palco, logo abaixo da base.
+
+   Ajuste (em % da caixa do palco):
+     --stage-w     largura do objeto            (70%)
+     --stage-base  altura da base do objeto     (100%)
+     --stage-x     centro horizontal do objeto  (50%)
+     --stage-mid   centro vertical da contraluz (50%)
+     --stage-reach quanto o feixe sobe ACIMA da caixa (0%; use 0
+                   se houver texto logo acima, porque o palco é um
+                   contexto próprio e a luz passaria na frente dele)
+   Só gradiente e opacity; o feixe respira em 8s e fica parado em
+   reduced-motion. A sombra desce 12% abaixo da base: quem usa não
+   pode cortar o palco com overflow. */
+
+.bf-stage {
+  --stage-w: 70%;
+  --stage-base: 100%;
+  --stage-x: 50%;
+  --stage-mid: 50%;
+  --stage-reach: 0%;
+  position: relative;
+  isolation: isolate;
+}
+.bf-stage > :is(.bf-stage__key, .bf-stage__rim, .bf-stage__floor) {
+  position: absolute;
+  z-index: -1;
+  display: block;
+  pointer-events: none;
+}
+.bf-stage > .bf-stage__key {
+  --b0: 155deg;   /* o cone: 50° centrados no eixo vertical */
+  left: 0;
+  right: 0;
+  top: calc(var(--stage-reach) * -1);
+  bottom: calc(100% - var(--stage-base));
+  background:
+    radial-gradient(ellipse 24% 9% at var(--stage-x) 3%, #ffb36a1f 0%, #ffb36a0a 50%, transparent 78%),
+    repeating-conic-gradient(from var(--b0) at var(--stage-x) -18%, #ffd9b000 0deg 1.1deg, #ffd9b00c 1.1deg 1.6deg, #ffd9b000 1.6deg 2.9deg),
+    conic-gradient(from var(--b0) at var(--stage-x) -18%,
+      transparent 0deg,
+      #ffb36a0d 9deg,
+      #ffb36a1f 25deg,
+      #ffb36a0d 41deg,
+      transparent 50deg);
+  /* Três máscaras cruzadas: a radial dissolve o feixe antes do chão,
+     a linear o acende sem aresta no alto da caixa e a cônica prende a
+     poeira dentro do cone (sem ela, a trama vaza em diagonais). */
+  -webkit-mask-image:
+    radial-gradient(ellipse 70% 100% at var(--stage-x) 0%, #000 38%, transparent 100%),
+    linear-gradient(180deg, #0000 0%, #000 18%),
+    conic-gradient(from var(--b0) at var(--stage-x) -18%, #0000 0deg, #000 12deg, #000 38deg, #0000 50deg);
+  -webkit-mask-composite: source-in, source-in;
+          mask-image:
+    radial-gradient(ellipse 70% 100% at var(--stage-x) 0%, #000 38%, transparent 100%),
+    linear-gradient(180deg, #0000 0%, #000 18%),
+    conic-gradient(from var(--b0) at var(--stage-x) -18%, #0000 0deg, #000 12deg, #000 38deg, #0000 50deg);
+          mask-composite: intersect;
+  animation: bf-stage-breathe 8s ease-in-out infinite;
+}
+/* A contraluz aparece em volta da silhueta: a elipse é mais larga que
+   o objeto e o azul ainda está aceso onde a borda dele termina. O raio
+   nunca passa da metade da caixa, senão a borda do palco corta a luz
+   numa aresta reta. */
+.bf-stage > .bf-stage__rim {
+  inset: 0;
+  background: radial-gradient(ellipse min(calc(var(--stage-w) * .74), 50%) 50% at var(--stage-x) var(--stage-mid),
+    #4c8dff24 0%, #4c8dff1c 42%, #4c8dff0b 72%, transparent 100%);
+}
+.bf-stage > .bf-stage__floor {
+  left: 0;
+  right: 0;
+  top: calc(var(--stage-base) - 12%);
+  height: 24%;
+  background:
+    radial-gradient(ellipse calc(var(--stage-w) * .35) 12.5% at var(--stage-x) 50%,
+      #0000008c 0%, #0000004d 50%, transparent 100%),
+    radial-gradient(ellipse min(calc(var(--stage-w) * .66), 50%) 44% at var(--stage-x) 56%,
+      #ff9a4c1a 0%, #ff9a4c0f 45%, transparent 100%);
+}
+@keyframes bf-stage-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .72; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bf-stage > .bf-stage__key { animation: none; }
+}
+
+/* A página descansa: depois de 20 s sem interação o js/particles.js
+   põe `is-idle` no <html> e TODA luz em laço infinito para onde está
+   (raios do nome, feixe dos estúdios, anéis do INFO); o primeiro
+   movimento, toque ou tecla solta de novo. */
+html.is-idle :is(
+  .hero-rays, .hero-rays-field > i,
+  .bf-stage > .bf-stage__key,
+  #panel-info .inf-sw__lit,
+  :is(#panel-downloads, #panel-manual) .dl-lights,
+  #panel-comprar .shop-light--beam
+) { animation-play-state: paused; }

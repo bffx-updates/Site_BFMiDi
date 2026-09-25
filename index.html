@@ -2,37 +2,67 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BFMIDI 8SW+ — Controladoras MIDI de palco | BFFX</title>
-<meta name="description" content="Quatro controladoras MIDI de palco: BFMIDI 8SW+, 6SW+, NANO+ e MICRO. Tela colorida, anel de LED por footswitch, MIDI DIN5, TRS e USB, e editor que abre no navegador.">
+<meta name="description" content="Quatro controladoras MIDI de palco: BFMIDI 8SW+, 6SW+, NANO+ e MICRO. Tela colorida, anel de LED por footswitch, MIDI DIN5 (8SW+), TRS e USB, e editor que abre no navegador.">
 <meta name="theme-color" content="#080b10">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://bffx.com.br/">
 <meta property="og:title" content="BFMIDI — Controle total aos seus pés.">
 <meta property="og:description" content="Quatro controladoras MIDI de palco: 8SW+, 6SW+, NANO+ e MICRO.">
-<meta property="og:image" content="assets/8sw-gallery-1.webp">
+<meta property="og:image" content="https://bffx.com.br/assets/og-bfmidi.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BFMIDI 8SW+ visto de frente: oito footswitches, LIVE MODE e GLOBAL SWITCH, tela colorida com amplificador e o anel azul do footswitch 1 aceso.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<!-- Antes de pintar: a barra APPS · DOWNLOADS do celular só existe na HOME.
+     Decidir aqui (e não no main.js, que roda depois) evita o salto de 64px do
+     painel quando a página abre direto numa vista (#8sw/info). -->
+<script>document.documentElement.setAttribute('data-view', (location.hash.split('/')[1] ? 'panel' : 'home'));
+/* A foto da 8SW+ só é pré-carregada quando ela é a primeira coisa na tela
+   (hash vazio ou #8sw). Quem entra por #nano, #nano/info ou #8sw/apps não
+   baixa 346 KB com prioridade alta que disputariam com a foto certa — a
+   <img> do HTML continua sendo a versão sem JS. */
+if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdjacentHTML('beforeend', '<link rel="preload" as="image" type="image/webp" imagesrcset="assets/8sw-hero-front-sm.webp 800w, assets/8sw-hero-front.webp 1600w" imagesizes="(max-width: 860px) 92vw, (max-width: 1200px) 82vw, 1000px" fetchpriority="high">');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&amp;family=Barlow:wght@400;500;600&amp;display=swap" rel="stylesheet">
-<link rel="preload" as="image" type="image/webp"
-      imagesrcset="assets/8sw-hero-front-sm.webp 800w, assets/8sw-hero-front.webp 1600w"
-      imagesizes="(max-width: 860px) 92vw, (max-width: 1200px) 82vw, 1000px">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/refine.css">
 <link rel="stylesheet" href="css/apps.css">
 <link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/home.css">
 <link rel="stylesheet" href="css/info.css">
 <link rel="stylesheet" href="css/conects.css">
 <link rel="stylesheet" href="css/shop.css">
 <link rel="stylesheet" href="css/downloads.css">
+<!-- SEM JAVASCRIPT: nenhum botão de navegação funciona (todos dependem do
+     main.js), então eles saem, e a HOME ganha embaixo dela o painel Apps,
+     que tem layout próprio sem JS e os links diretos de cada plataforma.
+     A página deixa de ter a altura travada da HOME e rola. Com JS nada disto
+     vale, e o apply() do main.js põe aria-hidden/inert no painel Apps. -->
+<noscript><style>
+  .selector, #model-navigation, #resource-navigation, #mobile-utility-navigation { display: none !important; }
+  #panels { padding-top: 16px; }
+  #panels > .panel { grid-area: auto; }
+  #panel-apps { display: flex; opacity: 1; visibility: visible; }
+  .app:has(#panel-home.is-on) { height: auto; }
+  .app:has(#panel-home.is-on) > .panels { min-height: 0; }
+</style></noscript>
 </head>
 <body>
 <a class="skip-link" href="#panels">Pular para o conteúdo</a>
 <div class="app" id="app">
 <canvas id="particle-field" aria-hidden="true"></canvas>
-  <div class="wrap selector-zone">
-    <div class="selector" id="selector" role="group" aria-label="Modelos BFMIDI e recursos" style="--n:6">
+  <!-- A cápsula é a navegação principal: landmark <nav> com o nome; dentro
+       dela, um grupo de botões (aria-pressed), e não abas — ver o main.js. -->
+  <nav class="wrap selector-zone" aria-label="Modelos BFMIDI e recursos">
+    <div class="selector" id="selector" role="group" style="--n:6">
       <div class="selector-bed" aria-hidden="true"></div>
       <div class="selector-led" aria-hidden="true"><i></i></div>
       <div class="selector-track" id="selector-track">
@@ -40,63 +70,52 @@
         <button class="tab" type="button" data-i="1" data-go="model:1" aria-pressed="false">6SW+</button>
         <button class="tab" type="button" data-i="2" data-go="model:2" aria-pressed="false">NANO+</button>
         <button class="tab" type="button" data-i="3" data-go="model:3" aria-pressed="false">MICRO</button>
-<button class="tab software-tab apps-tab" id="software-toggle" type="button" data-i="4" data-go="view:apps" aria-label="Apps" title="Apps" aria-pressed="false" aria-controls="panel-apps"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></button>
-<button class="tab gear-tab" id="resources-toggle" type="button" data-i="5" data-go="resources" aria-label="Recursos" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation"><span aria-hidden="true">⚙</span></button>
+<button class="tab software-tab apps-tab" id="software-toggle" type="button" data-i="4" data-go="view:apps" aria-label="App" title="Apps" aria-pressed="false" aria-controls="panel-apps"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span class="apps-tab__label">APP</span></button>
+<button class="tab gear-tab" id="resources-toggle" type="button" data-i="5" data-go="resources" aria-label="Downloads" title="Downloads" aria-pressed="false"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
     </div>
-</div>
-<nav class="mobile-utility-nav" id="mobile-utility-navigation" aria-label="Aplicativos e configurações" hidden>
-  <button class="mobile-utility-button mobile-apps-button" id="mobile-apps-toggle" type="button" data-go="view:apps" aria-label="APPs" aria-pressed="false" aria-controls="panel-apps">
-    <span class="mobile-utility-icon"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><b>APP</b></span>
-    <span class="mobile-utility-label">APPs</span>
-  </button>
-  <button class="mobile-utility-button mobile-settings-button" id="mobile-resources-toggle" type="button" data-go="resources" aria-label="Extras" aria-pressed="false" aria-expanded="false" aria-controls="resource-navigation">
-    <span class="mobile-utility-icon"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg></span>
-    <span class="mobile-utility-label">EXTRAS</span>
-  </button>
 </nav>
-<nav class="view-nav wrap" id="model-navigation" aria-label="Explore o modelo">
-<button class="overview-link is-active" id="overview-link" data-go="home" type="button" aria-current="page" data-copy="overview">Visão geral</button>
-<div class="selector selector-sub is-idle" id="subselector"
-         role="tablist" aria-label="Seções do modelo" style="--n:3">
-      <div class="selector-bed" aria-hidden="true"></div>
-      <div class="selector-led" aria-hidden="true"><i></i></div>
-      <div class="selector-track" id="subselector-track">
-        <button class="tab" type="button" id="subtab-info"    role="tab" aria-selected="false" aria-controls="panel-info"    data-i="0" data-go="view:info">Detalhes</button>
-        <button class="tab" type="button" id="subtab-conects" role="tab" aria-selected="false" aria-controls="panel-conects" data-i="1" data-go="view:conects">Conexões</button>
-        <button class="tab" type="button" id="subtab-comprar" role="tab" aria-selected="false" aria-controls="panel-comprar" data-i="2" data-go="view:comprar">Comprar</button>
-      </div>
-    </div>
-  </nav>
-<nav class="view-nav resource-nav wrap" id="resource-navigation" role="tablist" aria-label="Recursos" hidden>
-<button class="tab" id="subtab-apps" type="button" role="tab" aria-selected="false" aria-controls="panel-apps" data-go="view:apps" data-i="0">Apps</button>
-<button class="tab" id="subtab-downloads" type="button" role="tab" aria-selected="false" aria-controls="panel-downloads" data-go="view:downloads" data-i="1">Downloads</button>
-<button class="tab" id="subtab-manual" type="button" role="tab" aria-selected="false" aria-controls="panel-manual" data-go="view:manual" data-i="2">Manual</button>
+<!-- Só no celular e só na HOME (o CSS decide pelo data-view do <html>, que o
+     script do <head> grava antes da primeira pintura e o main.js mantém). -->
+<nav class="mobile-utility-nav" id="mobile-utility-navigation" aria-labelledby="mobile-apps-label mobile-resources-label">
+  <button class="mobile-utility-button mobile-apps-button" id="mobile-apps-toggle" type="button" data-go="view:apps" aria-pressed="false" aria-controls="panel-apps">
+    <span class="mobile-utility-icon"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>
+    <span class="mobile-utility-label" id="mobile-apps-label">Apps</span>
+  </button>
+  <button class="mobile-utility-button mobile-settings-button" id="mobile-resources-toggle" type="button" data-go="resources" aria-pressed="false">
+    <span class="mobile-utility-icon"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></span>
+    <span class="mobile-utility-label" id="mobile-resources-label">Downloads</span>
+  </button>
 </nav>
 <p class="sr-only" id="live-region" aria-live="polite"></p>
   <main class="panels" id="panels" tabindex="-1">
+    <!-- O título da página fica FORA dos painéis: o painel que sai vira
+         aria-hidden/inert, e com o h1 dentro da HOME as outras vistas ficavam
+         sem título de nível 1. O apply() do main.js troca o texto a cada vista. -->
+    <h1 class="sr-only" id="hero-h1b">BFMIDI 8SW+</h1>
     <section class="panel panel-home is-on" id="panel-home" aria-hidden="false">
       <div class="hero">
-        <h1 class="sr-only" id="hero-h1b">BFMIDI 8SW+</h1>
-<div class="hero-stage" id="hero-stage">
-
-
-          <figure class="shot is-on" data-i="0">
+<div class="hero-stage bf-stage" id="hero-stage">
+          <i class="bf-stage__key" aria-hidden="true"></i>
+          <figure class="shot bf-stage is-on" data-i="0" style="--home-ar:1.3927;--home-rel:1;--crop-l:1;--crop-r:1.25;--crop-t:1.05;--crop-b:0.96">
+            <i class="bf-stage__rim" aria-hidden="true"></i>
+            <i class="bf-stage__floor" aria-hidden="true"></i>
+            <div class="shot-body">
             <img src="assets/8sw-hero-front.webp"
                  srcset="assets/8sw-hero-front-sm.webp 800w, assets/8sw-hero-front.webp 1600w"
                  sizes="(max-width: 860px) 92vw, (max-width: 1200px) 82vw, 1000px"
-                 alt="BFMIDI 8SW+ visto de frente: oito footswitches, LIVE MODE e GLOBAL SWITCH, tela colorida com amplificador e o anel azul do footswitch 1 aceso."
-                 fetchpriority="high">
+                 alt="BFMIDI 8SW+ visto de frente: oito footswitches, LIVE MODE e GLOBAL SWITCH, tela colorida com amplificador e o anel azul do footswitch 1 aceso.">
+            </div>
           </figure>
         </div>
-<p class="hero-wordmark" aria-hidden="true"><span class="hero-rays"><span class="hero-rays-field"><i class="r1"></i><i class="r2"></i><i class="r3"></i><i class="core"></i></span></span><span class="hero-wordmark-text" id="hero-wordmark"></span></p>
+<p class="hero-wordmark" aria-hidden="true"><span class="hero-rays"><span class="hero-rays-field"><i class="r1"></i><i class="r2"></i><i class="r3"></i><i class="core"></i></span></span><span class="hero-wordmark-text" id="hero-wordmark">8SW+</span></p>
+<p class="hero-kicker bf-kicker" id="hero-kicker"></p>
       </div>
     </section>
     <section class="panel" id="panel-info"    role="tabpanel" aria-labelledby="subtab-info"    aria-hidden="true"></section>
     <section class="panel" id="panel-conects" role="tabpanel" aria-labelledby="subtab-conects" aria-hidden="true"></section>
     <section class="panel" id="panel-comprar" role="tabpanel" aria-labelledby="subtab-comprar" aria-hidden="true"></section>
-    <section class="panel" id="panel-software" role="tabpanel" aria-labelledby="software-toggle" aria-hidden="true" inert></section>
-    <section class="panel" id="panel-apps" role="tabpanel" aria-labelledby="subtab-apps" aria-hidden="true" inert><div class="apps-page" id="apps-page" data-focus="desk" data-plat="none">
+    <section class="panel" id="panel-apps" role="tabpanel" aria-labelledby="subtab-apps"><div class="apps-page" id="apps-page" data-focus="desk" data-plat="none">
   <div class="ap-wrap">
 
   <!-- PALCO. A ordem do HTML é a ordem de leitura em todas as larguras:
@@ -104,10 +123,10 @@
        texto vira a coluna da esquerda e o palco a da direita. -->
   <div class="ap-hero">
     <div class="ap-copy">
-      <p class="ap-eyebrow">
-        <img class="ap-eyebrow__icon" src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="44px" width="256" height="256" alt="" loading="lazy" decoding="async">
+      <p class="ap-eyebrow bf-kicker">
+        <img class="ap-eyebrow__icon pg-kicker__ico" src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="20px" width="256" height="256" alt="" loading="lazy" decoding="async">
         <span class="ap-eyebrow__name">BFMiDi Editor</span>
-        <span class="ap-eyebrow__ver"><i aria-hidden="true"></i>Versão 14</span>
+        <b class="ap-eyebrow__ver">Versão 14</b>
       </p>
       <h2 class="ap-title" id="apps-title">
         <span class="ap-title__line">Controle total,</span>
@@ -233,7 +252,7 @@
               <p class="ap-plat__file ap-plat__meta">App Store · app universal</p>
               <button class="ap-link-btn ap-plat__jump js-jump" type="button" data-jump="apps-conn-title">Como conectar ao pedal</button>
             </div>
-            <p class="ap-plat__text"><span class="ap-plat__t1">Conecta pelo Wi‑Fi do pedal, pela rede de casa ou pelo cabo USB, e abre para editar mesmo sem o pedal por perto.</span></p>
+            <p class="ap-plat__text"><span class="ap-plat__t1">Conecta pelo Wi‑Fi do pedal, pela rede de casa ou pelo cabo USB, e abre para editar mesmo sem o pedal.</span></p>
             <ul class="ap-tags" aria-label="Formas de conexão">
               <li>Wi‑Fi</li>
               <li>Rede</li>
@@ -377,25 +396,25 @@
         <p class="ap-sec-lead">Presets, footswitches, tela e LEDs da sua BFMIDI, tudo num lugar só.</p>
       </div>
       <ul class="ap-perks__list">
-        <li class="ap-perk" style="--c:#4c8dff">
+        <li class="ap-perk" style="--c:var(--led-presets)">
           <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg></span>
           <h4 class="ap-perk__k">Bancos e presets</h4>
           <p class="ap-perk__big">10 × 6</p>
-          <p class="ap-perk__p">Dez bancos, de A a J, com seis presets cada.</p>
+          <p class="ap-perk__p">10 bancos, de A a J, com 6 presets cada (4 ao alcance do pé na MICRO).</p>
         </li>
-        <li class="ap-perk" style="--c:#ff8a3d">
+        <li class="ap-perk" style="--c:var(--led-live)">
           <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12h4l2.6-6.5 5 13 2.6-6.5h4.8"/></svg></span>
           <h4 class="ap-perk__k">Modo LIVE</h4>
           <p class="ap-perk__big">Pé a pé</p>
           <p class="ap-perk__p">Cada footswitch com o seu comportamento: stomp, tap tempo, macros e mais.</p>
         </li>
-        <li class="ap-perk" style="--c:#b57bff">
+        <li class="ap-perk" style="--c:var(--led-screen)">
           <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="2"/><path d="M8.5 20h7M12 16.5V20"/><path d="m6.5 13 3.2-3.4 2.3 2.2 2-1.9 3.5 3.1"/></svg></span>
           <h4 class="ap-perk__k">Tela e LEDs</h4>
           <p class="ap-perk__big">A sua cara</p>
           <p class="ap-perk__p">Ícones, cores e imagens na tela da controladora, e a cor do anel de LED de cada footswitch.</p>
         </li>
-        <li class="ap-perk" style="--c:#3ddc84">
+        <li class="ap-perk" style="--c:var(--led-midi)">
           <span class="ap-ring" aria-hidden="true"><span class="ap-ring__glow"></span><svg class="ap-ring__svg" viewBox="0 0 100 100"><circle class="ap-ring__off" cx="50" cy="50" r="42" pathLength="360"/><circle class="ap-ring__on" cx="50" cy="50" r="42" pathLength="360"/></svg><svg class="ap-ring__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.6V4.5A1.5 1.5 0 0 1 4.5 3h7.1l9.1 9.1-8.6 8.6L3 11.6Z"/><circle cx="7.7" cy="7.7" r="1.5"/></svg></span>
           <h4 class="ap-perk__k">Modo amigável</h4>
           <p class="ap-perk__big">Nomes, não números</p>
@@ -413,22 +432,22 @@
         <p class="ap-sec-lead">Wi‑Fi do pedal, rede de casa ou cabo USB — e até sem o pedal.</p>
       </div>
       <ul class="ap-conn__list">
-        <li class="ap-conn__cell" style="--c:#ff8a3d">
+        <li class="ap-conn__cell" style="--c:var(--led-wireless)">
           <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">Wi‑Fi</span><h4>Wi‑Fi do pedal</h4></div>
           <code>http://192.168.4.1</code>
           <p>Rede <b>BFMIDI_WIFI</b>, senha <b>bfmidi@editor</b></p>
         </li>
-        <li class="ap-conn__cell" style="--c:#4c8dff">
+        <li class="ap-conn__cell" style="--c:var(--led-wireless)">
           <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">Rede</span><h4>Rede de casa</h4></div>
           <code>http://bfmidi.local</code>
           <p>Pedal e aparelho na mesma rede</p>
         </li>
-        <li class="ap-conn__cell" style="--c:#3ddc84">
+        <li class="ap-conn__cell" style="--c:var(--led-usb)">
           <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">USB</span><h4>Cabo USB</h4></div>
           <code>Chrome ou Edge</code>
           <p>No computador, e nos apps de Windows e Mac</p>
         </li>
-        <li class="ap-conn__cell" style="--c:#b57bff">
+        <li class="ap-conn__cell" style="--c:var(--led-doc)">
           <div class="ap-conn__head"><span class="ap-port" aria-hidden="true">Offline</span><h4>Sem pedal</h4></div>
           <code>Modo offline</code>
           <p>Nos apps e no editor online</p>
@@ -448,7 +467,7 @@
   <div class="apps-dialog-head">
     <img class="apps-dialog-icon" src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="46px" width="256" height="256" alt="" loading="lazy" decoding="async">
     <div class="apps-dialog-titles">
-      <span class="apps-dialog-label"><span class="apps-dialog-brand">BFMiDi Editor</span> · <span class="apps-dialog-ver">Versão 14</span></span>
+      <p class="apps-dialog-label bf-kicker"><span class="apps-dialog-brand">BFMiDi Editor</span> <b class="apps-dialog-ver">Versão 14</b></p>
       <h2 id="ajuda-titulo">Como podemos ajudar?</h2>
     </div>
     <button class="apps-close-help" type="button" aria-label="Fechar ajuda" commandfor="ajuda-dialog" command="close" autofocus>
@@ -458,7 +477,7 @@
   <div class="apps-dialog-body">
     <section class="apps-section" id="ajuda-sem" aria-labelledby="ajuda-sem-h">
       <h3 id="ajuda-sem-h"><span class="apps-step" aria-hidden="true">01</span>Sem instalar nada</h3>
-      <p class="apps-p">O editor também abre direto no navegador, sem instalar nada, de três jeitos:</p>
+      <p class="apps-p">O editor abre direto no navegador, de três jeitos:</p>
       <ul class="apps-reads">
         <li><span>Wi‑Fi do pedal</span><a href="http://192.168.4.1" target="_blank" rel="noopener noreferrer">http://192.168.4.1<span class="sr-only"> (abre em nova aba)</span></a><small>Com o pedal ligado e o Wi‑Fi dele ativo: rede <b>BFMIDI_WIFI</b>, senha <b>bfmidi@editor</b>. O editor vem do próprio pedal.</small></li>
         <li><span>Rede de casa</span><a href="http://bfmidi.local" target="_blank" rel="noopener noreferrer">http://bfmidi.local<span class="sr-only"> (abre em nova aba)</span></a><small>Pedal e aparelho na mesma rede. O editor vem do próprio pedal.</small></li>
@@ -497,6 +516,31 @@
     <section class="panel" id="panel-downloads" role="tabpanel" aria-labelledby="subtab-downloads" aria-hidden="true" inert></section>
     <section class="panel" id="panel-manual" role="tabpanel" aria-labelledby="subtab-manual" aria-hidden="true" inert></section>
   </main>
+<!-- BARRA DE BAIXO. Fixa na tela (refine.css), mas DEPOIS do <main> no HTML:
+     a ordem de Tab segue a leitura — cápsula, conteúdo, barra. Uma das duas
+     aparece por vez: a do modelo (HOME · INFO · IN/OUT · SHOP) ou a dos
+     recursos (o modelo · APPS · DOWNLOADS · MANUAL). Os rótulos vêm do
+     content.js; os daqui são a versão sem JS, iguais aos do main.js. -->
+<nav class="view-nav wrap" id="model-navigation" aria-label="Explore o modelo">
+<button class="overview-link is-active" id="overview-link" data-go="home" type="button" aria-current="page" title="Visão geral"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg><span>Visão geral</span></button>
+<div class="selector selector-sub is-idle" id="subselector" role="tablist" aria-label="Seções do modelo" style="--n:3">
+  <div class="selector-track" id="subselector-track">
+    <button class="tab" type="button" id="subtab-info" role="tab" aria-controls="panel-info" data-i="0" data-go="view:info" aria-selected="false"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></svg><span>INFO</span></button>
+    <button class="tab" type="button" id="subtab-conects" role="tab" aria-controls="panel-conects" data-i="1" data-go="view:conects" aria-selected="false"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v5m6-5v5M5 8h10v3a5 5 0 0 1-10 0Zm5 8v2a3 3 0 0 0 6 0v-3h4v6"/></svg><span>IN/OUT</span></button>
+    <button class="tab" type="button" id="subtab-comprar" role="tab" aria-controls="panel-comprar" data-i="2" data-go="view:comprar" aria-selected="false"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h2l3 12h11l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span>SHOP</span></button>
+  </div>
+</div>
+</nav>
+<nav class="view-nav resource-nav wrap" id="resource-navigation" aria-label="Recursos" hidden>
+<button class="overview-link" id="resource-home" data-go="home" type="button" aria-label="Visão geral · BFMIDI 8SW+" title="Visão geral · BFMIDI 8SW+"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg><span>8SW+</span></button>
+<div class="selector selector-sub" id="resource-selector" role="tablist" style="--n:3">
+  <div class="selector-track" id="resource-track">
+    <button class="tab" type="button" id="subtab-apps" role="tab" aria-controls="panel-apps" data-i="0" data-go="view:apps" aria-selected="false"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span>Apps</span></button>
+    <button class="tab" type="button" id="subtab-downloads" role="tab" aria-controls="panel-downloads" data-i="1" data-go="view:downloads" aria-selected="false"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg><span>Downloads</span></button>
+    <button class="tab" type="button" id="subtab-manual" role="tab" aria-controls="panel-manual" data-i="2" data-go="view:manual" aria-selected="false"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5C8 2 5 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-3-1-6-2-10 1Zm0 0v16"/></svg><span>Manual</span></button>
+  </div>
+</div>
+</nav>
   <footer class="site-footer">
     <div class="wrap footer-row">
       <p class="footer-note">© BFFX · BFMIDI</p><p class="footer-end" data-copy="footerEnd">Controladoras MIDI</p>

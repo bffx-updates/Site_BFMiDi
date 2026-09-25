@@ -18,20 +18,37 @@
    mede. Pelo mesmo motivo nada aqui usa `vw`, e todo texto
    pequeno sai de `--ap-min`: 11px no celular, 14px no desktop
    (14 × .8 = 11,2px renderizados).
+
+   A MESMA ESCALA DOS PAINÉIS (24/09/2026, terceira rodada): os
+   valores vêm de css/tokens.css e os --ap-* abaixo são só
+   apelidos. Dois containers, com papéis diferentes:
+   · `aps` na .apps-page (a largura do painel inteiro) decide a
+     COMPOSIÇÃO — celular, tablet empilhado, desktop em duas
+     colunas;
+   · `pg` na .ap-wrap (a moldura de --frame, 1720px CSS, com o
+     mesmo respiro lateral do INFO) dá a ESCALA do sistema: o
+     título (--t-page), o lead (--t-lead), o título de cartão
+     (--t-card) e os ritmos (--gap-*, --pad-card) chegam aqui
+     com o mesmo número que no .panel-inner.pg dos painéis, e o
+     `cqi` do título mede a mesma caixa. Trocar INFO ↔ APP não
+     muda o tamanho nem a posição do cabeçalho.
    ============================================================ */
 
 .apps-page {
-  --ap-ink: #eef3fa;
-  --ap-ink-2: #bdc8d8;
-  --ap-ink-3: #a4b0c2;
-  --ap-line: #a6bedd24;
-  --ap-line-2: #a6bedd3b;
-  --ap-orange: #ff792f;
-  --ap-cta: linear-gradient(155deg, #ffb765, #ff7838);
-  --ap-cta-ink: #391508;
-  --ap-ok: #39d98a;
-  --ap-focus: #ffd2a6;
-  --ap-min: 11px;
+  --ap-ink: var(--ink);
+  --ap-ink-2: var(--ink-2);
+  --ap-ink-3: var(--ink-3);
+  --ap-line: var(--line);
+  --ap-line-2: var(--line-2);
+  --ap-orange: var(--orange);
+  --ap-cta: var(--cta);
+  --ap-cta-ink: var(--cta-ink);
+  --ap-ok: var(--ok);
+  --ap-focus: var(--focus);
+  --ap-min: var(--t-min);
+  /* Alvo mínimo de toque em px CSS: 44 renderizados em qualquer faixa
+     (55px CSS sob o zoom .8 do desktop). */
+  --ap-hit: calc(44px / var(--zoom, 1));
   --ap-ease: var(--ease, cubic-bezier(.22, 1, .36, 1));
   container: aps / inline-size;
   width: 100%;
@@ -42,27 +59,34 @@
   color: var(--ap-ink);
   font: 400 16px/1.55 var(--font-body);
 }
-@media (min-width: 861px) {
-  .apps-page { --ap-min: 14px; }
-}
 .apps-page [hidden] { display: none !important; }
 .apps-page :is(a, button) { color: inherit; }
-.apps-page :is(a, button, [tabindex]):focus-visible { outline: 3px solid var(--ap-focus); outline-offset: 4px; }
+/* Foco único do site: --focus-w (3px; 3.75px CSS no desktop, os mesmos
+   3px na tela) na cor --focus, afastado --focus-offset. */
+.apps-page :is(a, button, [tabindex]):focus-visible { outline: var(--focus-w) solid var(--ap-focus); outline-offset: var(--focus-offset, 4px); }
 /* O véu fixo do rodapé cobre ~134px de baixo: o foco por Tab nunca pára ali. */
 .apps-page :is(a, button, [tabindex]) { scroll-margin: 96px 0 160px; }
-@media (min-width: 861px) {
-  .apps-page :is(a, button, [tabindex]):focus-visible { outline-width: 3.75px; }
-}
 
+/* A moldura: a mesma do .panel-inner.pg (pages.css) — largura máxima
+   --frame, micro-rótulo a --pg-top do topo (16 / 28 / 48px CSS), nada
+   centrado na vertical. O respiro lateral é o MESMO de INFO, IN/OUT,
+   SHOP e Downloads, e decidido pela JANELA como o deles (16px até 600;
+   28 até 860; 48px CSS a partir de 861) — pelo container, a faixa de
+   861 a ~865 caía no degrau do tablet e o título andava 16px ao trocar
+   de aba. O `pg` aqui é o que faz os tokens da escala chegarem
+   resolvidos aos filhos. */
 .apps-page .ap-wrap {
+  container: pg / inline-size;
   width: 100%;
-  max-width: 1760px;
+  max-width: var(--frame, 1720px);
   margin: 0 auto;
-  padding: 18px 16px 32px;
+  margin-block: 0 auto;
+  padding: var(--pg-top, 16px) 16px 32px;
   display: flex;
   flex-direction: column;
-  gap: 44px;
 }
+@media (min-width: 601px) { .apps-page .ap-wrap { padding-inline: 28px; } }
+@media (min-width: 861px) { .apps-page .ap-wrap { padding-inline: 48px; } }
 
 /* ---------- 1. PALCO ---------------------------------------- */
 
@@ -75,7 +99,11 @@
   overflow-x: clip;
 }
 /* No celular o palco vem depois do cartão; uma luz baixa e quente atrás
-   do título mantém o clima de palco já na primeira tela. */
+   do título mantém o clima de palco já na primeira tela. A caixa é
+   cortada pelo hero (overflow-x: clip), então as QUATRO bordas se
+   dissolvem na máscara: sem ela, a luz terminava numa aresta reta logo
+   abaixo da cápsula e num corte vertical na margem direita. O azul é
+   `closest-side`, para caber inteiro dentro da caixa. */
 .apps-page .ap-hero::before {
   content: '';
   position: absolute;
@@ -85,7 +113,15 @@
   pointer-events: none;
   background:
     radial-gradient(ellipse 70% 55% at 50% 0%, #ff8a3d2e 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 85% 20%, #3d8bff24 0%, transparent 72%);
+    radial-gradient(closest-side at 80% 30%, #3d8bff24 0%, transparent 100%);
+  -webkit-mask-image:
+    linear-gradient(180deg, transparent 0, #000 110px, #000 62%, transparent 100%),
+    linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(180deg, transparent 0, #000 110px, #000 62%, transparent 100%),
+    linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+          mask-composite: intersect;
 }
 /* Celular: o mesmo feixe âmbar do palco do desktop, vindo de cima e
    passando por trás do título — a primeira tela já tem luz de palco sem
@@ -172,53 +208,34 @@
 
 /* ---------- 2. TEXTO ---------------------------------------- */
 
-.apps-page .ap-eyebrow {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 11px;
-  margin: 0 0 14px;
-  color: var(--ap-ink);
-}
+/* A gramática de abertura de toda página (pgHead() nos painéis): o
+   micro-rótulo `.bf-kicker` do pages.css — aqui com o ícone do app de
+   20px no lugar do ponto e a etiqueta branca do chassi "Versão 14" —,
+   o título em duas linhas e o lead. 10px do micro-rótulo ao título,
+   14px do título ao lead. As regras de desenho do micro-rótulo são as
+   do pages.css; aqui só o encaixe. */
+.apps-page .ap-eyebrow { margin: 0 0 10px; }
 .apps-page .ap-eyebrow__icon {
-  width: 38px;
-  height: 38px;
-  flex: none;
-  border-radius: 10px;
-  box-shadow: 0 0 0 1px #ffffff1a, 0 10px 24px -8px #000, 0 0 22px -4px #ff782d59;
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px #ffffff1f, 0 0 12px -2px #ff782d66;
 }
-.apps-page .ap-eyebrow__name { font: 600 15px/1.2 var(--font-body); letter-spacing: .01em; }
-.apps-page .ap-eyebrow__ver {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 26px;
-  padding: 3px 10px 3px 9px;
-  border: 1px solid var(--ap-line-2);
-  border-radius: 999px;
-  background: #0f1824cc;
-  color: var(--ap-ink-2);
-  font: 500 var(--ap-min)/1 var(--font-mono);
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.apps-page .ap-eyebrow__ver i { width: 7px; height: 7px; border-radius: 50%; background: var(--ap-ok); box-shadow: 0 0 8px #39d98a; }
+.apps-page .ap-eyebrow__ver { white-space: nowrap; }
 
 .apps-page .ap-title {
-  margin: 0 0 10px;
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-variation-settings: 'wdth' 108;
-  font-size: clamp(27px, 8.5cqi, 46px);
-  line-height: 1;
-  letter-spacing: -.035em;
-  color: #f5f8fc;
+  font-variation-settings: 'wdth' var(--wdth-title, 108);
+  font-size: var(--t-page);
+  line-height: var(--lh-title, 1.02);
+  letter-spacing: var(--ls-title, -.035em);
+  color: var(--title-ink, #f5f8fc);
+  text-wrap: balance;
 }
 .apps-page .ap-title__line { display: block; }
 .apps-page .ap-title__line--hot {
-  color: #ff9a4c;
-  background: linear-gradient(100deg, #ffd9ad 0%, #ffb765 28%, #ff8a45 62%, #ff6a26 100%);
+  color: var(--hot-ink, #ff9a4c);
+  background: var(--hot);
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -226,10 +243,10 @@
 }
 .apps-page .ap-lead {
   max-width: 34em;
-  margin: 0;
+  margin: 14px 0 0;
   color: var(--ap-ink-2);
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: var(--t-lead);
+  line-height: var(--lh-lead, 1.55);
   text-wrap: pretty;
 }
 
@@ -243,30 +260,42 @@
   gap: 12px;
   margin-bottom: 10px;
 }
+/* Rótulo de cartão: neutro, mono 600, .14em — o mesmo .pg-label. */
 .apps-page .ap-label {
   margin: 0;
   white-space: nowrap;
   color: var(--ap-ink-2);
-  font: 500 var(--ap-min)/1.3 var(--font-mono);
-  letter-spacing: .16em;
+  font: 600 var(--ap-min)/1.3 var(--font-mono);
+  letter-spacing: var(--ls-micro, .14em);
   text-transform: uppercase;
 }
-.apps-page .ap-help-btn {
+/* Botões secundários (.ap-help-btn, .ap-link-btn): o .pg-ghost do
+   sistema — neutros, raio de botão (nunca pílula), 48px no celular e
+   56px CSS no desktop (44,8 na tela). */
+.apps-page :is(.ap-help-btn, .ap-link-btn) {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 8px 14px 8px 10px;
+  justify-content: center;
+  gap: 9px;
+  min-height: var(--btn2-h, 48px);
+  padding: 10px 18px;
   border: 1px solid var(--ap-line-2);
-  border-radius: 999px;
-  background: #101a27d9;
+  border-radius: var(--r-btn, 14px);
+  background: var(--ghost-bg, #0f1824cc);
   color: var(--ap-ink);
-  font: 600 14px/1.2 var(--font-body);
+  font: 600 var(--btn2-fs, 15px)/1.2 var(--font-body);
+  text-align: center;
+  text-decoration: none;
+  text-wrap: balance;
   cursor: pointer;
-  transition: border-color .2s, background-color .2s;
+  transition: border-color .15s, background-color .15s;
 }
-.apps-page .ap-help-btn svg { width: 20px; height: 20px; flex: none; color: #ffb27a; }
-.apps-page .ap-help-btn:hover { border-color: #ffb27a80; background-color: #182436; }
+.apps-page .ap-help-btn { flex: none; padding-left: 14px; }
+.apps-page .ap-help-btn svg { width: 20px; height: 20px; flex: none; color: var(--ap-ink-2); }
+.apps-page :is(.ap-help-btn, .ap-link-btn):active { transform: translateY(1px); }
+@media (hover: hover) {
+  .apps-page :is(.ap-help-btn, .ap-link-btn):hover { border-color: var(--ghost-edge-hover, #ffffff4d); background-color: var(--ghost-bg-hover, #16212fcc); }
+}
 
 .apps-page .ap-dock {
   --gap: 6px;
@@ -293,7 +322,7 @@
   min-height: 44px;
   padding: 11px 2px 9px;
   border: 1px solid #a6bedd29;
-  border-radius: 16px;
+  border-radius: var(--r-nav, 18px);
   background: linear-gradient(180deg, #1e2a3a 0%, #141d2a 62%, #101722 100%);
   box-shadow:
     inset 0 1px 0 #ffffff17,
@@ -360,25 +389,26 @@
   box-shadow: inset 0 1px 1px #0008;
 }
 .apps-page .ap-key.is-rec .ap-key__led { background: var(--ap-ok); box-shadow: 0 0 0 2px #39d98a26, 0 0 10px #39d98a; }
-.apps-page .ap-key:hover { color: var(--ap-ink); border-color: #a6bedd4d; transform: translateY(-2px); }
+@media (hover: hover) {
+  .apps-page .ap-key:hover { color: var(--ap-ink); border-color: #a6bedd4d; transform: translateY(-2px); }
+}
 .apps-page .ap-key:active { transform: translateY(1px); box-shadow: inset 0 1px 0 #ffffff12, inset 0 -1px 0 #0000005c, 0 1px 0 #05080c; }
 .apps-page .ap-key[aria-selected="true"] {
-  color: #2c0f03;
-  border-color: #ffc59a;
-  background: linear-gradient(162deg, #ffab6b 0%, #ff7f3d 46%, #e9581f 100%);
+  /* A tecla escolhida acende como TODA peça acesa da navegação (a pílula
+     da vista aberta, as teclas APP e engrenagem): fundo âmbar escuro,
+     aresta e tinta pêssego, anel laranja. O laranja CHEIO fica só no
+     botão de baixar (.ap-cta) — antes eram duas placas laranja, uma
+     sobre a outra, e a tecla parecia um segundo botão de compra. */
+  color: var(--chrome-on-ink, #ffd2a4);
+  border-color: var(--chrome-on-edge, #e7a36b);
+  background: var(--chrome-on-bg, linear-gradient(155deg, #3a2a1f, #231a14));
   box-shadow:
-    inset 0 1px 0 #ffe3c8,
-    inset 0 -2px 0 #0000002e,
-    0 2px 0 #7a2a0a,
-    0 14px 30px -10px #ff6a1f99,
-    0 0 0 4px #ff792f1f;
+    var(--chrome-util-on, 0 0 0 2px #ff8e3e, 0 0 24px #ff7a3355),
+    inset 0 1px 0 #ffd7ad2e,
+    0 12px 22px -14px #000;
 }
-.apps-page .ap-key[aria-selected="true"] .ap-key__sub { color: #2c0f03; }
+.apps-page .ap-key[aria-selected="true"] .ap-key__sub { color: var(--chrome-on-ink, #ffd2a4); }
 .apps-page .ap-key[aria-selected="true"]:hover { transform: none; }
-.apps-page .ap-key[aria-selected="true"]:focus-visible { outline-color: #fff; }
-.apps-page .ap-key[aria-selected="true"].is-rec .ap-key__led { background: #fff4e8; box-shadow: 0 0 0 2px #fff4e833, 0 0 10px #fff; }
-/* Na tecla laranja o LED apagado vira um ponto claro, não um furo escuro. */
-.apps-page .ap-key[aria-selected="true"]:not(.is-rec) .ap-key__led { background: #ffffff45; box-shadow: inset 0 1px 1px #0000002e; }
 /* Android: ainda não existe — a tecla fica tracejada, como algo por vir. */
 .apps-page .ap-key--soon:not([aria-selected="true"]) {
   border-style: dashed;
@@ -387,7 +417,7 @@
   box-shadow: inset 0 1px 0 #ffffff0d, 0 12px 22px -14px #000;
 }
 .apps-page .ap-key--soon:not([aria-selected="true"]) .ap-key__cap { opacity: .72; }
-.apps-page .ap-key--soon .ap-key__sub { color: #ffc79d; }
+.apps-page .ap-key--soon .ap-key__sub { color: var(--ap-ink-2); }
 
 /* ---------- 4. CARTÃO DA PLATAFORMA -------------------------- */
 
@@ -419,7 +449,7 @@
   min-width: 0;
   padding: 14px 16px 16px;
   border: 1px solid var(--ap-line-2);
-  border-radius: 22px;
+  border-radius: var(--r-card, 22px);
   background:
     radial-gradient(120% 90% at 0% 0%, #ff8a3d14 0%, transparent 46%),
     linear-gradient(180deg, #1a2433f2 0%, #111925f5 60%, #0d141ef7 100%);
@@ -448,14 +478,14 @@
 .apps-page .ap-plat h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 750;
-  font-variation-settings: 'wdth' 106;
-  font-size: 22px;
+  font-weight: 800;
+  font-variation-settings: 'wdth' var(--wdth-title, 108);
+  font-size: var(--t-card, 22px);
   line-height: 1.1;
   letter-spacing: -.02em;
-  color: #f6f9fd;
+  color: var(--title-ink, #f5f8fc);
 }
-.apps-page .ap-plat__sub { color: var(--ap-ink-2); font-weight: 600; font-variation-settings: 'wdth' 100; font-size: .7em; letter-spacing: 0; }
+.apps-page .ap-plat__sub { color: var(--ap-ink-2); font-weight: 600; font-variation-settings: 'wdth' var(--wdth-phrase, 100); font-size: .7em; letter-spacing: 0; }
 .apps-page .ap-plat__req { display: flex; align-items: flex-start; gap: 7px; margin: 3px 0 0; color: var(--ap-ink-2); font-size: 14px; line-height: 1.4; }
 .apps-page .ap-plat__req > span { text-wrap: balance; }
 /* O glifo da plataforma abre a linha do requisito — fora do ícone do app,
@@ -483,7 +513,7 @@
   background: transparent;
   border: 1.5px dashed #a6bedd5c;
 }
-.apps-page .ap-soon svg { width: 16px; height: 16px; flex: none; color: #ffc79d; }
+.apps-page .ap-soon svg { width: 16px; height: 16px; flex: none; color: var(--ap-ink-2); }
 /* Cartão estreito: "Em breve" — o "no Google Play" fica para o leitor de
    tela (e está no texto do cartão), para as duas fichas caberem numa linha. */
 @container applats (max-width: 459px) {
@@ -494,9 +524,9 @@
 .apps-page .ap-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .apps-page .ap-tags li {
   padding: 5px 7px 4px;
-  border-radius: 3px;
-  background: #e6eaf0;
-  color: #0b0d11;
+  border-radius: var(--r-tag, 3px);
+  background: var(--tag-bg, #e6eaf0);
+  color: var(--tag-ink, #0b0d11);
   font: 700 var(--ap-min)/1 var(--font-mono);
   letter-spacing: .05em;
   text-transform: uppercase;
@@ -504,26 +534,30 @@
 }
 
 .apps-page .ap-plat__act { display: flex; flex-direction: column; align-items: stretch; gap: 2px; scroll-margin: 96px 0 160px; }
+/* Primário: o .pg-cta do sistema — 52px no celular, 64px CSS no
+   desktop (51 na tela), raio de botão. */
 .apps-page .ap-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
-  min-height: 54px;
-  padding: 13px 22px;
-  border: 1px solid #ffc17e;
-  border-radius: 16px;
+  min-height: var(--btn-h, 52px);
+  padding: 12px var(--btn-px, 24px);
+  border: 1px solid var(--cta-edge, #ffc17e99);
+  border-radius: var(--r-btn, 14px);
   background: var(--ap-cta);
   color: var(--ap-cta-ink);
-  font: 700 16.5px/1.2 var(--font-body);
+  font: 700 var(--btn-fs, 16px)/1.2 var(--font-body);
   letter-spacing: .005em;
   text-decoration: none;
-  box-shadow: inset 0 1px 1px #ffe3bd, inset 0 -2px 0 #b8401433, 0 12px 30px -10px #ff6a1f80;
-  transition: filter .18s, transform .18s var(--ap-ease), box-shadow .18s;
+  box-shadow: var(--cta-shadow), inset 0 -2px 0 #b8401433;
+  transition: filter .15s, transform .15s var(--ap-ease);
 }
 .apps-page .ap-cta svg { width: 20px; height: 20px; flex: none; }
-.apps-page .ap-cta:hover { color: var(--ap-cta-ink); filter: brightness(1.06); transform: translateY(-1px); box-shadow: inset 0 1px 1px #ffe3bd, inset 0 -2px 0 #b8401433, 0 16px 36px -10px #ff6a1fb3; }
+@media (hover: hover) {
+  .apps-page .ap-cta:hover { color: var(--ap-cta-ink); filter: brightness(1.07); transform: translateY(-1px); }
+}
 .apps-page .ap-cta:active { transform: translateY(1px); }
 .apps-page .ap-cta:focus-visible { outline-color: #fff; }
 .apps-page .ap-plat__file {
@@ -533,24 +567,9 @@
   font: 500 var(--ap-min)/1.3 var(--font-mono);
   letter-spacing: .02em;
 }
-.apps-page .ap-link-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: center;
-  min-height: 44px;
-  padding: 8px 4px;
-  border: 0;
-  background: none;
-  color: #ffc196;
-  font: 600 14.5px/1.3 var(--font-body);
-  text-align: center;
-  text-decoration: underline;
-  text-decoration-color: #ffc19666;
-  text-underline-offset: 5px;
-  cursor: pointer;
-}
-.apps-page .ap-link-btn:hover { color: #ffdcc2; text-decoration-color: currentColor; }
+/* No cartão o secundário acompanha o primário: a mesma largura, logo
+   abaixo da linha do arquivo. */
+.apps-page .ap-plat__act .ap-link-btn { margin-top: 10px; padding-inline: 14px; }
 /* A linha mono da loja e o "Como conectar" só existem no cartão do
    desktop, onde completam a coluna do botão como o Windows faz com o
    arquivo e o guia. No celular o cartão fica enxuto. */
@@ -564,21 +583,28 @@
 }
 
 /* Android: o caminho real hoje — o editor que vem do próprio pedal. */
+/* É a rota do Wi‑Fi do pedal: o ponto de LED leva a cor do assunto
+   (--led-wireless, a mesma da célula "Wi‑Fi do pedal" logo abaixo) e o
+   rótulo fica neutro. */
 .apps-page .ap-path {
   display: grid;
   gap: 8px;
   padding: 12px 14px 8px;
-  border-radius: 16px;
-  background: #0b1119;
-  box-shadow: inset 0 1px 3px #000a, inset 0 0 0 1px #3ddc8433;
+  border-radius: var(--r-well, 18px);
+  background: var(--well, #0c1118e6);
+  box-shadow: var(--well-shadow, inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c);
 }
 .apps-page .ap-path__k {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   margin: 0;
-  color: #9ff0c4;
+  color: var(--ap-ink-2);
   font: 600 var(--ap-min)/1.3 var(--font-mono);
-  letter-spacing: .12em;
+  letter-spacing: var(--ls-micro, .14em);
   text-transform: uppercase;
 }
+.apps-page .ap-path__k::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--led-wireless, #b07cff); box-shadow: 0 0 10px var(--led-wireless, #b07cff); }
 .apps-page .ap-path__steps { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
 /* Dois passos, na ordem em que se faz: primeiro a rede, depois o endereço.
    O número vai numa tecla grafite, como as do editor. */
@@ -604,15 +630,15 @@
   align-items: center;
   gap: 8px;
   justify-self: start;
-  min-height: 44px;
+  min-height: var(--ap-hit, 44px);
   color: #f7fafd;
   font: 700 21px/1.2 var(--font-mono);
   letter-spacing: -.01em;
   text-decoration: underline;
-  text-decoration-color: #9ff0c466;
+  text-decoration-color: #eef3fa59;
   text-underline-offset: 6px;
 }
-.apps-page .ap-path__addr svg { width: 18px; height: 18px; flex: none; color: #9ff0c4; }
+.apps-page .ap-path__addr svg { width: 18px; height: 18px; flex: none; color: var(--ap-ink-2); }
 .apps-page .ap-path__addr:hover { text-decoration-color: currentColor; }
 /* Cartão estreito: os passos do Android apertam para "Abra" e o endereço
    caberem na mesma linha. */
@@ -1035,18 +1061,20 @@
 
 /* ---------- 6. ABAIXO DA DOBRA ------------------------------ */
 
-.apps-page .ap-more { display: grid; gap: 34px; }
+/* O ritmo do sistema: --gap-section (32 / 48 / 64px CSS) entre o palco e
+   a faixa de baixo e entre as seções; --gap-grid entre os cartões. */
+.apps-page .ap-more { display: grid; gap: var(--gap-section, 32px); margin-top: var(--gap-section, 32px); }
 .apps-page .ap-conn { scroll-margin-top: 24px; }
 .apps-page .ap-sec-head { display: grid; gap: 8px; margin-bottom: 16px; }
-.apps-page .ap-sec-lead { margin: 0; max-width: 34em; color: var(--ap-ink-2); font-size: 15px; line-height: 1.5; text-wrap: balance; }
+.apps-page .ap-sec-lead { margin: 0; max-width: 34em; color: var(--ap-ink-2); font-size: var(--t-lead-s, 15px); line-height: 1.5; text-wrap: balance; }
 .apps-page .ap-kicker {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin: 0 0 6px;
-  color: #ffc196;
+  margin: 0 0 10px;
+  color: var(--kicker-ink, #ffc196);
   font: 600 var(--ap-min)/1.3 var(--font-mono);
-  letter-spacing: .16em;
+  letter-spacing: var(--ls-kicker, .16em);
   text-transform: uppercase;
 }
 .apps-page .ap-kicker::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ap-orange); box-shadow: 0 0 8px var(--ap-orange); }
@@ -1054,11 +1082,11 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-variation-settings: 'wdth' 108;
+  font-variation-settings: 'wdth' var(--wdth-title, 108);
   font-size: clamp(24px, 6.6cqi, 34px);
   line-height: 1.05;
   letter-spacing: -.03em;
-  color: #f4f7fb;
+  color: var(--title-ink, #f5f8fc);
 }
 
 /* Benefícios: anel de LED de 3 arcos, como o da controladora (falhas às
@@ -1066,7 +1094,7 @@
 .apps-page .ap-perks__list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
+  gap: var(--gap-grid, 12px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1080,13 +1108,13 @@
   column-gap: 16px;
   row-gap: 2px;
   min-width: 0;
-  padding: 16px;
-  border: 1px solid #ffffff0d;
-  border-radius: 20px;
+  padding: var(--pad-card, 16px);
+  border: 1px solid var(--card-edge, #ffffff0d);
+  border-radius: var(--r-card, 22px);
   background:
-    radial-gradient(70% 60% at 0% 0%, color-mix(in srgb, var(--c) 11%, transparent), transparent 70%),
-    linear-gradient(180deg, #19212ccc, #121820cc);
-  box-shadow: inset 0 1px 0 #ffffff0f, 0 16px 30px -24px #000;
+    radial-gradient(70% 60% at 0% 0%, color-mix(in srgb, var(--c) 10%, transparent), transparent 70%),
+    var(--surface, linear-gradient(180deg, #19212cf2, #121820f2));
+  box-shadow: var(--card-shadow, inset 0 1px 0 #ffffff0f, 0 16px 30px -24px #000);
 }
 .apps-page .ap-ring {
   grid-area: ring;
@@ -1118,24 +1146,27 @@
   pointer-events: none;
 }
 .apps-page .ap-ring__ico { position: relative; width: 44%; height: 44%; color: #f5f7fa; }
+/* A cor do assunto mora só no anel e no brilho de canto: o rótulo é
+   neutro, como o .pg-label dos painéis. */
 .apps-page .ap-perk__k {
   grid-area: k;
   margin: 0;
-  color: color-mix(in srgb, var(--c) 55%, #fff);
+  color: var(--ap-ink-2);
   font: 600 var(--ap-min)/1.3 var(--font-mono);
-  letter-spacing: .14em;
+  letter-spacing: var(--ls-micro, .14em);
   text-transform: uppercase;
 }
+/* Título de cartão do sistema (--t-card: 22 / 26 / 30px CSS). */
 .apps-page .ap-perk__big {
   grid-area: big;
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-variation-settings: 'wdth' 110;
-  font-size: 23px;
+  font-variation-settings: 'wdth' var(--wdth-title, 108);
+  font-size: var(--t-card, 22px);
   line-height: 1.15;
   letter-spacing: -.02em;
-  color: #f5f8fc;
+  color: var(--title-ink, #f5f8fc);
 }
 .apps-page .ap-perk__p { grid-area: p; margin: 3px 0 0; color: var(--ap-ink-2); font-size: 14.5px; line-height: 1.5; text-wrap: pretty; }
 
@@ -1143,7 +1174,7 @@
 .apps-page .ap-conn__list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
+  gap: var(--gap-grid, 12px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1156,19 +1187,19 @@
   gap: 4px;
   min-width: 0;
   padding: 14px 16px 16px;
-  border-radius: 18px;
-  background: #0c1118e6;
-  box-shadow: inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c;
+  border-radius: var(--r-card, 22px);
+  background: var(--well, #0c1118e6);
+  box-shadow: var(--well-shadow, inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c);
 }
 .apps-page .ap-conn__head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 4px; }
 .apps-page .ap-port {
   flex: none;
   padding: 5px 7px 4px;
-  border-radius: 3px;
-  background: #e6eaf0;
-  color: #0b0d11;
-  font: 800 var(--ap-min)/1 var(--font-mono);
-  letter-spacing: .06em;
+  border-radius: var(--r-tag, 3px);
+  background: var(--tag-bg, #e6eaf0);
+  color: var(--tag-ink, #0b0d11);
+  font: 700 var(--ap-min)/1 var(--font-mono);
+  letter-spacing: .05em;
   text-transform: uppercase;
   box-shadow: 0 1px 0 #000a;
 }
@@ -1215,7 +1246,7 @@
   align-items: center;
   gap: 10px 14px;
   padding: 12px 14px;
-  border-radius: 18px;
+  border-radius: var(--r-card, 22px);
 }
 .apps-page:not(.is-js) .ap-plat__top { display: contents; }
 .apps-page:not(.is-js) .ap-plat__icon { width: 44px; height: 44px; }
@@ -1231,19 +1262,18 @@
 .apps-page:not(.is-js) .ap-plat--soon .ap-plat__flags { grid-area: flags; }
 .apps-page:not(.is-js) .ap-path { gap: 4px; padding: 8px 12px 4px; }
 .apps-page:not(.is-js) .ap-path__verb { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.apps-page:not(.is-js) .ap-cta { min-height: 46px; padding: 10px 16px; font-size: 15px; border-radius: 14px; }
+.apps-page:not(.is-js) .ap-cta { padding-block: 10px; }
 .apps-page:not(.is-js) .ap-plat__file { margin-top: 4px; }
 
 /* ---------- 8. LARGURAS ------------------------------------- */
 
 @container aps (max-width: 359px) {
-  .apps-page .ap-wrap { padding-inline: 10px; }
   .apps-page .ap-dock, .apps-page .ap-get { --gap: 4px; }
-  .apps-page .ap-key { padding-inline: 1px; border-radius: 14px; }
+  .apps-page .ap-key { padding-inline: 1px; }
   .apps-page .ap-key__cap svg { width: 22px; height: 22px; }
   .apps-page .ap-key__name { font-size: 11px; }
   .apps-page .ap-key__sub { font: 600 11px/1.2 var(--font-body); letter-spacing: .01em; }
-  .apps-page .ap-label { letter-spacing: .1em; }
+  .apps-page .ap-help-btn { padding-inline: 12px 14px; }
   .apps-page .ap-help-more { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .apps-page .ap-plat { padding-inline: 13px; }
   .apps-page .ap-plat__top { grid-template-columns: 44px minmax(0, 1fr); column-gap: 12px; }
@@ -1255,13 +1285,29 @@
   .apps-page .ap-path { padding: 9px 11px 6px; }
   .apps-page .ap-rec__more { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
+/* 360–389px: com a margem lateral de 16px, "Ajuda para instalar" e
+   "Recomendado para este dispositivo" passavam da coluna (o botão saía
+   9px do cabeçalho a 360, e a 375 os dois cabiam no pixel). Ficam só as
+   formas curtas — o complemento continua para o leitor de tela. */
+@container aps (min-width: 360px) and (max-width: 389px) {
+  .apps-page :is(.ap-help-more, .ap-rec__more) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+/* Espaçamento de texto aumentado (WCAG 1.4.12): o subtítulo da tecla e
+   o selo quebram linha em vez de vazar da tecla ou do cartão. No
+   espaçamento normal os dois cabem em todas as larguras e não mudam. */
+.apps-page .ap-key__sub { white-space: normal; overflow-wrap: anywhere; }
+.apps-page .ap-rec { max-width: 100%; white-space: normal; }
 
 /* Cartão largo (quando ELE tem ≥ 600px — tablet e desktop largo):
    informação à esquerda, botão à direita. */
 @container applats (min-width: 600px) {
+  /* A coluna do botão tem largura FIXA (a do primário), em todos os
+     cartões: um secundário de texto longo ("Ou use o editor do próprio
+     pedal…") quebra em duas linhas em vez de espremer o texto ao lado
+     — era ele que deixava o cartão Online 40px mais alto que os outros. */
   .apps-page.is-js .ap-plat {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 46%, 320px);
     grid-template-areas: "top top" "text act" "tags act";
     align-items: start;
     column-gap: 28px;
@@ -1278,7 +1324,7 @@
   .apps-page.is-js .ap-plat__flags { justify-content: flex-end; align-self: start; }
   .apps-page .ap-plat__text { grid-area: text; }
   .apps-page .ap-tags { grid-area: tags; }
-  .apps-page .ap-plat__act { grid-area: act; align-self: end; min-width: 250px; }
+  .apps-page .ap-plat__act { grid-area: act; align-self: end; min-width: 0; }
   /* Android largo: o caminho pelo pedal ocupa a largura toda, com os
      dois passos lado a lado, e o texto vem embaixo. Assim o cartão não
      fica mais alto que o do Windows. */
@@ -1300,18 +1346,20 @@
   .apps-page .ap-conn__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Tablet: ainda empilhado, mas o palco ganha o iPad e o texto centraliza. */
+/* Tablet: ainda empilhado, com o palco ganhando o iPad. O cabeçalho fica
+   À ESQUERDA, como o de INFO, IN/OUT, SHOP, Downloads e Manual — trocar
+   Apps ↔ Downloads na barra de recursos não pode mudar o título de lado.
+   Dock e cartão ocupam a mesma coluna do texto (da borda esquerda à
+   direita da moldura); o palco segue centrado embaixo, como mídia. */
 @container aps (min-width: 700px) {
-  .apps-page .ap-wrap { padding: 12px 32px 44px; gap: 52px; }
+  .apps-page .ap-wrap { padding-bottom: 44px; }
   .apps-page .ap-hero { row-gap: 30px; }
-  .apps-page .ap-eyebrow { justify-content: center; margin-bottom: 14px; }
-  .apps-page .ap-eyebrow__icon { width: 44px; height: 44px; border-radius: 12px; }
-  .apps-page .ap-eyebrow__name { font-size: 16px; }
-  .apps-page .ap-title { text-align: center; font-size: clamp(48px, 7.2cqi, 70px); margin-bottom: 12px; }
-  .apps-page .ap-lead { max-width: 40em; margin-inline: auto; text-align: center; font-size: 17px; }
-  .apps-page .ap-get { width: 100%; max-width: 760px; margin: 26px auto 0; }
+  .apps-page .ap-eyebrow { justify-content: flex-start; }
+  .apps-page .ap-title { text-align: start; }
+  .apps-page .ap-lead { max-width: 34em; margin-inline: 0; text-align: start; }
+  .apps-page .ap-get { width: 100%; max-width: none; margin: 26px 0 0; }
   .apps-page .ap-dock, .apps-page .ap-get { --gap: 10px; }
-  .apps-page .ap-key { padding: 14px 4px 12px; border-radius: 20px; row-gap: 7px; }
+  .apps-page .ap-key { padding: 14px 4px 12px; row-gap: 7px; }
   .apps-page .ap-key__cap { width: 34px; height: 34px; }
   .apps-page .ap-key__cap svg { width: 31px; height: 31px; }
   .apps-page .ap-stage { aspect-ratio: 1.8; width: 92%; margin: 0 auto; }
@@ -1320,33 +1368,33 @@
   .apps-page .ap-phone { right: 3.5%; bottom: 2.5%; width: 13%; }
   .apps-page .ap-light--beam-l { --lx: 13.5%; --bw: 26deg; }
   .apps-page .ap-light--beam-r { --lx: 90%; --bw: 22deg; }
-  .apps-page .ap-plat h3 { font-size: 25px; }
   .apps-page .ap-plat__text { font-size: 15.5px; }
   .apps-page .ap-sec-head h3 { font-size: 36px; }
 }
 
-/* Desktop: texto e dock à esquerda, palco à direita. O palco ocupa a
-   dobra inteira; o conteúdo se centra na faixa ACIMA do véu do rodapé
-   (134px de baixo), e a faixa seguinte só começa abaixo da dobra. */
+/* Desktop: texto e dock à esquerda, palco à direita. Nada ocupa a dobra
+   à força (era o min-height de "125svh" que deixava uma faixa morta
+   entre os aparelhos e a seção seguinte): o hero tem a altura do mais
+   alto dos dois lados, o cabeçalho fica ancorado no topo como o de
+   todo painel, os aparelhos centram na própria coluna, e a faixa de
+   baixo começa a --gap-section — espiando acima do véu do rodapé. */
 @container aps (min-width: 1080px) {
-  /* Mesma largura útil e mesma margem do painel INFO (1720px e
-     3% da janela, até 48px): trocar INFO ↔ APP não desloca o conteúdo. */
-  .apps-page .ap-wrap { max-width: 1720px; padding: 8px clamp(24px, 2.4cqi, 48px) 40px; gap: 56px; }
+  /* A moldura do INFO: 1720px CSS e 48px de respiro (ver a .ap-wrap, no
+     topo): trocar INFO ↔ APP não desloca o título. */
+  .apps-page .ap-wrap { padding-bottom: 40px; }
   .apps-page .ap-hero {
     grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
     column-gap: 3cqi;
-    align-items: center;
-    min-height: calc(125svh - 148px);
-    padding-bottom: 118px;
+    align-items: start;
     overflow-x: visible;
   }
   .apps-page .ap-hero::before { display: none; }
   .apps-page .ap-copy { padding: 0; }
-  .apps-page .ap-eyebrow { justify-content: flex-start; margin-bottom: 20px; }
-  .apps-page .ap-title { text-align: left; font-size: clamp(46px, 4.15cqi, 74px); margin-bottom: 16px; }
-  .apps-page .ap-lead { margin: 0; text-align: left; font-size: clamp(17px, 1.15cqi, 21px); max-width: 27em; }
-  .apps-page .ap-get { max-width: none; margin: 30px 0 0; }
-  .apps-page .ap-stage { width: 100%; aspect-ratio: 1.2; margin: 0; }
+  .apps-page .ap-eyebrow { justify-content: flex-start; }
+  .apps-page .ap-title { text-align: left; }
+  .apps-page .ap-lead { margin-inline: 0; text-align: left; max-width: 27em; }
+  .apps-page .ap-get { max-width: none; margin: 28px 0 0; }
+  .apps-page .ap-stage { width: 100%; aspect-ratio: 1.2; margin: 0; align-self: center; }
   .apps-page .ap-lights {
     inset: -12% 0 -6%;
     --lx: 50%;
@@ -1365,25 +1413,21 @@
   /* A poça do celular não passa da borda do palco. */
   .apps-page .ap-phone .ap-dev__glow { left: -30%; right: -30%; }
   .apps-page .ap-key { padding: 16px 4px 13px; }
-  .apps-page .ap-plat h3 { font-size: 26px; }
   .apps-page .ap-plat__text { font-size: 16px; }
   .apps-page .ap-plat__req { font-size: 15px; }
-  .apps-page .ap-link-btn { font-size: 15px; }
   .apps-page :is(.ap-path__net, .ap-path__verb) { font-size: 15px; }
 
-  .apps-page .ap-more { grid-template-columns: minmax(0, 1fr); gap: 44px; }
-  .apps-page .ap-perks__list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .apps-page .ap-more { grid-template-columns: minmax(0, 1fr); }
+  .apps-page .ap-perks__list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .apps-page .ap-perk {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "ring" "k" "big" "p";
     row-gap: 4px;
-    padding: 22px 22px 24px;
   }
   .apps-page .ap-ring { width: 58px; margin: 0 0 14px 2px; }
-  .apps-page .ap-perk__big { font-size: 30px; }
   .apps-page .ap-perk__p { font-size: 16px; }
-  .apps-page .ap-conn__list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-  .apps-page .ap-conn__cell { padding: 18px 20px 20px; }
+  .apps-page .ap-conn__list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .apps-page .ap-conn__cell { padding: 18px var(--pad-card, 20px) 20px; }
   .apps-page .ap-conn__cell code { font-size: 22px; }
   .apps-page .ap-conn__cell :is(h4, p) { font-size: 15.5px; }
   .apps-page .ap-sec-head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; margin-bottom: 20px; }
@@ -1392,10 +1436,9 @@
   .apps-page .ap-compat { font-size: 16px; }
 
   /* Os cinco cartões ocupam a MESMA célula e o bloco fica com a altura
-     do maior. A coluna do texto é centrada na vertical; sem isto ela se
-     recentrava a cada troca de plataforma e a tecla recém-clicada fugia
-     do cursor. O cartão escondido segue fora do foco e da árvore de
-     acessibilidade (visibility: hidden) — só reserva o espaço. */
+     do maior: trocar de plataforma não mexe em nada abaixo nem em volta
+     da tecla recém-clicada. O cartão escondido segue fora do foco e da
+     árvore de acessibilidade (visibility: hidden) — só reserva o espaço. */
   .apps-page.is-js .ap-plats { display: grid; grid-template-columns: minmax(0, 1fr); }
   .apps-page.is-js .ap-plats > .ap-plat { grid-area: 1 / 1; }
   .apps-page.is-js .ap-plats > .ap-plat[hidden] { display: flex !important; visibility: hidden; }
@@ -1418,67 +1461,33 @@
     .apps-page.is-js .ap-plats > .ap-plat > .ap-tags { margin-top: 12px; align-self: end; }
   }
 }
-
-@container aps (min-width: 1500px) {
-  .apps-page .ap-title { font-size: clamp(60px, 4.1cqi, 80px); }
-  .apps-page .ap-lead { font-size: 21px; }
-  .apps-page .ap-plat h3 { font-size: 28px; }
-  .apps-page .ap-cta { min-height: 58px; font-size: 17.5px; }
+/* Desktop estreito (1024–1199 de janela): colunas iguais. Com a coluna
+   do texto em .86fr, "em qualquer tela." quebrava em três linhas no
+   título da escala única. */
+@container aps (min-width: 1080px) and (max-width: 1499px) {
+  .apps-page .ap-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
-/* Tela grande (1920×1080 e acima): a composição cresce com a tela em vez
-   de flutuar no meio de um campo vazio — palco maior, título e dock na
-   mesma escala. Só com altura para isso; a faixa seguinte continua
-   abaixo da dobra. */
-@container aps (min-width: 2200px) {
-  @media (min-height: 1000px) {
-    .apps-page .ap-wrap { max-width: 2240px; padding-inline: 64px; }
-    .apps-page .ap-hero { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
-    .apps-page .ap-stage { aspect-ratio: 1.14; }
-    .apps-page .ap-ipad { bottom: 4.5%; width: 26%; }
-    .apps-page .ap-eyebrow { margin-bottom: 24px; gap: 8px 14px; }
-    .apps-page .ap-eyebrow__icon { width: 52px; height: 52px; border-radius: 14px; }
-    .apps-page .ap-eyebrow__name { font-size: 19px; }
-    .apps-page .ap-eyebrow__ver { min-height: 30px; padding-inline: 12px; font-size: 15px; }
-    .apps-page .ap-title { font-size: clamp(60px, 3.8cqi, 92px); margin-bottom: 20px; }
-    .apps-page .ap-lead { font-size: 23px; max-width: 30em; }
-    .apps-page .ap-get { margin-top: 38px; }
-    .apps-page .ap-get__head { margin-bottom: 14px; }
-    .apps-page .ap-label { font-size: 15px; }
-    .apps-page .ap-help-btn { min-height: 48px; font-size: 15.5px; }
-    .apps-page .ap-dock, .apps-page .ap-get { --gap: 12px; }
-    .apps-page .ap-key { padding: 20px 4px 16px; border-radius: 22px; row-gap: 8px; }
-    .apps-page .ap-key__cap { width: 40px; height: 40px; }
-    .apps-page .ap-key__cap svg { width: 34px; height: 34px; }
-    .apps-page .ap-key__name { font-size: 19px; }
-    .apps-page .ap-key__sub { font-size: 15px; }
-    .apps-page.is-js .ap-plats { margin-top: 18px; }
-    .apps-page .ap-plat { border-radius: 26px; }
-    .apps-page.is-js .ap-plat { padding: 24px 28px; column-gap: 32px; row-gap: 12px; }
-    .apps-page.is-js .ap-plat__icon { width: 64px; height: 64px; }
-    .apps-page.is-js .ap-plat__top { grid-template-columns: 64px minmax(0, 1fr) auto; }
-    .apps-page.is-js .ap-plat__icon img { border-radius: 17px; }
-    .apps-page .ap-plat h3 { font-size: 32px; }
-    .apps-page .ap-plat__req { font-size: 16.5px; }
-    .apps-page .ap-plat__text { font-size: 18px; }
-    .apps-page .ap-cta { min-height: 64px; padding-inline: 28px; font-size: 19px; border-radius: 18px; }
-    .apps-page .ap-plat__act { min-width: 290px; }
-    .apps-page .ap-link-btn { font-size: 16.5px; }
-  }
-}
+/* Tela grande: NADA muda. A moldura é a mesma --frame de 1720px CSS das
+   outras abas em qualquer largura (a regra antiga que levava os Apps a
+   2240px, com título, dock e cartão maiores, saiu) — a 1920 e a 2560 o
+   título começa na mesma coluna do INFO. */
 
-/* Notebook de tela baixa (1366×768, 1280×720…): o mesmo desenho, mais
-   justo na vertical, para o botão do cartão ficar acima do véu. */
-@media (min-width: 861px) and (max-height: 840px) {
-  .apps-page .ap-wrap { padding-top: 0; }
-  .apps-page .ap-eyebrow { margin-bottom: 12px; }
-  .apps-page .ap-eyebrow__icon { width: 38px; height: 38px; border-radius: 10px; }
-  .apps-page .ap-title { margin-bottom: 10px; }
+/* Notebook (até 960px de altura — 1440×900, 1366×768, 1280×720…): o
+   mesmo desenho, mais justo na vertical. O cabeçalho continua na mesma
+   altura (--pg-top) e com o mesmo título; o que aperta é o dock, o
+   cartão, o palco e o intervalo até a seção seguinte (o degrau m de
+   --gap-section), para o título dela aparecer ACIMA da barra de baixo
+   — a pista de que a página continua. */
+@media (min-width: 861px) and (max-height: 960px) {
   .apps-page .ap-get { margin-top: 18px; }
   .apps-page .ap-get__head { margin-bottom: 8px; }
   .apps-page .ap-key { padding-top: 12px; padding-bottom: 10px; }
   .apps-page.is-js .ap-plats { margin-top: 12px; }
   .apps-page.is-js .ap-plat { row-gap: 8px; padding-top: 14px; padding-bottom: 14px; }
   .apps-page .ap-plat__text { line-height: 1.45; }
+  .apps-page .ap-more { margin-top: var(--gap-section-m, 48px); }
+}
+@media (min-width: 861px) and (max-height: 840px) {
   /* Cartão estreito (notebook de 1024): uma frase e sem as fichas, para
      o texto terminar acima do véu do rodapé. */
   @container applats (max-width: 599px) {
@@ -1487,27 +1496,18 @@
   }
 }
 @container aps (min-width: 1080px) {
-  @media (min-width: 861px) and (max-height: 840px) {
-    .apps-page .ap-title { font-size: clamp(42px, 3.7cqi, 66px); }
-    .apps-page .ap-hero { min-height: calc(125svh - 140px); padding-bottom: 112px; }
+  @media (min-width: 861px) and (max-height: 960px) {
     .apps-page .ap-stage { aspect-ratio: 1.34; }
     /* Palco achatado: o notebook sobe e o iPad encolhe um pouco, para as
        linhas 1 a 4 da lista seguirem acima dele. */
     .apps-page .ap-mac { top: 3%; }
     .apps-page .ap-ipad { bottom: 0; width: 23%; }
-    /* E o palco inteiro sobe um pouco: com o iPad pousado no chão, a base
-       dele não entra no véu do rodapé. */
-    .apps-page .ap-stage { translate: 0 -3.5%; }
   }
 }
-/* Notebook de 1280–1366 com tela baixa: o cabeçalho ganha respiro sob a
-   barra de modelos; título e dock apertam o mesmo tanto, e o cartão
-   continua terminando acima do véu. */
+/* Notebook de altura média (1280–1440 de janela, 761–840 de altura): o
+   dock aperta um pouco. */
 @container aps (min-width: 1500px) {
   @media (min-width: 861px) and (min-height: 761px) and (max-height: 840px) {
-    .apps-page .ap-copy { padding-top: 28px; }
-    .apps-page .ap-eyebrow { margin-bottom: 10px; }
-    .apps-page .ap-title { font-size: clamp(40px, 3.5cqi, 64px); margin-bottom: 8px; }
     .apps-page .ap-get { margin-top: 14px; }
     .apps-page .ap-key { padding-top: 10px; padding-bottom: 9px; }
   }
@@ -1521,13 +1521,11 @@
   }
 }
 /* Notebook baixo (1280×720; 1366×768 com a barra do navegador = ~657px
-   úteis): o subtítulo sai (fica para o leitor de tela), o título encolhe
-   e o cartão aperta, para o botão E a linha do arquivo/guia ficarem
-   acima do véu do rodapé. */
+   úteis): o subtítulo sai (fica para o leitor de tela) e o cartão
+   aperta, para o botão E a linha do arquivo/guia ficarem acima do véu
+   do rodapé. */
 @media (min-width: 861px) and (max-height: 760px) {
   .apps-page .ap-lead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .apps-page .ap-title { margin-bottom: 0; }
-  .apps-page .ap-eyebrow { margin-bottom: 10px; }
   .apps-page .ap-get { margin-top: 14px; }
   .apps-page .ap-get__head { margin-bottom: 6px; }
   .apps-page .ap-key { padding-top: 10px; padding-bottom: 9px; row-gap: 4px; }
@@ -1537,16 +1535,8 @@
   .apps-page .ap-plat__text { line-height: 1.4; }
 }
 @container aps (min-width: 1080px) {
-  @media (min-width: 861px) and (max-height: 760px) {
-    .apps-page .ap-title { font-size: clamp(38px, 2.9cqi, 50px); }
-    .apps-page .ap-hero { min-height: calc(125svh - 134px); padding-bottom: 108px; }
-  }
-  /* Abaixo de ~700px úteis a coluna do texto sobe para o topo (o palco
-     continua centrado): cada pixel economizado vai para o botão. */
+  /* Abaixo de ~700px úteis cada pixel vai para o botão. */
   @media (min-width: 861px) and (max-height: 700px) {
-    .apps-page .ap-copy { align-self: start; padding-top: 6px; }
-    .apps-page .ap-title { font-size: clamp(36px, 2.6cqi, 46px); }
-    .apps-page .ap-eyebrow__icon { width: 32px; height: 32px; border-radius: 9px; }
     .apps-page .ap-key__cap { width: 30px; height: 30px; }
     .apps-page .ap-key__cap svg { width: 27px; height: 27px; }
   }
@@ -1555,19 +1545,24 @@
 /* Celular de tela baixa (iPhone SE, 320×640): o subtítulo sai para o
    botão da plataforma caber na primeira tela. */
 @media (max-width: 860px) and (max-height: 740px) {
-  .apps-page .ap-wrap { padding-top: 10px; }
   /* Nada de display:none aqui: o elemento é animado, e trocar o display
      reinicia a animação (o Chrome passa por 800×600 ao capturar a página
      inteira). O texto continua para o leitor de tela. */
   .apps-page .ap-lead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .apps-page .ap-get { margin-top: 10px; }
-  .apps-page .ap-title { margin-bottom: 0; font-size: clamp(26px, 7.7cqi, 40px); }
-  .apps-page .ap-eyebrow { margin-bottom: 10px; }
-  .apps-page .ap-eyebrow__icon { width: 32px; height: 32px; border-radius: 9px; }
-  .apps-page .ap-get__head { margin-bottom: 8px; }
-  .apps-page .ap-key { padding-top: 9px; padding-bottom: 8px; row-gap: 3px; }
-  .apps-page.is-js .ap-plats { margin-top: 12px; }
-  .apps-page .ap-plat { padding-top: 12px; gap: 10px; }
+  /* Com a barra de baixo (APPS · DOWNLOADS · MANUAL) o véu sobe: cada
+     linha abaixo devolve alguns pixels para o botão da plataforma ficar
+     inteiro acima dele (320×640 e 360×640, nas quatro teclas). O
+     requisito cabe numa linha só a 12px mesmo no cartão de 320. */
+  .apps-page .ap-get { margin-top: 4px; }
+  .apps-page .ap-get__head { margin-bottom: 6px; }
+  .apps-page .ap-help-btn { min-height: 44px; }
+  .apps-page .ap-key { padding-top: 6px; padding-bottom: 5px; row-gap: 2px; }
+  .apps-page .ap-key__cap { width: 24px; height: 24px; }
+  .apps-page .ap-key__cap svg { width: 22px; height: 22px; }
+  .apps-page.is-js .ap-plats { margin-top: 8px; }
+  .apps-page .ap-plat { padding-top: 10px; gap: 10px; }
+  .apps-page .ap-plat__top { row-gap: 3px; }
+  .apps-page .ap-plat__req { white-space: nowrap; font-size: 12px; }
   /* Android em tela baixa: o cabeçalho vira uma linha só (ícone, nome e
      selo) e o requisito do app que ainda não saiu e o rótulo "Use agora"
      cedem o lugar aos dois passos que funcionam hoje — os dois continuam
@@ -1586,8 +1581,7 @@
 
 /* Sem JS o palco fica alinhado ao topo, ao lado da lista. */
 @container aps (min-width: 1080px) {
-  .apps-page:not(.is-js) .ap-hero { align-items: start; }
-  .apps-page:not(.is-js) .ap-stage { margin-top: 24px; }
+  .apps-page:not(.is-js) .ap-stage { align-self: start; margin-top: 24px; }
 }
 
 /* ---------- 9. MOVIMENTO ------------------------------------ */
@@ -1630,6 +1624,7 @@
   .apps-page .ap-dev,
   .apps-page .ap-key,
   .apps-page .ap-cta,
+  .apps-page :is(.ap-help-btn, .ap-link-btn),
   .apps-page .ap-dev__glow,
   .apps-page .ap-chrome__v,
   .apps-page .ap-light--beam,
@@ -1666,13 +1661,13 @@
 /* ---------- 10. AJUDA --------------------------------------- */
 
 #ajuda-dialog {
-  --ap-min: 11px;
+  --ap-min: var(--t-min, 11px);
   padding: 0;
   margin: auto;
   width: min(780px, calc(100% - 28px));
   max-height: calc(100svh - 40px);
   border: 1px solid #a6bedd33;
-  border-radius: 24px;
+  border-radius: var(--r-card, 22px);
   color: #e8edf5;
   background:
     radial-gradient(90% 50% at 0% 0%, #ff8a3d14, transparent 55%),
@@ -1680,7 +1675,6 @@
   box-shadow: inset 0 1px 0 #ffffff12, 0 40px 120px #000c;
   font: 400 16px/1.6 var(--font-body);
 }
-@media (min-width: 861px) { #ajuda-dialog { --ap-min: 14px; } }
 #ajuda-dialog[open] { display: flex; flex-direction: column; }
 #ajuda-dialog::backdrop { background: #03070dcc; backdrop-filter: blur(10px); }
 #ajuda-dialog .apps-dialog-head {
@@ -1693,14 +1687,10 @@
 }
 #ajuda-dialog .apps-dialog-icon { width: 46px; height: 46px; flex: none; border-radius: 12px; box-shadow: 0 0 0 1px #ffffff1a, 0 0 22px -6px #ff782d66; }
 #ajuda-dialog .apps-dialog-titles { flex: 1 1 auto; min-width: 0; }
-/* Nome do app com a grafia dele (BFMiDi Editor), nunca em caixa alta
-   forçada; só a versão vai em versalete mono. */
-#ajuda-dialog .apps-dialog-label {
-  color: #ffc196;
-  font: 500 var(--ap-min)/1.3 var(--font-mono);
-  letter-spacing: .04em;
-}
-#ajuda-dialog .apps-dialog-ver { letter-spacing: .14em; text-transform: uppercase; }
+/* O micro-rótulo é o mesmo da página (.bf-kicker do pages.css): a
+   palavra em mono pêssego e a etiqueta branca "Versão 14". O ícone do
+   app ao lado já faz o papel do ponto. */
+#ajuda-dialog .apps-dialog-label::before { display: none; }
 #ajuda-dialog h2 {
   margin: 4px 0 0;
   font-family: var(--font-display);
@@ -1713,19 +1703,20 @@
 #ajuda-dialog .apps-close-help {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: var(--ap-hit, 44px);
+  height: var(--ap-hit, 44px);
   flex-shrink: 0;
-  border: 1px solid #a6bedd33;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #223044, #172232);
+  border: 1px solid var(--line-2, #a6bedd3b);
+  border-radius: var(--r-btn, 14px);
+  background: var(--chrome-bg, linear-gradient(180deg, #19212c, #121820));
   color: #e8edf5;
   cursor: pointer;
 }
 #ajuda-dialog .apps-close-help svg { width: 20px; height: 20px; }
-#ajuda-dialog .apps-close-help:hover { border-color: #a6bedd66; background: #26364c; }
-#ajuda-dialog :is(a, button):focus-visible { outline: 3px solid #ffd2a6; outline-offset: 3px; }
-@media (min-width: 861px) { #ajuda-dialog :is(a, button):focus-visible { outline-width: 3.75px; } }
+@media (hover: hover) {
+  #ajuda-dialog .apps-close-help:hover { border-color: var(--ghost-edge-hover, #ffffff4d); background: #1f2935; }
+}
+#ajuda-dialog :is(a, button):focus-visible { outline: var(--focus-w, 3px) solid var(--focus, #ffd2a6); outline-offset: var(--focus-offset, 4px); }
 #ajuda-dialog .apps-dialog-body { position: relative; padding: 0 22px 24px; overflow-y: auto; overscroll-behavior: contain; }
 #ajuda-dialog .apps-section { margin-top: 22px; }
 #ajuda-dialog .apps-section h3 {
@@ -1742,12 +1733,12 @@
   min-width: 36px;
   height: 26px;
   padding: 0 6px;
-  border: 1px solid #ff8a4a47;
+  border: 1px solid var(--line-2, #a6bedd3b);
   border-radius: 8px;
-  background: #ff792f14;
-  color: #ffc196;
+  background: #ffffff08;
+  color: var(--ink-2, #bdc8d8);
   font: 600 var(--ap-min)/1 var(--font-mono);
-  letter-spacing: .08em;
+  letter-spacing: var(--ls-micro, .14em);
 }
 #ajuda-dialog .apps-p { margin: 0 0 12px; color: #bdc8d8; }
 #ajuda-dialog .apps-reads { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
@@ -1757,28 +1748,45 @@
   gap: 2px;
   min-width: 0;
   padding: 12px 14px 13px;
-  border-radius: 14px;
+  border-radius: var(--r-well, 18px);
   background: #0b1119;
-  box-shadow: inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c;
+  box-shadow: var(--well-shadow, inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c);
 }
-#ajuda-dialog .apps-reads li > span { color: #a4b0c2; font: 600 var(--ap-min)/1.3 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+#ajuda-dialog .apps-reads li > span { color: var(--ink-2, #bdc8d8); font: 600 var(--ap-min)/1.3 var(--font-mono); letter-spacing: var(--ls-micro, .14em); text-transform: uppercase; }
 #ajuda-dialog .apps-reads li > :is(a, b) {
   justify-self: start;
   color: #f6f9fd;
   font: 700 18px/1.35 var(--font-mono);
   overflow-wrap: anywhere;
 }
-#ajuda-dialog .apps-reads li > a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-decoration-color: #ffc19666; text-underline-offset: 5px; }
+#ajuda-dialog .apps-reads li > a { display: inline-flex; align-items: center; min-height: var(--ap-hit, 44px); text-decoration: underline; text-decoration-color: #eef3fa59; text-underline-offset: 5px; }
+@media (hover: hover) {
+  #ajuda-dialog .apps-reads li > a:hover { text-decoration-color: currentColor; }
+}
+/* "Chrome ou Edge" não é link, mas ocupa a mesma linha dos endereços:
+   com a mesma altura, as três leituras ficam alinhadas lado a lado. */
+#ajuda-dialog .apps-reads li > b { display: inline-flex; align-items: center; min-height: var(--ap-hit, 44px); }
 #ajuda-dialog .apps-reads small { color: #bdc8d8; font-size: 14px; line-height: 1.45; }
 #ajuda-dialog .apps-reads small b { color: #eef2f7; font-weight: 600; }
-#ajuda-dialog .apps-reads small a { color: #ffc196; text-underline-offset: 3px; }
+/* O link dentro da frase ("editor online") precisa ser reconhecível sem
+   depender só da cor (o texto em volta é quase do mesmo tom): sublinhado
+   sempre, na gramática dos endereços acima. */
+#ajuda-dialog .apps-reads small a { color: #eef2f7; text-decoration: underline; text-decoration-color: #eef3fa73; text-underline-offset: 3px; }
+@media (hover: hover) {
+  #ajuda-dialog .apps-reads small a:hover { text-decoration-color: currentColor; }
+}
+/* Os endereços têm 44px de altura e as linhas vizinhas encostam neles: o
+   anel de foco vai por DENTRO da caixa, para não riscar o rótulo de cima
+   nem a primeira linha do texto de baixo. */
+#ajuda-dialog .apps-reads li > a { margin-inline: -6px; padding-inline: 6px; }
+#ajuda-dialog .apps-reads li > a:focus-visible { outline-offset: -2px; border-radius: 8px; }
 #ajuda-dialog .apps-steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: ap-step; }
 #ajuda-dialog .apps-steps li {
   counter-increment: ap-step;
   position: relative;
   min-height: 56px;
   padding: 14px 14px 14px 60px;
-  border-radius: 14px;
+  border-radius: var(--r-well, 18px);
   background: #121a25;
   box-shadow: inset 0 0 0 1px #ffffff0a;
   color: #bdc8d8;
@@ -1806,19 +1814,20 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 46px;
-  padding: 10px 16px 10px 12px;
-  border: 1px solid #a6bedd2e;
-  border-radius: 14px;
-  background: #0b121cb3;
+  min-height: var(--btn2-h, 48px);
+  padding: 10px 18px 10px 14px;
+  border: 1px solid var(--line-2, #a6bedd3b);
+  border-radius: var(--r-btn, 14px);
+  background: var(--ghost-bg, #0f1824cc);
   color: #e8edf5;
-  font-size: 15px;
-  font-weight: 500;
+  font: 600 var(--btn2-fs, 15px)/1.2 var(--font-body);
   text-decoration: none;
 }
-#ajuda-dialog .apps-links svg { width: 20px; height: 20px; flex: none; color: #ffb27a; }
-#ajuda-dialog .apps-links a:hover { border-color: #ffb27a80; background: #151f2d; }
-#ajuda-dialog .apps-versions { display: grid; margin: 0; border: 1px solid #a6bedd24; border-radius: 16px; background: #0b121cb3; }
+#ajuda-dialog .apps-links svg { width: 20px; height: 20px; flex: none; color: var(--ink-2, #bdc8d8); }
+@media (hover: hover) {
+  #ajuda-dialog .apps-links a:hover { border-color: var(--ghost-edge-hover, #ffffff4d); background: var(--ghost-bg-hover, #16212fcc); }
+}
+#ajuda-dialog .apps-versions { display: grid; margin: 0; border: 1px solid #a6bedd24; border-radius: var(--r-well, 18px); background: #0b121cb3; }
 #ajuda-dialog .apps-versions > div { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 4px 16px; padding: 13px 18px; }
 #ajuda-dialog .apps-versions > div + div { border-top: 1px solid #a6bedd1c; }
 #ajuda-dialog .apps-versions dt { color: #f1f5fb; font-weight: 600; }
@@ -1832,7 +1841,7 @@
   #ajuda-dialog .apps-reads { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 560px) {
-  #ajuda-dialog { width: calc(100% - 20px); max-height: calc(100svh - 24px); border-radius: 20px; }
+  #ajuda-dialog { width: calc(100% - 20px); max-height: calc(100svh - 24px); }
   #ajuda-dialog .apps-dialog-head { padding: 16px 14px 13px; gap: 12px; }
   #ajuda-dialog .apps-dialog-icon { width: 40px; height: 40px; border-radius: 10px; }
   #ajuda-dialog h2 { font-size: 21px; }

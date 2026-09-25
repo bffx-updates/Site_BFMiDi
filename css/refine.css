@@ -1,14 +1,4 @@
 /* BFMIDI — palco escuro, partículas e apresentação direta do produto. */
-:root {
-  color-scheme: dark;
-  --paper: #080b10; --paper-2: #111720;
-  --ink: #edf1f7; --ink-2: #b3bdcc; --ink-3: #929eaf;
-  --hairline: #ffffff12; --hairline-strong: #ffffff25;
-  --graphite: #101620; --graphite-lift: #1b2431;
-  --blue: #4289ff; --blue-ink: #91bcff; --blue-lit: #99c4ff;
-  --focus: #99c4ff; --contact: #0009; --maxw-page: 1360px;
-  --fs-label: .75rem; --fs-body: 1rem;
-}
 html,body { height: auto; }
 body { overflow: auto; overscroll-behavior: auto; background: var(--paper); }
 .app { height: auto; min-height: 100svh; overflow: clip; isolation: isolate; }
@@ -18,88 +8,11 @@ body { overflow: auto; overscroll-behavior: auto; background: var(--paper); }
 .wrap { padding-inline: clamp(20px,4.5vw,64px); }
 button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 ::selection { background: #346ac8; color: #fff; }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: 5px; }
-.skip-link { position: fixed; left: 16px; top: -100px; z-index: 20; padding: 12px 20px; background: var(--paper-2); color: #fff; border-radius: 8px; }
+:focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); }
+.skip-link { position: fixed; left: 16px; top: -100px; z-index: 60; padding: 12px 20px; border: 1px solid var(--chrome-edge); border-radius: var(--r-btn); background: var(--chrome-bg); box-shadow: var(--chrome-shadow); color: var(--ink); font: 600 var(--btn2-fs)/1.2 var(--font-body); }
 .skip-link:focus { top: 12px; }
-.site-header { height: 72px; padding-block: 0; gap: 28px; border-bottom: 1px solid var(--hairline); }
-.brand { gap: 4px; font: 900 27px/1 var(--font-display); letter-spacing: -.06em; }
-.brand-dot { height: 5px; width: 5px; background: #8ab5ff; box-shadow: 0 0 12px #4f92ff66; }
-.header-caption { font: 400 .75rem/1.4 var(--font-mono); letter-spacing: .12em; color: var(--ink-3); }
-.header-caption { border-left: 1px solid var(--hairline-strong); padding-left: 26px; }
-.header-link { margin-left: auto; display: flex; align-items: center; gap: 16px; border: 0; background: transparent; padding: 12px 0; font-size: .875rem; color: var(--ink-2); cursor: pointer; }
-.header-link:hover { color: #fff; }
-.header-link > span:last-child { font-size: 20px; }
-
-/* Menu inspirado na cápsula do aplicativo: vidro azul e seleção âmbar. */
-.selector-zone { display: flex; justify-content: center; align-items: center; padding-block: 32px 20px; }
-.selector-zone > .selector { width: min(980px,100%); }
-.selector { --pad: 7px; width: 100%; padding: var(--pad); border: 1px solid #6997b77a; border-radius: 999px; background: linear-gradient(165deg,#243e58e8 0%,#14283df2 48%,#1a344ced 100%); box-shadow: inset 0 2px 2px #aedbff4a,inset 0 -2px 3px #0009,0 0 0 1px #273f55,0 16px 35px -18px #000,0 0 35px -18px #5d9ccc66; }
-.selector-track { position: relative; }
-.selector-bed { border-radius: 999px; background: linear-gradient(160deg,#ffbb64 0%,#ff8e3e 44%,#ff6933 100%); box-shadow: inset 0 2px 2px #fff0cbcc,inset 0 -2px 3px #b9311766,0 0 0 1px #ffae6077,0 5px 22px -6px #ff6f3388; }
-.tab { display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; padding: 14px 8px; min-height: 58px; font-size: clamp(1rem,1.8vw,1.25rem); color: #bacbde; text-shadow: 0 1px 2px #0005; transition: color .2s,background .2s,transform .2s; }
-.tab + .tab::before { display: block; top: 28%; bottom: 28%; background: #a7c3db24; }
-.tab:hover { color: #fff; background: #badfff0a; }
-.tab[aria-pressed="true"] { color: #391508; text-shadow: 0 1px #ffc78177; }
-.tab[aria-pressed="true"]::before,.tab[aria-pressed="true"] + .tab::before { opacity: 0; }
-.selector-led { display: none; }
-.nav-icon { display: block; width: 22px; height: 22px; flex: 0 0 auto; }
-.gear-tab,.software-tab { justify-self: center; width: 58px; padding: 0; background: radial-gradient(circle at 50% 38%,#132639,#0b1725); box-shadow: inset 0 1px 2px #9ac5e833,0 1px 1px #07111a66; }
-.gear-tab .nav-icon,.software-tab .nav-icon { width: 25px; height: 25px; transition: transform .4s var(--ease); }
-.gear-tab:hover .nav-icon { transform: rotate(25deg); }
-.software-tab:hover .nav-icon { transform: scale(1.08); }
-.gear-tab[aria-pressed="true"],.software-tab[aria-pressed="true"] { background: transparent; box-shadow: none; }
-.gear-tab::before,.software-tab::before { display: none !important; }
-.view-nav { display: flex; align-items: stretch; justify-content: center; gap: 4px; width: calc(100% - 40px); max-width: 620px; padding: 6px; margin-inline: auto; border: 1px solid #6f91b144; border-radius: 27px; background: linear-gradient(155deg,#192b3ddc,#0d1927ed); box-shadow: inset 0 1px 1px #add3f426,0 8px 22px -12px #000; }
-.overview-link,.selector-sub .tab,.resource-nav .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 58px; padding: 8px; border: 1px solid transparent; border-radius: 19px; background: transparent; font: 500 .875rem/1.15 var(--font-body); letter-spacing: 0; color: #acbed3; cursor: pointer; text-shadow: none; transition: background .2s,border-color .2s,color .2s,box-shadow .2s; }
-.overview-link { flex: 1; }
-.selector-sub { --pad: 0px; display: block; flex: 3; width: auto; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
-.selector-sub .selector-track { height: 100%; gap: 4px; }
-.selector-sub .selector-bed,.selector-sub .selector-led,.selector-sub .tab::before { display: none; }
-.overview-link:hover,.selector-sub .tab:hover,.resource-nav .tab:hover { color: #f1f6ff; background: #7ba7d018; }
-.overview-link.is-active,.selector-sub .tab[aria-selected="true"],.resource-nav .tab[aria-selected="true"] { color: #ffcf9e; border-color: #e7a36b66; background: linear-gradient(#543b2b99,#30271ff2); box-shadow: inset 0 1px 1px #ffd7ad22,0 2px 8px #0003; }
-.resource-nav { max-width: 510px; }
-.resource-nav .tab { flex: 1; font-variation-settings: normal; }
-.resource-nav .tab::before { display: none; }
-.resource-page { max-width: 960px; padding-top: 44px; padding-bottom: 52px; }
-.resource-quick-page { position: relative; display: flex; align-items: center; justify-content: center; min-height: 430px; overflow: hidden; }
-.resource-quick-page::before, .resource-quick-page::after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; filter: blur(2px); }
-.resource-quick-page::before { width: 360px; height: 180px; left: 8%; top: 22%; background: #2d79b51c; box-shadow: 440px 40px 0 #ff9e4b0d; }
-.resource-quick-page::after { width: 220px; height: 220px; right: 12%; bottom: -80px; background: #ff9e4b12; }
-.resource-quick-links { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(28px,6vw,86px); }
-.resource-quick-link {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
-  width: 196px; height: 196px; color: #b9d2e8; text-decoration: none;
-  border: 1px solid #47718caa; border-radius: 30px;
-  background: radial-gradient(circle at 50% 22%,#274867aa,transparent 44%),linear-gradient(145deg,#192f45ed,#0c1826f2);
-  box-shadow: inset 0 1px 1px #d5eeff1e,0 22px 38px -26px #000,0 0 28px #2c7db51c;
-  transition: color .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
-}
-.resource-quick-link .nav-icon { width: 58px; height: 58px; padding: 11px; color: #ffb266; border: 1px solid currentColor; border-radius: 17px; background: #ffad6812; filter: drop-shadow(0 0 9px #ff9d5c88); }
-.resource-quick-link span { font: 700 1.05rem/1 var(--font-display); letter-spacing: .04em; text-transform: uppercase; }
-.resource-quick-link:hover, .resource-quick-link:focus-visible {
-  color: #fff; border-color: #ffad68; transform: translateY(-7px); box-shadow: 0 0 32px #ff9a4b44, inset 0 1px 1px #fff2;
-}
-#resource-navigation { display: none !important; }
 .mobile-utility-nav { display: none; }
 .mobile-utility-nav[hidden] { display: none !important; }
-.resource-heading { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin-bottom: 30px; }
-.resource-heading > .nav-icon { width: 40px; height: 40px; padding: 8px; box-sizing: content-box; color: #e6b989; border: 1px solid #c0916044; border-radius: 18px; background: #2d2926; }
-.resource-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 18px; }
-.resource-card { padding: 26px; border: 1px solid #5c7e9d44; border-radius: 22px; background: linear-gradient(145deg,#192b3adc,#101b28ef); box-shadow: inset 0 1px 1px #b4d7f312,0 16px 30px -25px #000; }
-.resource-card h3 { font: 600 1.125rem/1.4 var(--font-display); }
-.resource-card p { color: var(--ink-2); font-size: 1rem; line-height: 1.5; margin-block: 12px 24px; }
-.resource-card .btn { width: 100%; }
-.software-page { width: min(1180px,100%); margin-inline: auto; padding: clamp(28px,5vw,68px) clamp(20px,4vw,54px); }
-.software-hero { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: clamp(18px,3vw,34px); padding: clamp(24px,4vw,46px); border: 1px solid #7ba4c13d; border-radius: 28px; background: radial-gradient(circle at 10% 10%,#284b6866,transparent 36%),linear-gradient(145deg,#162638e8,#0c151fef); box-shadow: inset 0 1px #c7e4f51c,0 24px 60px -38px #000; }
-.software-brand-icon { width: clamp(74px,9vw,112px); aspect-ratio: 1; border-radius: 25%; background: #000 url('../assets/apps/icon-256.png') center/cover no-repeat; box-shadow: 0 18px 38px #0008,0 0 28px #ff782d26; }
-.software-intro { display: grid; gap: 9px; }
-.software-intro .panel-title,.software-intro .panel-lead { margin: 0; }
-.software-action { white-space: nowrap; }
-.software-features { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin-top: 18px; }
-.software-feature { min-height: 180px; padding: 24px; border: 1px solid #7796af2e; border-radius: 20px; background: linear-gradient(155deg,#172534d9,#0d161fdf); }
-.software-feature-number { display: block; margin-bottom: 30px; color: #ff9a57; font: 600 .72rem/1 var(--font-mono); letter-spacing: .12em; }
-.software-feature h3 { margin: 0 0 8px; color: #edf4ff; font: 700 1.15rem/1.25 var(--font-display); }
-.software-feature p { margin: 0; color: var(--ink-2); font-size: .92rem; line-height: 1.5; }
 .panels { display: grid; }
 .panel { position: static; grid-area: 1/1; min-width: 0; display: none; transition: none; }
 .panel.is-on { display: flex; animation: panel-enter .4s var(--ease) both; }
@@ -111,58 +24,15 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 .shot.is-on { transform: translateY(0); }
 .shot img { filter: drop-shadow(0 22px 16px #0009) drop-shadow(0 -1px 1px #a6c6ff18); }
 .hero-ctas { justify-content: center; align-items: center; gap: 12px; margin-top: 4px; }
-.btn { height: auto; min-height: 46px; border-radius: 9px; gap: 20px; padding: 11px 22px; font: 500 .875rem/1.4 var(--font-body); letter-spacing: 0; text-transform: none; transition: background .2s,border-color .2s,transform .2s; }
-.btn-primary { background: #d8e6fa; color: #101a28; border-color: #d8e6fa; box-shadow: none; }
-.btn-primary:hover { background: #fff; color: #101a28; border-color: #fff; transform: translateY(-1px); }
-.btn-ghost { color: var(--ink-2); border-color: #ffffff28; background: #11182388; }
-.btn-ghost:hover { color: #fff; background: #1b2634; border-color: #ffffff45; transform: translateY(-1px); }
-.btn:disabled { cursor: not-allowed; background: #1b2430; color: #8c99ab; border-color: #ffffff12; box-shadow: none; transform: none; }
-/* O painel fica centrado na vertical (margin-block: auto). Para o conteúdo
-   subir SEM perder o centro, o padding de baixo cresce mais do que o de cima
-   encolhe: a caixa fica 24px mais alta, as margens automáticas cedem 12px
-   cada, e o conteúdo sobe 20px ("diminua um pouco o espaço do menu pro
-   conteúdo", 18/09/2026 — era ~110px entre a cápsula e o micro-rótulo). */
+/* A moldura, a ancoragem no topo e o padding de cima de todo .panel-inner
+   moram no sistema (css/pages.css, #panels > .panel > .panel-inner.pg);
+   aqui ficam só o respiro lateral e o de baixo, que cada painel pode trocar. */
 .panel-inner { max-width: var(--maxw-page); padding: 30px clamp(20px,4.5vw,64px) 70px; margin-block: auto; }
-.split { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(30px,5vw,70px); align-items: center; height: auto; }
-.split-media { position: relative; min-width: 0; padding: 30px 0; background: radial-gradient(ellipse,#253a5355,transparent 70%); }
-.panel-shot img { max-height: 440px; width: 100%; object-fit: contain; }
-.split-copy { gap: 16px; overflow: visible; padding: 0; }
-.silk { font-size: .75rem; line-height: 1.4; letter-spacing: .1em; }
-.panel-title { font: 700 clamp(1.8rem,2.8vw,2.5rem)/1.15 var(--font-display); letter-spacing: -.035em; text-transform: none; }
-.panel-lead { font-size: 1rem; }
-.spec-strip { background: #ffffff12; border-radius: 12px; }
-.spec-cell { padding: 18px; gap: 8px; background: #101720; }
-.spec-value { font-size: 1.6rem; }
-.spec-note { font-size: .875rem; line-height: 1.4; }
-.feat { gap: 10px; }
-.feat-title { font-size: 1.125rem; line-height: 1.3; text-transform: none; }
-.feat-body,.band-list li { font-size: 1rem; line-height: 1.5; }
-.band-list { gap: 10px; }
-.band-list li { padding-left: 20px; }
-.band-list li::before { top: .68em; height: 4px; width: 4px; border-radius: 50%; background: #759dce; }
-.buy { max-width: 740px; gap: 14px; height: auto; overflow: visible; }
-.buy-thumb { max-height: none; }
-.buy-thumb img { width: 320px; height: auto; max-height: 200px; object-fit: contain; }
-.buy-price { font-size: 1.8rem; }
-.buy .hero-ctas { justify-content: center; margin-top: 8px; }
-.buy-unavailable { font-size: .875rem; color: var(--ink-2); }
-.whatsapp-waitlist { display: flex; align-items: center; gap: 12px; width: min(100%,560px); margin-top: 4px; padding: 13px 16px; border: 1px solid #41d88255; border-radius: 16px; background: linear-gradient(145deg,#16372b99,#10251eaa); color: #dcebe4; text-align: left; transition: border-color .2s,background .2s,transform .2s; }
-.whatsapp-waitlist:hover { border-color: #58e49899; background: linear-gradient(145deg,#1b4937bb,#123126cc); color: #fff; transform: translateY(-1px); }
-.whatsapp-waitlist svg { width: 30px; height: 30px; flex: 0 0 auto; fill: none; stroke: #55df91; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
-.whatsapp-waitlist span { display: grid; gap: 2px; font-size: .83rem; line-height: 1.35; }
-.whatsapp-waitlist strong { color: #69e9a0; font-size: .9rem; }
 .shot-map { min-height: 210px; height: auto; background: linear-gradient(160deg,#202c3c,#10151e); border-color: #52647b55; }
 .shot-map .silk { color: #bec7d7; }
 .map-sw { border-color: #8190a8; }
-.site-footer { margin-top: auto; padding-block: 0; }
-.footer-row { min-height: 50px; align-items: center; justify-content: space-between; gap: 20px; }
-.footer-end { color: var(--ink-3); font-size: .75rem; }
 @keyframes panel-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 860px) {
-  .site-header { height: 64px; gap: 22px; }
-  .header-caption { display: none; }
-  .selector-zone { padding-block: 18px 8px; }
-  .selector { width: min(780px,100%); margin-inline: auto; }
   .selector-sub { margin: 0; width: auto; }
   .view-nav { gap: 4px; }
   .hero { padding-top: 26px; }
@@ -170,41 +40,14 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .shot { inset: 0 -3%; }
   .split { display: grid; grid-template-columns: 1fr; gap: 20px; overflow: visible; }
   .panel-inner { padding-top: 12px; }
-  .split-media { display: block; padding: 0; }
-  .panel-shot { max-height: none; }
-  .panel-shot img { max-height: 320px; }
 }
-@media (max-width: 560px) { .hero-ctas .btn { flex: 0 1 auto; } .panel-lead,.feat-body { font-size: 1rem; line-height: 1.5; } .spec-note { font-size: .875rem; } }
 @media (max-width: 420px) {
-  .brand { font-size: 25px; }
-  .view-nav { gap: 4px; }
-  .overview-link { white-space: normal; }
-  .selector-sub .tab { padding-inline: 6px; font-size: .875rem; }
   .btn { padding-inline: 18px; gap: 14px; }
   .hero-stage { height: 245px; }
   .spec-cell { padding: 14px; }
 }
-@media (max-height: 620px) and (max-width: 900px) and (orientation: landscape) { .split-media,.feat-body { display: block; } .spec-strip { grid-template-columns: repeat(2,minmax(0,1fr)); } .spec-note { display: block; } .buy .band-list { display: flex; } }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 
-/* Botões de ação seguem o mesmo material do menu. */
-.btn { border-radius: 999px; padding-inline: 24px; min-height: 48px; }
-.btn-primary { background: linear-gradient(155deg,#ffb765,#ff7838); color: #391508; border-color: #ffc17e99; box-shadow: inset 0 1px 1px #ffdfb2,0 6px 16px -8px #d85526aa; }
-.btn-primary:hover { color: #301105; background: linear-gradient(155deg,#ffc881,#ff8c45); border-color: #ffd7a6; }
-.btn-ghost { background: linear-gradient(#23394c,#152537); border-color: #86a8c64d; color: #d3dfed; box-shadow: inset 0 1px #b7dbf31a; }
-.btn-ghost:hover { background: linear-gradient(#2c4860,#1b3046); border-color: #86a8c67d; }
-.btn:disabled { background: #182330; color: #8797aa; border-color: #43536955; box-shadow: none; }
-@media (max-width: 1050px) { .selector-zone { padding-inline: 24px; } }
-@media (max-width: 760px) {
-  .software-hero { grid-template-columns: auto minmax(0,1fr); border-radius: 22px; }
-  .software-action { grid-column: 1 / -1; width: 100%; }
-  .software-features { grid-template-columns: 1fr; }
-  .software-feature { min-height: 0; }
-}
-@media (max-width: 860px) { .selector-zone { padding: 22px 20px 16px; } .view-nav { max-width: 600px; } .resource-nav { max-width: 510px; } }
-@media (max-width: 560px) { .selector { --pad: 6px; } .tab { min-height: 56px; padding: 14px 3px; font-size: .875rem; font-variation-settings: 'wdth' 100; } .gear-tab { width: 52px; height: 56px; padding: 0; } .gear-tab .nav-icon { width: 25px; height: 25px; } .view-nav { padding: 5px; border-radius: 26px; } .overview-link,.selector-sub .tab,.resource-nav .tab { padding: 9px 4px; min-height: 64px; border-radius: 20px; font-size: .875rem; } .nav-icon { width: 20px; height: 20px; } .resource-card { padding: 22px; } }
-@media (max-width: 560px) { .resource-quick-page { min-height: 300px; padding-inline: 16px; } .resource-quick-links { width: 100%; gap: 14px; } .resource-quick-link { width: min(42vw, 150px); height: min(42vw, 150px); border-radius: 20px; } .resource-quick-link .nav-icon { width: 44px; height: 44px; padding: 8px; border-radius: 13px; } .resource-quick-link span { font-size: .9rem; } }
-@media (max-width: 360px) { .selector-zone { padding-inline: 12px; } .view-nav { width: calc(100% - 24px); } .gear-tab { width: 44px; } }
 
 /* No celular, a vitrine assume a estrutura de um aplicativo: modelos no topo,
    conteúdo em primeiro plano e navegação persistente ao alcance do polegar. */
@@ -213,64 +56,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   body { background: linear-gradient(180deg,#080c12 0%,#06090e 100%); }
   .app { min-height: 100dvh; padding-bottom: calc(82px + env(safe-area-inset-bottom)); }
 
-  .selector-zone {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    width: 100%;
-    padding: max(10px,env(safe-area-inset-top)) 10px 9px;
-    border-bottom: 1px solid #8eb8d51a;
-    background: linear-gradient(180deg,#080c12f5 60%,#080c12d9 84%,transparent);
-    backdrop-filter: blur(18px) saturate(1.2);
-  }
-  .selector-zone > .selector {
-    --pad: 5px;
-    width: 100%;
-    padding: var(--pad);
-    border-radius: 22px;
-    border-color: #6997b75c;
-    background: linear-gradient(160deg,#1d354be8,#0f2031f2);
-    box-shadow: inset 0 1px 1px #b8ddf52e,inset 0 -1px 2px #0008,0 8px 22px -16px #000;
-  }
-  .selector-zone .selector-bed { border-radius: 17px; }
-  .selector-zone .tab {
-    min-height: 44px;
-    padding: 8px 2px;
-    border-radius: 17px;
-    font-size: .78rem;
-    font-weight: 600;
-    letter-spacing: -.01em;
-  }
-  .selector-zone .gear-tab,.selector-zone .software-tab { width: 44px; height: 44px; min-height: 44px; }
-  .selector-zone .gear-tab .nav-icon,.selector-zone .software-tab .nav-icon { width: 21px; height: 21px; }
-
-  .view-nav {
-    position: fixed;
-    z-index: 50;
-    left: 10px;
-    right: 10px;
-    bottom: max(10px,env(safe-area-inset-bottom));
-    width: auto;
-    max-width: none;
-    margin: 0;
-    padding: 5px;
-    gap: 2px;
-    border-radius: 21px;
-    border-color: #8ab1ce52;
-    background: linear-gradient(155deg,#1b3043f5,#0c1927f7);
-    box-shadow: inset 0 1px 1px #c1e3fa24,0 18px 46px #000c,0 0 0 1px #071019;
-    backdrop-filter: blur(22px) saturate(1.3);
-  }
-  .overview-link,.selector-sub .tab,.resource-nav .tab {
-    min-height: 54px;
-    padding: 6px 2px;
-    gap: 4px;
-    border-radius: 16px;
-    font-size: .72rem;
-    line-height: 1.1;
-  }
-  .nav-icon { width: 21px; height: 21px; }
-  .selector-sub .selector-track { gap: 2px; }
   .resource-nav { max-width: none; }
 
   .panels { min-height: calc(100dvh - 76px - 84px); }
@@ -296,245 +81,14 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
 
 
   .panel-inner { width: 100%; margin: 0; padding: 16px 16px 26px; }
-  .split { display: flex; flex-direction: column; gap: 14px; }
-  .split-media {
-    width: 100%;
-    margin: 0;
-    padding: 14px;
-    border: 1px solid #7897b224;
-    border-radius: 22px;
-    background: radial-gradient(ellipse,#29415e4d,#111b288f 70%);
-    overflow: hidden;
-  }
-  .panel-shot,.split-media .shot-map { max-height: 260px; }
-  .split-copy { gap: 12px; }
-  .panel-title { font-size: clamp(1.65rem,8vw,2.15rem); }
-  .panel-lead,.feat-body,.band-list li { font-size: .95rem; line-height: 1.5; }
-  .spec-strip { border-radius: 18px; }
-  .spec-cell { padding: 14px; }
-  .buy { align-items: stretch; text-align: left; }
-  .buy-thumb { align-self: center; }
-  .buy .hero-ctas { justify-content: stretch; }
-  .buy .hero-ctas .btn { flex: 1 1 100%; }
-  .resource-page { padding: 22px 16px 28px; }
-  .software-page { padding: 18px 14px 28px; }
-  .software-hero { grid-template-columns: 58px minmax(0,1fr); gap: 14px; padding: 20px; }
-  .software-brand-icon { width: 58px; border-radius: 16px; }
-  .software-intro .panel-title { font-size: 1.55rem; }
-  .software-intro .panel-lead { grid-column: 1 / -1; font-size: .9rem; }
-  .software-feature { padding: 20px; }
-  .software-feature-number { margin-bottom: 18px; }
-  .resource-heading { align-items: flex-start; text-align: left; gap: 10px; margin-bottom: 18px; }
-  .resource-heading > .nav-icon { width: 30px; height: 30px; border-radius: 14px; }
-  .resource-card { border-radius: 18px; }
-  .site-footer { margin-bottom: 8px; }
 }
 
 @media (max-width: 380px) {
-  .selector-zone { padding-inline: 7px; }
-  .selector-zone .tab { font-size: .7rem; }
-  .selector-zone .gear-tab,.selector-zone .software-tab { width: 40px; }
-  .view-nav { left: 7px; right: 7px; }
   .overview-link,.selector-sub .tab,.resource-nav .tab { font-size: .67rem; }
   .hero { padding-inline: 10px; }
   .hero-stage { height: 242px; }
 }
 
-/* ── Navegação em barra flutuante no rodapé (18/09/2026, imagem de referência
-   do usuário) ─────────────────────────────────────────────────────────────
-   Quatro pílulas SOLTAS, flutuando sobre o conteúdo: o trilho perdeu moldura,
-   fundo e sombra, e cada botão virou a sua própria pílula, com ícone e nome
-   lado a lado. O HOME fica só com o ícone — o nome continua no DOM, escondido
-   como .sr-only, porque é ele que dá nome ao botão para leitor de tela; com
-   display:none o botão ficaria anônimo.
-
-   Os dois seletores precisam de `.app > #id` (1,1,0) para EMPATAR com
-   `.app > :not(#particle-field)` lá do topo do arquivo, que prende todo filho
-   do .app em `position: relative` — era ele que matava, em silêncio, o
-   `position: fixed` que o bloco de 600px já pedia. O desempate é a ORDEM,
-   então este bloco tem de continuar sendo o ÚLTIMO do arquivo. */
-.app > #model-navigation,
-.app > #resource-navigation {
-  position: fixed;
-  z-index: 50;
-  left: 50%;
-  bottom: calc(max(10px,env(safe-area-inset-bottom)) + var(--bf-footbar) + var(--bf-bar-gap));
-  transform: translateX(-50%);
-  width: min(100% - 28px,900px);
-  max-width: none;
-  margin: 0;
-  padding: 0;
-  gap: 12px;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-}
-
-/* Assinatura discreta abaixo das pílulas. A referência de 19/09 aproxima
-   a navegação da base: 18px de assinatura e 8px de intervalo. A folga do
-   documento permite rolar o último parágrafo acima da barra e do véu. */
-.app { --bf-footbar: 18px; --bf-bar-gap: 8px; padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
-#app > .site-footer {
-  position: fixed;
-  z-index: 49;
-  left: 50%;
-  bottom: max(6px,env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  width: min(100% - 28px,900px);
-  margin: 0;
-  padding: 0;
-}
-#app > .site-footer .footer-row { min-height: var(--bf-footbar); padding: 0 6px; }
-
-/* Véu do rodapé. O conteúdo rola POR BAIXO da barra — é o que a imagem de
-   referência mostra — mas passava legível atrás da assinatura, e duas linhas
-   de texto sobrepostas viram borrão. O degradê apaga o que entra na faixa sem
-   cortar nada, e não intercepta clique. Fica ABAIXO das pílulas e da
-   assinatura no empilhamento (47 < 49 < 50) e ACIMA do conteúdo, que os
-   filhos do #app fixam em z-index 1. A altura sai do mesmo `--bf-footbar`,
-   então acompanha a faixa se ela mudar. */
-#app::after {
-  content: '';
-  position: fixed;
-  z-index: 47;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--bf-footbar) + var(--bf-bar-gap) + 108px + env(safe-area-inset-bottom));
-  pointer-events: none;
-  background: linear-gradient(180deg,#080b1000,#080b10d9 42%,#080b10);
-}
-
-/* As quatro pílulas saem EXATAMENTE iguais. A largura do HOME é FIXADA na
-   conta (três vãos de 12px fora, dividido por quatro) em vez de sair de uma
-   proporção 1:3 de flex-grow: com `min-width: auto` o HOME reivindicava a
-   largura do próprio conteúdo e terminava 25px mais gordo que as abas. O
-   submenu leva o resto, e o grid de 3 colunas dele reparte em partes iguais.
-   Mudou o `gap` da barra? Mude os dois 12px daqui junto. */
-.view-nav .overview-link { flex: 0 0 calc((100% - 36px) / 4); min-width: 0; }
-.view-nav .selector-sub { flex: 1 1 auto; min-width: 0; }
-.view-nav .selector-sub .selector-track { gap: 12px; }
-
-.view-nav .overview-link,
-.view-nav .selector-sub .tab,
-#resource-navigation .tab {
-  flex-direction: row;
-  gap: 10px;
-  min-height: 70px;
-  padding: 8px 12px;
-  border: 1px solid #6f91b155;
-  border-radius: 22px;
-  background: linear-gradient(155deg,#1b2f43ee,#0d1927f5);
-  box-shadow: inset 0 1px 1px #add3f41f,0 10px 26px -14px #000c;
-  font: 600 1rem/1.1 var(--font-body);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: #c3d3e6;
-  backdrop-filter: blur(18px) saturate(1.2);
-}
-.view-nav .overview-link { gap: 0; }
-.view-nav .overview-link > span {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip-path: inset(50%); white-space: nowrap; border: 0;
-}
-.view-nav .nav-icon { width: 22px; height: 22px; flex: 0 0 auto; }
-
-.view-nav .overview-link:hover,
-.view-nav .selector-sub .tab:hover,
-#resource-navigation .tab:hover {
-  color: #f1f6ff;
-  border-color: #8fb4d4aa;
-  background: linear-gradient(155deg,#22394fee,#122234f5);
-}
-
-/* Laranja = "você está aqui", e só isso. A imagem de referência trazia IN/OUT
-   e SHOP com borda laranja mesmo inativos; ficou combinado manter a cor como
-   indicação de aba aberta, para ela não perder o significado. */
-.view-nav .overview-link.is-active,
-.view-nav .selector-sub .tab[aria-selected="true"],
-#resource-navigation .tab[aria-selected="true"] {
-  color: #ffd2a4;
-  border-color: #e7a36b;
-  background: linear-gradient(155deg,#5a3d2ae8,#33271cf2);
-  box-shadow: inset 0 1px 1px #ffd7ad2e,0 10px 26px -14px #000c;
-}
-
-/* Abaixo de ~620px o nome não cabe ao lado do ícone (a pílula fica com ~77px):
-   volta a ficar embaixo dele, como a barra de aplicativo já fazia. */
-@media (max-width: 620px) {
-  .view-nav .overview-link,
-  .view-nav .selector-sub .tab,
-  #resource-navigation .tab {
-    flex-direction: column;
-    gap: 4px;
-    min-height: 58px;
-    padding: 7px 4px;
-    border-radius: 16px;
-    font-size: .66rem;
-    letter-spacing: .05em;
-  }
-  .view-nav .nav-icon { width: 21px; height: 21px; }
-}
-/* ── Faixa de conexões no painel CONECTS (18/09/2026, arte do usuário) ──
-   Oito tiles na 8SW+, sete na NANO+ (sem DIN5): saídas MIDI, USB, sem fio e
-   entradas. Nasceu com quatro, sob a foto; com oito virou uma FAIXA que
-   atravessa as duas colunas do .split, abaixo de foto e texto — sob a foto,
-   oito tiles viravam um bloco de 2×4 que empurrava tudo. Os arquivos têm a
-   mesma caixa (480×477), então os tiles saem iguais em qualquer coluna.
-
-   Desktop: UMA linha com exatamente n colunas (o main.js escreve --n no
-   <ul>), tiles de até 130px, centrada — um auto-fit com máximo definido
-   conta as colunas pelo máximo e abria sete para oito tiles. Tablet (≤860):
-   quatro por linha. Celular (≤600): dois por linha, e a faixa sobe para
-   ENTRE a foto e o texto (order), porque ilustra a foto e não o fechamento
-   do editor. */
-.port-grid {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(var(--n,4),minmax(0,1fr));
-  gap: 14px;
-  width: 100%;
-  max-width: calc(var(--n,4) * 130px + (var(--n,4) - 1) * 14px);
-  margin: 0 auto;
-  padding: 0;
-  list-style: none;
-}
-.port-grid li { margin: 0; min-width: 0; }
-.port-grid img { display: block; width: 100%; height: auto; filter: drop-shadow(0 12px 18px #0009); }
-/* O gap do .split (até 70px) vale também entre as LINHAS; a faixa não
-   precisa de tanto ar acima dela. */
-.split { row-gap: 22px; }
-/* IN/OUT ocupa mais da área útil depois da escala global de 80%.
-   Foto, texto e portas crescem juntos; INFO e os menus mantêm a escala
-   aprovada. Em janelas baixas o conteúdo continua acessível pela rolagem. */
-@media (min-width: 861px) {
-  #panel-conects .panel-inner { max-width: 1720px; padding: 28px 48px; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr); column-gap: 64px; }
-  #panel-conects .split-media { padding: 12px 0; }
-  #panel-conects .panel-shot { width: 100%; max-height: none; }
-  #panel-conects .panel-shot img { max-height: 360px; }
-  #panel-conects .split { row-gap: 32px; }
-  #panel-conects .split-copy { gap: 18px; }
-  #panel-conects .silk { font-size: .875rem; }
-  #panel-conects .panel-title { font-size: clamp(2.3rem,3vw,3rem); line-height: 1.12; }
-  #panel-conects .panel-lead,#panel-conects .band-list li { font-size: 1.25rem; line-height: 1.5; }
-  #panel-conects .band-list { gap: 12px; }
-  #panel-conects .port-grid { max-width: calc(var(--n,4) * 140px + (var(--n,4) - 1) * 16px); gap: 16px; }
-}
-@media (min-width: 861px) and (max-width: 1100px) {
-  #panel-conects .panel-inner { padding-inline: 28px; column-gap: 32px; }
-  #panel-conects .panel-title { font-size: 2.25rem; }
-  #panel-conects .panel-lead,#panel-conects .band-list li { font-size: 1.125rem; }
-  #panel-conects .port-grid { max-width: calc(var(--n,4) * 120px + (var(--n,4) - 1) * 12px); gap: 12px; }
-}
-@media (max-width: 860px) {
-  .port-grid { grid-template-columns: repeat(4,minmax(0,1fr)); max-width: none; gap: 12px; }
-}
-@media (max-width: 600px) {
-  .port-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; order: 1; }
-  .split-copy { order: 2; }
-}
 
 /* ── Nome da controladora no vão do HOME (18/09/2026, imagem de referência) ──
    Em TODA largura. Nasceu só no desktop, com a justificativa de que "no
@@ -752,63 +306,6 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   100% { filter: brightness(1);               transform: scaleX(var(--wm-stretch)) scale(1); }
 }
 
-/* INFO — proporções da referência: produto solto e ficha ampla à direita.
-   A foto recebe largura explícita para não encolher pelo tamanho intrínseco
-   do srcset. Em telas baixas, o documento inteiro continua rolando. */
-@media (min-width: 861px) {
-  .selector-zone { padding-block: 28px 24px; }
-  .selector-zone > .selector { --pad: 9px; }
-  .selector-zone .tab { min-height: 72px; font-size: clamp(1.2rem,1.6vw,1.65rem); }
-  .selector-zone .gear-tab,.selector-zone .software-tab { width: 72px; height: 72px; }
-  .selector-zone .nav-icon { width: 28px; height: 28px; }
-
-  #panel-info .panel-inner {
-    max-width: 1680px;
-    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-    gap: clamp(48px,6vw,104px);
-    padding: 40px clamp(32px,4vw,64px) 24px;
-    margin-block: auto;
-  }
-  #panel-info .split-media { padding: 0; background: none; overflow: visible; }
-  #panel-info .panel-shot { width: 100%; max-width: 640px; max-height: none; }
-  #panel-info .panel-shot img { width: 100%; max-height: 500px; }
-  #panel-info .split-copy { gap: 22px; }
-  #panel-info .spec-strip { margin-top: 0; border-radius: 15px; }
-  #panel-info .spec-cell { padding: 24px 22px; gap: 12px; background: #10171f; }
-  #panel-info .spec-cell .silk { font-size: .875rem; letter-spacing: .1em; }
-  #panel-info .spec-value { font-size: 2rem; }
-  #panel-info .spec-note { font-size: 1.0625rem; line-height: 1.45; }
-  #panel-info .feat { gap: 16px; }
-  #panel-info .feat-title { font-size: 1.4rem; line-height: 1.3; }
-  #panel-info .feat-body,#panel-info .band-list li { font-size: 1.25rem; line-height: 1.5; }
-  #panel-info .band-list { gap: 14px; }
-  #panel-info .band-list li { padding-left: 25px; }
-  .view-nav .nav-icon { width: 25px; height: 25px; }
-}
-
-@media (min-width: 861px) and (max-width: 1440px) {
-  .selector-zone > .selector { width: min(860px,100%); --pad: 7px; }
-  .selector-zone .tab { min-height: 62px; }
-  .selector-zone .gear-tab,.selector-zone .software-tab { width: 62px; height: 62px; }
-  #panel-info .panel-inner { gap: 40px; padding-top: 28px; }
-  #panel-info .panel-shot img { max-height: 400px; }
-  #panel-info .spec-cell { padding: 18px; }
-  #panel-info .spec-cell .silk { font-size: .75rem; }
-  #panel-info .spec-note { font-size: 1rem; }
-  #panel-info .feat-body,#panel-info .band-list li { font-size: 1.0625rem; }
-}
-
-@media (max-width: 860px) {
-  #panel-info .panel-inner { gap: 28px; padding-bottom: 24px; }
-  #panel-info .split-media { padding: 8px 0; margin: 0; border: 0; background: none; overflow: visible; }
-  #panel-info .panel-shot { width: 100%; max-height: none; }
-  #panel-info .panel-shot img { width: 100%; max-height: 340px; }
-  #panel-info .split-copy { width: 100%; gap: 22px; }
-  #panel-info .spec-cell { padding: 18px; gap: 10px; }
-  #panel-info .spec-note { font-size: .9375rem; line-height: 1.45; }
-  #panel-info .feat { gap: 14px; }
-  #panel-info .feat-body,#panel-info .band-list li { font-size: 1rem; line-height: 1.55; }
-}
 
 /* HOME desktop: a controladora ganha presença e o nome desce um pouco. */
 @media (min-width: 861px) {
@@ -819,153 +316,24 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .panel-home .hero-wordmark { margin-top: clamp(200px, 20vh, 280px); }
 }
 
-@media (max-width: 420px) {
-  #panel-info .spec-cell { padding: 15px 12px; }
-  #panel-info .spec-cell .silk { font-size: .6875rem; letter-spacing: .07em; }
-  #panel-info .spec-note { font-size: .875rem; }
-  #panel-info .panel-shot img { max-height: 280px; }
-}
 
 /* Escala de desktop solicitada: 100% no navegador deve ter o tamanho visual
    da antiga página a 80%. O zoom de CSS também recalcula o espaço do layout,
-   inclusive menus fixos, sem alterar a preferência de zoom do navegador.
-   A altura em svh compensa a escala para o palco continuar ocupando a janela.
-   Celulares e tablets mantêm os tamanhos de leitura e toque existentes. */
+   inclusive menus fixos, sem alterar a preferência de zoom do navegador. O
+   valor e a altura da janela em px CSS (--fold, no lugar de 125svh) moram em
+   css/tokens.css. Celulares e tablets mantêm os tamanhos de leitura e toque. */
 @media (min-width: 861px) {
-  html { zoom: .8; }
-  .app { min-height: 125svh; }
+  html { zoom: var(--zoom); }
+  .app { min-height: var(--fold); }
 }
 
-/* Acesso rápido aos aplicativos, destacado como o botão da referência. */
-@media (min-width: 861px) {
-  .selector-zone .software-tab.apps-tab {
-    position: relative;
-    z-index: 3;
-    /* Mantém a célula do grid no tamanho do menu e amplia só o botão. */
-    width: 72px;
-    height: 72px;
-    min-height: 72px;
-    margin-inline: 4px;
-    padding: 0;
-    gap: 3px;
-    border: 1px solid #83b9e8aa;
-    border-radius: 14px;
-    background: radial-gradient(circle at 35% 25%, #2b4d70 0%, #142b45 45%, #091727 78%);
-    box-shadow: inset 0 1px 2px #e8f7ff66, 0 0 0 1px #1c3550, 0 13px 25px -12px #000, 0 0 24px #78b9ef55;
-    transform: translateY(0) scale(1.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .selector-zone .software-tab.apps-tab .nav-icon {
-    width: 36px;
-    height: 36px;
-    color: #edf8ff;
-    filter: drop-shadow(0 0 7px #c9e8ff);
-  }
-  .selector-zone .software-tab.apps-tab::after {
-    content: 'APP';
-    color: #8dbce9;
-    font: 700 1rem/1 var(--font-body);
-    letter-spacing: .08em;
-  }
-.selector-zone .software-tab.apps-tab[aria-pressed="true"] {
-    background: radial-gradient(circle at 35% 25%, #39668f 0%, #183755 48%, #0b1d31 80%);
-    box-shadow: inset 0 1px 2px #fff8, 0 0 0 1px #2c5277, 0 13px 25px -12px #000, 0 0 28px #8bc8ff88;
-  }
-  .selector.apps-active .selector-bed { opacity: 0; }
-}
-
-/* Mobile: o seletor superior fica exclusivo para os quatro modelos. Os dois
-   acessos secundários formam uma barra horizontal logo abaixo dele. */
+/* Mobile: o seletor superior fica exclusivo para os quatro modelos (o
+   restante do celular está no bloco do CROMO, no fim do arquivo). */
 @media (max-width: 600px) {
   .app {
     --mobile-name-y: -62px;
     --mobile-action-height: 52px;
     --mobile-action-width: 48%;
-  }
-  .selector-zone > .selector { --n: 4 !important; }
-  .selector-zone > .selector .selector-track { grid-template-columns: repeat(4,minmax(0,1fr)); }
-
-  .selector-zone #software-toggle,
-  .selector-zone #resources-toggle { display: none; }
-
-  .app > #mobile-utility-navigation {
-    position: relative;
-    z-index: 5;
-    left: auto;
-    bottom: auto;
-    transform: none;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0;
-    box-sizing: border-box;
-    width: calc(100% - 20px);
-    margin: 0 10px 12px;
-    padding: 0;
-    border: 0;
-    background: none;
-    box-shadow: none;
-  }
-  .mobile-utility-button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex: 0 0 var(--mobile-action-width);
-    width: var(--mobile-action-width);
-    min-width: 0;
-    height: var(--mobile-action-height);
-    min-height: var(--mobile-action-height);
-    margin: 0;
-    padding: 5px 8px;
-    border: 1px solid #5c7f9d55;
-    border-radius: 17px;
-    background: linear-gradient(155deg,#1a344ce8,#10253af2);
-    box-shadow: inset 0 1px 1px #d4ecff1c,0 8px 18px -14px #000;
-    transform: none;
-    color: #e9f5ff;
-  }
-  .mobile-settings-button { flex-direction: row-reverse; }
-  .mobile-utility-icon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1px;
-    box-sizing: border-box;
-    width: 56px;
-    height: 60px;
-    padding: 7px;
-    flex: 0 0 auto;
-    border: 1px solid #85b6df88;
-    border-radius: 14px;
-    background: radial-gradient(circle at 35% 25%,#315a80,#10243a 75%);
-    box-shadow: inset 0 1px 2px #e8f7ff44,0 0 16px #78b9ef38;
-  }
-  .mobile-utility-icon .nav-icon { width: 30px; height: 30px; }
-  .mobile-utility-icon b { color: #9cc5e9; font: 700 .58rem/1 var(--font-body); letter-spacing: .08em; }
-  .mobile-utility-label {
-    flex: 1;
-    color: #9ebbd6;
-    font: 700 clamp(.82rem,4vw,1.12rem)/1 var(--font-body);
-    letter-spacing: .04em;
-    text-align: center;
-  }
-  .mobile-settings-button[aria-pressed="true"] {
-    color: #351608;
-    border-color: #ffb66f;
-    background: linear-gradient(155deg,#ffb765,#ff7838);
-    box-shadow: inset 0 1px 1px #ffdfb2,0 7px 18px -9px #d85526aa;
-  }
-  .mobile-apps-button[aria-pressed="true"] {
-    border-color: #9fd0f8;
-    background: radial-gradient(circle at 35% 25%,#39668f,#183755 52%,#0b1d31 82%);
-    box-shadow: inset 0 1px 2px #fff8,0 0 0 1px #2c5277,0 0 24px #8bc8ff77;
   }
 
   .panel-home .hero-wordmark { transform: translateY(var(--mobile-name-y)); }
@@ -974,31 +342,505 @@ button,a { touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   .app { padding-bottom: calc(132px + env(safe-area-inset-bottom)); }
 }
 
-@media (max-width: 860px) {
-  .selector-zone .software-tab.apps-tab {
-    position: relative;
-    z-index: 3;
-    width: 46px;
-    height: 50px;
-    min-height: 50px;
-    padding: 0;
-    gap: 2px;
-    border: 1px solid #83b9e8aa;
-    border-radius: 11px;
-    background: radial-gradient(circle at 35% 25%, #2b4d70 0%, #142b45 45%, #091727 78%);
-    box-shadow: inset 0 1px 2px #e8f7ff66, 0 0 0 1px #1c3550, 0 8px 16px -10px #000, 0 0 16px #78b9ef55;
-    transform: scale(1.28);
-    display: flex;
+/* ══ CROMO EM GRAFITE (24/09/2026) ══════════════════════════════════════════
+   Cápsula de modelos, barra de baixo (a do modelo e a dos recursos), barra
+   utilitária do celular e rodapé no MESMO material dos cartões dos painéis:
+   grafite opaco (tokens --chrome-* em css/tokens.css), sem backdrop-filter.
+   O vidro azul de antes fazia a navegação parecer de outro site.
+
+   Três regras que valem para toda peça daqui:
+   · o LARANJA é o único estado aceso — o leito sob o modelo, a pílula da
+     vista aberta e o anel das teclas APP e engrenagem;
+   · as quatro peças têm a MESMA largura, --w-nav (900px CSS) no desktop e a
+     tela menos 2 × --gutter embaixo disso (16px de cada lado no celular);
+   · hover só onde existe ponteiro que paira (@media (hover: hover)) — no iOS
+     o :hover grudava no último toque; o toque ganha um retorno próprio
+     (scale .96 no :active).
+
+   Este bloco tem de continuar sendo o ÚLTIMO do arquivo: os seletores
+   `.app > #id` EMPATAM com `.app > :not(#particle-field)` do topo (que prende
+   todo filho do .app em position: relative) e o desempate é a ordem. */
+
+.app {
+  --bf-footbar: 20px;          /* a faixa da assinatura */
+  --bf-bar-gap: 8px;           /* entre as pílulas e a assinatura */
+  --bf-pill-h: 70px;           /* a altura das pílulas */
+  --bf-bar-bottom: calc(max(10px, env(safe-area-inset-bottom)) + var(--bf-footbar) + var(--bf-bar-gap));
+  padding-bottom: calc(132px + env(safe-area-inset-bottom));
+}
+.nav-icon { display: block; width: 22px; height: 22px; flex: 0 0 auto; }
+/* A âncora de rolagem do teclado: o foco que desce para trás da barra fixa
+   sobe o bastante para ficar acima das pílulas. */
+html { scroll-padding-bottom: 150px; }
+.selector-led { display: none; }
+
+/* Foco: o mesmo anel dos painéis (token), por DENTRO da pílula ou tecla —
+   por fora ele colava na borda da cápsula e sumia nela. */
+:is(#selector .tab, .view-nav .overview-link, .view-nav .tab, .mobile-utility-button):focus-visible {
+  outline: var(--focus-w) solid var(--focus);
+  outline-offset: -4px;
+}
+/* O "Pular" põe o foco no título da vista (ou no <main>): quem chega ali
+   já sabe onde está, e um anel em volta da página inteira só confunde. */
+#panels:focus, #panels [tabindex="-1"]:focus { outline: none; }
+
+/* ── A CÁPSULA DE MODELOS ─────────────────────────────────────────────── */
+/* viewport-fit=cover (index.html): no iPhone deitado a página passa por
+   baixo do recorte da câmera. As faixas laterais seguras (env, 0 em qualquer
+   outra tela) entram na cápsula, no conteúdo e nas barras fixas. */
+.selector-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 22px env(safe-area-inset-right) 16px env(safe-area-inset-left);
+}
+#panels { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+.selector-zone > #selector {
+  --pad: 6px;
+  width: min(100% - 2 * var(--gutter), var(--w-nav));
+  padding: var(--pad);
+  border: 1px solid var(--chrome-edge);
+  border-radius: var(--r-pill);
+  background: var(--chrome-bg);
+  box-shadow: var(--chrome-shadow);
+}
+#selector .selector-bed {
+  border-radius: var(--r-pill);
+  background: linear-gradient(160deg,#ffbb64 0%,#ff8e3e 44%,#ff6933 100%);
+  box-shadow: inset 0 2px 2px #fff0cbcc,inset 0 -2px 3px #b9311766,0 0 0 1px #ffae6077,0 5px 22px -6px #ff6f3388;
+  transition: transform var(--dur-slide) var(--ease), opacity var(--dur-fade) ease;
+}
+/* Em Apps/Downloads/Manual quem acende é a tecla (APP ou engrenagem); o
+   leito apaga no lugar do modelo em vez de escorregar para trás dela. */
+#selector.is-util .selector-bed { opacity: 0; }
+
+#selector { --tab-h: 56px; }
+#selector .tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tab-h);
+  padding: 6px 4px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' var(--wdth-readout), 'wght' 800;
+  font-size: 1.0625rem;
+  letter-spacing: .01em;
+  line-height: 1;
+  color: var(--chrome-ink);
+  text-shadow: none;
+  /* O modelo que SAI clareia na hora (o leito já está indo embora); o que
+     ENTRA escurece com atraso, quando o laranja está chegando embaixo dele —
+     sem o atraso a palavra acendia antes do leito. */
+  transition: color .2s ease, transform .12s ease;
+}
+#selector .tab[aria-pressed="true"] { transition-delay: calc(var(--dur-slide) * .3), 0s; }
+#selector .tab + .tab::before { top: 28%; bottom: 28%; background: var(--chrome-sep); }
+#selector .tab[aria-pressed="true"] { color: var(--cta-ink); text-shadow: 0 1px #ffc78177; }
+#selector .tab[aria-pressed="true"]::before,
+#selector .tab[aria-pressed="true"] + .tab::before,
+#selector .software-tab::before,
+#selector .gear-tab::before,
+#selector .software-tab + .tab::before { opacity: 0; }
+
+/* A GRADE DA CÁPSULA: quatro colunas iguais para os modelos e, no fim, as
+   duas teclas do tamanho delas (APP --app-w, engrenagem --tab-h), a 8px
+   uma da outra e dos modelos. Com seis colunas iguais cada tecla ficava
+   centrada numa coluna que ela não preenchia: 7px de folga à esquerda do
+   leito contra 40 à direita da engrenagem, e vãos de 20 e 54px. Agora as
+   duas pontas têm a mesma folga (--pad). O leito continua deslizando por
+   transform: a largura dele é a de uma coluna de modelo. */
+#selector { --app-w: 64px; --util-gap: 8px; }
+#selector .selector-track { grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto; }
+#selector .selector-bed {
+  width: calc((100% - 2 * var(--pad) - var(--app-w) - var(--tab-h) - 2 * var(--util-gap)) / 4);
+}
+
+/* APP e engrenagem: duas TECLAS encaixadas na cápsula — mesma altura do
+   leito, e nenhuma das duas sai da silhueta da cápsula. A engrenagem é
+   redonda (abaixo), no grafite da cápsula; o APP é mais largo, leva o
+   rótulo e um material um degrau MAIS CLARO, com aresta mais viva e ícone
+   maior — o destaque de tecla própria que a referência pedia, sem laranja
+   no repouso (o laranja é só "você está aqui"). */
+#selector .software-tab,
+#selector .gear-tab {
+  justify-self: start;
+  margin-left: var(--util-gap);
+  align-self: stretch;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 0;
+  padding: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  background: linear-gradient(180deg,#242e3b,#161d27);
+  box-shadow: inset 0 1px 0 #ffffff17, 0 6px 14px -8px #000;
+  color: var(--ink);
+}
+#selector .software-tab {
+  width: var(--app-w);
+  border-color: #a6bedd5c;
+  background: linear-gradient(180deg, #2e3a4b, #1b2330);
+  box-shadow: inset 0 1px 0 #ffffff26, 0 8px 18px -8px #000;
+}
+/* A engrenagem é a ponta da cápsula: redonda, concêntrica com a curva
+   dela (mesma folga --pad em volta), como o leito na outra ponta. */
+#selector .gear-tab { width: var(--tab-h); border-radius: 50%; color: var(--chrome-ink); }
+#selector .software-tab .nav-icon,
+#selector .gear-tab .nav-icon { width: 22px; height: 22px; transition: transform .4s var(--ease); }
+#selector .software-tab .nav-icon { width: 26px; height: 26px; }
+.apps-tab__label {
+  font: 700 var(--t-min)/1 var(--font-body);
+  letter-spacing: .08em;
+  color: var(--ink);
+}
+#selector .software-tab[aria-pressed="true"],
+#selector .gear-tab[aria-pressed="true"] {
+  color: var(--chrome-on-ink);
+  border-color: var(--chrome-on-edge);
+  background: var(--chrome-on-bg);
+  box-shadow: var(--chrome-util-on), inset 0 1px 0 #ffd7ad2e;
+}
+#selector .software-tab[aria-pressed="true"] .apps-tab__label { color: var(--chrome-on-ink); }
+
+@media (hover: hover) {
+  #selector .tab:not([aria-pressed="true"]):hover { color: #fff; background-color: var(--chrome-hover-bg); }
+  #selector :is(.software-tab, .gear-tab):not([aria-pressed="true"]):hover { border-color: var(--chrome-hover-edge); background: linear-gradient(180deg,#2a3544,#19212c); }
+  #selector .software-tab:not([aria-pressed="true"]):hover { background: linear-gradient(180deg,#384759,#222c3a); }
+  #selector .gear-tab:hover .nav-icon { transform: rotate(25deg); }
+  #selector .software-tab:hover .nav-icon { transform: scale(1.08); }
+}
+
+/* ── A BARRA DE BAIXO ─────────────────────────────────────────────────────
+   Quatro pílulas soltas, flutuando sobre o conteúdo, com ícone e nome lado a
+   lado. Duas barras, uma por vez: a do modelo (HOME · INFO · IN/OUT · SHOP)
+   e a dos recursos ([o modelo] APPS · DOWNLOADS · MANUAL). O HOME da barra do
+   modelo é só o ícone — o nome continua no DOM, como .sr-only, porque é ele
+   que dá nome ao botão para leitor de tela. */
+.app > #model-navigation,
+.app > #resource-navigation {
+  position: fixed;
+  z-index: 50;
+  left: 50%;
+  bottom: var(--bf-bar-bottom);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  width: min(100% - 2 * var(--gutter) - env(safe-area-inset-left) - env(safe-area-inset-right), var(--w-nav));
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+/* As quatro pílulas saem EXATAMENTE iguais: a do HOME tem a largura FIXADA
+   na conta (três vãos de 12px, dividido por quatro) e o trilho das abas leva
+   o resto, em três colunas iguais. Mudou o `gap`? Mude os 12px daqui junto. */
+.view-nav .overview-link { flex: 0 0 calc((100% - 36px) / 4); min-width: 0; }
+.view-nav .selector-sub {
+  --pad: 0px;
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.view-nav .selector-sub .selector-track { height: 100%; gap: 12px; }
+.view-nav .selector-sub .tab::before { display: none; }
+
+.view-nav .overview-link,
+.view-nav .selector-sub .tab {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--bf-pill-h);
+  padding: 8px 12px;
+  border: 1px solid var(--chrome-edge);
+  border-radius: var(--r-card);
+  background: var(--chrome-bg);
+  box-shadow: var(--chrome-shadow);
+  font: 600 1rem/1.1 var(--font-body);
+  font-variation-settings: normal;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--chrome-ink);
+  text-shadow: none;
+  cursor: pointer;
+  transition: color .2s ease, border-color .2s ease, background-color .2s ease, transform .12s ease;
+}
+.view-nav #overview-link { gap: 0; }
+.view-nav #overview-link > span {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+.view-nav .nav-icon { width: 22px; height: 22px; }
+
+/* Laranja = "você está aqui", e só isso. */
+.view-nav .overview-link.is-active,
+.view-nav .selector-sub .tab[aria-selected="true"] {
+  color: var(--chrome-on-ink);
+  border-color: var(--chrome-on-edge);
+  background: var(--chrome-on-bg);
+  box-shadow: inset 0 1px 1px #ffd7ad2e, 0 16px 34px -20px #000;
+}
+
+@media (hover: hover) {
+  .view-nav .overview-link:not(.is-active):hover,
+  .view-nav .selector-sub .tab:not([aria-selected="true"]):hover {
+    color: #fff;
+    border-color: var(--chrome-hover-edge);
+    background: linear-gradient(0deg, var(--chrome-hover-bg), var(--chrome-hover-bg)), var(--chrome-bg);
+  }
+}
+
+/* Retorno ao toque: todas as teclas da navegação cedem um pouco ao ser
+   apertadas (só transform — e nada anima para quem pede menos movimento). */
+:is(#selector .tab, .view-nav .overview-link, .view-nav .selector-sub .tab, .mobile-utility-button):active {
+  transform: scale(.96);
+}
+
+/* ── A ASSINATURA E O VÉU ─────────────────────────────────────────────── */
+#app > .site-footer {
+  position: fixed;
+  z-index: 49;
+  left: 50%;
+  bottom: max(6px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(100% - 2 * var(--gutter) - env(safe-area-inset-left) - env(safe-area-inset-right), var(--w-nav));
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+#app > .site-footer .footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: none;
+  min-height: var(--bf-footbar);
+  padding: 0 6px;
+}
+#app > .site-footer :is(.footer-note, .footer-end) {
+  font: 500 var(--t-min)/1.2 var(--font-body);
+  letter-spacing: .02em;
+  color: var(--ink-3);
+}
+
+/* Véu do rodapé. O conteúdo rola POR BAIXO da barra, e o véu é OPACO da
+   borda de cima das pílulas para baixo — antes ele chegava a ~43% ali, e os
+   títulos dos cartões passavam legíveis entre as pílulas e atrás da
+   assinatura. Acima das pílulas, 64px de degradê. Fica ABAIXO das pílulas e
+   da assinatura (47 < 49 < 50) e ACIMA do conteúdo; não intercepta clique. */
+#app::after {
+  content: '';
+  position: fixed;
+  z-index: 47;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--bf-bar-bottom) + var(--bf-pill-h) + 64px);
+  pointer-events: none;
+  background: linear-gradient(180deg,#080b1000 0,#080b10 64px,#080b10);
+}
+
+/* ── DESKTOP (≥861px; zoom .8, os px daqui são CSS) ─────────────────────── */
+@media (min-width: 861px) {
+  .app { --bf-footbar: 22px; }
+  .selector-zone { padding-block: 28px 24px; }
+  .selector-zone > #selector { --pad: 7px; --tab-h: 64px; }
+  #selector .tab { font-size: 1.375rem; }
+  #selector { --app-w: 96px; }
+  #selector .gear-tab .nav-icon { width: 24px; height: 24px; }
+  #selector .software-tab .nav-icon { width: 30px; height: 30px; }
+  .view-nav .nav-icon { width: 25px; height: 25px; }
+}
+
+/* ── 621–760px: com a barra estreita, "DOWNLOADS" encostava na borda da
+   pílula; o nome encolhe um degrau antes de ir para baixo do ícone. ─────── */
+@media (max-width: 760px) {
+  .view-nav .overview-link,
+  .view-nav .selector-sub .tab {
+    gap: 8px;
+    padding-inline: 8px;
+    font-size: .875rem;
+    letter-spacing: .05em;
+  }
+}
+
+/* ── ATÉ 620px: o nome não cabe ao lado do ícone (a pílula fica com ~77px)
+   e volta a ficar embaixo dele. O HOME, que é só ícone, ganha um espaçador
+   da altura do rótulo, para os quatro ícones ficarem na MESMA linha. ─────── */
+@media (max-width: 620px) {
+  .app { --bf-pill-h: 58px; }
+  .view-nav .overview-link,
+  .view-nav .selector-sub .tab {
     flex-direction: column;
+    gap: 4px;
+    padding: 7px 4px;
+    border-radius: var(--r-nav);
+    font-size: .6875rem;
+    letter-spacing: .04em;
+  }
+  .view-nav #overview-link { gap: 4px; }
+  .view-nav #overview-link::after { content: ''; display: block; height: 1.1em; }
+  .view-nav .nav-icon { width: 21px; height: 21px; }
+}
+
+/* ── CELULAR (≤600px): a cápsula fica só com os quatro modelos, e APPS ·
+   DOWNLOADS viram uma barra própria logo abaixo, só na HOME. ─────────────── */
+@media (max-width: 600px) {
+  html { scroll-padding-bottom: 124px; }
+  .selector-zone { padding-block: max(10px, env(safe-area-inset-top)) 0; }
+  .selector-zone > #selector {
+    --n: 4 !important;
+    --pad: 5px;
+    --tab-h: 44px;
+    border-radius: var(--r-nav);
+  }
+  .selector-zone > #selector .selector-track { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  #selector .selector-bed { width: calc((100% - 2 * var(--pad)) / 4); border-radius: calc(var(--r-nav) - 5px); }
+  #selector .tab {
+    padding: 6px 2px;
+    border-radius: calc(var(--r-nav) - 5px);
+    font-size: .8125rem;
+    letter-spacing: 0;
+  }
+  .selector-zone #software-toggle,
+  .selector-zone #resources-toggle { display: none; }
+
+  .app > #mobile-utility-navigation {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    gap: 10px;
+    width: calc(100% - 2 * var(--gutter));
+    margin: 10px auto 12px;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+  html[data-view="panel"] .app > #mobile-utility-navigation { display: none; }
+  .mobile-utility-button {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    min-width: 0;
+    height: 48px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--chrome-edge);
+    border-radius: var(--r-nav);
+    background: var(--chrome-bg);
+    box-shadow: var(--chrome-shadow);
+    color: var(--chrome-ink);
+    cursor: pointer;
+    transition: color .2s ease, border-color .2s ease, transform .12s ease;
   }
-  .selector-zone .software-tab.apps-tab .nav-icon { width: 23px; height: 23px; color: #edf8ff; }
-  .selector-zone .software-tab.apps-tab::after {
-    content: 'APP';
-    color: #8dbce9;
-    font: 700 .56rem/1 var(--font-body);
-    letter-spacing: .06em;
+  .mobile-utility-icon { display: flex; }
+  .mobile-utility-icon .nav-icon { width: 22px; height: 22px; }
+  .mobile-utility-label {
+    font: 600 .8125rem/1 var(--font-body);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
-  .selector.apps-active .selector-bed { opacity: 0; }
+  .mobile-utility-button[aria-pressed="true"] {
+    color: var(--chrome-on-ink);
+    border-color: var(--chrome-on-edge);
+    background: var(--chrome-on-bg);
+  }
+}
+/* Até 360px as quatro colunas ficam com ~70px: o nome desce um degrau para
+   "NANO+" não encostar no divisor. Na barra de recursos a pílula tem ~63px
+   e "DOWNLOADS" pede 64 mesmo sem espaçamento (a fonte já está no piso de
+   11px): a coluna do meio (a ordem é a de `resources`, APPS · DOWNLOADS ·
+   MANUAL) ganha um pouco mais que as vizinhas, e o nome, menos respiro. */
+@media (max-width: 360px) {
+  #selector .tab { font-size: .75rem; }
+  #resource-track { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr); }
+  .view-nav :is(.overview-link, .selector-sub .tab) { padding-inline: 2px; letter-spacing: .01em; }
+}
+@media (max-width: 600px) and (hover: hover) {
+  .mobile-utility-button:not([aria-pressed="true"]):hover { color: #fff; border-color: var(--chrome-hover-edge); }
+}
+
+/* ── TELA BAIXA (celular deitado, ≤500px de altura): pílulas de 70px, a
+   cápsula e a assinatura deixavam ~190px para o conteúdo. Tudo desce para o
+   alvo mínimo de 44px e a assinatura sai. ─────────────────────────────── */
+@media (max-height: 500px) {
+  .app { --bf-pill-h: 44px; --bf-footbar: 0px; --bf-bar-gap: 0px; }
+  .selector-zone { padding-block: 8px 6px; }
+  .selector-zone > #selector { --tab-h: 44px; }
+  /* Tecla de 44px: ícone e rótulo do APP (22 + 3 + o rótulo) cabem nela. */
+  #selector .software-tab .nav-icon { width: 22px; height: 22px; }
+  .view-nav .overview-link,
+  .view-nav .selector-sub .tab {
+    flex-direction: row;
+    gap: 8px;
+    padding: 4px 10px;
+    font-size: .6875rem;
+  }
+  .view-nav #overview-link::after { display: none; }
+  #app > .site-footer { display: none; }
+  /* Com as pílulas de 44px e sem assinatura, a barra ocupa ~54px e a
+     reserva de 132px embaixo do conteúdo sobrava. Nos painéis ela fica
+     com a barra mais o degradê do véu (o fim do texto não passa por
+     baixo dele); na HOME, que não rola, o véu encolhe para 16px de
+     degradê e a reserva acompanha — é essa altura que vira palco. */
+  .app { padding-bottom: calc(var(--bf-bar-bottom) + var(--bf-pill-h) + 64px); }
+  .app:has(#panel-home.is-on) { padding-bottom: calc(var(--bf-bar-bottom) + var(--bf-pill-h) + 16px); }
+  #app:has(#panel-home.is-on)::after {
+    height: calc(var(--bf-bar-bottom) + var(--bf-pill-h) + 16px);
+    background: linear-gradient(180deg,#080b1000 0,#080b10 16px,#080b10);
+  }
+}
+
+/* ── CELULAR DEITADO ESTREITO (≤600 × ≤500, paisagem): a barra APPS ·
+   DOWNLOADS do celular comia 70px de uma janela de 320 e a foto da HOME
+   virava um ponto (17×12px a 568×320). Deitado há largura de sobra: APP e
+   engrenagem voltam para a cápsula, como acima de 600px, e a barra sai. ── */
+@media (max-width: 600px) and (max-height: 500px) and (orientation: landscape) {
+  .selector-zone > #selector { --app-w: 60px; }
+  .selector-zone > #selector .selector-track { grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto; }
+  #selector .selector-bed { width: calc((100% - 2 * var(--pad) - var(--app-w) - var(--tab-h) - 2 * var(--util-gap)) / 4); }
+  .selector-zone #software-toggle,
+  .selector-zone #resources-toggle { display: flex; }
+  html .app > #mobile-utility-navigation { display: none; }
+}
+
+/* ── ALTO CONTRASTE (forced-colors): o sistema descarta os degradês, e o
+   véu, as pílulas e a cápsula ficavam transparentes — o texto dos cartões
+   passava por baixo e se misturava com os rótulos. O "você está aqui",
+   que era só o laranja, vira um contorno na cor de destaque do sistema. */
+@media (forced-colors: active) {
+  #app::after,
+  #selector,
+  .view-nav .overview-link,
+  .view-nav .selector-sub .tab,
+  .mobile-utility-button,
+  #app > .site-footer { background: Canvas; }
+  .selector-bed,
+  .selector-led { display: none; }
+  #selector .tab[aria-pressed="true"],
+  .view-nav .selector-sub .tab[aria-selected="true"],
+  .view-nav .overview-link.is-active,
+  .mobile-utility-button[aria-pressed="true"] {
+    outline: 3px solid Highlight;
+    outline-offset: -3px;
+  }
 }
