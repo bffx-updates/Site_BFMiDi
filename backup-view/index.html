@@ -4,178 +4,278 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BFMiDi · Backup View</title>
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0C1016">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230C1016'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23FC6337' stroke-width='3.5'/%3E%3C/svg%3E">
 <style>
-  :root {
-    --bg: #0C1016;
-    --card-a: #1B2029; --card-b: #141820;
+  :root { color-scheme: dark;
+    --bg: #090E15;
+    --card-a: #1B2533; --card-b: #131B26;
     --line: rgba(255,255,255,.075); --line2: rgba(255,255,255,.13);
     --text: #F2F4F7; --soft: #C9CFD6; --muted: #8E97A3; --faint: #5F6873;
     --accent: #FC6337; --accent2: #FF8A4C; --ok: #2BD65B;
     --r: 1.1rem;
   }
+  /* Poços e peças internas (mostrador, banner, campos, EXTRAS, trilho e tiles das opções, layer,
+     teclas, log) no mesmo matiz azul-ardósia dos cards (≈214°), com a luminância amostrada na referência. */
   /* Tudo em rem: 16px numa janela de 1728px (a largura da imagem de referência),
      escalando junto com a janela até 11px. A composição mantém a proporção. */
   html { font-size: clamp(11px, calc(100vw / 108), 16px); }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
-  body { min-height: 100vh; color: var(--text); font-size: .95rem; line-height: 1.35;
+  /* Texto pequeno com piso de 11px: max(11px, …) nos rótulos miúdos. */
+  body { min-height: 100vh; color: var(--text); font-size: max(11px, .95rem); line-height: 1.35;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    /* brilhos como na referência: canto inferior direito e borda esquerda a meia altura */
     background:
-      radial-gradient(40rem 28rem at -4% 104%, rgba(252,99,55,.22), transparent 70%),
-      radial-gradient(52rem 18rem at 62% 108%, rgba(252,99,55,.10), transparent 70%),
+      radial-gradient(44rem 26rem at 104% 106%, rgba(252,99,55,.22), transparent 70%),
+      radial-gradient(22rem 30rem at -6% 64%, rgba(252,99,55,.13), transparent 70%),
       radial-gradient(70rem 36rem at 50% -12%, rgba(64,92,140,.16), transparent 70%),
       var(--bg);
     background-attachment: fixed; }
-  ::selection { background: rgba(252,99,55,.35); }
+  ::selection { background: rgba(255,255,255,.22); color: #fff; }
   button { font: inherit; color: inherit; }
+  /* controles e peças do console não selecionam texto no arraste */
+  .key, .opt, .chip, .layerseg, .xbtn, .tile, .ftag, .display { -webkit-user-select: none; user-select: none; }
+  /* foco de teclado: anel pêssego, visível sobre o laranja e sobre o grafite */
+  :where(button, summary, pre):focus-visible { outline: 2px solid #FFD2B8; outline-offset: 3px; }
 
   /* ── topo ── */
+  /* fundo opaco (o conteúdo não aparece por trás); sombra só depois de rolar */
   .top { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
     min-height: 4.9rem; padding: .9rem 2.5rem; border-bottom: 1px solid var(--line);
-    background: linear-gradient(180deg, rgba(16,20,26,.97), rgba(11,14,19,.97)); }
+    background: linear-gradient(180deg, #131820, #0C1015); }
+  .top.scrolled { box-shadow: 0 .6rem 1.2rem -.6rem rgba(0,0,0,.8); }
   .brand { display: flex; align-items: center; gap: 1.2rem; white-space: nowrap; }
   .brand .name { font-size: 1.55rem; font-weight: 600; letter-spacing: .01em; }
   .brand b { color: var(--accent); font-weight: 900; }
   .brand .sep { width: 1px; height: 1.7rem; background: var(--line2); }
   .brand .sub { font-size: 1.05rem; font-weight: 600; letter-spacing: .05em; color: var(--muted); text-transform: uppercase; }
-  .filebtn { margin-left: .7rem; display: inline-flex; align-items: center; gap: .75rem; height: 2.65rem; padding: 0 1.35rem; border-radius: .7rem; cursor: pointer;
-    background: linear-gradient(180deg, #FF8B50, #F1602A); color: #1A0B04; font-size: .95rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase;
+  .filebtn { position: relative; margin-left: .7rem; display: inline-flex; align-items: center; gap: .75rem; height: 2.65rem; padding: 0 1.35rem; border-radius: .7rem; cursor: pointer;
+    background: linear-gradient(180deg, #FF8B50, #F1602A); color: #1A0B04; font-size: max(11px, .95rem); font-weight: 900; letter-spacing: .06em; text-transform: uppercase;
     box-shadow: 0 0 1.6rem -.2rem rgba(252,99,55,.6), inset 0 1px 0 rgba(255,255,255,.35); }
   .filebtn svg { width: 1.2rem; height: 1.2rem; }
   .filebtn:hover { filter: brightness(1.06); }
-  .filebtn input { display: none; }
-  .fileinfo { margin-left: auto; display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; color: var(--muted); font-size: .95rem; font-weight: 700; }
+  /* o input fica escondido só da vista: continua na ordem do Tab, e o anel vai no botão */
+  .filebtn input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip-path: inset(50%); pointer-events: none; }
+  .filebtn:has(input:focus-visible) { outline: 2px solid #FFD2B8; outline-offset: 3px; }
+  .fileinfo { margin-left: auto; min-width: 0; display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap; color: var(--muted); font-size: max(11px, .95rem); font-weight: 700; }
   .fileinfo .fname { color: var(--text); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; max-width: 30vw;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* chips do arquivo (versão, presets, truncado) andam juntos: se não cabem ao lado do nome, descem todos */
+  .fileinfo .fchips { display: flex; align-items: center; gap: inherit; flex-wrap: wrap; min-width: 0; }
+  /* ≥721px: quem cede é o nome do arquivo (reticências), só quando falta espaço de verdade */
+  @media (min-width: 721px) {
+    .brand, .filebtn { flex: none; }
+    .filebtn { white-space: nowrap; }
+    .fileinfo { flex: 1 1 auto; flex-wrap: nowrap; justify-content: flex-end; }
+    .fileinfo .fname { max-width: none; min-width: 3rem; flex: 0 1 auto; }
+    .fileinfo .chip, .fileinfo .fchips { flex: none; }
+  }
+  /* ≥900px: topo numa linha só. O topo é fixo: o foco de teclado não pode ficar escondido atrás dele. */
+  @media (min-width: 900px) {
+    html { scroll-padding-top: 5.9rem; }
+    .top { flex-wrap: nowrap; }
+  }
+  @media (max-width: 1239px) { .brand .sep, .brand .sub { display: none; } }
+  /* abaixo de 900 (onde o topo pode quebrar em 2 linhas) e em paisagem baixa: o topo rola junto (não come a altura da tela) */
+  @media (max-width: 899px), (max-height: 500px) { html { scroll-padding-top: 0; } .top { position: static; } }
 
-  main { max-width: 108rem; margin: 0 auto; padding: 1.5rem 2.75rem 2.5rem; }
+  /* margem lateral = a do topo (2.5rem): conteúdo colado às bordas do cabeçalho */
+  main { max-width: 108rem; margin: 0 auto; padding: 1.5rem 2.5rem 1.9rem; }
   .empty { margin: 10vh auto; max-width: 38rem; text-align: center; padding: 3rem 2rem; border-radius: 1.4rem; border: 2px dashed rgba(255,255,255,.14);
-    background: linear-gradient(180deg, rgba(27,32,41,.6), rgba(20,24,32,.6)); color: var(--muted); font-size: 1.05rem; transition: .2s; }
-  .empty.over { border-color: var(--accent); background: rgba(252,99,55,.07); color: var(--text); }
+    background: linear-gradient(180deg, rgba(27,37,51,.6), rgba(19,27,38,.6)); color: var(--muted); font-size: 1.05rem; cursor: pointer; transition: opacity .2s; }
+  .empty:hover { border-color: rgba(252,99,55,.5); }
+  .empty svg { display: block; width: 3rem; height: 3rem; color: var(--accent); margin: 0 auto .8rem; }
   .empty h2 { margin: 0 0 .6rem; color: var(--text); font-size: 1.7rem; font-weight: 900; letter-spacing: .02em; }
   .empty p { margin: .4rem 0; }
+  .empty b { color: var(--accent2); }
   .empty .k { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent2); }
+  /* arrastando um arquivo por cima da página (com ou sem backup aberto) */
+  body.dragging .empty { border-color: var(--accent); background: rgba(252,99,55,.07); color: var(--text); }
+  body.dragging::after { content: 'Solte para abrir o backup'; position: fixed; inset: 1rem; z-index: 50; display: grid; place-items: center;
+    border: 2px dashed var(--accent); border-radius: 1.4rem; background: rgba(10,13,18,.8); font-size: 1.6rem; font-weight: 900; pointer-events: none; }
 
-  .chip { display: inline-flex; align-items: center; gap: .6rem; height: 2.65rem; padding: 0 1.2rem; border-radius: 999px; font-size: .95rem; font-weight: 900;
-    letter-spacing: .065em; text-transform: uppercase; white-space: nowrap; color: var(--text); background: rgba(12,15,20,.75); border: 1px solid var(--line2); }
+  /* chip neutro elevado (base opaca, fio claro em cima), não afundado */
+  .chip { display: inline-flex; align-items: center; gap: .6rem; height: 2.65rem; padding: 0 1.2rem; border-radius: 999px; font-size: max(11px, .95rem); font-weight: 900;
+    letter-spacing: .065em; text-transform: uppercase; white-space: nowrap; color: var(--text);
+    background: linear-gradient(180deg, #18212C, #111820); border: 1px solid rgba(170,195,225,.2); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
+  .chip[title] { cursor: help; }
   .chip svg { width: 1.3rem; height: 1.3rem; }
   .chip .dot { width: .7rem; height: .7rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 .6rem currentColor; }
-  .chip.ok { color: #3BE377; border-color: rgba(43,214,91,.6); background: rgba(43,214,91,.08); }
+  .chip.ok { color: #3BE377; border-color: rgba(43,214,91,.6); background: rgba(43,214,91,.08); box-shadow: 0 0 1rem -.35rem rgba(43,214,91,.6); }
   .chip.acc { color: var(--accent2); border-color: rgba(252,99,55,.7); background: rgba(252,99,55,.08); box-shadow: 0 0 1rem -.35rem rgba(252,99,55,.6); }
   .chip.bad { color: #FF8A8A; border-color: rgba(255,72,72,.55); background: rgba(255,72,72,.08); }
   .chip.warn { color: #FFD766; border-color: rgba(255,204,32,.5); background: rgba(255,204,32,.08); }
+  /* placa fora do catálogo: o silício não é conhecido */
+  .chip.unk { color: var(--muted); border-style: dashed; }
 
-  /* superfície comum dos cards */
+  /* superfície comum dos cards: luz no topo e à esquerda, base escura (como na referência) */
   .console, .principal, .row, details.boot, .phead {
-    background: linear-gradient(180deg, var(--card-a), var(--card-b)); border: 1px solid var(--line); border-radius: var(--r);
-    box-shadow: 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.045); }
+    background: linear-gradient(180deg, var(--card-a), var(--card-b)); border-radius: var(--r);
+    border: 1px solid rgba(255,255,255,.07); border-top-color: rgba(255,255,255,.2); border-left-color: rgba(255,255,255,.12); border-bottom-color: rgba(0,0,0,.45);
+    box-shadow: 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.08); }
 
   /* ── linha de cima: console · modelo · principal ── */
-  .hero { display: grid; grid-template-columns: 29.8rem minmax(0, 1fr) 29.75rem; gap: 1.4rem; align-items: stretch; margin-bottom: 1.4rem; }
-  .console { align-self: start; display: flex; align-items: center; gap: 1.05rem; padding: 1rem 1rem 1rem 1.1rem; }
+  /* Os três com a altura do PRINCIPAL fechado; abrir EXTRAS aumenta só o PRINCIPAL. */
+  .hero { display: grid; grid-template-columns: 29.8rem minmax(0, 1fr) 29.75rem; gap: 1.4rem; align-items: start; margin-bottom: 1.4rem; }
+  .hero > .console, .hero > .model, .hero > .principal { min-height: 13.95rem; }
+  .console { display: flex; align-items: center; gap: 1.05rem; padding: 1rem 1rem 1rem 1.1rem; }
   .display { position: relative; flex: none; width: 11.45rem; height: 10.1rem; border-radius: .95rem; cursor: pointer; user-select: none;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: radial-gradient(120% 80% at 50% 0%, #131820 0%, #06080B 65%);
+    background: radial-gradient(120% 80% at 50% 0%, #141C27 0%, #080D14 65%);
     border: 1px solid rgba(255,255,255,.07); border-bottom: 2px solid var(--accent);
     box-shadow: inset 0 .2rem .9rem rgba(0,0,0,.9), 0 .7rem 1.3rem -.7rem rgba(252,99,55,.85); }
   .display .bk { font-size: 4.4rem; font-weight: 900; line-height: .9; letter-spacing: -.015em; color: #fff; }
   .display .sub { margin-top: .2rem; font-size: 1.2rem; font-weight: 700; letter-spacing: .02em; color: #D9DEE4; }
-  .display .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 1.4rem; height: 2.6rem; padding: 0; border: 0; background: transparent;
-    color: var(--muted); cursor: pointer; font-size: 1.4rem; font-weight: 900; opacity: 0; transition: .15s; }
+  /* Setas de banco: faixa da altura do mostrador (alvo ≥24px). Invisíveis em repouso,
+     como na referência; aparecem no hover e no foco, e sempre no toque. */
+  .display .nav { position: absolute; top: 0; height: 100%; width: max(24px, 1.9rem); padding: 0; border: 0; background: transparent;
+    display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; opacity: 0; transition: opacity .15s; }
+  .display .nav svg { width: 1.2rem; height: 1.2rem; }
   .display .nav.l { left: .2rem; } .display .nav.r { right: .2rem; }
-  .display:hover .nav { opacity: .9; }
+  /* aparece sem transição (o render recria a seta e ela piscaria); o fade é só para sumir */
+  .display:hover .nav, .display:focus-within .nav { opacity: .9; transition: none; }
   .display .nav:hover { color: var(--accent2); }
+  .display .nav:focus-visible { opacity: 1; outline-offset: -3px; border-radius: .45rem; }
   .display .nav:disabled { visibility: hidden; }
+  @media (hover: none) { .display .nav { opacity: .7; } }
+  /* um banco só: mostrador inerte */
+  .display.single { cursor: default; }
   .keys { display: grid; grid-template-columns: repeat(3, 4.5rem); grid-auto-rows: 4.4rem; gap: .875rem .9rem; }
-  .keys.k2 { grid-template-columns: repeat(2, 4.5rem); }
-  .key { border-radius: .85rem; border: 1px solid rgba(255,255,255,.075); background: linear-gradient(180deg, #242B35, #181D25); color: #E9EDF2;
-    font-size: 2.35rem; font-weight: 800; cursor: pointer; transition: .12s;
+  .keys.k2 { grid-template-columns: repeat(2, 4.5rem); margin-inline: auto; }
+  .key { border-radius: .85rem; border: 1px solid rgba(255,255,255,.075); background: linear-gradient(180deg, #212B38, #161E29); color: #E9EDF2;
+    font-size: 2.35rem; font-weight: 800; cursor: pointer; transition: transform .12s;
     box-shadow: 0 .35rem .8rem -.2rem rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05); }
-  .key:hover:not(:disabled) { border-color: rgba(252,99,55,.45); }
-  .key.on { color: #fff; border-color: rgba(255,178,130,.55); background: linear-gradient(180deg, #FF8D55, #F25D26);
+  .key:hover:not(:disabled):not(.on) { border-color: rgba(252,99,55,.75); }
+  .key.on { color: #fff; border-color: rgba(255,178,130,.55); background: linear-gradient(180deg, #F26C33, #D24E1A);
     box-shadow: 0 0 1.7rem -.1rem rgba(252,99,55,.6), inset 0 1px 0 rgba(255,255,255,.35); }
-  .key:disabled { cursor: not-allowed; }
-  .key.off:not(.on) { opacity: .5; }
+  /* tracejado = slot fora do backup; hachurado = preset desativado */
+  .key:disabled { cursor: not-allowed; background: transparent; border: 1px dashed rgba(255,255,255,.14); color: var(--faint); box-shadow: none; }
+  .key.off:not(.on) { color: #7C8591; background: repeating-linear-gradient(135deg, #1A222D 0 .3rem, #141A23 .3rem .6rem); }
+  .key:active:not(:disabled) { transform: translateY(1px) scale(.97); }
 
   .model { position: relative; overflow: hidden; container-type: inline-size; min-width: 0; border-radius: var(--r);
     display: flex; flex-direction: column; justify-content: center; padding: 1.8rem 2.6rem;
-    background: radial-gradient(55% 95% at 90% 18%, rgba(252,99,55,.24), transparent 70%),
-      radial-gradient(40% 70% at 100% 100%, rgba(252,99,55,.14), transparent 70%), linear-gradient(180deg, #1B1F27, #11141A);
-    border: 1px solid rgba(252,99,55,.6);
-    box-shadow: 0 0 0 1px rgba(252,99,55,.12), 0 0 2.4rem -.3rem rgba(252,99,55,.4), inset 0 0 2.2rem rgba(252,99,55,.07), 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85); }
+    /* O MODELO não segue a luz 'topo claro, base escura' dos outros cards: como na referência, a moldura
+       é um fio laranja inteiro, mais aceso nos cantos superior esquerdo e inferior direito. Os fundos vão
+       no padding-box; as três últimas camadas (border-box) só aparecem na borda. */
+    background: radial-gradient(55% 95% at 90% 18%, rgba(252,99,55,.24), transparent 70%) padding-box,
+      radial-gradient(40% 70% at 100% 100%, rgba(252,99,55,.16), transparent 70%) padding-box, linear-gradient(180deg, #1B1F27, #11141A) padding-box,
+      radial-gradient(38% 80% at 0% 0%, #FFB27A, rgba(252,99,55,0) 100%) border-box,
+      radial-gradient(42% 90% at 100% 100%, #FFC48A, rgba(252,99,55,0) 100%) border-box,
+      linear-gradient(rgba(252,99,55,.55), rgba(252,99,55,.55)) border-box;
+    border: 1px solid transparent;
+    box-shadow: 0 0 0 1px rgba(252,99,55,.08), 0 0 2.2rem -.5rem rgba(252,99,55,.36),
+      inset 0 0 2.2rem rgba(252,99,55,.07), 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85); }
   .model > :not(.dev) { position: relative; z-index: 1; }
   .model small { font-size: 1.05rem; font-weight: 900; letter-spacing: .3em; color: var(--accent); }
-  .model .name { margin: .55rem 0 1.15rem; font-size: min(3.9rem, 9.6cqw); font-weight: 900; line-height: 1.05; letter-spacing: .005em; white-space: nowrap;
+  /* O nome da placa encolhe pelo número de letras (--len) até caber inteiro;
+     com até 15 letras fica no tamanho de sempre. */
+  .model .name { margin: .55rem 0 1.15rem; font-size: clamp(1.6rem, min(9.6cqw, calc(100cqw / (var(--len, 14) * .66))), 3.9rem); font-weight: 900; line-height: 1.05;
+    letter-spacing: .005em; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
     text-shadow: 0 .2rem 1.2rem rgba(0,0,0,.6); }
   .model .tags { display: flex; gap: 1.1rem; flex-wrap: wrap; }
   .model .tags .chip { font-size: 1.05rem; padding: 0 1.3rem; }
-  .model .dev { position: absolute; z-index: 0; right: -4.5rem; top: .25rem; width: 50%; pointer-events: none;
+  /* chips coloridos com base opaca: o desenho do pedal não aparece por baixo */
+  .model .tags .chip.acc { background: linear-gradient(rgba(252,99,55,.1), rgba(252,99,55,.1)), #141A23; }
+  .model .tags .chip.bad { background: linear-gradient(rgba(255,72,72,.1), rgba(255,72,72,.1)), #141A23; }
+  /* ilustração dimensionada pela altura e centrada no card (não vaza em nenhuma largura) */
+  .model .dev { position: absolute; z-index: 0; right: -4rem; top: 50%; width: auto; height: 14.5rem; transform: translateY(-50%); pointer-events: none;
     -webkit-mask-image: linear-gradient(100deg, transparent 16%, #000 44%); mask-image: linear-gradient(100deg, transparent 16%, #000 44%); }
   .model .dev text { font-family: inherit; }
-  @container (max-width: 30rem) { .model .dev { opacity: .35; } }
+  /* 15 letras (BFMIDI-S3 MICRO / NANO+): o desenho só recua um pouco, para o nome não encostar no 'BFMIDI' dele */
+  .model.mid .dev { opacity: .55; right: -5.4rem; top: 54%; }
+  /* mais de 15 (placa fora do catálogo): quase some */
+  .model.long .dev { opacity: .22; }
+  @container (max-width: 30rem) { .model .dev, .model.mid .dev { opacity: .35; } }
 
   /* ── card PRINCIPAL (o header do preset: PC, canal e extras), no visual do editor ── */
   .principal { container-type: inline-size; min-width: 0; padding: .8rem 1.25rem 1rem; }
-  .pbanner { height: 3.15rem; border-radius: .9rem; display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(180deg, #05070A, #0B0E12); border: 1px solid rgba(255,255,255,.08); box-shadow: inset 0 .25rem .7rem rgba(0,0,0,.9);
+  .pbanner { position: relative; height: 3.15rem; border-radius: .9rem; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, #0A1119, #0E151F); border: 1px solid rgba(255,255,255,.08); box-shadow: inset 0 .25rem .7rem rgba(0,0,0,.9);
     font-size: 2rem; font-weight: 900; letter-spacing: .03em; }
+  /* fio sob o banner, como na referência */
+  .pbanner::after { content: ''; position: absolute; left: .4rem; right: .4rem; bottom: -.55rem; height: 1px; background: rgba(255,255,255,.07); }
   .pfields { display: grid; gap: .7rem; margin-top: 1.05rem; }
   .fld { display: flex; height: 3.5rem; min-width: 0; border-radius: .8rem; overflow: hidden;
-    background: linear-gradient(180deg, #161A21, #10141A); border: 1px solid rgba(255,255,255,.08); }
+    background: linear-gradient(180deg, #15202B, #0F1721); border: 1px solid rgba(255,255,255,.08); }
   .fld .ftag { width: 5.5rem; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem;
-    color: #fff; font-size: .85rem; font-weight: 900; letter-spacing: .05em; }
+    color: #fff; font-size: max(11px, .85rem); font-weight: 900; letter-spacing: .05em; }
   .fld .ftag svg { width: 1.4rem; height: 1.4rem; }
-  .fld.pc .ftag { background: linear-gradient(180deg, #3D8DFF, #1B5CE3); }
-  .fld.ch .ftag { background: linear-gradient(180deg, #FF8C50, #EF5E27); }
+  /* contraste AA: azul um pouco mais fechado no PC; no CANAL o laranja fica e o rótulo escurece */
+  .fld.pc .ftag { background: linear-gradient(180deg, #2F7BF5, #1B5CE3); }
+  .fld.ch .ftag { background: linear-gradient(180deg, #FF8C50, #EF5E27); color: #1A0B04; }
   .fld.ch { height: 3.6rem; border-color: rgba(252,99,55,.75); box-shadow: 0 0 1.1rem -.35rem rgba(252,99,55,.55); }
   .fld .fval { flex: 1; min-width: 0; display: flex; align-items: center; gap: .95rem; padding: 0 1rem 0 1.25rem; font-size: 1.9rem; font-weight: 800; }
-  .fld .fval small { font-size: .95rem; font-weight: 700; letter-spacing: .03em; color: #D5DAE0; text-transform: uppercase;
+  .fld .fval small { font-size: max(11px, .95rem); font-weight: 700; letter-spacing: .03em; color: #D5DAE0; text-transform: uppercase;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .fld .chev { margin-left: auto; flex: none; color: var(--muted); }
   .fld .chev svg { width: 1.2rem; height: 1.2rem; }
+  /* divisor antes do '>' só no PC (na referência o CANAL não tem) */
+  .fld.pc .chev { padding-left: .9rem; border-left: 1px solid rgba(255,255,255,.016); align-self: stretch; display: flex; align-items: center; }
   .fld.ch .fval { color: #FF7C47; font-size: 2rem; font-weight: 600; }
   .fld.off .fval { color: var(--muted); }
   .chrow { display: flex; gap: .8rem; min-width: 0; }
   .chrow .fld { flex: 1; }
   .xbtn { position: relative; flex: none; width: 7.3rem; height: 3.6rem; border-radius: .8rem; cursor: pointer; border: 1px solid rgba(255,255,255,.1);
-    background: linear-gradient(180deg, #1D232C, #151A21); color: #E6EAEE; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: .25rem; font-size: .82rem; font-weight: 900; letter-spacing: .08em; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+    background: linear-gradient(180deg, #1E2835, #161E29); color: #E6EAEE; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: .25rem; font-size: max(11px, .82rem); font-weight: 900; letter-spacing: .08em; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
   .xbtn svg { width: 1.35rem; height: 1.35rem; }
   .xbtn:hover:not(:disabled) { border-color: rgba(252,99,55,.6); }
-  .xbtn:disabled { cursor: default; }
+  .xbtn:active:not(:disabled) { transform: translateY(1px) scale(.97); }
+  /* sem envios extras (o caso mais comum): o repouso da referência, claro, só sem contador e sem
+     reação a hover/toque; o inativo se distingue de leve pelo ícone e rótulo em --soft */
+  .xbtn:disabled { cursor: default; color: var(--soft); }
   .xbtn.on { color: var(--accent2); border-color: rgba(252,99,55,.7); }
-  .xbtn .cnt { position: absolute; top: -.45rem; right: -.45rem; min-width: 1.4rem; height: 1.4rem; padding: 0 .35rem; border-radius: .7rem; background: var(--accent);
-    color: #1b0c05; font-size: .8rem; font-weight: 900; display: flex; align-items: center; justify-content: center; letter-spacing: 0; }
+  .xbtn .cnt { position: absolute; top: -.45rem; right: -.45rem; min-width: max(18px, 1.4rem); height: max(18px, 1.4rem); padding: 0 .35rem; border-radius: .7rem; background: var(--accent);
+    color: #1b0c05; font-size: max(11px, .8rem); font-weight: 900; display: flex; align-items: center; justify-content: center; letter-spacing: 0; }
   .xlist { margin-top: .8rem; display: grid; gap: .45rem; }
-  .xlist .xi { display: flex; align-items: center; gap: .6rem; padding: .55rem .8rem; border-radius: .7rem; background: #10141A; border: 1px solid var(--line);
+  .xlist[hidden] { display: none; }
+  .xlist .xi { display: flex; align-items: center; gap: .6rem; padding: .55rem .8rem; border-radius: .7rem; background: #0F151E; border: 1px solid var(--line);
     font-weight: 800; font-size: 1rem; text-transform: uppercase; min-width: 0; }
-  .xlist .xi span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-  .xlist .xi .k { flex: none; font-size: .75rem; padding: .15rem .45rem; border-radius: .35rem; color: #fff; }
+  .xlist .xi .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .xlist .xi .v { flex: none; white-space: nowrap; }
+  .xlist .xi .k { flex: none; font-size: max(11px, .75rem); padding: .15rem .45rem; border-radius: .35rem; color: #fff; }
   .xlist .xi .k.pc { background: #1B5CE3; } .xlist .xi .k.cc { background: #3a3f46; }
-  .xlist .xi .c { margin-left: auto; flex: none; color: var(--muted); font-size: .85rem; }
+  .xlist .xi .c { margin-left: auto; flex: none; color: var(--muted); font-size: max(11px, .85rem); }
   /* Largo (card ocupando a linha toda): PC e CANAL lado a lado. */
   @container (min-width: 44rem) { .pfields { grid-template-columns: 1fr 1.3fr; } }
 
   /* ── cabeçalho do preset ── */
   .phead { display: inline-flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; padding: .6rem 1.1rem .6rem 1.3rem; margin-bottom: .9rem;
-    background: linear-gradient(180deg, #141820, #0F1318); }
+    background: linear-gradient(180deg, #152029, #0F161E); }
   .phead .tag { display: flex; align-items: center; justify-content: center; height: 3.25rem; min-width: 5.05rem; padding: 0 .9rem; border-radius: .8rem;
     font-size: 2rem; font-weight: 900; color: var(--accent2);
     background: linear-gradient(180deg, rgba(252,99,55,.30), rgba(252,99,55,.14)); border: 1px solid rgba(252,99,55,.65); box-shadow: 0 0 1.1rem -.35rem rgba(252,99,55,.6); }
   .phead .big { font-size: 2.45rem; font-weight: 900; line-height: 1; letter-spacing: .005em; }
+  /* '(sem nome)' no tom azulado da referência; slot fora do backup, atenuado */
+  .phead .big.none { color: #C9D3E6; font-weight: 800; }
+  .phead .big.missing { color: var(--muted); font-size: 1.6rem; font-weight: 700; }
+  /* chips e seletor de layer quebram juntos */
+  .phead .pmeta { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; }
   .phead .chip { height: 2.75rem; padding: 0 1.35rem; font-size: 1rem; }
-  .phead .chip.acc { padding: 0 1.65rem; }
-  .layerseg { display: inline-flex; gap: .3rem; padding: .2rem; border-radius: .95rem; background: rgba(8,10,14,.8); border: 1px solid var(--line); }
+  /* DUAL LAYER é status (contorno + ícone), não se confunde com o botão selecionado */
+  .phead .chip.acc { padding: 0 1.65rem; background: transparent; box-shadow: none; border-color: rgba(252,99,55,.5); }
+  .phead .chip.acc svg { width: 1.2rem; height: 1.2rem; }
+  .nopreset { padding: 2rem; border: 1px dashed var(--line2); border-radius: var(--r); color: var(--muted); text-align: center; }
+  .layerseg { display: inline-flex; gap: .3rem; padding: .2rem; border-radius: .95rem; background: rgba(10,17,26,.8); border: 1px solid var(--line); }
   .layerseg button { height: 2.75rem; padding: 0 1.65rem; border-radius: .75rem; border: 1px solid transparent; background: transparent; cursor: pointer;
     color: #AEB5BE; font-size: 1.1rem; font-weight: 900; letter-spacing: .05em; }
-  .layerseg button.on { color: var(--accent2); border-color: rgba(252,99,55,.7); background: linear-gradient(180deg, rgba(252,99,55,.24), rgba(252,99,55,.1));
+  .layerseg button:not(.on):hover { color: var(--text); }
+  .layerseg button:active { transform: translateY(1px) scale(.97); }
+  .layerseg button.on { color: var(--accent2); border-color: rgba(252,99,55,.7); background: linear-gradient(180deg, rgba(252,99,55,.34), rgba(252,99,55,.16));
     box-shadow: 0 0 1.1rem -.35rem rgba(252,99,55,.65); }
 
-  /* ── lista dos SWs (2 colunas: 1-2-3 | 4-5-6) ── */
-  .swlist { display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; gap: .8rem 1.7rem; }
+  /* ── lista dos SWs (2 colunas: 1-2-3 | 4-5-6; 1 coluna só a partir de 1239) ── */
+  /* linhas da grade com a mesma altura (a da mais alta), como na referência */
+  .swlist { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(var(--rows, 3), 1fr); grid-auto-flow: column; gap: .8rem 1.7rem; }
   .row { display: grid; grid-template-columns: 2.6rem .32rem 3.75rem minmax(0, 1fr) auto; align-items: center; column-gap: 1.3rem;
     min-height: 6.95rem; padding: .85rem 1.3rem .85rem 1.45rem; }
-  .row .n { font-size: 4rem; font-weight: 900; line-height: 1; text-align: center; letter-spacing: -.02em; }
+  /* número com o topo na linha do título do modo (o transform não mexe na grade) */
+  .row .n { font-size: 3.65rem; font-weight: 900; line-height: 1; text-align: center; letter-spacing: -.02em; transform: translateY(-.45rem); }
+  /* barra e tile sobem junto com o número: os três ficam centrados entre si */
+  .row .bar, .row > .tile { transform: translateY(-.3rem); }
   .row .bar { width: .32rem; height: 3.5rem; border-radius: .2rem; background: var(--c, #3a3e44);
     box-shadow: 0 0 .8rem var(--c, transparent), 0 0 .25rem var(--c, transparent); }
   .row .txt { min-width: 0; display: flex; flex-direction: column; gap: .75rem; }
@@ -183,20 +283,33 @@
   .row .mode { min-width: 0; container-type: inline-size; }
   .row .mode span { display: block; font-size: clamp(1.1rem, calc(100cqw / (var(--len, 6) * .8)), 2.15rem); font-weight: 900; line-height: .95;
     letter-spacing: .01em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .row .midi { font-size: 1.2rem; font-weight: 700; letter-spacing: .01em; line-height: 1.15; text-transform: uppercase; color: #E9EDF2;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .row .midi .more { margin-left: .6rem; font-size: .85rem; color: var(--accent2); letter-spacing: .04em; }
+  /* Linha MIDI: até 2 linhas antes da reticência. O '+N' vai no fluxo do texto, colado ao fim da
+     mensagem; se ela não cabe nas 2 linhas, fitMidi corta o texto e põe '…' + '+N' logo depois
+     do último caractere visível (.cut), em vez de deixar o '+N' na borda da coluna. */
+  .row .midi { display: flex; min-width: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: .01em; line-height: 1.15;
+    text-transform: uppercase; color: #E9EDF2; }
+  .row .midi .mt { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .row .midi .more { margin-left: .35rem; font-size: max(11px, .85rem); color: var(--accent2); letter-spacing: .04em; cursor: help; white-space: nowrap; }
   .row .midi .ch { color: var(--muted); }
   .row .midi.none { color: var(--muted); font-size: 1rem; letter-spacing: .08em; }
-  .opts { display: flex; gap: .6rem; padding: .5rem; border-radius: .95rem; background: linear-gradient(180deg, #0E1217, #0A0D11);
+  /* raio do trilho concêntrico ao dos tiles (.7rem + .5rem de padding) */
+  .opts { display: flex; gap: .6rem; padding: .5rem; border-radius: 1.2rem; background: linear-gradient(180deg, #10171F, #0B1119);
     border: 1px solid rgba(255,255,255,.05); box-shadow: inset 0 .2rem .6rem rgba(0,0,0,.7); }
-  .opt { width: 4.15rem; height: 3.9rem; border-radius: .7rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .38rem;
-    background: linear-gradient(180deg, #1B2029, #151920); border: 1px solid rgba(255,255,255,.07); color: #E9EDF2; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
-  .opt svg { width: 1.6rem; height: 1.6rem; }
-  .opt i { font-style: normal; font-size: .68rem; font-weight: 800; letter-spacing: .07em; line-height: 1; color: var(--soft); text-transform: uppercase; }
+  /* tiles de largura igual, com piso para o rótulo de 11px caber (DISPARA) */
+  .opt { position: relative; width: max(4.15rem, 61px); height: 3.9rem; padding: 0 2px; border-radius: .7rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .38rem;
+    background: linear-gradient(180deg, #18212D, #121924); border: 1px solid rgba(255,255,255,.07); color: #E9EDF2; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+  /* visible: o brilho do anel do LED se desfaz redondo, sem caixa quadrada */
+  .opt svg { width: 1.6rem; height: 1.6rem; overflow: visible; }
+  .opt i { font-style: normal; font-size: max(11px, .68rem); font-weight: 800; letter-spacing: .04em; line-height: 1; color: var(--soft); text-transform: uppercase;
+    white-space: nowrap; text-align: center; }
   .opt.on { color: var(--accent2); border-color: rgba(252,99,55,.8); background: linear-gradient(180deg, rgba(252,99,55,.26), rgba(252,99,55,.12));
     box-shadow: 0 0 1.1rem -.3rem rgba(252,99,55,.6), inset 0 1px 0 rgba(255,200,170,.15); }
   .opt.on i { color: var(--accent2); }
+  /* abaixo de ~1680px o tile fica com 61–64px: o rótulo aperta o espaçamento para não encostar na borda
+     (a 1728, a largura da referência, o tile tem 66px e o espaçamento continua .04em) */
+  @media (max-width: 1679px) { .opt i { letter-spacing: 0; } }
+  /* só para leitor de tela (estado da opção e cor do LED) */
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
   /* tile do SW (porte simplificado do icon_tile_render) */
   .tile { position: relative; border-radius: 18%; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -207,52 +320,118 @@
   .tile img.ico { -webkit-mask: none; mask: none; object-fit: contain; }
   .tile .sg { font-size: calc(var(--s, 3.75rem) * .15 * var(--k, 1)); font-weight: 800; letter-spacing: .03em; line-height: 1; max-width: 92%; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap; }
-  .tile .sg.big { font-size: calc(var(--s, 3.75rem) * .26); }
+  /* modo TEXTO: a sigla encolhe (--kb) até caber no tile */
+  .tile .sg.big { font-size: calc(var(--s, 3.75rem) * .26 * var(--kb, 1)); text-overflow: clip; }
   .tile .miss { font-size: 1.2rem; color: #777; }
   .tile.bare { border-color: #8C939C; background: #0F1318 !important; }
 
   /* ── log de boot (barra de largura total) ── */
-  details.boot { margin-top: 1.1rem; background: linear-gradient(180deg, #151920, #10141A); }
-  details.boot summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 1.9rem; flex-wrap: wrap; min-height: 4.05rem;
-    padding: .55rem 2.25rem; font-size: 1rem; font-weight: 800; letter-spacing: .2em; color: #AAB2BC; text-transform: uppercase; }
+  details.boot { margin-top: 1.1rem; background: radial-gradient(18rem 5rem at 0% 50%, rgba(252,99,55,.10), transparent 70%), linear-gradient(180deg, #16202B, #101820); }
+  /* seta na altura da 1ª linha; rótulo e chips quebram juntos (.sb), os chips alinhados ao rótulo */
+  details.boot summary { cursor: pointer; list-style: none; display: flex; align-items: flex-start; gap: 1.9rem; min-height: 4.05rem;
+    padding: .7rem 2.25rem; font-size: 1rem; font-weight: 800; letter-spacing: .2em; color: #AAB2BC; text-transform: uppercase; }
+  details.boot summary .sb { display: flex; align-items: center; flex-wrap: wrap; gap: .8rem 1.9rem; min-width: 0; }
+  details.boot summary .lbl { display: flex; align-items: center; min-height: 2.65rem; }
+  details.boot summary:hover { color: var(--text); }
+  details.boot summary:focus-visible { outline-offset: -4px; border-radius: var(--r); }
   details.boot summary::-webkit-details-marker { display: none; }
-  details.boot summary::before { content: ''; flex: none; width: .62rem; height: .62rem; margin-right: .1rem; border-top: .2rem solid var(--accent);
+  details.boot summary::before { content: ''; flex: none; width: .62rem; height: .62rem; margin: calc((2.65rem - .82rem) / 2) .1rem 0 0; border-top: .2rem solid var(--accent);
     border-right: .2rem solid var(--accent); transform: rotate(45deg); transition: transform .15s; filter: drop-shadow(0 0 .3rem rgba(252,99,55,.7)); }
   details.boot[open] summary::before { transform: rotate(135deg); }
-  details.boot summary .chips { display: flex; gap: 1.2rem; flex-wrap: wrap; }
-  details.boot pre { margin: 0 1.2rem 1.2rem; background: #0B0E12; border: 1px solid var(--line2); border-radius: .8rem; padding: 1rem; font-size: .85rem;
-    overflow: auto; max-height: 30rem; color: #C9CED3; }
-  details.boot .note { padding: 0 2.25rem 1.2rem; color: var(--muted); font-size: .95rem; }
+  details.boot summary .chips { display: flex; gap: .8rem 1.2rem; flex-wrap: wrap; }
+  details.boot pre { margin: 0 1.2rem 1.2rem; background: #0A0F16; border: 1px solid var(--line2); border-radius: .8rem; padding: 1rem; font-size: max(11px, .85rem);
+    overflow: auto; max-height: 30rem; color: #C9CED3; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.18) transparent; }
+  details.boot pre::-webkit-scrollbar { width: 10px; height: 10px; }
+  details.boot pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,.16); border-radius: 10px; border: 3px solid #0A0F16; }
+  details.boot pre::-webkit-scrollbar-track, details.boot pre::-webkit-scrollbar-corner { background: transparent; }
+  /* linha do motivo do reset realçada dentro do log (vermelha se for falha) */
+  mark.rs { background: rgba(43,214,91,.12); color: inherit; }
+  mark.rs.bad { background: rgba(255,72,72,.2); color: #FFC2C2; }
+  details.boot .note { padding: 0 2.25rem 1.2rem; color: var(--muted); font-size: max(11px, .95rem); }
 
-  @media (max-width: 1100px) {
-    .hero { grid-template-columns: auto minmax(0, 1fr); }
-    .hero > .principal { grid-column: 1 / -1; }
+  /* 1240–1299 (notebook de 1280): ainda 2 colunas. O piso de 61px das opções pesa mais quando o rem
+     encolhe, então os vãos da linha e o entre colunas cedem aos poucos (contínuo, 0 em 1300) e o
+     texto MIDI fica com pelo menos a largura que tem em 1300. */
+  @media (min-width: 1240px) and (max-width: 1299px) {
+    .swlist { column-gap: clamp(1.2rem, calc(1.7rem - (1300px - 100vw) * .08), 1.7rem); }
+    .row { column-gap: clamp(1rem, calc(1.3rem - (1300px - 100vw) * .05), 1.3rem); }
   }
-  @media (max-width: 1000px) {
-    .swlist { grid-template-columns: 1fr; grid-auto-flow: row; }
+  /* ≤1239 (onde o hero também passa para 2 linhas): lista em 1 coluna, linhas na altura natural (sem igualar) */
+  @media (max-width: 1239px) {
+    .swlist { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; }
+    .hero { grid-template-columns: auto minmax(0, 1fr); }
+    .hero > .principal { grid-column: 1 / -1; min-height: 0; }
+    .hero > .console, .hero > .model { align-self: stretch; min-height: 0; }
   }
   @media (max-width: 720px) {
     html { font-size: 11px; }
     .top { padding: .8rem 1.1rem; gap: .8rem; }
-    .brand .sep, .brand .sub { display: none; }
     .filebtn { margin-left: 0; }
     .fileinfo { margin-left: 0; width: 100%; }
+    .fileinfo .fname { max-width: none; flex: 1 1 auto; min-width: 0; }
     main { padding: 1.1rem 1.1rem 2rem; }
     .hero { grid-template-columns: 1fr; }
-    .console { justify-self: center; }
+    .console { justify-self: stretch; justify-content: center; }
+    .keys.k2 { margin-inline: 0; }
     .phead { display: flex; gap: 1rem; }
-    .phead .big { font-size: 2rem; }
-    .row { grid-template-columns: 2.4rem .32rem 3.75rem minmax(0, 1fr); grid-template-areas: "n b t x" "o o o o"; row-gap: .9rem; padding: 1rem 1.1rem 1.1rem; }
-    .row .n { grid-area: n; font-size: 3.4rem; } .row .bar { grid-area: b; } .row .tile { grid-area: t; } .row .txt { grid-area: x; }
-    .row .opts { grid-area: o; justify-self: start; }
+    /* O nome não estica (os chips vêm logo depois dele, como acima de 720) e nunca passa da linha
+       da tag: nome longo quebra ao lado dela. Os chips só descem quando não cabem ao lado. */
+    .phead .big { font-size: 2rem; flex: 0 1 auto; min-width: 0; max-width: calc(100% - 6.05rem); }
+    .phead .pmeta { gap: .8rem; }
+    .row { grid-template-columns: 2.4rem .32rem 3.75rem minmax(0, 1fr) auto; padding: 1rem 1.1rem 1.1rem; }
+    .row .n { font-size: 3.4rem; }
     .row .midi { font-size: 1.3rem; }
-    .opt i { font-size: .78rem; }
+    /* resumo do log mais justo: RESET + N LINHAS cabem juntos numa linha a 360; o que desce
+       continua alinhado ao rótulo (a seta fica fora de .sb) */
+    details.boot summary { padding: .7rem 1.2rem; gap: 1.1rem; }
+    details.boot summary .sb { gap: .7rem 1rem; }
+    details.boot summary .chips { gap: .7rem .8rem; }
+    details.boot .note { padding: 0 1.2rem 1.2rem; }
+    details.boot pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 .6rem .8rem; }
+  }
+  /* celular estreito (360): marca e ABRIR BACKUP numa linha só */
+  @media (max-width: 380px) {
+    .top { gap: .6rem; }
+    .brand .name { font-size: 1.4rem; }
+    .filebtn { padding: 0 1rem; gap: .5rem; letter-spacing: .03em; }
+    /* os três chips do arquivo (V3 · PRESETS · TRUNCADO) cabem numa linha até 320 */
+    .fileinfo { gap: .8rem; }
+  }
+  /* abaixo de 360 (320–359): console mais justo, teclas de 44px, sem rolagem lateral */
+  @media (max-width: 359px) {
+    .console { gap: .6rem; padding: .8rem; }
+    .keys { grid-template-columns: repeat(3, 4rem); grid-auto-rows: 4rem; gap: .6rem; }
+    .keys.k2 { grid-template-columns: repeat(2, 4rem); }
+    .model { padding-inline: 1.6rem; }
+    .model .name { font-size: clamp(1.4rem, min(9.6cqw, calc(100cqw / (var(--len, 14) * .66))), 3.9rem); }
+  }
+  /* só abaixo de 600px as opções descem para baixo do texto */
+  @media (max-width: 600px) {
+    .row { grid-template-columns: 2.4rem .32rem 3.75rem minmax(0, 1fr); grid-template-areas: "n b t x" "o o o o"; row-gap: .9rem; }
+    .row .n { grid-area: n; } .row .bar { grid-area: b; } .row .tile { grid-area: t; } .row .txt { grid-area: x; }
+    .row .opts { grid-area: o; justify-self: start; }
+    .row.noopts { grid-template-areas: "n b t x"; row-gap: 0; }
+  }
+  /* ponteiro grosso (toque): alvos de 44px */
+  @media (pointer: coarse) {
+    .filebtn, .layerseg button { min-height: 44px; }
+    .layerseg button { padding: 0 1.4rem; }
+  }
+  /* alto contraste (forced-colors): os estados deixam de depender só da cor */
+  @media (forced-colors: active) {
+    .key.on, .layerseg button.on, .opt.on, .xbtn.on { outline: 2px solid Highlight; outline-offset: -3px; }
+    .key.off:not(.on) { color: GrayText; }
+    .model { border-color: CanvasText; }
+    mark.rs, mark.rs.bad { background: Mark; color: MarkText; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="name"><b>BFMIDI</b> BACKUP VIEW</span><i class="sep"></i><span class="sub">Visualizador de backup</span></div>
+  <div class="brand"><span class="name" role="heading" aria-level="1"><b>BFMIDI</b> BACKUP VIEW</span><i class="sep"></i><span class="sub">Visualizador de backup</span></div>
   <label class="filebtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h3.6l2 2h7.4A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>Abrir backup <input id="file" type="file" accept=".json,application/json"></label>
   <div class="fileinfo" id="fileinfo">Nenhum arquivo aberto</div>
 </header>
@@ -355,7 +534,7 @@ const LETTERS = 'ABCDEFGHIJ';
 // ─────────────────────────────────────────────────────────────────────────────
 // ESTADO
 // ─────────────────────────────────────────────────────────────────────────────
-const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false };
+const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false, bootOpen: null };
 let LED = LED_DEFAULT.map(([n, rgb]) => ({ name: n, rgb }));
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -482,13 +661,16 @@ function tileHtml(t, size, shape) {
   const isText = t.mode === 'text';
   const sig = t.sigla || '';
   const k = Math.min(1, 4.6 / Math.max(1, sig.length)).toFixed(2);
+  // modo TEXTO (sigla grande): W e M contam mais largos, para 'WWWW' também caber
+  const wl = sig.length + (sig.match(/[Ww]/g) || []).length * .3 + (sig.match(/[Mm]/g) || []).length * .1;
+  const kb = Math.min(1, 3.4 / Math.max(1, wl)).toFixed(2);
   // border-color não aceita gradiente: borda em cor sólida (a cor base da entrada).
   const pb = PAL[num(t.br)];
   const br = !pb || pb.type === 'none' ? 'transparent' : pb.type === 'img' ? '#555' : hex6(pb.hex);
   const bare = br === 'transparent' && palCss(t.bg) === 'transparent';
   const shapeCls = shape === 1 ? 'circle' : shape === 2 ? 'octagon' : '';
   const clip = `-webkit-background-clip:text;background-clip:text;color:transparent`;
-  return `<div class="tile ${shapeCls} ${bare ? 'bare' : ''}" style="--s:${typeof size === 'number' ? size + 'px' : size};--k:${k};background:${palCss(t.bg)};${bare ? '' : `border-color:${br}`}">` +
+  return `<div class="tile ${shapeCls} ${bare ? 'bare' : ''}" style="--s:${typeof size === 'number' ? size + 'px' : size};--k:${k};--kb:${kb};background:${palCss(t.bg)};${bare ? '' : `border-color:${br}`}">` +
     (isText ? `<div class="sg big" style="background:${sgCss};${clip}">${esc(sig || '—')}</div>`
             : `${iconHtml(t.icon_id, icCss)}${sig ? `<div class="sg" style="background:${sgCss};${clip}">${esc(sig)}</div>` : ''}`) +
     `</div>`;
@@ -595,9 +777,9 @@ function ringSvg(colors) {
   const r = 9.6, c = 12;
   const glow = (col) => `style="filter:drop-shadow(0 0 3px ${col})"`;
   if (colors[0] === colors[1] && colors[1] === colors[2])
-    return `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><circle cx="${c}" cy="${c}" r="${r}" stroke="${colors[0]}" ${glow(colors[0])}/></svg>`;
+    return `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${r}" stroke="${colors[0]}" ${glow(colors[0])}/></svg>`;
   const pt = (deg) => `${(c + r * Math.cos(deg * Math.PI / 180)).toFixed(2)} ${(c + r * Math.sin(deg * Math.PI / 180)).toFixed(2)}`;
-  return `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.6">` +
+  return `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" aria-hidden="true">` +
     [150, 270, 30].map((deg, i) => `<path d="M${pt(deg - 60)} A${r} ${r} 0 0 1 ${pt(deg + 60)}" stroke="${colors[i]}" ${glow(colors[i])}/>`).join('') + `</svg>`;
 }
 const ICONS = {
@@ -609,8 +791,8 @@ const ICONS = {
   toggle: '<rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="16" cy="12" r="3" fill="currentColor"/>',
   ring: '<circle cx="7" cy="12" r="2.4" fill="currentColor"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/><circle cx="17" cy="12" r="2.4" fill="currentColor"/>',
 };
-const ico = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`;
-const opt = (svg, label, on, title) => `<div class="opt${on ? ' on' : ''}" title="${esc(title || label)}${on ? ' · LIGADO' : ' · DESLIGADO'}">${svg}<i>${label}</i></div>`;
+const ico = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]}</svg>`;
+const opt = (svg, label, on, title) => `<div class="opt${on ? ' on' : ''}" title="${esc(title || label)}${on ? ' · LIGADO' : ' · DESLIGADO'}">${svg}<i>${label}</i><span class="sr">${on ? ' ligado' : ' desligado'}</span></div>`;
 function ledOpt(mode, p) {
   const c1 = ledCss(P(p, 'color', 1));
   let cols = [c1, c1, c1];
@@ -619,7 +801,7 @@ function ledOpt(mode, p) {
     if (!P(p, 'ledu')) { if (hasC) cols = [c1, ledCss(P(p, 'color2', 5)), ledCss(P(p, 'color3', 9))]; else if (hasB) cols = [c1, ledCss(P(p, 'color2', 5)), c1]; }
   } else if (mode === 'spin' && P(p, 'ledu')) cols = [c1, ledCss(P(p, 'color2', P(p, 'color', 1))), ledCss(P(p, 'color3', P(p, 'color', 1)))];
   const name = (LED[P(p, 'color', 1)] || {}).name || '?';
-  return `<div class="opt" title="LED: ${esc(name)}">${ringSvg(cols)}<i>LED</i></div>`;
+  return `<div class="opt" title="LED: ${esc(name)}">${ringSvg(cols)}<i>LED</i><span class="sr"> ${esc(name)}</span></div>`;
 }
 function optsHtml(mode, p) {
   if (mode === 'mute') return '';
@@ -655,16 +837,21 @@ function swRowHtml(sw, shape) {
   let midi;
   if (!first) midi = `<div class="midi none">${sw.mode === 'mute' ? 'SEM FUNÇÃO' : 'SEM ENVIO MIDI'}</div>`;
   else {
-    const more = msgs.length > 1 ? `<span class="more">+${msgs.length - 1}</span>` : '';
+    // '+N' colado ao fim da mensagem: o espaço fica DENTRO do span nowrap (o leitor de tela lê
+    // "CANAL 1 +2", e o '+N' não quebra sozinho para a linha de baixo). Se a mensagem não cabe
+    // nas 2 linhas, fitMidi corta o texto e mantém o '+N' logo depois da reticência.
+    const n1 = msgs.length - 1;
+    const more = n1 ? `<span class="more"> +${n1}</span>` : '';
     // Uma linha: "CC : 42 - NOME AMIGÁVEL"; sem nome, o canal no lugar dele.
     const head = first.t === 'CMD' ? 'CMD' : `${first.t} : ${first.n}`;
     const tail = first.name ? esc(first.name) : `<span class="ch">CANAL ${first.ch}</span>`;
-    midi = `<div class="midi">${esc(head)} - ${tail}${more}</div>`;
+    midi = `<div class="midi"><span class="mt">${esc(head)} - ${tail}${more}</span></div>`;
   }
   const tip = msgs.map((m) => `${m.t === 'CMD' ? 'CMD' : m.t + ' ' + m.n}${m.name ? ' · ' + m.name : ''} · CH ${m.ch}`).join('\n');
   const bar = sw.mode === 'mute' ? '#3a3e44' : ledCss(P(sw.p, 'color', 1));
-  return `<div class="row" title="${esc(tip)}"><div class="n">${sw.n}</div><div class="bar" style="--c:${bar}"></div>${initialTile(sw, shape)}` +
-    `<div class="txt"><div class="mode"><span style="--len:${modeTitle.length}">${esc(modeTitle)}</span></div>${midi}</div>${optsHtml(sw.mode, sw.p)}</div>`;
+  const opts = optsHtml(sw.mode, sw.p);
+  return `<div class="row${opts ? '' : ' noopts'}" title="${esc(tip)}"><div class="n">${sw.n}</div><div class="bar" style="--c:${bar}"></div>${initialTile(sw, shape)}` +
+    `<div class="txt"><div class="mode"><span style="--len:${modeTitle.length}">${esc(modeTitle)}</span></div>${midi}</div>${opts}</div>`;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -673,20 +860,24 @@ function swRowHtml(sw, shape) {
 function renderConsole() {
   const n = swCount(); const banks = banksInBackup(); const bi = banks.indexOf(S.bank);
   const keys = Array.from({ length: n }, (_, i) => { const tag = S.bank + (i + 1); const ok = hasPreset(tag);
-    const en = ok && num(parseKv(S.backup.presets[tag], '|').enabled, 1);
-    return `<button class="key${S.pi === i + 1 ? ' on' : ''}${ok && !en ? ' off' : ''}" data-pi="${i + 1}"${ok ? '' : ' disabled'} title="${ok ? esc(S.bank + (i + 1) + ' · ' + (parseKv(S.backup.presets[tag], '|').name || '(sem nome)')) : 'não está no backup'}">${i + 1}</button>`; }).join('');
-  return `<div class="console"><div class="display" id="bankNext" title="Clique para o próximo banco (← → no teclado)">` +
-    `<button class="nav l" data-bank="-1"${banks.length > 1 ? '' : ' disabled'} title="Banco anterior">‹</button>` +
+    const hd = ok ? parseKv(S.backup.presets[tag], '|') : {}; const en = ok && num(hd.enabled, 1);
+    const tip = ok ? `${tag} · ${hd.name || '(sem nome)'}${en ? '' : ' · DESATIVADO'}` : `${tag} · não está no backup`;
+    return `<button class="key${S.pi === i + 1 ? ' on' : ''}${ok && !en ? ' off' : ''}" data-pi="${i + 1}" aria-pressed="${S.pi === i + 1}"${ok ? '' : ' disabled'} title="${esc(tip)}">${i + 1}</button>`; }).join('');
+  // Com um banco só o mostrador fica inerte (sem clique nem dica).
+  const multi = banks.length > 1;
+  return `<div class="console">` + (multi ? `<div class="display" id="bankNext" title="Clique para o próximo banco (← → no teclado)">` : `<div class="display single">`) +
+    `<button class="nav l" data-bank="-1"${multi ? '' : ' disabled'} title="Banco anterior" aria-label="Banco anterior">${svgi('<path d="m15 6-6 6 6 6"/>')}</button>` +
     `<span class="bk">${S.bank}${S.pi}</span><span class="sub">SET BANK</span>` +
-    `<button class="nav r" data-bank="1"${banks.length > 1 ? '' : ' disabled'} title="Próximo banco">›</button></div>` +
+    `<button class="nav r" data-bank="1"${multi ? '' : ' disabled'} title="Próximo banco" aria-label="Próximo banco">${svgi(CHEV_R)}</button></div>` +
     `<div class="keys${n === 4 ? ' k2' : ''}">${keys}</div></div>`;
 }
 // Ilustração DECORATIVA do pedal no card MODELO (não é foto do produto):
 // caixa em 3/4 com aro laranja, knob e o nome da placa impresso na face.
 function deviceSvg(name) {
   const m = /^BFMIDI-?\s*(.*)$/i.exec(name || '');
-  const l2 = (m && m[1] ? m[1] : '').trim();
-  const fs2 = l2.length > 8 ? 15 : 19;
+  const l2f = (m && m[1] ? m[1] : '').trim(); const l2 = l2f.length > 12 ? l2f.slice(0, 11) + '…' : l2f;
+  // 2ª linha: 'S3 MICRO'/'S3 NANO+' (8 letras) já vão no corpo menor, para caber no card
+  const fs2 = l2.length > 7 ? 15 : 19;
   return `<svg class="dev" viewBox="0 0 360 260" aria-hidden="true"><defs>` +
     `<linearGradient id="dvFace" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B313B"/><stop offset=".5" stop-color="#171B22"/><stop offset="1" stop-color="#0B0E12"/></linearGradient>` +
     `<linearGradient id="dvSide" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141820"/><stop offset="1" stop-color="#06080B"/></linearGradient>` +
@@ -709,29 +900,36 @@ function deviceSvg(name) {
 function renderModel() {
   const rawName = g('board', '—'); const name = boardCanonical(rawName); const model = MODELS.find((m) => m.id === name);
   const fam = model ? model.fam : (name.split(' ')[0] || '—');
-  return `<div class="model">${deviceSvg(name)}<small>MODELO</small><div class="name">${esc(name)}</div><div class="tags">` +
-    `<span class="chip acc">${esc(fam)}</span><span class="chip">${model && model.chip ? model.chip : 'ESP32-S2'}</span>` +
+  const fade = name.length > 15 ? ' long' : name.length === 15 ? ' mid' : '';
+  return `<div class="model${fade}">${deviceSvg(name)}<small>MODELO</small>` +
+    `<div class="name" title="${esc(name)}" style="--len:${name.length}">${esc(name)}</div><div class="tags">` +
+    `<span class="chip acc">${esc(fam)}</span>${model ? `<span class="chip">${model.chip || 'ESP32-S2'}</span>` : '<span class="chip unk">CHIP ?</span>'}` +
     (!model ? '<span class="chip bad">NÃO CATALOGADO</span>' : '') + `</div></div>`;
 }
 function renderBootLog() {
   const b = S.backup;
   if (typeof b.boot_log !== 'string' || !b.boot_log)
-    return `<details class="boot"><summary><span class="lbl">Log de boot do pedal</span><span class="chips"><span class="chip">AUSENTE</span></span></summary><div class="note">Este backup não traz o log de boot (editor/firmware anteriores ao 13.7).</div></details>`;
+    return `<details class="boot"${S.bootOpen ? ' open' : ''}><summary><span class="sb"><span class="lbl">Log de boot do pedal</span><span class="chips"><span class="chip">AUSENTE</span></span></span></summary><div class="note">Este backup não traz o log de boot (editor/firmware anteriores ao 13.7).</div></details>`;
   const m = /reset: ([A-Z_\/]+)/.exec(b.boot_log);
   const reason = m ? m[1] : '';
   const bad = /^(BROWNOUT|PANIC|INT_WDT|TASK_WDT|WDT)$/.test(reason);
   const chips = (reason ? `<span class="chip ${bad ? 'bad' : 'ok'}">RESET: ${esc(reason)}</span>` : '')
-    + (b.boot_log.indexOf('[log truncado') >= 0 ? '<span class="chip warn">LOG TRUNCADO</span>' : '')
-    + `<span class="chip">${b.boot_log.split('\n').filter(Boolean).length} LINHAS</span>`;
-  return `<details class="boot"${bad ? ' open' : ''}><summary><span class="lbl">Log de boot do pedal</span><span class="chips">${chips}</span></summary><pre>${esc(b.boot_log)}</pre></details>`;
+    + (b.boot_log.indexOf('[log truncado') >= 0 ? '<span class="chip warn" title="O pedal guardou só o começo do log de boot">LOG TRUNCADO</span>' : '')
+    + `<span class="chip">${b.boot_log.split('\n').filter((l) => l && !/^\[log truncado/.test(l)).length} LINHAS</span>`;
+  // Aberto por padrão só com reset de falha; depois vale o que o usuário escolheu.
+  const open = S.bootOpen ?? bad;
+  // A linha do reset é realçada DEPOIS do esc (o texto já está escapado).
+  const log = esc(b.boot_log).replace(/^.*reset: .*$/m, (l) => `<mark class="rs${bad ? ' bad' : ''}">${l}</mark>`);
+  return `<details class="boot"${open ? ' open' : ''}><summary><span class="sb"><span class="lbl">Log de boot do pedal</span><span class="chips">${chips}</span></span></summary><pre>${log}</pre></details>`;
 }
 const PC_ICON = '<path d="M4 5h16v10H4z"/><path d="M9 19h6M12 15v4"/>';
 const CH_ICON = '<rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9.5" cy="9.5" r="1" fill="currentColor"/><circle cx="14.5" cy="9.5" r="1" fill="currentColor"/><circle cx="9.5" cy="14.5" r="1" fill="currentColor"/><circle cx="14.5" cy="14.5" r="1" fill="currentColor"/>';
 const PLUS_ICON = '<path d="M12 5v14M5 12h14"/>';
 const CHEV_R = '<path d="m9 6 6 6-6 6"/>';
 const CHEV_D = '<path d="m6 9 6 6 6-6"/>';
+const LAYERS_ICON = '<path d="m12 4 8 4-8 4-8-4z"/><path d="m4 12 8 4 8-4"/><path d="m4 16 8 4 8-4"/>';
 const SLIDERS_ICON = '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>';
-const svgi = (inner) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+const svgi = (inner) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
 // Card PRINCIPAL: o que sai na chamada do preset (PC principal no canal do
 // preset + os envios EXTRAS), no mesmo desenho do card do editor.
 function renderPrincipal() {
@@ -742,49 +940,102 @@ function renderPrincipal() {
   const ex = pr ? pr.extras : [];
   if (!ex.length) S.showExtras = false;
   const two = (n) => String(n).padStart(2, '0');
-  const list = S.showExtras ? `<div class="xlist">${ex.map((e) => { const nm = e.t === 'PC' ? pcLabel(e.ch, e.n) : ccLabel(e.ch, e.n);
+  const list = S.showExtras ? `<div class="xlist" id="xlist">${ex.map((e) => { const nm = e.t === 'PC' ? pcLabel(e.ch, e.n) : ccLabel(e.ch, e.n);
       const val = e.t === 'CC' ? ` = ${e.v === 128 ? 'EXP' : e.v}` : '';
-      return `<div class="xi"><span class="k ${e.t.toLowerCase()}">${e.t}</span><span>${e.n}${nm ? ' - ' + esc(nm) : ''}${val}</span><span class="c">CH ${two(e.ch)}</span></div>`; }).join('')}</div>` : '';
-  return `<div class="principal"><div class="pbanner">PRINCIPAL</div><div class="pfields">` +
-    `<div class="fld pc${on ? '' : ' off'}" title="Program Change enviado na chamada do preset"><div class="ftag">${svgi(PC_ICON)}PC</div>` +
+      return `<div class="xi" title="${esc(`${e.t} ${e.n}${nm ? ' - ' + nm : ''}${val} · CH ${two(e.ch)}`)}"><span class="k ${e.t.toLowerCase()}">${e.t}</span>` +
+        `<span class="nm">${e.n}${nm ? ' - ' + esc(nm) : ''}</span>${val ? `<span class="v">${val}</span>` : ''}<span class="c">CH ${two(e.ch)}</span></div>`; }).join('')}</div>` : '<div class="xlist" id="xlist" hidden></div>';
+  const miss = pr ? '' : 'Slot fora do backup';
+  return `<div class="principal"><div class="pbanner" role="heading" aria-level="2">PRINCIPAL</div><div class="pfields">` +
+    `<div class="fld pc${on ? '' : ' off'}" title="${miss || 'Program Change enviado na chamada do preset'}"><div class="ftag">${svgi(PC_ICON)}PC</div>` +
       `<div class="fval">${pr ? pcn : '—'}${pcName ? `<small>${esc(pcName)}</small>` : ''}<span class="chev">${svgi(CHEV_R)}</span></div></div>` +
-    `<div class="chrow"><div class="fld ch${on ? '' : ' off'}" title="Canal do PC principal (OFF = não envia)"><div class="ftag">${svgi(CH_ICON)}CANAL</div>` +
-      `<div class="fval">${on ? 'CH ' + two(ch) : 'OFF'}<span class="chev">${svgi(CHEV_D)}</span></div></div>` +
-      `<button class="xbtn${S.showExtras ? ' on' : ''}" id="extras"${ex.length ? '' : ' disabled'} title="${ex.length ? 'Ver os envios extras do preset' : 'Sem envios extras'}">` +
+    `<div class="chrow"><div class="fld ch${on ? '' : ' off'}" title="${miss || 'Canal do PC principal (OFF = não envia)'}"><div class="ftag">${svgi(CH_ICON)}CANAL</div>` +
+      `<div class="fval">${on ? 'CH ' + two(ch) : pr ? 'OFF' : '—'}<span class="chev">${svgi(CHEV_D)}</span></div></div>` +
+      `<button class="xbtn${S.showExtras ? ' on' : ''}" id="extras" aria-expanded="${S.showExtras}" aria-controls="xlist"${ex.length ? '' : ' disabled'} title="${ex.length ? 'Ver os envios extras do preset' : 'Sem envios extras'}">` +
       `${svgi(PLUS_ICON)}EXTRAS${ex.length ? `<span class="cnt">${ex.length}</span>` : ''}</button></div>` +
     `</div>${list}</div>`;
 }
 function renderPreset() {
   const tag = S.bank + S.pi;
-  if (!hasPreset(tag)) return `<div class="phead"><span class="tag">${tag}</span><span class="big none">não está no backup</span></div>`;
+  if (!hasPreset(tag)) return `<div class="phead"><span class="tag">${tag}</span><span class="big missing" role="heading" aria-level="2">não está no backup</span></div>` +
+    `<div class="nopreset">Este slot não existe no arquivo: não há SWs para mostrar.</div>`;
   const pr = presetOf(tag); const h = pr.hdr;
   const hasL2 = num(h.l2) === 1; if (!hasL2) S.layer = 1;
   const bankOn = gi('bank_letter_enabled_' + LETTERS.indexOf(S.bank), 1);
-  const head = `<div class="phead"><span class="tag">${tag}</span><span class="big${h.name ? '' : ' none'}">${esc(h.name || '(sem nome)')}</span>` +
+  // Chips e seletor de layer num grupo só (.pmeta): quebram juntos.
+  const lb = (L) => `<button data-layer="${L}" class="${S.layer === L ? 'on' : ''}" aria-pressed="${S.layer === L}">LAYER ${L}</button>`;
+  const head = `<div class="phead"><span class="tag">${tag}</span><span class="big${h.name ? '' : ' none'}" role="heading" aria-level="2">${esc(h.name || '(sem nome)')}</span><div class="pmeta">` +
     (num(h.enabled, 1) ? '<span class="chip ok"><i class="dot"></i>ATIVO</span>' : '<span class="chip bad">DESATIVADO</span>') +
     (bankOn ? '' : '<span class="chip warn">BANCO DESLIGADO</span>') +
-    (hasL2 ? `<span class="chip acc">LAYER 2</span><div class="layerseg"><button data-layer="1" class="${S.layer === 1 ? 'on' : ''}">LAYER 1</button><button data-layer="2" class="${S.layer === 2 ? 'on' : ''}">LAYER 2</button></div>` : '') +
-    `</div>`;
+    (hasL2 ? `<span class="chip acc">${svgi(LAYERS_ICON)}DUAL LAYER</span><div class="layerseg">${lb(1)}${lb(2)}</div>` : '') +
+    `</div></div>`;
   const n = swCount(); const shape = gi('icon_shape');
   const rows = pr.sws[S.layer].slice(0, n).map((sw) => swRowHtml(sw, shape)).join('');
-  return `${head}<div class="swlist" style="grid-template-rows:repeat(${Math.ceil(n / 2)}, auto)">${rows}</div>`;
+  return `${head}<div class="swlist" style="--rows:${Math.ceil(n / 2)}">${rows}</div>`;
 }
 
+const FOLDER_SVG = document.querySelector('.filebtn svg').outerHTML;
 const $main = document.getElementById('main');
 const $info = document.getElementById('fileinfo');
 function render() {
   if (!S.backup) {
-    $main.innerHTML = `<div class="empty" id="drop"><h2>Abra um backup da BFMiDi</h2><p>Arraste o arquivo <span class="k">bfmidi-backup-*.json</span> aqui ou use o botão <b>ABRIR BACKUP</b>.</p><p>Nada é enviado a lugar nenhum — tudo é lido no seu navegador.</p></div>`;
+    $main.innerHTML = `<div class="empty" id="drop">${FOLDER_SVG}<h2>Abra um backup da BFMiDi</h2><p>Arraste o arquivo <span class="k">bfmidi-backup-*.json</span> aqui ou use o botão <b>ABRIR BACKUP</b>.</p><p>Nada é enviado a lugar nenhum — tudo é lido no seu navegador.</p></div>`;
     return;
   }
-  const bootOpen = !!document.querySelector('details.boot[open]');
+  // O innerHTML recria tudo: guarda qual controle tinha o foco e o devolve depois.
+  const a = document.activeElement; const inMain = !!a && $main.contains(a);
+  const fk = inMain ? (a.id ? '#' + a.id : a.dataset.pi ? `.key[data-pi="${a.dataset.pi}"]` : a.dataset.layer ? `.layerseg [data-layer="${a.dataset.layer}"]`
+    : a.dataset.bank ? `.nav[data-bank="${a.dataset.bank}"]` : a.matches('summary') ? 'details.boot summary' : a.matches('pre') ? 'details.boot pre' : '') : '';
   $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderPreset()}${renderBootLog()}`;
-  if (bootOpen) { const d = document.querySelector('details.boot'); if (d) d.open = true; }
+  if (inMain) {
+    // O controle sumiu ou ficou desabilitado (preset sem extras, sem layer 2, slot fora
+    // do backup): o foco vai para a tecla do preset atual, nunca para o <body>.
+    const tryFocus = (el) => { if (!el || el.disabled) return false; el.focus({ preventScroll: true }); return document.activeElement === el; };
+    tryFocus(fk && $main.querySelector(fk)) || tryFocus($main.querySelector('.key[aria-pressed="true"]')) || tryFocus($main.querySelector('.key:not(:disabled)'));
+  }
+  fitMidi();
 }
+// '+N' da linha MIDI: fica no fluxo do texto. Se a mensagem não cabe nas 2 linhas, o texto é
+// cortado aqui (busca binária pelo maior trecho que cabe) e termina em '…' seguido do '+N', colado
+// ao último caractere visível. Só muda o que se vê: o leitor de tela recebe o texto inteiro (.sr)
+// e a lista completa continua no title da linha. Ao redimensionar, tudo volta ao inteiro e é medido
+// de novo (mede todas antes de cortar, para não intercalar leitura e escrita de layout à toa).
+function fitMidi() {
+  const ms = Array.from($main.querySelectorAll('.row .midi')).filter((m) => m.querySelector('.more'));
+  for (const m of ms) {
+    const t = m.querySelector('.mt');
+    if (t._full !== undefined) { t.innerHTML = t._full; t.removeAttribute('aria-hidden'); const sr = m.querySelector('.sr'); if (sr) sr.remove(); }
+    m.classList.remove('cut');
+  }
+  const over = (t) => t.scrollHeight > t.clientHeight + 1;
+  ms.filter((m) => over(m.querySelector('.mt'))).forEach((m) => {
+    const t = m.querySelector('.mt'), more = t.querySelector('.more');
+    t._full = t.innerHTML;
+    const full = t.textContent;
+    more.remove();
+    const nodes = []; const w = document.createTreeWalker(t, NodeFilter.SHOW_TEXT);
+    for (let n = w.nextNode(); n; n = w.nextNode()) nodes.push([n, n.data]);
+    const total = nodes.reduce((a, [, d]) => a + d.length, 0);
+    const keep = (k) => {   // os k primeiros caracteres, sem espaço/separador pendurado, + '…'
+      let left = k, last = null;
+      for (const [n, d] of nodes) { const take = Math.max(0, Math.min(d.length, left)); n.data = d.slice(0, take); left -= take; if (take) last = n; }
+      if (last) last.data = last.data.replace(/[\s\-:·]+$/, '') + '…';
+    };
+    t.appendChild(more);
+    let lo = 1, hi = total - 1;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; keep(mid); if (over(t)) hi = mid - 1; else lo = mid; }
+    keep(lo);
+    m.classList.add('cut');
+    t.setAttribute('aria-hidden', 'true');
+    m.insertAdjacentHTML('beforeend', `<span class="sr">${esc(full)}</span>`);
+  });
+}
+let fitRaf = 0;
+addEventListener('resize', () => { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitMidi); });
 function updateInfo() {
   const b = S.backup; if (!b) return;
-  $info.innerHTML = `<span class="fname" title="${esc(S.name)}">${esc(S.name.replace(/\.json$/i, ''))}</span><span class="chip">V${esc(b.version)}</span>` +
-    `<span class="chip">${svgi(SLIDERS_ICON)}${Object.keys(b.presets || {}).length} PRESETS</span>${num(b.truncated) ? '<span class="chip bad">TRUNCADO</span>' : ''}`;
+  $info.innerHTML = `<span class="fname" title="${esc(S.name)}">${esc(S.name.replace(/\.json$/i, ''))}</span><span class="fchips"><span class="chip">V${esc(b.version)}</span>` +
+    `<span class="chip">${svgi(SLIDERS_ICON)}${Object.keys(b.presets || {}).length} PRESETS</span>` +
+    (num(b.truncated) ? '<span class="chip bad" title="O backup foi cortado ao ser gerado: presets ou mídias podem estar faltando">TRUNCADO</span>' : '') + '</span>';
 }
 function stepBank(dir) {
   const banks = banksInBackup(); if (banks.length < 2) return;
@@ -797,7 +1048,7 @@ function load(text, name) {
   let b;
   try { b = JSON.parse(text); } catch (e) { alert('Arquivo não é um JSON válido.'); return; }
   if (!b || typeof b !== 'object' || !b.presets) { alert('Este JSON não parece um backup da BFMiDi (sem "presets").'); return; }
-  S.backup = b; S.name = name; S.layer = 1;
+  S.backup = b; S.name = name; S.layer = 1; S.bootOpen = null;
   // paleta de LED do próprio backup (color_N), quando presente
   LED = LED_DEFAULT.map(([n, rgb], i) => { const v = b.global_config && b.global_config['color_' + i]; const q = v ? String(v).split(',').map((x) => num(x)) : null; return { name: n, rgb: q && q.length === 3 ? q : rgb }; });
   // Abre no preset inicial do backup (início automático), senão no primeiro que existir.
@@ -807,8 +1058,17 @@ function load(text, name) {
   S.bank = start[0]; S.pi = num(start.slice(1), 1);
   updateInfo(); render();
 }
-document.getElementById('file').addEventListener('change', (e) => { const f = e.target.files[0]; if (!f) return; f.text().then((t) => load(t, f.name)); e.target.value = ''; });
+// O input do ABRIR BACKUP é invisível: clicado com o mouse, ele não guarda o foco (senão, ao
+// voltar do seletor, os atalhos ← → 1..6 morreriam, o anel ficaria preso no botão e o Espaço
+// reabriria o seletor). Pelo Tab o foco fica nele, como o usuário quis.
+const $file = document.getElementById('file');
+let lastPointer = false;
+addEventListener('pointerdown', () => { lastPointer = true; }, true);
+addEventListener('keydown', () => { lastPointer = false; }, true);
+$file.addEventListener('focus', () => { if (lastPointer) $file.blur(); });
+$file.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; if (lastPointer) e.target.blur(); if (f) f.text().then((t) => load(t, f.name)); });
 $main.addEventListener('click', (e) => {
+  if (e.target.closest('#drop')) { document.getElementById('file').click(); return; }
   const nav = e.target.closest('[data-bank]'); if (nav) { e.stopPropagation(); stepBank(num(nav.dataset.bank, 1)); return; }
   if (e.target.closest('#bankNext')) { stepBank(1); return; }
   if (e.target.closest('#extras')) { S.showExtras = !S.showExtras; render(); return; }
@@ -816,14 +1076,33 @@ $main.addEventListener('click', (e) => {
   const lb = e.target.closest('.layerseg button'); if (lb) { S.layer = num(lb.dataset.layer, 1); render(); }
 });
 document.addEventListener('keydown', (e) => {
-  if (!S.backup || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input, select, textarea'))) return;
+  // Só campos de DIGITAR bloqueiam os atalhos (o input de arquivo não digita nada).
+  if (!S.backup || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input:not([type=file]), select, textarea'))) return;
+  // Lendo o log pelo teclado: as teclas são do log (senão o preset muda lá em cima e o log volta ao topo).
+  if (e.target.closest && e.target.closest('details.boot pre')) return;
   if (e.key === 'ArrowRight') stepBank(1);
   else if (e.key === 'ArrowLeft') stepBank(-1);
-  else if (/^[1-6]$/.test(e.key) && num(e.key) <= swCount() && hasPreset(S.bank + e.key)) { S.pi = num(e.key); S.layer = 1; render(); }
+  else if (/^[1-6]$/.test(e.key) && num(e.key) <= swCount() && hasPreset(S.bank + e.key)) {
+    // Com o foco numa tecla, ele acompanha a seleção (senão o anel fica numa tecla e o laranja em outra).
+    const onKey = !!document.activeElement && document.activeElement.matches('.key');
+    S.pi = num(e.key); S.layer = 1; render();
+    if (onKey) { const k = $main.querySelector(`.key[data-pi="${S.pi}"]`); if (k) k.focus({ preventScroll: true }); }
+  }
 });
-document.addEventListener('dragover', (e) => { e.preventDefault(); const d = document.getElementById('drop'); if (d) d.classList.add('over'); });
-document.addEventListener('dragleave', () => { const d = document.getElementById('drop'); if (d) d.classList.remove('over'); });
-document.addEventListener('drop', (e) => { e.preventDefault(); const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) f.text().then((t) => load(t, f.name)); });
+// O usuário abriu/fechou o log: vale nas próximas trocas de preset e de banco.
+$main.addEventListener('toggle', (e) => { if (e.target.matches('details.boot')) S.bootOpen = e.target.open; }, true);
+// Arrastar arquivo: contador de enter/leave para a camada não piscar ao passar sobre filhos.
+let dragDepth = 0;
+const dragEnd = () => { dragDepth = 0; document.body.classList.remove('dragging'); };
+document.addEventListener('dragenter', (e) => { if (!Array.from(e.dataTransfer.types || []).includes('Files')) return; dragDepth++; document.body.classList.add('dragging'); });
+document.addEventListener('dragover', (e) => { e.preventDefault(); });
+document.addEventListener('dragleave', () => { if (--dragDepth <= 0) dragEnd(); });
+document.addEventListener('drop', (e) => { e.preventDefault(); dragEnd(); const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) f.text().then((t) => load(t, f.name)); });
+// Rede de segurança: durante o arraste não chegam eventos de ponteiro; se chegou um, o arraste acabou.
+addEventListener('pointermove', () => { if (dragDepth) dragEnd(); }, { passive: true });
+addEventListener('blur', () => { if (dragDepth) dragEnd(); });
+// Sombra no topo só depois de rolar.
+addEventListener('scroll', () => document.querySelector('.top').classList.toggle('scrolled', scrollY > 4), { passive: true });
 render();
 </script>
 </body>
