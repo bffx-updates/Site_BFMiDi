@@ -1,0 +1,239 @@
+/* ============================================================
+   BFMIDI — VITRINE · LINGUAGEM COMPARTILHADA DOS PAINÉIS
+   ------------------------------------------------------------
+   As peças que os painéis do modelo (INFO, IN/OUT, SHOP) e o de
+   DOWNLOADS dividem com a vitrine dos Apps (css/apps.css): o
+   cabeçalho com micro-rótulo e título em Archivo expandido, a
+   etiqueta de porta branca do chassi, o cartão grafite com
+   filete, o anel de LED de 3 arcos e os botões.
+
+   Tudo vive dentro de `.pg`, a classe que cada painel põe no
+   seu `.panel-inner`. O layout é decidido por CONTAINER QUERY
+   (`pg`), não por media query: no desktop o site aplica
+   `html { zoom: .8 }`, e a largura que importa é a do layout.
+   Pelo mesmo motivo todo texto pequeno sai de `--pg-min`: 11px
+   no celular, 14px no desktop (14 × .8 = 11,2px renderizados).
+
+   Regras de cada painel ficam no arquivo dele (info.css,
+   conects.css, shop.css, downloads.css). Aqui só o que é comum.
+   ============================================================ */
+
+.pg {
+  --pg-ink: #eef3fa;
+  --pg-ink-2: #bdc8d8;
+  --pg-ink-3: #a4b0c2;
+  --pg-line: #a6bedd24;
+  --pg-line-2: #a6bedd3b;
+  --pg-orange: #ff792f;
+  --pg-cta: linear-gradient(155deg, #ffb765, #ff7838);
+  --pg-cta-ink: #391508;
+  --pg-ok: #39d98a;
+  --pg-focus: #ffd2a6;
+  --pg-min: 11px;
+  --pg-surface: linear-gradient(180deg, #19212ccc, #121820cc);
+  --pg-well: #0c1118e6;
+  container: pg / inline-size;
+  min-width: 0;
+  color: var(--pg-ink);
+}
+@media (min-width: 861px) {
+  .pg { --pg-min: 14px; }
+}
+.pg :is(a, button, [tabindex]):focus-visible { outline: 3px solid var(--pg-focus); outline-offset: 4px; }
+/* O véu fixo do rodapé cobre ~134px de baixo: o foco por Tab nunca pára ali. */
+.pg :is(a, button, [tabindex]) { scroll-margin: 96px 0 160px; }
+@media (min-width: 861px) {
+  .pg :is(a, button, [tabindex]):focus-visible { outline-width: 3.75px; }
+}
+
+/* ---------- cabeçalho ------------------------------------- */
+
+.pg .pg-head { display: grid; gap: 10px; min-width: 0; }
+.pg .pg-kicker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 9px;
+  margin: 0;
+  color: #ffc196;
+  font: 600 var(--pg-min)/1.3 var(--font-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.pg .pg-kicker::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pg-orange);
+  box-shadow: 0 0 8px var(--pg-orange);
+}
+/* O nome do modelo no micro-rótulo: a etiqueta branca do chassi. */
+.pg .pg-kicker b {
+  padding: 4px 6px 3px;
+  border-radius: 3px;
+  background: #e6eaf0;
+  color: #0b0d11;
+  font-weight: 800;
+  letter-spacing: .06em;
+  box-shadow: 0 1px 0 #000a;
+}
+.pg .pg-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 108;
+  font-size: clamp(28px, 8cqi, 44px);
+  line-height: 1.02;
+  letter-spacing: -.035em;
+  color: #f5f8fc;
+  text-wrap: balance;
+}
+.pg .pg-title__line { display: block; }
+.pg .pg-title__hot {
+  color: #ff9a4c;
+  background: linear-gradient(100deg, #ffd9ad 0%, #ffb765 28%, #ff8a45 62%, #ff6a26 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-bottom: .06em;   /* descendentes não são cortados pelo clip */
+}
+.pg .pg-lead {
+  max-width: 36em;
+  margin: 0;
+  color: var(--pg-ink-2);
+  font-size: 15px;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+@container pg (min-width: 700px) {
+  .pg .pg-title { font-size: clamp(40px, 5.2cqi, 64px); }
+  .pg .pg-lead { font-size: 17px; }
+}
+@container pg (min-width: 1400px) {
+  .pg .pg-title { font-size: clamp(56px, 4cqi, 80px); }
+  .pg .pg-lead { font-size: 19px; }
+}
+
+/* ---------- etiqueta de porta (serigrafia do chassi) -------- */
+
+.pg .pg-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.pg .pg-tags li,
+.pg .pg-tag {
+  display: inline-block;
+  padding: 5px 7px 4px;
+  border-radius: 3px;
+  background: #e6eaf0;
+  color: #0b0d11;
+  font: 700 var(--pg-min)/1 var(--font-mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 1px 0 #000a, inset 0 -1px 0 #0000001f;
+}
+
+/* ---------- cartão grafite ---------------------------------- */
+
+.pg .pg-card {
+  --c: #ffffff;
+  position: relative;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #ffffff0d;
+  border-radius: 20px;
+  background:
+    radial-gradient(70% 60% at 0% 0%, color-mix(in srgb, var(--c) 9%, transparent), transparent 70%),
+    var(--pg-surface);
+  box-shadow: inset 0 1px 0 #ffffff0f, 0 16px 30px -24px #000;
+}
+.pg .pg-well {
+  border-radius: 18px;
+  background: var(--pg-well);
+  box-shadow: inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0c;
+}
+
+/* ---------- anel de LED de 3 arcos --------------------------
+   O mesmo desenho do anel dos footswitches (falhas às 12h, 4h
+   e 8h). Marcação gerada por `ledRing()` no main.js:
+     <span class="pg-ring" style="--c:#hex">
+       <svg class="pg-ring__svg" viewBox="0 0 100 100">
+         <circle class="pg-ring__off" …/> <circle …/>
+       </svg>
+       <span class="pg-ring__glow"></span>
+       [ícone opcional com class="pg-ring__ico"]
+     </span>
+   O tamanho vem de `width` no contexto de quem usa. */
+.pg .pg-ring {
+  --c: #ffffff;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 50px;
+  aspect-ratio: 1;
+  flex: none;
+  color: var(--c);
+}
+.pg .pg-ring__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.pg .pg-ring__svg circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 88 32;
+  stroke-dashoffset: 74;
+}
+.pg .pg-ring__off { opacity: .28; }
+.pg .pg-ring__glow {
+  position: absolute;
+  inset: -34%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, transparent 50%, color-mix(in srgb, var(--c) 55%, transparent) 64%, transparent 100%);
+  opacity: .75;
+  pointer-events: none;
+}
+.pg .pg-ring__ico { position: relative; width: 44%; height: 44%; color: #f5f7fa; }
+
+/* ---------- botões ------------------------------------------ */
+
+.pg .pg-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 24px;
+  border: 1px solid #ffc17e99;
+  border-radius: 14px;
+  background: var(--pg-cta);
+  color: var(--pg-cta-ink);
+  font: 700 16px/1.2 var(--font-body);
+  text-decoration: none;
+  box-shadow: inset 0 1px 1px #ffdfb2, 0 10px 28px -10px #ff6a1f88;
+  transition: filter .15s, transform .15s;
+}
+.pg .pg-cta svg { width: 19px; height: 19px; flex: none; }
+.pg .pg-cta:focus-visible { outline-color: #fff; }
+.pg .pg-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 10px 20px;
+  border: 1px solid var(--pg-line-2);
+  border-radius: 14px;
+  background: #0f1824cc;
+  color: var(--pg-ink);
+  font: 600 15px/1.2 var(--font-body);
+  text-decoration: none;
+  transition: border-color .15s, background-color .15s;
+}
+.pg .pg-ghost svg { width: 18px; height: 18px; flex: none; }
+@media (hover: hover) {
+  .pg .pg-cta:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  .pg .pg-ghost:hover { border-color: #ffffff4d; background: #16212fcc; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pg .pg-cta, .pg .pg-ghost { transition: none; }
+}

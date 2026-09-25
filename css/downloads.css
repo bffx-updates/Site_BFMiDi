@@ -1,0 +1,314 @@
+/* ============================================================
+   BFMIDI — VITRINE · PAINÉIS DOWNLOADS E MANUAL
+   ------------------------------------------------------------
+   Os dois painéis de Extras com o mesmo desenho, na linguagem
+   da vitrine dos Apps: cabeçalho pg-head (micro-rótulo, título
+   em duas linhas com a segunda em laranja, lead) e cartões
+   grafite com o anel de LED de 3 arcos, cada um aceso numa das
+   quatro cores dos Apps. O botão de cada cartão estica a área
+   de clique para o cartão inteiro (::after); link externo abre
+   em nova aba e diz isso à vista ("Abre em nova aba"), link
+   interno troca o painel sem sair do site ("Neste site").
+
+   Marcação em renderResource() (js/main.js). Escopado em
+   #panel-downloads e #panel-manual. As manchas antigas do
+   `.resource-quick-page` (refine.css) não se aplicam: a classe
+   não é mais usada — e, se voltar, as regras do fim deste
+   arquivo as apagam. Layout por CONTAINER QUERY (`pg`).
+   ============================================================ */
+
+:is(#panel-downloads, #panel-manual) .panel-inner.pg {
+  max-width: 1720px;
+  padding: 14px 16px 28px;
+}
+@media (min-width: 601px) {
+  :is(#panel-downloads, #panel-manual) .panel-inner.pg { padding: 24px 28px 40px; }
+}
+@media (min-width: 861px) {
+  :is(#panel-downloads, #panel-manual) .panel-inner.pg { padding: 10px 48px 44px; }
+}
+
+:is(#panel-downloads, #panel-manual) .dl {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 24px;
+  min-width: 0;
+}
+
+/* Luz de palco: o feixe âmbar vem de cima e passa por trás do título;
+   a contraluz azul fica atrás dos cartões. Só gradiente, sem blur, e
+   sempre dentro da largura da caixa (nada vaza para os lados). */
+:is(#panel-downloads, #panel-manual) .dl-lights {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: -90px;
+  bottom: -40px;
+  pointer-events: none;
+  --lx: 50%;
+  --bw: 46deg;
+  --b0: calc(180deg - var(--bw) / 2);
+  background:
+    radial-gradient(ellipse 30% 10% at var(--lx) 12%, #ffc48a24 0%, transparent 72%),
+    repeating-conic-gradient(from var(--b0) at var(--lx) -20%, #ffd9b000 0deg 1.1deg, #ffd9b00b 1.1deg 1.6deg, #ffd9b000 1.6deg 2.9deg),
+    conic-gradient(from var(--b0) at var(--lx) -20%,
+      transparent 0deg,
+      #ffae6a14 calc(var(--bw) * .184),
+      #ffc48a2e calc(var(--bw) * .368),
+      #ffd3a23d calc(var(--bw) * .5),
+      #ffc48a2e calc(var(--bw) * .632),
+      #ffae6a14 calc(var(--bw) * .816),
+      transparent var(--bw));
+  /* Duas máscaras: a vertical dissolve o feixe antes dos cartões e a
+     cônica prende os raios de poeira dentro do cone (sem ela, a trama
+     repetida vaza em diagonais pela página inteira). */
+  -webkit-mask-image:
+    linear-gradient(180deg, #0000 0%, #000 12%, #000 34%, transparent 70%),
+    conic-gradient(from var(--b0) at var(--lx) -20%, #0000 0deg, #000 calc(var(--bw) * .263), #000 calc(var(--bw) * .737), #0000 var(--bw));
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(180deg, #0000 0%, #000 12%, #000 34%, transparent 70%),
+    conic-gradient(from var(--b0) at var(--lx) -20%, #0000 0deg, #000 calc(var(--bw) * .263), #000 calc(var(--bw) * .737), #0000 var(--bw));
+          mask-composite: intersect;
+  animation: dl-beam 8s ease-in-out infinite;
+}
+:is(#panel-downloads, #panel-manual) .dl::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: -30px;
+  height: 70%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 46% 40% at 50% 62%, #3d8bff1f 0%, #3d8bff0a 50%, transparent 74%),
+    radial-gradient(ellipse 60% 18% at 50% 100%, #ff8a3d14 0%, transparent 70%);
+}
+@keyframes dl-beam {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .8; }
+}
+
+/* ---------- cartões ----------------------------------------- */
+
+:is(#panel-downloads, #panel-manual) .dl-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:is(#panel-downloads, #panel-manual) .dl-card {
+  --c: #4c8dff;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-areas: "ring k" "ring t" "p p" "foot foot";
+  column-gap: 14px;
+  row-gap: 3px;
+  min-width: 0;
+  padding: 16px 16px 14px;
+  border: 1px solid #ffffff0d;
+  border-radius: 20px;
+  background:
+    radial-gradient(70% 60% at 0% 0%, color-mix(in srgb, var(--c) 12%, transparent), transparent 70%),
+    linear-gradient(180deg, #19212ccc, #121820cc);
+  box-shadow: inset 0 1px 0 #ffffff0f, 0 16px 30px -24px #000;
+  transition: transform .2s var(--ease, ease);
+}
+/* Filete aceso no topo, na cor do anel (como os cartões de INFO). */
+:is(#panel-downloads, #panel-manual) .dl-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c) 80%, #fff), transparent);
+  opacity: .7;
+}
+:is(#panel-downloads, #panel-manual) .dl-card__top { display: contents; }
+:is(#panel-downloads, #panel-manual) .dl-card .pg-ring { grid-area: ring; align-self: center; width: 46px; }
+:is(#panel-downloads, #panel-manual) .dl-card__k {
+  grid-area: k;
+  align-self: end;
+  margin: 0;
+  color: color-mix(in srgb, var(--c) 50%, #fff);
+  font: 600 var(--pg-min)/1.3 var(--font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+:is(#panel-downloads, #panel-manual) .dl-card__t {
+  grid-area: t;
+  align-self: start;
+  margin: 0;
+  color: #f5f8fc;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 108;
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+}
+:is(#panel-downloads, #panel-manual) .dl-card__p {
+  grid-area: p;
+  margin: 10px 0 0;
+  color: var(--pg-ink-2);
+  font-size: 14.5px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+:is(#panel-downloads, #panel-manual) .dl-card__foot {
+  grid-area: foot;
+  align-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--pg-line);
+}
+:is(#panel-downloads, #panel-manual) .dl-card__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 9px 14px 9px 16px;
+  border: 1px solid color-mix(in srgb, var(--c) 42%, #ffffff14);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--c) 12%, #0f1824);
+  color: var(--pg-ink);
+  font: 700 15px/1.2 var(--font-body);
+  text-decoration: none;
+}
+/* O cartão inteiro é a área de clique do botão. */
+:is(#panel-downloads, #panel-manual) .dl-card__go::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+}
+:is(#panel-downloads, #panel-manual) .dl-card__arrow {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: color-mix(in srgb, var(--c) 45%, #fff);
+  transition: transform .2s var(--ease, ease);
+}
+:is(#panel-downloads, #panel-manual) .dl-card__dest {
+  margin-left: auto;
+  color: var(--pg-ink-3);
+  white-space: nowrap;
+  font: 500 var(--pg-min)/1.3 var(--font-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+@media (hover: hover) {
+  :is(#panel-downloads, #panel-manual) .dl-card:has(.dl-card__go:hover) { transform: translateY(-2px); }
+  :is(#panel-downloads, #panel-manual) .dl-card__go:hover .dl-card__arrow { transform: translate(2px, -2px); }
+  :is(#panel-downloads, #panel-manual) .dl-card__go[data-go]:hover .dl-card__arrow { transform: translateX(3px); }
+}
+/* Foco por teclado: o anel contorna o CARTÃO, que é a área de clique. */
+:is(#panel-downloads, #panel-manual) .dl-card__go:focus-visible { outline: none; }
+:is(#panel-downloads, #panel-manual) .dl-card:has(.dl-card__go:focus-visible) {
+  outline: 3px solid var(--pg-focus);
+  outline-offset: 4px;
+}
+
+/* Entrada em cascata ao abrir o painel (display none → grid reinicia a
+   animação). Só transform e opacity. */
+:is(#panel-downloads, #panel-manual) .dl-card { animation: dl-rise .6s var(--ease, ease) backwards; }
+:is(#panel-downloads, #panel-manual) .dl-card:nth-child(2) { animation-delay: .06s; }
+:is(#panel-downloads, #panel-manual) .dl-card:nth-child(3) { animation-delay: .12s; }
+:is(#panel-downloads, #panel-manual) .dl-card:nth-child(4) { animation-delay: .18s; }
+@keyframes dl-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- larguras ---------------------------------------- */
+
+@container pg (min-width: 620px) {
+  :is(#panel-downloads, #panel-manual) .dl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  :is(#panel-downloads, #panel-manual) .dl-card { padding: 20px 20px 16px; }
+  :is(#panel-downloads, #panel-manual) .dl-card .pg-ring { width: 50px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__t { font-size: 24px; }
+}
+/* Tablet: o cabeçalho centraliza, como na vitrine dos Apps. */
+@container pg (min-width: 700px) and (max-width: 1399px) {
+  :is(#panel-downloads, #panel-manual) .dl > .pg-head { justify-items: center; text-align: center; }
+  :is(#panel-downloads, #panel-manual) .pg-kicker { justify-content: center; }
+  :is(#panel-downloads, #panel-manual) .dl { row-gap: 34px; }
+}
+/* Desktop largo: cabeçalho à esquerda, cartões à direita. Abaixo disso
+   (janela de 1024) os cartões ficariam estreitos demais ao lado do
+   título, e o layout de tablet — cabeçalho centrado em cima — vale. */
+@container pg (min-width: 1400px) {
+  :is(#panel-downloads, #panel-manual) .dl {
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    align-items: center;
+    column-gap: 4.5cqi;
+  }
+  /* O feixe desce sobre os cartões (o palco desta página) e pousa numa
+     poça quente embaixo deles; a contraluz azul fica atrás. */
+  :is(#panel-downloads, #panel-manual) .dl-lights {
+    --lx: 70%;
+    --bw: 40deg;
+    top: -220px;
+    bottom: 0;
+    -webkit-mask-image:
+      linear-gradient(180deg, #0000 0%, #000 22%, #000 62%, transparent 96%),
+      conic-gradient(from var(--b0) at var(--lx) -20%, #0000 0deg, #000 calc(var(--bw) * .263), #000 calc(var(--bw) * .737), #0000 var(--bw));
+            mask-image:
+      linear-gradient(180deg, #0000 0%, #000 22%, #000 62%, transparent 96%),
+      conic-gradient(from var(--b0) at var(--lx) -20%, #0000 0deg, #000 calc(var(--bw) * .263), #000 calc(var(--bw) * .737), #0000 var(--bw));
+  }
+  :is(#panel-downloads, #panel-manual) .dl::after {
+    left: 38%;
+    bottom: -60px;
+    height: 120%;
+    background:
+      radial-gradient(ellipse 48% 42% at 50% 50%, #3d8bff24 0%, #3d8bff0a 52%, transparent 74%),
+      radial-gradient(ellipse 50% 9% at 50% 93%, #ff8a3d29 0%, #ff8a3d0d 46%, transparent 72%),
+      linear-gradient(90deg, transparent 6%, #a6bedd1a 30%, #ffc48a2e 50%, #a6bedd1a 70%, transparent 94%) 0 93% / 100% 1px no-repeat;
+  }
+  /* Um véu frio atrás do título. */
+  :is(#panel-downloads, #panel-manual) .dl > .pg-head { position: relative; }
+  :is(#panel-downloads, #panel-manual) .dl > .pg-head::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: -30% -10% -30% -12%;
+    pointer-events: none;
+    background: radial-gradient(ellipse 55% 50% at 40% 50%, #1f33505c 0%, #14223533 45%, transparent 75%);
+  }
+  :is(#panel-downloads, #panel-manual) .pg-title { font-size: clamp(56px, 4.4cqi, 84px); }
+  :is(#panel-downloads, #panel-manual) .dl-grid { gap: 16px; }
+  :is(#panel-downloads, #panel-manual) .dl-card { column-gap: 20px; row-gap: 4px; padding: 28px 28px 20px; border-radius: 22px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__go::after { border-radius: 22px; }
+  :is(#panel-downloads, #panel-manual) .dl-card .pg-ring { width: 64px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__p { margin-top: 14px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__foot { margin-top: 18px; padding-top: 16px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__t { font-size: 30px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__p { font-size: 17px; }
+  :is(#panel-downloads, #panel-manual) .dl-card__go { min-height: 48px; font-size: 16px; }
+}
+
+/* As manchas do layout antigo (refine.css, `.resource-quick-page`) não
+   voltam nem se a classe reaparecer na marcação. */
+:is(#panel-downloads, #panel-manual) .resource-quick-page::before,
+:is(#panel-downloads, #panel-manual) .resource-quick-page::after { content: none; display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  :is(#panel-downloads, #panel-manual) :is(.dl-lights, .dl-card) { animation: none; }
+  :is(#panel-downloads, #panel-manual) :is(.dl-card, .dl-card__arrow) { transition: none; }
+}

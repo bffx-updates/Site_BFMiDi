@@ -24,9 +24,20 @@
        (`lead` não aparece mais em lugar nenhum: abria o painel INFO e saiu
         em 19/09/2026; fica no arquivo como descrição do modelo)
      · `specs` + banda `panel:'info'` ...... painel INFO
-     · banda `panel:'conects'` ............. painel CONECTS
-     · `ports` (chaves de `ports`) ......... painel CONECTS, a faixa de ícones
-                                              das conexões sob foto e texto
+     · banda `panel:'conects'` ............. painel CONECTS (IN/OUT): o título
+                                              em duas linhas (`title` + `hot`),
+                                              o lead (`body`), a foto traseira
+                                              (`img`, `size` = largura×altura do
+                                              arquivo) e `silk`, as etiquetas do
+                                              chassi em cima de cada conector:
+                                              [nome, % da largura da foto],
+                                              medidas na própria foto; `floor`
+                                              = % da altura da foto em que o
+                                              chassi termina (dali saem a
+                                              sombra no chão e os fios das
+                                              etiquetas)
+     · `ports` (chaves de `ports`) ......... painel CONECTS, o painel de
+                                              conexões abaixo da foto
      · `buy` (compartilhado) ............... painel COMPRAR
 
    MODELO SEM FOTO  ->  `shot: null`
@@ -100,7 +111,23 @@ window.BF_CONTENT = (function () {
       buy: 'Comprar',
       footerEnd: 'Controladoras MIDI'
     },
+    /* Painel INFO. `head` é o cabeçalho (o micro-rótulo "Informações" e o
+       nome do modelo vêm de `sub` e de `models`); `{w}`/`{h}` são as medidas
+       de `dimensions` do modelo, e `leadNoDims` vale para modelo sem elas.
+       `dims` são as cotas da foto: `value` é a etiqueta desenhada e `label`
+       a frase que o leitor de tela ouve no lugar do desenho. A foto é vista
+       de cima, então a segunda medida é a PROFUNDIDADE, e não a altura. */
     infoCards: {
+      head: {
+        title: 'Tudo no pé,',
+        hot: 'tudo à vista.',
+        lead: 'Footswitches com anel de LED próprio e tela colorida, num corpo de {w}\u00a0×\u00a0{h}\u00a0cm.',
+        leadNoDims: 'Footswitches com anel de LED próprio e tela colorida.'
+      },
+      dims: {
+        value: '{v}\u00a0cm',
+        label: 'Medidas da {model} vista de cima: {w} cm de largura por {h} cm de profundidade.'
+      },
       switches: { description: 'Acesso rápido, intuitivo e total controle do seu setup em qualquer situação.' },
       presets: { description: 'Organize seus timbres e setups com liberdade e praticidade.' },
       screen: { title: 'Visualização clara e intuitiva.' },
@@ -110,24 +137,48 @@ window.BF_CONTENT = (function () {
         description: 'Cada footswitch tem o próprio anel de LED. A cor diz o estado, e o estado é seu: você escolhe a cor de ligado e de desligado em cada um.'
       }
     },
-    /* Os ícones das conexões do painel CONECTS (18/09/2026, arte do usuário):
-       um tile por conexão, com o nome já impresso na própria imagem — o
-       `label` é só o texto alternativo. Cada modelo lista em `ports` as
-       chaves que tem, NA ORDEM em que devem aparecer (saídas MIDI, USB, sem
-       fio, entradas); modelo sem `ports` não mostra a faixa. Arquivo: assets/<img>.webp, 480×477 com alfa —
-       TODOS na mesma caixa ("deixe os ícones do mesmo tamanho"): a arte dos
-       USB era 6% mais baixa e foi esticada na exportação, o que não se nota.
-       `h` é a altura em px, para o <img> reservar a proporção antes de
-       carregar. */
+    /* O painel de conexões (IN/OUT). Uma entrada por porta; cada modelo lista
+       em `ports` as chaves que tem, NA ORDEM em que devem aparecer (saídas
+       MIDI, USB, sem fio, entradas). Modelo sem `ports` não mostra o painel.
+
+       `img`   arte da porta (18/09/2026, arte do usuário): assets/<img>.webp,
+               480×477 com alfa, TODAS na mesma caixa ("deixe os ícones do
+               mesmo tamanho"); `h` é a altura, para o <img> reservar a
+               proporção antes de carregar. O nome impresso na arte fica
+               pequeno demais para ler no painel, por isso ele se repete em
+               texto (`name`) e a imagem é decorativa (alt vazio).
+       `label` o nome completo da porta, como está na arte.
+       `tag`   a etiqueta branca, como a serigrafia do chassi. Um modelo cujo
+               chassi imprima outro nome troca só o dele, na banda de
+               conexões (`portTags`) — a 6SW+ chama o dual switch de SW1/2.
+       `name`  o nome em texto; `role` o que a porta faz, numa frase.
+       `group` a família no painel. Portas vizinhas com o mesmo `group`
+               ficam sob a mesma etiqueta ("Saídas MIDI", "USB"…). */
     ports: {
-      din5:      { img: 'port-din5',       h: 477, label: 'MIDI OUT (DIN5)' },
-      trs:       { img: 'port-trs',        h: 477, label: 'MIDI OUT (TRS-A)' },
-      usbDevice: { img: 'port-usb-device', h: 477, label: 'USB MIDI DEVICE' },
-      usbHost:   { img: 'port-usb-host',   h: 477, label: 'USB HOST' },
-      bluetooth: { img: 'port-bluetooth',  h: 477, label: 'Conexão Bluetooth MIDI — BLE (MIDI wireless)' },
-      wifi:      { img: 'port-wifi',       h: 477, label: 'Conexão Wi-Fi para o app' },
-      dualSw:    { img: 'port-dual-switch',h: 477, label: 'Entrada Dual Switch — P10 TRS' },
-      exp:       { img: 'port-expression', h: 477, label: 'Entrada Pedal de Expressão — P10 TRS' }
+      din5:      { img: 'port-din5',       h: 477, label: 'MIDI OUT (DIN5)',
+                   tag: 'DIN5',   name: 'MIDI OUT',        group: 'Saídas MIDI',
+                   role: 'MIDI clássico, no cabo de 5 pinos.' },
+      trs:       { img: 'port-trs',        h: 477, label: 'MIDI OUT (TRS-A)',
+                   tag: 'TRS',    name: 'MIDI OUT TRS',    group: 'Saídas MIDI',
+                   role: 'MIDI por cabo P10 TRS, tipo A.' },
+      usbDevice: { img: 'port-usb-device', h: 477, label: 'USB MIDI DEVICE',
+                   tag: 'DEVICE', name: 'USB MIDI DEVICE', group: 'USB',
+                   role: 'MIDI por USB, com o computador.' },
+      usbHost:   { img: 'port-usb-host',   h: 477, label: 'USB HOST',
+                   tag: 'HOST',   name: 'USB HOST',        group: 'USB',
+                   role: 'Controla pedais USB, sem computador.' },
+      bluetooth: { img: 'port-bluetooth',  h: 477, label: 'Conexão Bluetooth MIDI — BLE (MIDI wireless)',
+                   tag: 'BLE',    name: 'Bluetooth MIDI',  group: 'Sem fio',
+                   role: 'MIDI sem fio, por Bluetooth LE.' },
+      wifi:      { img: 'port-wifi',       h: 477, label: 'Conexão Wi-Fi para o app',
+                   tag: 'WI-FI',  name: 'Wi-Fi',           group: 'Sem fio',
+                   role: 'Liga o app e o editor, sem cabo.' },
+      dualSw:    { img: 'port-dual-switch',h: 477, label: 'Entrada Dual Switch — P10 TRS',
+                   tag: '2SW',    name: 'Dual Switch',     group: 'Entradas',
+                   role: 'Dois footswitches externos, P10 TRS.' },
+      exp:       { img: 'port-expression', h: 477, label: 'Entrada Pedal de Expressão — P10 TRS',
+                   tag: 'EXP',    name: 'Expressão',       group: 'Entradas',
+                   role: 'Pedal de expressão, P10 TRS.' }
     },
 
     models: [
@@ -182,17 +233,17 @@ window.BF_CONTENT = (function () {
           {
             panel: 'conects',
             img: '8sw-rear',
+            size: [1200, 644],
+            floor: 90.7,
             alt: 'Painel traseiro da BFMIDI 8SW+ com as entradas e saídas ' +
                  'identificadas: DEVICE, 2SW, EXP, DIN5, TRS, HOST e 9V.',
-            title: 'Conexões MIDI e USB HOST',
+            title: 'Cabo, USB',
+            hot: 'e sem fio.',
             body: 'MIDI clássico, MIDI por TRS e MIDI por USB saem juntos. A porta ' +
                   'HOST vai além: ela controla pedais USB direto, sem computador ' +
                   'no meio.',
-            list: [
-              'Saídas MIDI DIN5, TRS e USB simultâneas',
-              'Porta USB HOST para controlar pedais USB',
-              'Entradas para pedal de expressão e dois footswitches externos'
-            ]
+            silk: [['DEVICE', 21.4], ['2SW', 31.3], ['EXP', 40.8], ['DIN5', 52],
+                   ['TRS', 63.6], ['HOST', 75], ['9V', 86]]
           }
         ]
       },
@@ -223,6 +274,11 @@ window.BF_CONTENT = (function () {
         ],
         buy: {
           hideDetails: true,
+          /* Sem loja ainda (`href: '#'`): o botão sai desabilitado e esta
+             frase o descreve. É específica do modelo porque a frase
+             compartilhada fala de "canal de contato", e aqui o botão é de
+             compra. */
+          unavailable: 'A 6SW+ ainda não está na loja online.',
           primary: {
             label: 'Comprar 6SW+',
             href: '#'
@@ -255,17 +311,19 @@ window.BF_CONTENT = (function () {
           {
             panel: 'conects',
             img: '6sw-rear',
+            size: [1600, 517],
+            floor: 99.3,
             alt: 'Painel traseiro da BFMIDI 6SW+ com as conexões identificadas: ' +
                  '9V, SW1/2, EXP, USB HOST, TRS e USB DEVICE.',
-            title: 'Conexões da 6SW+',
+            title: 'Cabo, USB',
+            hot: 'e sem fio.',
             body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
                   'USB sem computador. As entradas de expressão e de footswitches ' +
                   'externos ficam na mesma borda, ao lado do 9V.',
-            list: [
-              'Saídas MIDI TRS e USB',
-              'Porta USB HOST para pedais USB',
-              'Pedal de expressão e dois footswitches externos'
-            ]
+            silk: [['9V', 13.4], ['SW1/2', 19.9], ['EXP', 26.9], ['HOST', 47.2],
+                   ['TRS', 74.2], ['DEVICE', 86.6]],
+            /* O chassi da 6SW+ imprime SW1/2 onde as outras imprimem 2SW. */
+            portTags: { dualSw: 'SW1/2' }
           }
         ]
       },
@@ -320,16 +378,17 @@ window.BF_CONTENT = (function () {
           {
             panel: 'conects',
             img: 'nano-gallery-6',
+            size: [1600, 563],
+            floor: 96.2,
             alt: 'Painel traseiro da BFMIDI NANO+ com as entradas e saídas ' +
                  'identificadas: EXP, 2SW, DEVICE, 9V, HOST e TRS.',
-            title: 'Conexões da NANO+',
+            title: 'Cabo, USB',
+            hot: 'e sem fio.',
             body: 'A NANO+ oferece MIDI por TRS e USB, além da porta USB HOST para ' +
-                  'controlar pedais sem computador.',
-            list: [
-              'Saídas MIDI TRS e USB',
-              'Porta USB HOST para pedais USB',
-              'Pedal de expressão e dois footswitches externos'
-            ]
+                  'controlar pedais sem computador, e entradas para pedal de ' +
+                  'expressão e dois footswitches externos.',
+            silk: [['TRS', 20.8], ['HOST', 31], ['9V', 41], ['DEVICE', 61.3],
+                   ['2SW', 70.5], ['EXP', 79]]
           }
         ]
       },
@@ -390,16 +449,16 @@ window.BF_CONTENT = (function () {
           {
             panel: 'conects',
             img: 'micro-rear',
+            size: [1600, 827],
+            floor: 99.6,
             alt: 'Painel traseiro da BFMIDI 3 MICRO com as conexões identificadas: ' +
                  '9V, TRS, USB DEVICE e USB HOST.',
-            title: 'Conexões da MICRO',
+            title: 'Cabo, USB',
+            hot: 'e sem fio.',
             body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
-                  'USB sem computador. Tudo no topo, com a alimentação de 9V.',
-            list: [
-              'Saídas MIDI TRS e USB',
-              'Porta USB HOST para pedais USB',
-              'Editor por Wi-Fi ou pelo cabo USB'
-            ]
+                  'USB sem computador. Tudo no topo, com a alimentação de 9V, e o ' +
+                  'editor por Wi-Fi ou pelo cabo USB.',
+            silk: [['9V', 23.4], ['TRS', 39], ['DEVICE', 55.5], ['HOST', 71.6]]
           }
         ]
       }
@@ -440,17 +499,39 @@ window.BF_CONTENT = (function () {
       softwareLabel: 'Sistema BFMiDi',
       items: [
         { key: 'apps', label: 'Apps', eyebrow: 'Apps', title: 'BFMiDi Editor' },
+        /* PAINEL DOWNLOADS (#8sw/downloads). O título sai em duas linhas —
+           `head.title` em branco, `head.hot` em laranja. Os cartões, NA
+           ORDEM: o dos apps (`apps`, leva à seção Apps deste site, sem
+           sair da página), o atualizador (`links`, key 'updater'), o
+           manual (o link do item `manual` abaixo) e o Backup View (key
+           'backup'). `kicker` é o micro-rótulo de cada cartão. A Central
+           de downloads (key 'central') fica fora dos cartões: a seção Apps
+           do site já cumpre esse papel. `newTabShort`/`here` dizem, à vista,
+           se o cartão abre outra aba ou fica no site (`newTab`, a frase
+           inteira, vai para o leitor de tela); `goLabel` é o botão do
+           cartão que traz para cá a partir do painel Manual. */
         { key: 'downloads', label: 'Downloads', eyebrow: 'Downloads', title: 'Downloads e atualizações',
+          head: { title: 'Downloads e', hot: 'atualizações.' },
           lead: 'Acesse os aplicativos e o atualizador da controladora.',
+          newTab: 'Abre em nova aba',
+          newTabShort: 'Nova aba',
+          here: 'Neste site',
+          goLabel: 'Ver downloads',
+          apps: { kicker: 'Aplicativos', title: 'BFMiDi Editor', description: 'O mesmo editor da sua BFMIDI no navegador, no Windows, no Mac, no iPhone e no iPad.', label: 'Ver os apps' },
           links: [
-            { title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
-            { title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/Update_BFMiDi_v14/' },
-            { key: 'backup', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' }
+            { key: 'central', kicker: 'Aplicativos', title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
+            { key: 'updater', kicker: 'Firmware', title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/Update_BFMiDi_v14/' },
+            { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' }
           ] },
+        /* PAINEL MANUAL (#8sw/manual): mesmo desenho do de Downloads. Os
+           `links` viram cartões e `related` acrescenta cartões internos para
+           outros painéis desta lista (pela `key`). */
         { key: 'manual', label: 'Manual', eyebrow: 'Manual', title: 'Manual BFMIDI',
+          head: { title: 'Manual', hot: 'da BFMIDI.' },
           lead: 'Consulte as instruções de configuração e uso da controladora.',
+          related: ['downloads'],
           links: [
-            { title: 'Manual online', description: 'Consulte os recursos, os modos de operação e as conexões.', label: 'Abrir manual', href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' }
+            { key: 'manual', kicker: 'Documentação', title: 'Manual online', description: 'Consulte os recursos, os modos de operação e as conexões.', label: 'Abrir manual', href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' }
           ] }
       ]
     },
@@ -490,7 +571,30 @@ window.BF_CONTENT = (function () {
         'Presets de fábrica já gravados, prontos para tocar'
       ],
       primary: { label: 'Falar com a BFFX', href: '#' },
-      ghost:   { label: 'Abrir o manual',   href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' }
+      ghost:   { label: 'Abrir o manual',   href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' },
+
+      /* Textos do painel SHOP redesenhado (24/09/2026). Nenhum é oferta:
+         `storeNote` acompanha o endereço da loja, que o main.js tira do
+         próprio `primary.href` (trocou o link, o endereço acompanha);
+         `soon` é a ficha do botão sem loja (href '#'); `waitKicker`
+         separa o bloco do WhatsApp; `newTab` é o aviso, para leitor de
+         tela, do link que abre outra aba. `portTags` é o nome CURTO de
+         cada conexão, como na serigrafia do chassi — a descrição longa
+         continua em `ports` e vai para o leitor de tela. */
+      storeNote: 'Loja online da BFFX',
+      soon: 'Em breve',
+      waitKicker: 'Grupo de espera',
+      newTab: 'abre em nova aba',
+      portTags: {
+        din5: 'DIN5',
+        trs: 'TRS',
+        usbDevice: 'USB DEVICE',
+        usbHost: 'USB HOST',
+        bluetooth: 'BLUETOOTH',
+        wifi: 'WI-FI',
+        dualSw: '2SW',
+        exp: 'EXP'
+      }
     }
   };
 })();

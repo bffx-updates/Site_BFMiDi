@@ -1,0 +1,482 @@
+/* ============================================================
+   BFMIDI — VITRINE · PAINEL SHOP (COMPRAR)
+   ------------------------------------------------------------
+   A mesma linguagem da vitrine dos Apps (css/apps.css) e das
+   peças comuns (css/pages.css): cabeçalho pg-head com o nome
+   do modelo, a foto num PALCO iluminado como a controladora é
+   fotografada na home — feixe âmbar vindo de cima, contraluz
+   azul fria atrás, sombra de contato e a linha do chão —, a
+   ficha em números, as etiquetas de porta do chassi e o cartão
+   de compra, com o WhatsApp do grupo de espera no mesmo
+   acabamento do botão.
+
+   Marcação em renderComprar() (js/main.js). Ordem do HTML =
+   ordem de leitura no celular: cabeçalho → palco → cartão de
+   compra → ficha → conexões. No desktop o texto vira a coluna
+   da esquerda (cabeçalho, ficha, conexões e o cartão por
+   último, como a vitrine dos Apps) e o palco a da direita.
+
+   Escopado em #panel-comprar. Layout por CONTAINER QUERY (`pg`,
+   declarado no .panel-inner.pg): no desktop o site aplica
+   `html { zoom: .8 }` e quem manda é a largura do layout.
+   Texto pequeno sai de `--pg-min` (11px no celular, 14px no
+   desktop = 11,2px renderizados).
+   ============================================================ */
+
+/* A caixa do painel: mesma largura útil e mesma margem de INFO e
+   APPS (1720px, 48px no desktop), então trocar de aba não desloca
+   o conteúdo. Vence o `.panel-inner` do refine.css por id. */
+#panel-comprar .panel-inner.pg {
+  max-width: 1720px;
+  padding: 10px 16px 28px;
+}
+@media (min-width: 601px) {
+  #panel-comprar .panel-inner.pg { padding: 18px 28px 36px; }
+}
+@media (min-width: 861px) {
+  #panel-comprar .panel-inner.pg { padding: 6px 48px 36px; }
+}
+
+#panel-comprar .shop {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "head" "stage" "buy" "facts" "ports";
+  row-gap: 16px;
+  min-width: 0;
+}
+#panel-comprar .shop > .pg-head { grid-area: head; }
+/* O título é o nome do modelo: duas palavras curtas, então sai maior que
+   o dos outros painéis desde o celular. */
+#panel-comprar .pg-title { font-size: clamp(36px, 11.5cqi, 60px); line-height: .98; }
+#panel-comprar .shop-stage { grid-area: stage; }
+#panel-comprar .shop-buy { grid-area: buy; }
+#panel-comprar .shop-facts { grid-area: facts; }
+#panel-comprar .shop-ports { grid-area: ports; }
+
+/* ---------- 1. PALCO ---------------------------------------- */
+
+/* Proporção fixa: a <img> não declara width/height (o recorte muda
+   por modelo), então quem reserva o espaço é a caixa. SEM z-index
+   de propósito: a luz (z-index -1) cai no contexto do .shop e passa
+   por TRÁS do título no celular, nunca por cima dele. */
+#panel-comprar .shop-stage {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  aspect-ratio: 1.3;
+}
+#panel-comprar .shop-stage__lights {
+  position: absolute;
+  inset: -22% 0 -2%;
+  z-index: -1;
+  pointer-events: none;
+}
+#panel-comprar .shop-light { position: absolute; inset: 0; display: block; }
+/* Névoa fria de ciclorama. */
+#panel-comprar .shop-light--haze {
+  background: radial-gradient(ellipse 62% 44% at 50% 60%, #1f33505c 0%, #14223533 45%, transparent 75%);
+}
+/* Contraluz azul atrás do aparelho. */
+#panel-comprar .shop-light--rim {
+  background:
+    radial-gradient(ellipse 40% 30% at 50% 52%, #3d8bff33 0%, #3d8bff12 46%, transparent 72%),
+    radial-gradient(ellipse 20% 26% at 84% 60%, #3d8bff1f 0%, transparent 70%),
+    radial-gradient(ellipse 20% 26% at 16% 62%, #3d8bff1a 0%, transparent 72%);
+}
+/* O feixe âmbar vindo de cima, com os raios de poeira da vitrine dos
+   Apps. Só gradiente: zero blur. */
+#panel-comprar .shop-light--beam {
+  --bw: 42deg;
+  --b0: calc(180deg - var(--bw) / 2);
+  background:
+    radial-gradient(ellipse 26% 9% at 50% 22%, #ffc48a26 0%, transparent 70%),
+    repeating-conic-gradient(from var(--b0) at 50% -30%, #ffd9b000 0deg 1.1deg, #ffd9b00d 1.1deg 1.6deg, #ffd9b000 1.6deg 2.9deg),
+    conic-gradient(from var(--b0) at 50% -30%,
+      transparent 0deg,
+      #ffae6a14 calc(var(--bw) * .184),
+      #ffc48a30 calc(var(--bw) * .368),
+      #ffd3a242 calc(var(--bw) * .5),
+      #ffc48a30 calc(var(--bw) * .632),
+      #ffae6a14 calc(var(--bw) * .816),
+      transparent var(--bw));
+  -webkit-mask-image:
+    linear-gradient(180deg, #0000 0%, #000 14%, #000 58%, transparent 96%),
+    conic-gradient(from var(--b0) at 50% -30%, #0000 0deg, #000 calc(var(--bw) * .263), #000 calc(var(--bw) * .737), #0000 var(--bw));
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(180deg, #0000 0%, #000 14%, #000 58%, transparent 96%),
+    conic-gradient(from var(--b0) at 50% -30%, #0000 0deg, #000 calc(var(--bw) * .263), #000 calc(var(--bw) * .737), #0000 var(--bw));
+          mask-composite: intersect;
+  animation: shop-beam 7s ease-in-out infinite;
+}
+@keyframes shop-beam {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .78; }
+}
+/* O chão: sombra de contato sob o aparelho, a poça quente onde o feixe
+   pousa e a linha do palco. A linha e a sombra ficam na altura em que a
+   foto pousa (base da .shop-stage__shot = 12% de baixo). */
+#panel-comprar .shop-stage__floor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 38% 4.5% at 50% 88.5%, #000000c2 0%, #00000066 48%, transparent 74%),
+    radial-gradient(ellipse 52% 11% at 50% 89.5%, #ff8a3d4d 0%, #ff8a3d1a 46%, transparent 72%),
+    linear-gradient(90deg, transparent 6%, #a6bedd1c 30%, #ffc48a33 50%, #a6bedd1c 70%, transparent 94%) 0 89% / 100% 1px no-repeat;
+}
+#panel-comprar .shop-stage__shot {
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  top: 5%;
+  bottom: 12%;
+}
+/* Ao abrir o painel (display none → flex reinicia a animação) o aparelho
+   sobe para a luz e o feixe acende. Só transform e opacity. */
+#panel-comprar .shop-stage__shot { animation: shop-rise .8s var(--ease, ease) backwards; }
+#panel-comprar .shop-stage__lights { animation: shop-fade 1s ease backwards; }
+@keyframes shop-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shop-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+#panel-comprar .shop-stage__shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  filter: drop-shadow(0 18px 16px #000b) drop-shadow(0 -1px 1px #a6c6ff1f);
+}
+#panel-comprar .shop-stage__shot .shot-map { height: 100%; }
+
+/* ---------- 2. CARTÃO DE COMPRA ----------------------------- */
+
+/* O mesmo acabamento do cartão de plataforma dos Apps (.ap-plat). */
+#panel-comprar .shop-buy {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #ffb07047;
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 0% 0%, #ff8a3d14 0%, transparent 46%),
+    linear-gradient(180deg, #1a2433f2 0%, #111925f5 60%, #0d141ef7 100%);
+  box-shadow: inset 0 1px 0 #ffffff12, 0 26px 60px -34px #000;
+}
+#panel-comprar .shop-cta {
+  width: 100%;
+  min-height: 58px;
+  padding: 14px 22px;
+  border-radius: 16px;
+  border-color: #ffc17e;
+  font-size: 17px;
+  letter-spacing: .005em;
+  box-shadow: inset 0 1px 1px #ffe3bd, inset 0 -2px 0 #b8401433, 0 12px 30px -10px #ff6a1f80;
+}
+#panel-comprar .shop-cta svg { width: 20px; height: 20px; }
+#panel-comprar .shop-cta__go { transition: transform .2s var(--ease, ease); }
+@media (hover: hover) {
+  #panel-comprar a.shop-cta:hover .shop-cta__go { transform: translateX(3px); }
+}
+#panel-comprar a.shop-cta:active { transform: translateY(1px); }
+
+/* Sem loja: estado inativo inequívoco — tracejado, apagado, sem cara de
+   botão (não recebe foco nem reage ao mouse), com a ficha "Em breve". */
+#panel-comprar .shop-cta.is-off {
+  cursor: not-allowed;
+  border: 1.5px dashed #a6bedd5c;
+  background: #111925;
+  color: var(--pg-ink-2);
+  box-shadow: inset 0 1px 0 #ffffff08;
+  filter: none;
+  transform: none;
+}
+#panel-comprar .shop-cta.is-off .shop-cta__ico { color: var(--pg-ink-3); }
+#panel-comprar .shop-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 9px 3px;
+  border: 1px solid #ffb07047;
+  border-radius: 999px;
+  background: #ffb07014;
+  color: #ffc79d;
+  font: 600 var(--pg-min)/1.2 var(--font-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+#panel-comprar .shop-soon::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffb070;
+  box-shadow: 0 0 8px #ffb070;
+}
+
+/* Para onde o botão leva, à vista (o endereço sai do próprio link). */
+#panel-comprar .shop-dest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin: 0;
+  color: var(--pg-ink-2);
+  font: 500 var(--pg-min)/1.4 var(--font-mono);
+  letter-spacing: .02em;
+  text-align: center;
+}
+#panel-comprar .shop-dest > span { min-width: 0; }
+#panel-comprar .shop-dest b { color: var(--pg-ink); font-weight: 600; white-space: nowrap; }
+#panel-comprar .shop-dest__ico { flex: none; width: 15px; height: 15px; color: var(--pg-ok); }
+#panel-comprar .shop-dest.is-off {
+  font: 500 14px/1.45 var(--font-body);
+  letter-spacing: 0;
+  color: var(--pg-ink-2);
+}
+#panel-comprar .shop-dest.is-off .shop-dest__ico { color: #ffc79d; }
+
+/* Divisória com o nome do bloco seguinte. */
+#panel-comprar .shop-sep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0 0;
+  color: var(--pg-ink-3);
+  font: 600 var(--pg-min)/1.3 var(--font-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+#panel-comprar .shop-sep::before,
+#panel-comprar .shop-sep::after { content: ''; flex: 1; height: 1px; background: var(--pg-line-2); }
+
+/* WhatsApp do grupo de espera: tecla grafite com anel de LED verde. */
+#panel-comprar .shop-wa {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 14px;
+  min-height: 64px;
+  padding: 12px 14px 12px 12px;
+  border: 1px solid #39d98a42;
+  border-radius: 16px;
+  background:
+    radial-gradient(90% 140% at 0% 50%, #39d98a14 0%, transparent 60%),
+    #0c1118e6;
+  box-shadow: inset 0 1px 0 #ffffff0a, inset 0 1px 3px #0006;
+  color: var(--pg-ink);
+  text-decoration: none;
+  text-align: left;
+  transition: border-color .15s, background-color .15s;
+}
+#panel-comprar .shop-wa .pg-ring { width: 42px; }
+#panel-comprar .shop-wa__txt { display: grid; gap: 2px; min-width: 0; }
+#panel-comprar .shop-wa__txt strong { color: #8ef0b8; font: 700 16px/1.25 var(--font-body); }
+#panel-comprar .shop-wa__txt > span { color: var(--pg-ink-2); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
+#panel-comprar .shop-wa__go { width: 20px; height: 20px; color: #8ef0b8; transition: transform .2s var(--ease, ease); }
+@media (hover: hover) {
+  #panel-comprar .shop-wa:hover { border-color: #39d98a8c; }
+  #panel-comprar .shop-wa:hover .shop-wa__go { transform: translate(2px, -2px); }
+}
+/* Sem loja, o WhatsApp é o caminho ativo: ganha o destaque. */
+#panel-comprar .shop.is-off .shop-wa {
+  border-color: #39d98a80;
+  box-shadow: inset 0 1px 0 #ffffff0a, 0 0 0 1px #39d98a1f, 0 16px 34px -20px #39d98a66;
+}
+
+/* Sem `hideDetails`: preço e lista voltam, dentro do cartão. */
+#panel-comprar .shop-details { display: grid; gap: 8px; padding: 0 4px 6px; }
+#panel-comprar .shop-price {
+  margin: 0;
+  color: #f5f8fc;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 110;
+  font-size: 26px;
+  line-height: 1.1;
+}
+#panel-comprar .shop-details .band-list { margin: 0; }
+
+/* ---------- 3. FICHA EM NÚMEROS ----------------------------- */
+
+/* Poço escuro dividido por filetes de 1px (o gap deixa aparecer o fundo
+   claro do <dl>). O valor vem ANTES do rótulo na tela, mas o <dt> vem
+   antes no HTML — o leitor de tela lê "Footswitches: 8". */
+#panel-comprar .shop-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff12;
+  box-shadow: inset 0 0 0 1px #ffffff0c, 0 16px 30px -24px #000;
+}
+#panel-comprar .shop-fact {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px 16px 15px;
+  background: linear-gradient(180deg, #121a24, #0c1118);
+}
+#panel-comprar .shop-fact dd {
+  margin: 0;
+  color: #f5f8fc;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-variation-settings: 'wdth' 110;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+#panel-comprar .shop-fact dt {
+  color: var(--pg-ink-2);
+  font: 500 14px/1.3 var(--font-body);
+  text-wrap: balance;
+}
+
+/* ---------- 4. CONEXÕES ------------------------------------- */
+
+#panel-comprar .shop-ports { display: grid; gap: 10px; min-width: 0; }
+#panel-comprar .shop-label {
+  margin: 0;
+  color: var(--pg-ink-3);
+  font: 600 var(--pg-min)/1.3 var(--font-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+#panel-comprar .shop-ports .pg-tags li { position: relative; }
+
+/* ---------- 5. LARGURAS ------------------------------------- */
+
+/* Celular estreito (320): o WhatsApp não pode virar uma torre de texto. */
+@container pg (max-width: 359px) {
+  #panel-comprar .shop-buy { padding: 12px; }
+  #panel-comprar .shop-cta { padding-inline: 16px; }
+  #panel-comprar .shop-wa { column-gap: 10px; padding: 10px 10px 10px 8px; }
+  #panel-comprar .shop-wa .pg-ring { width: 34px; }
+  #panel-comprar .shop-wa__txt strong { font-size: 15px; }
+  #panel-comprar .shop-wa__go { width: 18px; height: 18px; }
+  #panel-comprar .shop-fact { padding: 12px 12px 13px; }
+  #panel-comprar .shop-fact dd { font-size: 26px; }
+}
+
+@container pg (min-width: 520px) {
+  #panel-comprar .shop-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #panel-comprar .shop-fact { padding: 16px 16px 17px; }
+}
+
+/* Tablet: cabeçalho em cima; palco e cartão lado a lado; ficha e
+   conexões na largura toda. */
+@container pg (min-width: 680px) {
+  #panel-comprar .shop {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "head head" "stage buy" "facts facts" "ports ports";
+    column-gap: 26px;
+    row-gap: 22px;
+    align-items: center;
+  }
+  #panel-comprar .shop-stage { aspect-ratio: 1.3; }
+  #panel-comprar .shop-stage__shot { left: 3%; right: 3%; }
+  #panel-comprar .pg-title { font-size: clamp(48px, 8cqi, 72px); }
+  #panel-comprar .shop-buy { padding: 16px; }
+}
+
+/* Desktop: texto à esquerda, palco à direita, como a vitrine dos Apps.
+   As duas faixas `1fr` vazias centralizam o texto na altura do palco. */
+@container pg (min-width: 1040px) {
+  #panel-comprar .shop {
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    grid-template-rows: 1fr auto auto auto auto 1fr;
+    grid-template-areas: ". stage" "head stage" "facts stage" "ports stage" "buy stage" ". stage";
+    column-gap: 4cqi;
+    row-gap: 0;
+    align-items: start;
+  }
+  #panel-comprar .shop > .pg-head { gap: 14px; margin-bottom: 30px; }
+  #panel-comprar .pg-title { font-size: clamp(56px, 5cqi, 96px); line-height: .98; }
+  #panel-comprar .shop-stage { align-self: center; aspect-ratio: 1.2; }
+  #panel-comprar .shop-stage__shot { left: 4%; right: 4%; }
+  #panel-comprar .shop-facts { margin-bottom: 24px; }
+  #panel-comprar .shop-fact { padding: 16px 14px 17px; }
+  #panel-comprar .shop-fact dd { font-size: 36px; }
+  #panel-comprar .shop-fact dt { font-size: 14px; }
+  #panel-comprar .shop-ports { margin-bottom: 30px; }
+  #panel-comprar .shop-buy {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 18px;
+  }
+  #panel-comprar .shop-cta { min-height: 66px; font-size: 19px; }
+  #panel-comprar .shop-cta svg { width: 22px; height: 22px; }
+  #panel-comprar .shop-wa { min-height: 76px; padding: 14px 18px 14px 14px; column-gap: 16px; }
+  #panel-comprar .shop-wa .pg-ring { width: 48px; }
+  #panel-comprar .shop-wa__txt strong { font-size: 18px; }
+  #panel-comprar .shop-wa__txt > span { font-size: 16px; }
+  #panel-comprar .shop-dest.is-off { font-size: 15px; }
+}
+
+/* Janela de 1024 (layout de ~1180px): a coluna do texto ganha metade da
+   largura, senão "Comportamentos" não cabe na célula da ficha. */
+@container pg (min-width: 1040px) and (max-width: 1399px) {
+  #panel-comprar .shop { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 3cqi; }
+}
+@container pg (min-width: 1400px) {
+  #panel-comprar .shop-fact { padding: 18px 20px 19px; }
+  #panel-comprar .shop-fact dd { font-size: 40px; }
+  #panel-comprar .shop-fact dt { font-size: 15px; }
+}
+
+/* Desktop BAIXO (1366×768, 1280×720): a coluna do texto aperta os
+   respiros para o cartão de compra inteiro caber acima da barra do
+   rodapé já na primeira dobra. A largura não muda nada disso. */
+@media (min-width: 861px) and (max-height: 820px) {
+  @container pg (min-width: 1040px) {
+    #panel-comprar .shop > .pg-head { gap: 10px; margin-bottom: 20px; }
+    #panel-comprar .pg-title { font-size: clamp(52px, 4.2cqi, 72px); }
+    #panel-comprar .shop-facts { margin-bottom: 16px; }
+    #panel-comprar .shop-fact { padding-block: 13px 14px; }
+    #panel-comprar .shop-fact dd { font-size: 32px; }
+    #panel-comprar .shop-ports { gap: 8px; margin-bottom: 20px; }
+    #panel-comprar .shop-buy { gap: 9px; padding: 14px 16px; }
+    #panel-comprar .shop-cta { min-height: 58px; }
+    #panel-comprar .shop-sep { margin-top: 2px; }
+    #panel-comprar .shop-wa { min-height: 64px; padding-block: 10px; }
+    #panel-comprar .shop-wa .pg-ring { width: 42px; }
+  }
+}
+
+/* 6SW+: a foto é quase 3:1 (seis footswitches em linha). No palco padrão
+   ela pousaria no chão com meio palco vazio em cima; um palco mais baixo
+   mantém o aparelho do mesmo tamanho e tira o vazio. */
+#panel-comprar .shop--6sw .shop-stage { aspect-ratio: 2; }
+/* No tablet, meia largura deixaria a 6SW+ miúda: o palco fica com a
+   largura toda e o cartão de compra desce para baixo dele. */
+@container pg (min-width: 680px) and (max-width: 1039px) {
+  #panel-comprar .shop--6sw { grid-template-areas: "head head" "stage stage" "buy buy" "facts facts" "ports ports"; }
+  #panel-comprar .shop--6sw .shop-stage { aspect-ratio: 2.5; }
+}
+@container pg (min-width: 1040px) {
+  #panel-comprar .shop--6sw .shop-stage { aspect-ratio: 1.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #panel-comprar :is(.shop-light--beam, .shop-stage__shot, .shop-stage__lights) { animation: none; }
+  #panel-comprar :is(.shop-cta__go, .shop-wa, .shop-wa__go) { transition: none; }
+}

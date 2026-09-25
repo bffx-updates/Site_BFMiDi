@@ -5,10 +5,12 @@ Site estático em português, com quatro modelos e painéis de detalhes, conexõ
 - Conteúdo e destinos comerciais: `js/content.js`.
 - Navegação, links diretos e acessibilidade: `js/main.js`.
 - Composição e ajustes responsivos atuais: `css/refine.css`, carregado após os estilos de base.
-- Cards ilustrados da seção INFO e faixa de LEDs: `css/info.css`. Os textos complementares ficam em `infoCards` de `js/content.js`; números e especificações continuam próprios de cada modelo.
+- Linguagem compartilhada dos painéis (24/09/2026, mesma da seção Apps): `css/pages.css` — cabeçalho `.pg-head` (micro-rótulo com o nome do modelo na etiqueta branca do chassi, título em duas linhas com a segunda em laranja), etiqueta de porta `.pg-tag`, cartão `.pg-card`, anel de LED de 3 arcos `.pg-ring` e botões `.pg-cta`/`.pg-ghost`, tudo dentro da classe `.pg` do `.panel-inner`. No `main.js`, `pgHead()` e `ledRing()` geram a marcação. Layout por container query (`pg`), porque o desktop tem `html { zoom: .8 }`; texto pequeno sai de `--pg-min` (11px renderizados).
+- Cada painel tem o seu arquivo, escopado nele: INFO em `css/info.css`, IN/OUT em `css/conects.css`, SHOP em `css/shop.css`, Downloads e Manual em `css/downloads.css`. Os templates valem para os quatro modelos.
+- IN/OUT: as etiquetas brancas sob a foto traseira são posicionadas pelos campos `silk` e `floor` da banda `conects` de cada modelo (medidos na foto). Foto traseira recortada ou reexportada = medir de novo. INFO usa o recorte do corpo do pedal em `INFO_MEDIA` (main.js): foto nova precisa de uma entrada lá. Os textos complementares ficam em `infoCards` de `js/content.js`; números e especificações continuam próprios de cada modelo.
 - Preparação para hospedagem e validação de arquivos: `node scripts/build.cjs`.
 - Prévia local: `servidor_local.bat`.
-- Publicação do código no GitHub: execute `SUBIR_SITE_GITHUB.bat`. Para apenas validar sem enviar, use `SUBIR_SITE_GITHUB.bat --verificar`.
+- Publicação do código no GitHub: execute `SUBIR_SITE_GITHUB.bat` (Windows) ou dê duplo-clique em `SUBIR_SITE_GITHUB.command` (Mac; ele roda o `SUBIR_SITE_GITHUB.sh`, avisa por notificação e fecha a janela quando dá certo, e a deixa aberta com a mensagem quando dá erro). Para apenas validar sem enviar, use `SUBIR_SITE_GITHUB.bat --verificar`.
 
 O tema escuro apresenta a controladora centralizada, com nome do modelo e informações diretas. O fundo usa partículas discretas em `js/particles.js`: até 100 pontos, atualização limitada a 30 quadros por segundo e resolução limitada para reduzir o custo em telas de alta densidade. A animação pausa quando a aba fica oculta e permanece estática quando o visitante prefere movimento reduzido. O canvas é decorativo e não intercepta cliques.
 
