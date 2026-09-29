@@ -112,9 +112,7 @@
     var mineKey = byPlat(device) || keys[0];
     var startKey = byPlat(wanted) || mineKey;
     var mine = mineKey.getAttribute('data-plat');
-    /* Android: o app ainda não existe, então não é "recomendado" — é o
-       aparelho do visitante, e o cartão mostra o caminho pelo pedal. */
-    var label = mine === 'android' ? 'seu dispositivo' : 'recomendado para este dispositivo';
+    var label = 'recomendado para este dispositivo';
     mineKey.classList.add('is-rec');
     var sr = document.createElement('span');
     sr.className = 'sr-only';

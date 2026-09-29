@@ -170,10 +170,10 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
             <span class="ap-key__sub" aria-hidden="true"><span class="ap-lm">iOS 17+</span><span class="ap-s">17+</span></span>
             <span class="ap-key__led" aria-hidden="true"></span>
           </button>
-          <button class="ap-key ap-key--soon" type="button" role="tab" id="ap-tab-android" aria-controls="ap-plat-android" aria-selected="false" tabindex="-1" data-plat="android" data-focus="phone">
+          <button class="ap-key" type="button" role="tab" id="ap-tab-android" aria-controls="ap-plat-android" aria-selected="false" tabindex="-1" data-plat="android" data-focus="phone">
             <span class="ap-key__cap" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.5H6.4v8.2c0 .7.5 1.2 1.2 1.2h1.1v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.4v2.6a1.3 1.3 0 0 0 2.6 0v-2.6h1.1c.7 0 1.2-.5 1.2-1.2V9.5zM3.9 9.7a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zm16.2 0a1.3 1.3 0 0 0-1.3 1.3v5.2a1.3 1.3 0 0 0 2.6 0V11a1.3 1.3 0 0 0-1.3-1.3zM15.4 3.6l1-1.7c.1-.1 0-.3-.1-.3-.1-.1-.3 0-.3.1l-1 1.8a6.6 6.6 0 0 0-6 0l-1-1.8c-.1-.1-.3-.2-.4-.1-.1.1-.1.2-.1.3l1 1.7A5.9 5.9 0 0 0 6.4 8.7h11.2a5.9 5.9 0 0 0-2.2-5.1zM9.3 6.6a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2zm5.4 0a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2z"/></svg></span>
             <span class="ap-key__name">Android</span>
-            <span class="ap-key__sub">Em breve</span>
+            <span class="ap-key__sub" aria-hidden="true"><span class="ap-lm">Android 7+</span><span class="ap-s">7+</span></span>
             <span class="ap-key__led" aria-hidden="true"></span>
           </button>
         </div>
@@ -288,11 +288,10 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
             </ul>
           </article>
 
-          <!-- Android: o app ainda não existe na loja. O caminho real no celular
-               hoje é o editor que vem do próprio pedal, pelo Wi‑Fi dele. -->
-          <article class="ap-plat ap-plat--soon" id="ap-plat-android" aria-labelledby="ap-plat-android-h" data-plat="android">
+          <!-- Android -->
+          <article class="ap-plat" id="ap-plat-android" aria-labelledby="ap-plat-android-h" data-plat="android">
             <div class="ap-plat__top">
-              <div class="ap-plat__flags"><span class="ap-rec ap-rec--mine" hidden>Seu dispositivo</span><span class="ap-soon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.6V12l3 2"/></svg><span>Em breve<span class="ap-soon__more"> no Google Play</span></span></span></div>
+              <div class="ap-plat__flags"><span class="ap-rec" hidden><span>Recomendado<span class="ap-rec__more"> para este dispositivo</span></span></span></div>
               <span class="ap-plat__icon" aria-hidden="true"><img src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="56px" width="256" height="256" alt="" loading="lazy" decoding="async"></span>
               <div class="ap-plat__id">
                 <h3 id="ap-plat-android-h">Android</h3>
@@ -300,15 +299,20 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
               </div>
             </div>
             <div class="ap-plat__act">
-              <div class="ap-path">
-                <p class="ap-path__k">Use agora, pelo Wi‑Fi do pedal</p>
-                <ol class="ap-path__steps">
-                  <li><span class="ap-path__n" aria-hidden="true">1</span><p class="ap-path__net">Com o pedal ligado e o Wi‑Fi dele ativo, conecte o celular à rede <b>BFMIDI_WIFI</b> (senha <b>bfmidi@editor</b>).</p></li>
-                  <li><span class="ap-path__n" aria-hidden="true">2</span><p class="ap-path__go"><span class="ap-path__verb">Abra</span> <a class="ap-path__addr" href="http://192.168.4.1" target="_blank" rel="noopener noreferrer">http://192.168.4.1<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="sr-only"> (abre em nova aba)</span></a></p></li>
-                </ol>
-              </div>
+              <a class="ap-cta" href="https://play.google.com/store/apps/details?id=com.bffx.bfmidi" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.3 2.6c-.2.2-.3.6-.3 1v16.8c0 .4.1.8.3 1l9.5-9.4zM17 8.6 14.5 7.2 4.9 1.8l9.9 9.9zm0 6.8-2.2-2.2-9.9 9.9 9.6-5.5zM20.9 11.1 18 9.5l-2.4 2.4 2.4 2.4 2.9-1.6c.8-.5.8-1.2 0-1.6z"/></svg>
+                <span>Baixar no Google Play</span>
+                <span class="sr-only">(abre em nova aba)</span>
+              </a>
+              <p class="ap-plat__file ap-plat__meta">Google Play · celular e tablet</p>
+              <button class="ap-link-btn ap-plat__jump js-jump" type="button" data-jump="apps-conn-title">Como conectar ao pedal</button>
             </div>
-            <p class="ap-plat__text"><span class="ap-plat__t1">O app está em teste fechado no Google Play.</span><span class="ap-plat__t2"> O link entra aqui quando ele for liberado.</span></p>
+            <p class="ap-plat__text"><span class="ap-plat__t1">Conecta pelo Wi‑Fi do pedal ou pela rede de casa, e abre para editar mesmo sem o pedal.</span></p>
+            <ul class="ap-tags" aria-label="Formas de conexão">
+              <li>Wi‑Fi</li>
+              <li>Rede</li>
+              <li>Offline</li>
+            </ul>
           </article>
 
         </div>
@@ -507,7 +511,7 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
         <div><dt>Windows</dt><dd>Setup.exe · 5,3 MB · instala por usuário, sem senha de administrador. Inclui Wi‑Fi automático e conexão por cabo USB.</dd></div>
         <div><dt>Mac</dt><dd>Disponível na App Store. Requer macOS 14 ou mais recente.</dd></div>
         <div><dt>iPhone e iPad</dt><dd>Disponível na App Store. Requer iOS ou iPadOS 17 ou mais recente.</dd></div>
-        <div><dt>Android</dt><dd>Em teste fechado no Google Play. O link público entra aqui quando o app for liberado.</dd></div>
+        <div><dt>Android</dt><dd>Disponível no Google Play. Requer Android 7 ou mais recente.</dd></div>
       </dl>
     </section>
   </div>
