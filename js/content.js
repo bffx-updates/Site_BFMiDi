@@ -539,8 +539,8 @@ window.BF_CONTENT = (function () {
             { key: 'central', kicker: 'Aplicativos', title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
             { key: 'updater', kicker: 'Firmware', title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/Update_BFMiDi_v14/' },
             { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' },
-            /* A página é CÓPIA de MONITOR_MIDI/ (na raiz do projeto), feita
-               por `node MONITOR_MIDI/build.mjs` — não edite a de cá. */
+            /* A página mora só aqui (monitor-midi/). A lista de pedais dela,
+               pedal_data.js, sai de `node Site/scripts/monitor_pedals.mjs`. */
             { key: 'monitor', kicker: 'Ferramenta', title: 'Monitor MIDI', description: 'Veja em tempo real o MIDI que chega pelo USB, com o nome de cada CC e PC do seu pedal.', label: 'Abrir Monitor MIDI', href: 'monitor-midi/index.html' }
           ] },
         /* PAINEL MANUAL (#8sw/manual): mesmo desenho do de Downloads. Os

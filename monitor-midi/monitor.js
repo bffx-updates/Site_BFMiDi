@@ -5,8 +5,8 @@
      3. Escolher a entrada USB e tocar — as mensagens aparecem em tempo real.
 
    NOMES AMIGÁVEIS (opcional): cada canal pode apontar para um pedal do MODO
-   AMIGÁVEL do editor (a tabela vem de pedal_data.js, gerado por build.mjs a
-   partir do webApp), e o usuário pode dar nomes próprios a qualquer CC, PC ou
+   AMIGÁVEL do editor (a tabela vem de pedal_data.js, gerado por
+   Site/scripts/monitor_pedals.mjs a partir do webApp), e o usuário pode dar nomes próprios a qualquer CC, PC ou
    nota. Ordem de prioridade: nome do usuário > nome do pedal > só o número.
    Tudo fica no localStorage deste navegador. */
 'use strict';
@@ -801,7 +801,7 @@ function renderMap() {
   if (!DATA) {
     const n = el('div', 'mon-notice');
     n.append('Lista de pedais não encontrada. Rode ');
-    n.appendChild(el('code', null, 'node MONITOR_MIDI/build.mjs'));
+    n.appendChild(el('code', null, 'node Site/scripts/monitor_pedals.mjs'));
     n.append(' na raiz do projeto para gerar o pedal_data.js. Os nomes seus funcionam mesmo assim.');
     mapEl.appendChild(n);
     mapAddBtn.disabled = true;
