@@ -33,9 +33,17 @@ for (const model of content.models) for (const key of model.ports || []) {
 for (const match of html.matchAll(/(?:src|href)="((?:assets|css|js)\/[^"?#]+)"/g)) {
   assert(fs.existsSync(path.join(root, match[1])), 'Arquivo ausente: ' + match[1]);
 }
+// Os cartões de Downloads/Manual apontam para páginas locais (backup-view/,
+// monitor-midi/) pelo content.js, que o laço acima não enxerga.
+for (const section of content.resources ? content.resources.items : []) {
+  for (const link of section.links || []) {
+    if (!link.href || /^(https?:|#|mailto:)/.test(link.href)) continue;
+    assert(fs.existsSync(path.join(root, link.href.split(/[?#]/)[0])), 'Página ausente: ' + link.href);
+  }
+}
 const output = path.join(root, 'dist');
 fs.mkdirSync(output, { recursive: true });
 fs.copyFileSync(path.join(root, 'index.html'), path.join(output, 'index.html'));
-for (const folder of ['assets', 'css', 'js', 'backup-view']) fs.cpSync(path.join(root, folder), path.join(output, folder), { recursive: true });
+for (const folder of ['assets', 'css', 'js', 'backup-view', 'monitor-midi']) fs.cpSync(path.join(root, folder), path.join(output, folder), { recursive: true });
 console.log('Validação concluída: quatro modelos, ' + sections.length + ' painéis, ' + images + ' imagens e referências locais válidas.');
 console.log('Site estático preparado em dist/.');

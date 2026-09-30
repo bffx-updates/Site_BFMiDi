@@ -261,6 +261,11 @@
    600px vira uma faixa rala de uma linha de texto. */
 @container pg (min-width: 560px) {
   :is(#panel-downloads, #panel-manual) .dl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Número ÍMPAR de cartões (hoje cinco no Downloads): o primeiro, o dos
+     apps, ocupa a fileira inteira — sem isso o último ficava sozinho numa
+     linha, e assim as duas ferramentas (Backup View e Monitor MIDI) fecham
+     a grade lado a lado. `:nth-last-child(odd)` no primeiro = total ímpar. */
+  #panel-downloads .dl-grid > .dl-card:first-child:nth-last-child(odd) { grid-column: 1 / -1; }
 }
 @container pg (min-width: 700px) {
   :is(#panel-downloads, #panel-manual) .dl-card { --ring: 52px; --dl-colgap: 16px; }

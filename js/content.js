@@ -517,8 +517,11 @@ window.BF_CONTENT = (function () {
            `head.title` em branco, `head.hot` em laranja. Os cartões, NA
            ORDEM: o dos apps (`apps`, leva à seção Apps deste site, sem
            sair da página), o atualizador (`links`, key 'updater'), o
-           manual (o link do item `manual` abaixo) e o Backup View (key
-           'backup'). `kicker` é o micro-rótulo de cada cartão. A Central
+           manual (o link do item `manual` abaixo), o Backup View (key
+           'backup') e o Monitor MIDI (key 'monitor'). Com cinco cartões, o
+           dos apps ocupa a fileira inteira na grade de 2 colunas e as duas
+           ferramentas ficam lado a lado embaixo (css/downloads.css).
+           `kicker` é o micro-rótulo de cada cartão. A Central
            de downloads (key 'central') fica fora dos cartões: a seção Apps
            do site já cumpre esse papel. `newTabShort`/`here` dizem, à vista,
            se o cartão abre outra aba ou fica no site (`newTab`, a frase
@@ -526,7 +529,7 @@ window.BF_CONTENT = (function () {
            cartão que traz para cá a partir do painel Manual. */
         { key: 'downloads', label: 'Downloads', eyebrow: 'Downloads', title: 'Downloads e atualizações',
           head: { title: 'Downloads e', hot: 'atualizações.' },
-          lead: 'O editor, o atualizador de firmware, o manual e o Backup View da sua BFMIDI.',
+          lead: 'O editor, o atualizador de firmware, o manual e as ferramentas da sua BFMIDI.',
           newTab: 'Abre em nova aba',
           newTabShort: 'Nova aba',
           here: 'Neste site',
@@ -535,7 +538,10 @@ window.BF_CONTENT = (function () {
           links: [
             { key: 'central', kicker: 'Aplicativos', title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
             { key: 'updater', kicker: 'Firmware', title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/Update_BFMiDi_v14/' },
-            { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' }
+            { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' },
+            /* A página é CÓPIA de MONITOR_MIDI/ (na raiz do projeto), feita
+               por `node MONITOR_MIDI/build.mjs` — não edite a de cá. */
+            { key: 'monitor', kicker: 'Ferramenta', title: 'Monitor MIDI', description: 'Veja em tempo real o MIDI que chega pelo USB, com o nome de cada CC e PC do seu pedal.', label: 'Abrir Monitor MIDI', href: 'monitor-midi/index.html' }
           ] },
         /* PAINEL MANUAL (#8sw/manual): mesmo desenho do de Downloads. Os
            `links` viram cartões e `related` acrescenta cartões internos para

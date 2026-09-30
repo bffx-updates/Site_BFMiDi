@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<title>BFMIDI · Monitor MIDI</title>
+<link rel="stylesheet" href="monitor.css" />
+</head>
+<body>
+  <!-- Ícones reaproveitados pelos botões (<use href="#i-…">). -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-din" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9.2" />
+        <path d="M10.4 2.9v2.4h3.2V2.9" />
+        <circle cx="6.9" cy="11.2" r="1.05" fill="currentColor" stroke="none" />
+        <circle cx="8.4" cy="15" r="1.05" fill="currentColor" stroke="none" />
+        <circle cx="12" cy="16.6" r="1.05" fill="currentColor" stroke="none" />
+        <circle cx="15.6" cy="15" r="1.05" fill="currentColor" stroke="none" />
+        <circle cx="17.1" cy="11.2" r="1.05" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6.5" y="5" width="4" height="14" rx="1.2" /><rect x="13.5" y="5" width="4" height="14" rx="1.2" />
+      </symbol>
+      <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5.6v12.8c0 .8.9 1.3 1.6.8l9.4-6.4a1 1 0 0 0 0-1.6L9.6 4.8C8.9 4.3 8 4.8 8 5.6z" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4.5 7h15M9.5 7V4.8h5V7M6.5 7l.9 12.2c.1.9.8 1.6 1.7 1.6h5.8c.9 0 1.6-.7 1.7-1.6L17.5 7" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="8.5" y="8.5" width="11" height="11" rx="2.2" /><path d="M15.5 8.5V6.2c0-1-.8-1.7-1.7-1.7H6.2c-1 0-1.7.8-1.7 1.7v7.6c0 1 .8 1.7 1.7 1.7h2.3" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12.5l4.5 4.5L19 7.5" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />
+      </symbol>
+      <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v13M6 12.5l6 6 6-6" />
+      </symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.8 12.6V5.5c0-1 .8-1.7 1.7-1.7h7.1l7.6 7.6a1.7 1.7 0 0 1 0 2.4l-6.7 6.7a1.7 1.7 0 0 1-2.4 0l-7.3-7.9z" /><circle cx="8.6" cy="8.6" r="1.5" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="mon-app">
+    <header class="mon-header">
+      <div class="mon-brand">
+        <span class="mon-logo" aria-hidden="true"><svg><use href="#i-din" /></svg></span>
+        <div class="mon-brand-text">
+          <h1 class="mon-title">Monitor MIDI</h1>
+          <p class="mon-sub">BFMIDI · mensagens USB em tempo real</p>
+        </div>
+      </div>
+      <div id="monitor-status" class="mon-status" data-state="idle" role="status" aria-live="polite">
+        <span class="mon-status-led" aria-hidden="true"></span>
+        <span class="mon-status-text">solicitando acesso MIDI…</span>
+      </div>
+    </header>
+
+    <div class="mon-layout">
+      <aside class="mon-side">
+
+        <!-- ENTRADA -->
+        <section class="mon-card mon-card-input" aria-labelledby="h-input">
+          <h2 class="mon-card-title" id="h-input">Entrada</h2>
+          <select id="midi-input" class="mon-select" aria-label="Entrada MIDI USB">
+            <option value="">— solicitando acesso —</option>
+          </select>
+          <div class="mon-actions">
+            <button id="btn-pause" type="button" class="mon-btn" aria-pressed="false">
+              <svg class="mon-ico"><use href="#i-pause" /></svg><span>PAUSAR</span>
+            </button>
+            <button id="btn-clear" type="button" class="mon-btn">
+              <svg class="mon-ico"><use href="#i-trash" /></svg><span>LIMPAR</span>
+            </button>
+            <button id="btn-copy" type="button" class="mon-btn">
+              <svg class="mon-ico"><use href="#i-copy" /></svg><span>COPIAR</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- NOMES AMIGÁVEIS -->
+        <section id="names-card" class="mon-card mon-card-names" aria-labelledby="h-names">
+          <div class="mon-card-head">
+            <h2 class="mon-card-title" id="h-names">Nomes amigáveis</h2>
+            <label class="mon-switch" title="Mostrar nomes amigáveis">
+              <input id="names-enabled" type="checkbox" role="switch" checked />
+              <span class="mon-switch-track" aria-hidden="true"></span>
+              <span class="mon-sr">Mostrar nomes amigáveis</span>
+            </label>
+          </div>
+          <p class="mon-hint">
+            Opcional. Escolha o pedal de cada canal para ver o nome de cada
+            CC e PC, como no MODO AMIGÁVEL do editor.
+          </p>
+
+          <div class="mon-names-body">
+            <div id="names-map" class="mon-map"></div>
+            <button id="names-add" type="button" class="mon-btn mon-btn-ghost">
+              <svg class="mon-ico"><use href="#i-plus" /></svg><span>ADICIONAR PEDAL</span>
+            </button>
+
+            <div class="mon-divider" role="presentation"></div>
+
+            <h3 class="mon-subtitle">
+              <svg class="mon-ico"><use href="#i-tag" /></svg>
+              Nomes seus <span id="custom-count" class="mon-count-badge"></span>
+            </h3>
+            <p class="mon-hint">
+              Dê um nome a qualquer CC, PC ou nota. Também dá para clicar em
+              <b>+ nome</b> direto numa mensagem da lista. Um nome seu vale mais
+              que o do pedal.
+            </p>
+            <form id="custom-form" class="mon-custom-form" autocomplete="off">
+              <select id="cf-type" class="mon-select mon-select-sm" aria-label="Tipo de mensagem">
+                <option value="cc">CC</option>
+                <option value="pc">PC</option>
+                <option value="note">NOTA</option>
+              </select>
+              <input id="cf-num" class="mon-input mon-input-sm" type="number" min="0" max="127"
+                     inputmode="numeric" placeholder="nº" aria-label="Número" />
+              <select id="cf-ch" class="mon-select mon-select-sm" aria-label="Canal"></select>
+              <input id="cf-name" class="mon-input mon-input-sm mon-cf-name" type="text" maxlength="32"
+                     placeholder="Nome (ex.: Delay Mix)" aria-label="Nome" />
+              <button type="submit" class="mon-btn mon-btn-accent mon-cf-add">
+                <svg class="mon-ico"><use href="#i-plus" /></svg><span>SALVAR</span>
+              </button>
+            </form>
+            <div id="custom-list" class="mon-custom-list"></div>
+          </div>
+        </section>
+
+        <!-- OPÇÕES -->
+        <section class="mon-card mon-card-opts" aria-labelledby="h-opts">
+          <h2 class="mon-card-title" id="h-opts">Opções</h2>
+          <div class="mon-opts">
+            <label class="mon-opt">
+              <span class="mon-opt-text">Mostrar horário</span>
+              <span class="mon-switch"><input id="opt-time" type="checkbox" role="switch" /><span class="mon-switch-track" aria-hidden="true"></span></span>
+            </label>
+            <label class="mon-opt">
+              <span class="mon-opt-text">Juntar mensagens repetidas<small>A mesma mensagem seguida soma ×N</small></span>
+              <span class="mon-switch"><input id="opt-collapse" type="checkbox" role="switch" /><span class="mon-switch-track" aria-hidden="true"></span></span>
+            </label>
+            <label class="mon-opt">
+              <span class="mon-opt-text">Acompanhar as novas<small>Rola sozinho até a última</small></span>
+              <span class="mon-switch"><input id="opt-autoscroll" type="checkbox" role="switch" /><span class="mon-switch-track" aria-hidden="true"></span></span>
+            </label>
+            <label class="mon-opt">
+              <span class="mon-opt-text">Limpar após 1 s sem MIDI</span>
+              <span class="mon-switch"><input id="opt-autoclear" type="checkbox" role="switch" /><span class="mon-switch-track" aria-hidden="true"></span></span>
+            </label>
+            <label class="mon-opt">
+              <span class="mon-opt-text">Mostrar Clock (F8)<small>Chega 24× por batida e lota a lista</small></span>
+              <span class="mon-switch"><input id="opt-clock" type="checkbox" role="switch" /><span class="mon-switch-track" aria-hidden="true"></span></span>
+            </label>
+            <label class="mon-opt">
+              <span class="mon-opt-text">Mostrar Active Sense (FE)</span>
+              <span class="mon-switch"><input id="opt-active" type="checkbox" role="switch" /><span class="mon-switch-track" aria-hidden="true"></span></span>
+            </label>
+            <label class="mon-opt">
+              <span class="mon-opt-text">Máximo na lista<small>As mais antigas saem primeiro</small></span>
+              <input id="opt-max" class="mon-input mon-input-num" type="number" min="20" max="2000" step="10" />
+            </label>
+          </div>
+        </section>
+      </aside>
+
+      <!-- MONITOR -->
+      <main class="mon-main">
+        <section class="mon-card mon-monitor" aria-label="Mensagens recebidas">
+          <div class="mon-monitor-head">
+            <div class="mon-stats">
+              <div class="mon-stat">
+                <span id="stat-total" class="mon-stat-num">0</span>
+                <span class="mon-stat-label">mensagens</span>
+              </div>
+              <div class="mon-stat">
+                <span id="stat-rate" class="mon-stat-num">0</span>
+                <span class="mon-stat-label">por segundo</span>
+              </div>
+              <div class="mon-stat">
+                <span id="stat-channels" class="mon-stat-num">0</span>
+                <span class="mon-stat-label">canais ativos</span>
+              </div>
+            </div>
+            <div class="mon-activity" title="Pisca a cada mensagem recebida">
+              <span id="activity-led" class="mon-activity-led" aria-hidden="true"></span>
+              <span class="mon-activity-label">MIDI IN</span>
+            </div>
+          </div>
+
+          <div id="channel-strip" class="mon-channels" role="group" aria-label="Filtrar por canal"></div>
+
+          <div class="mon-events-wrap">
+            <div id="monitor-events" class="mon-events" role="log" aria-label="Lista de mensagens MIDI"></div>
+            <button id="btn-follow" type="button" class="mon-follow" hidden>
+              <svg class="mon-ico"><use href="#i-down" /></svg><span>NOVAS MENSAGENS</span>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- pedal_data.js é GERADO por build.mjs (node MONITOR_MIDI/build.mjs).
+       Sem ele o monitor funciona igual, só sem a lista de pedais. -->
+  <script src="pedal_data.js"></script>
+  <script src="monitor.js"></script>
+</body>
+</html>

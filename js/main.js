@@ -1131,16 +1131,19 @@
     central: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
     downloads: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
     manual: '<path d="M12 6.5C10 5 7 4.5 3.5 5v13.5c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5V20"/>',
-    backup: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Zm0 0v6h6"/><path d="M7 15s2-3 5-3 5 3 5 3-2 3-5 3-5-3-5-3Z"/><circle cx="12" cy="15" r="1"/>'
+    backup: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Zm0 0v6h6"/><path d="M7 15s2-3 5-3 5 3 5 3-2 3-5 3-5-3-5-3Z"/><circle cx="12" cy="15" r="1"/>',
+    /* Monitor MIDI: o sinal chegando (linha de atividade). */
+    monitor: '<path d="M2.5 12h4l2.5-6.5 4 13 3-9 1.5 2.5h4"/>'
   };
   /* A cor do anel de cada cartão é o ASSUNTO dele (tabela em css/tokens.css):
      o editor é MIDI, o atualizador e a lista de downloads são USB (firmware
-     pelo cabo), o manual é documentação e o Backup View lê presets. A cor
+     pelo cabo), o manual é documentação, o Backup View lê presets e o
+     Monitor MIDI mostra MIDI. A cor
      mora só no anel e no brilho de canto; rótulo e botão ficam neutros. */
   var DL_COLORS = {
     apps: 'var(--led-midi)', central: 'var(--led-midi)',
     updater: 'var(--led-usb)', downloads: 'var(--led-usb)',
-    manual: 'var(--led-doc)', backup: 'var(--led-presets)'
+    manual: 'var(--led-doc)', backup: 'var(--led-presets)', monitor: 'var(--led-midi)'
   };
 
   function dlCard(o, D) {
@@ -1184,6 +1187,7 @@
       cards.push(fromLink(byKey(item.links, 'updater')));
       cards.push(fromLink(manualItem && (byKey(manualItem.links, 'manual') || manualItem.links[0])));
       cards.push(fromLink(byKey(item.links, 'backup')));
+      cards.push(fromLink(byKey(item.links, 'monitor')));
     } else {
       (item.links || []).forEach(function (link) { cards.push(fromLink(link)); });
       (item.related || []).forEach(function (key) {
