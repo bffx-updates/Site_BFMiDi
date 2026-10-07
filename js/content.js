@@ -306,7 +306,7 @@ window.BF_CONTENT = (function () {
           },
           ghost: {
             label: 'Abrir o manual',
-            href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/'
+            href: 'https://bffx-updates.github.io/MANUAL_USER/'
           },
           /* A 6SW+ ainda não esteve à venda: "caso esteja esgotado" não
              vale para ela (aprovado em 24/09/2026). */
@@ -551,7 +551,7 @@ window.BF_CONTENT = (function () {
           lead: 'Consulte as instruções de configuração e uso da controladora.',
           related: ['downloads'],
           links: [
-            { key: 'manual', kicker: 'Documentação', title: 'Manual online', description: 'Consulte os recursos, os modos de operação e as conexões.', label: 'Abrir manual', href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' }
+            { key: 'manual', kicker: 'Documentação', title: 'Manual online', description: 'Consulte os recursos, os modos de operação e as conexões.', label: 'Abrir manual', href: 'https://bffx-updates.github.io/MANUAL_USER/' }
           ] }
       ]
     },
@@ -591,7 +591,7 @@ window.BF_CONTENT = (function () {
         'Presets de fábrica já gravados, prontos para tocar'
       ],
       primary: { label: 'Falar com a BFFX', href: '#' },
-      ghost:   { label: 'Abrir o manual',   href: 'https://bffx-updates.github.io/Manual_BFMiDI_v13/' },
+      ghost:   { label: 'Abrir o manual',   href: 'https://bffx-updates.github.io/MANUAL_USER/' },
 
       /* Textos do painel SHOP redesenhado (24/09/2026). Nenhum é oferta:
          `storeNote` acompanha o endereço da loja, que o main.js tira do
