@@ -518,9 +518,10 @@ window.BF_CONTENT = (function () {
            ORDEM: o dos apps (`apps`, leva à seção Apps deste site, sem
            sair da página), o atualizador (`links`, key 'updater'), o
            manual (o link do item `manual` abaixo), o Backup View (key
-           'backup') e o Monitor MIDI (key 'monitor'). Com cinco cartões, o
-           dos apps ocupa a fileira inteira na grade de 2 colunas e as duas
-           ferramentas ficam lado a lado embaixo (css/downloads.css).
+           'backup'), o Monitor MIDI (key 'monitor') e o Gerador de
+           Frequência (key 'freq'). Com seis cartões a grade de 2 colunas
+           fecha em três fileiras; com número ímpar, o dos apps ocupa a
+           fileira inteira (css/downloads.css).
            `kicker` é o micro-rótulo de cada cartão. A Central
            de downloads (key 'central') fica fora dos cartões: a seção Apps
            do site já cumpre esse papel. `newTabShort`/`here` dizem, à vista,
@@ -541,7 +542,10 @@ window.BF_CONTENT = (function () {
             { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' },
             /* A página mora só aqui (monitor-midi/). A lista de pedais dela,
                pedal_data.js, sai de `node Site/scripts/monitor_pedals.mjs`. */
-            { key: 'monitor', kicker: 'Ferramenta', title: 'Monitor MIDI', description: 'Veja em tempo real o MIDI que chega pelo USB, com o nome de cada CC e PC do seu pedal.', label: 'Abrir Monitor MIDI', href: 'monitor-midi/index.html' }
+            { key: 'monitor', kicker: 'Ferramenta', title: 'Monitor MIDI', description: 'Veja em tempo real o MIDI que chega pelo USB, com o nome de cada CC e PC do seu pedal.', label: 'Abrir Monitor MIDI', href: 'monitor-midi/index.html' },
+            /* Repo próprio (bffx-updates/Gerador_Frequencia); a fonte é a
+               pasta GERADOR DE FREQUENCIA/ na raiz do projeto. */
+            { key: 'freq', kicker: 'Ferramenta', title: 'Gerador de Frequência', description: 'Tom senoidal com as notas das cordas da guitarra, para testar afinadores. Dá para desafinar em cents.', label: 'Abrir gerador', href: 'https://bffx-updates.github.io/Gerador_Frequencia/' }
           ] },
         /* PAINEL MANUAL (#8sw/manual): mesmo desenho do de Downloads. Os
            `links` viram cartões e `related` acrescenta cartões internos para
