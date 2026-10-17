@@ -528,6 +528,7 @@ const MATCH_MODE_PEDAL = [
   ['PANTHEON','PANTHEON'], [null,'GT1000'], ['BOSS_MS3','BOSS_MS3'], [null,'EVENTIDE_H90'], ['user',1], ['user',2], ['user',3],
   ['SEPIA','SEPIA'], ['COSMOS','COSMOS'], [null,'SL2'], ['WAVELENGTH','WAVELENGTH'], [null,'SCARLETT_OD'], ['VALETON_GP150','VALETON_GP150'],
   ['VALETON_GP150','VALETON_GP180'], ['LINE6_M5','LINE6_M5'], ['LINE6_M9','LINE6_M9'], ['TIMELINE','MOBIUS'],
+  ['ZOOM_MS','ZOOM_MS'], ['ZOOM_MS','ZOOM_MS'], ['ZOOM_MS','ZOOM_MS'],
 ];
 const LETTERS = 'ABCDEFGHIJ';
 
@@ -591,6 +592,7 @@ function ccLabel(ch, n) {
   if (SPECIAL_CCS[n]) return SPECIAL_CCS[n];
   if (n >= 200 && n <= 321 && KEMPER[n]) return KEMPER[n];
   if (n >= 400 && n <= 504 && GP5[n]) return GP5[n];
+  if (n >= 800 && n <= 802) return `Zoom FX ${n - 799} Liga/Desliga`;  // CC virtual da Zoom MultiStomp (SysEx no host)
   const m = MATCH_MODE_PEDAL[pedalIdxFor(ch)];
   if (!m) return '';
   if (m[0] === 'user') { const up = userPedal(m[1]); return (up && up.cc && up.cc[String(n)]) || ''; }
