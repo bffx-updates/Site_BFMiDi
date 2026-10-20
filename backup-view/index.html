@@ -506,12 +506,16 @@ const boardCanonical = (n) => MODEL_LEGACY_IDS[n] || n;
 const boardIs4 = (n) => /4S|MICRO/.test(n || '');
 
 // SW_MODE_IDS (BANK_MEMORY.h) — índice = o que vai em sw_modes do preset.
-const SW_MODE_IDS = ['mute','fx1','fx2','fx3','spin','ramp','momentary','favorite','macros','tap_tempo','single','steps','control'];
+const SW_MODE_IDS = ['mute','fx1','fx2','fx3','spin','ramp','momentary','favorite','macros','tap_tempo','single','steps','control','increment','spring','wave'];
 const SW_MODE_TITLE = { mute: 'MUTE', fx1: 'STOMP', fx2: 'STOMP-2', fx3: 'STOMP-3', spin: 'SPIN', ramp: 'RAMP',
-  momentary: 'MOMENTARY', favorite: 'FAVORITE', macros: 'MACROS', tap_tempo: 'TAP TEMPO', single: 'SINGLE', steps: 'STEPS', control: 'CONTROL' };
+  momentary: 'MOMENTARY', favorite: 'FAVORITE', macros: 'MACROS', tap_tempo: 'TAP TEMPO', single: 'SINGLE', steps: 'STEPS', control: 'CONTROL', increment: 'INCREMENTO', spring: 'RETORNO', wave: 'ONDA' };
 
 const SPECIAL_CCS = { 128: 'UP BANK', 129: 'DOWN BANK', 130: 'UP PRESET', 131: 'DOWN PRESET', 132: 'OUT LIVE MODE', 133: 'TO LAYER', 134: 'SW_LIVE',
-  135: 'UP BANK STANDBY', 136: 'DOWN BANK STANDBY' };
+  135: 'UP BANK STANDBY', 136: 'DOWN BANK STANDBY',
+  // MODO SETLIST (out/2026): espelho de SW_SETLIST_CCS (app.jsx).
+  137: 'SETLIST NEXT PART', 138: 'SETLIST PREV PART', 139: 'SETLIST NEXT SONG', 140: 'SETLIST PREV SONG',
+  141: 'SETLIST PART 1', 142: 'SETLIST PART 2', 143: 'SETLIST PART 3', 144: 'SETLIST PART 4',
+  145: 'SETLIST PART 5', 146: 'SETLIST PART 6', 147: 'SETLIST PART 7', 148: 'SETLIST PART 8' };
 const KEMPER = Object.fromEntries(D.KEMPER_NRPN || []);
 const GP5 = Object.fromEntries(D.GP5_PARAMS || []);
 
@@ -741,7 +745,8 @@ function swMessages(mode, p) {
       for (const s of ['', '2', '3']) if (hasCh(p, s)) cc(P(p, 'ch' + s), P(p, 'num' + s));
       break;
     case 'macros':
-      for (const s of ['', '2', '3']) for (const [t, ch, n] of splitSlots(p['mslots' + s])) (t === 1 ? pc : cc)(ch, n);
+      // Em PC o programa e o on (ou o off); o num do slot e ignorado (0).
+      for (const s of ['', '2', '3']) for (const [t, ch, n, on, off] of splitSlots(p['mslots' + s])) (t === 1 ? pc(ch, on >= 0 ? on : off) : cc(ch, n));
       break;
     case 'single': {
       const slots = [...splitSlots(p.sslots), ...splitSlots(p.lslots), ...splitSlots(p.rslots)];
@@ -751,21 +756,35 @@ function swMessages(mode, p) {
     }
     case 'momentary': {
       const sl = splitSlots(p.mom_slots);
-      if (sl.length) for (const [ch, n] of sl) cc(ch, n); else cc(P(p, 'ch'), P(p, 'num'));
+      // 5o campo t=1 = slot em PC (programa = on, ou off; -1 = nada).
+      if (sl.length) for (const [ch, n, on, off, t] of sl) (t === 1 ? pc(ch, on >= 0 ? on : off) : cc(ch, n)); else cc(P(p, 'ch'), P(p, 'num'));
       break;
     }
+    // SEGURAR do TAP/SPIN: ate 3 slots (out/2026) — lp_ch/lp_num e os mesmos
+    // com sufixo 2/3 (SW_LP_SLOT_KEYS no firmware).
     case 'tap_tempo':
       for (const [ch, n] of splitSlots(p.tslots)) cc(ch, n);
-      cc(P(p, 'lp_ch'), P(p, 'lp_num'));
+      for (const s of ['', '2', '3']) cc(P(p, 'lp_ch' + s), P(p, 'lp_num' + s));
       break;
     case 'spin': {
       const sl = splitSlots(p.spin_slots);
       if (sl.length) for (const [ch, n] of sl) cc(ch, n); else cc(P(p, 'ch'), P(p, 'num'));
-      cc(P(p, 'lp_ch'), P(p, 'lp_num'));
+      for (const s of ['', '2', '3']) cc(P(p, 'lp_ch' + s), P(p, 'lp_num' + s));
       break;
     }
     case 'steps': cc(P(p, 'ch'), P(p, 'num', 21)); cc(P(p, 'eff_ch'), P(p, 'eff_num', 20)); break;
     case 'control': cc(P(p, 'ch'), P(p, 'num')); cc(P(p, 'ch2'), P(p, 'num2')); break;
+    // INCREMENTO: a 1a mensagem e a do numero de inicio (tgt 0 = valor do CC
+    // fixo, 1 = numero do CC, 2 = PC).
+    case 'increment': {
+      const tgt = P(p, 'tgt');
+      if (tgt === 2) pc(P(p, 'ch'), P(p, 'ini'));
+      else cc(P(p, 'ch'), tgt === 1 ? P(p, 'ini') : P(p, 'num'));
+      break;
+    }
+    // RETORNO: a 1a mensagem e a da ACAO (PC com aspc=1: programa = on).
+    case 'spring': (P(p, 'aspc') ? pc(P(p, 'ch'), P(p, 'on', 127)) : cc(P(p, 'ch'), P(p, 'num'))); break;
+    case 'wave': cc(P(p, 'ch'), P(p, 'num')); break;
     case 'ramp': cc(P(p, 'ch'), P(p, 'num')); break;
   }
   for (const m of out) m.name = m.t === 'PC' ? pcLabel(m.ch, m.n) : ccLabel(m.ch, m.n);
