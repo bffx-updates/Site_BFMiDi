@@ -45,5 +45,8 @@ const output = path.join(root, 'dist');
 fs.mkdirSync(output, { recursive: true });
 fs.copyFileSync(path.join(root, 'index.html'), path.join(output, 'index.html'));
 for (const folder of ['assets', 'css', 'js', 'backup-view', 'monitor-midi']) fs.cpSync(path.join(root, folder), path.join(output, folder), { recursive: true });
+// Editor de Setlist (setlist/): gerado por `node webApp/build_setlist_site.mjs`;
+// copiado só se existir (o cartão que aponta pra ele pode estar desligado).
+if (fs.existsSync(path.join(root, 'setlist', 'index.html'))) fs.cpSync(path.join(root, 'setlist'), path.join(output, 'setlist'), { recursive: true });
 console.log('Validação concluída: quatro modelos, ' + sections.length + ' painéis, ' + images + ' imagens e referências locais válidas.');
 console.log('Site estático preparado em dist/.');

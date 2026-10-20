@@ -243,6 +243,7 @@
 :is(#panel-downloads, #panel-manual) .dl-card:nth-child(4) { animation-delay: .18s; }
 :is(#panel-downloads, #panel-manual) .dl-card:nth-child(5) { animation-delay: .24s; }
 :is(#panel-downloads, #panel-manual) .dl-card:nth-child(6) { animation-delay: .30s; }
+:is(#panel-downloads, #panel-manual) .dl-card:nth-child(7) { animation-delay: .36s; }
 @keyframes dl-rise {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }

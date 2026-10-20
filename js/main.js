@@ -1135,7 +1135,9 @@
     /* Monitor MIDI: o sinal chegando (linha de atividade). */
     monitor: '<path d="M2.5 12h4l2.5-6.5 4 13 3-9 1.5 2.5h4"/>',
     /* Gerador de Frequência: uma senoide. */
-    freq: '<path d="M2.5 12c2-6.5 4.3-6.5 6.3 0s4.3 6.5 6.3 0 4.3-6.5 6.4 0"/>'
+    freq: '<path d="M2.5 12c2-6.5 4.3-6.5 6.3 0s4.3 6.5 6.3 0 4.3-6.5 6.4 0"/>',
+    /* Editor de Setlist: lista com nota musical (o ícone do setlist no app). */
+    setlist: '<path d="M4 6h11M4 11h11M4 16h7"/><circle cx="17.5" cy="18" r="2.4"/><path d="M19.9 18V8.5l-3.4 1"/>'
   };
   /* A cor do anel de cada cartão é o ASSUNTO dele (tabela em css/tokens.css):
      o editor é MIDI, o atualizador e a lista de downloads são USB (firmware
@@ -1146,7 +1148,7 @@
     apps: 'var(--led-midi)', central: 'var(--led-midi)',
     updater: 'var(--led-usb)', downloads: 'var(--led-usb)',
     manual: 'var(--led-doc)', backup: 'var(--led-presets)', monitor: 'var(--led-midi)',
-    freq: 'var(--led-input)'
+    freq: 'var(--led-input)', setlist: 'var(--led-presets)'
   };
 
   function dlCard(o, D) {
@@ -1190,6 +1192,9 @@
       cards.push(fromLink(byKey(item.links, 'updater')));
       cards.push(fromLink(manualItem && (byKey(manualItem.links, 'manual') || manualItem.links[0])));
       cards.push(fromLink(byKey(item.links, 'backup')));
+      // Editor de Setlist (setlist/): só aparece quando o link existe no
+      // content.js (ligado em 20/out/2026).
+      cards.push(fromLink(byKey(item.links, 'setlist')));
       cards.push(fromLink(byKey(item.links, 'monitor')));
       cards.push(fromLink(byKey(item.links, 'freq')));
     } else {
