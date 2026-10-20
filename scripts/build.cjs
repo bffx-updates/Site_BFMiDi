@@ -48,5 +48,8 @@ for (const folder of ['assets', 'css', 'js', 'backup-view', 'monitor-midi']) fs.
 // Editor de Setlist (setlist/): gerado por `node webApp/build_setlist_site.mjs`;
 // copiado só se existir (o cartão que aponta pra ele pode estar desligado).
 if (fs.existsSync(path.join(root, 'setlist', 'index.html'))) fs.cpSync(path.join(root, 'setlist'), path.join(output, 'setlist'), { recursive: true });
+// Páginas legais do BFX VIEW (bfview/): cópia de BF_VIEW/legal/privacidade.html
+// e termos.html, publicadas em 20/out/2026 para a ficha da Google Play.
+if (fs.existsSync(path.join(root, 'bfview'))) fs.cpSync(path.join(root, 'bfview'), path.join(output, 'bfview'), { recursive: true });
 console.log('Validação concluída: quatro modelos, ' + sections.length + ' painéis, ' + images + ' imagens e referências locais válidas.');
 console.log('Site estático preparado em dist/.');
