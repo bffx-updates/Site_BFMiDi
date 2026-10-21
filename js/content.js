@@ -542,7 +542,7 @@ window.BF_CONTENT = (function () {
             { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' },
             /* EDITOR DE SETLIST (PLANO_SETLIST_SITE.md). A página (setlist/) é
                GERADA por `node webApp/build_setlist_site.mjs` — não edite lá. */
-            { key: 'setlist', kicker: 'Ferramenta', title: 'Editor de Setlist', description: 'Monte o banco de músicas e os setlists do modo palco no navegador e leve para o app por um arquivo.', label: 'Abrir editor', href: 'setlist/index.html' },
+            { key: 'setlist', kicker: 'Ferramenta', title: 'Editor de Setlist', description: 'Monte suas músicas e setlists do modo palco no navegador e leve para o app por um arquivo.', label: 'Abrir editor', href: 'setlist/index.html' },
             /* A página mora só aqui (monitor-midi/). A lista de pedais dela,
                pedal_data.js, sai de `node Site/scripts/monitor_pedals.mjs`. */
             { key: 'monitor', kicker: 'Ferramenta', title: 'Monitor MIDI', description: 'Veja em tempo real o MIDI que chega pelo USB, com o nome de cada CC e PC do seu pedal.', label: 'Abrir Monitor MIDI', href: 'monitor-midi/index.html' },
