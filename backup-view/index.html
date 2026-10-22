@@ -111,7 +111,7 @@
   .chip.unk { color: var(--muted); border-style: dashed; }
 
   /* superfície comum dos cards: luz no topo e à esquerda, base escura (como na referência) */
-  .console, .principal, .row, details.boot, .phead {
+  .console, .principal, .row, details.boot, .phead, .mmap {
     background: linear-gradient(180deg, var(--card-a), var(--card-b)); border-radius: var(--r);
     border: 1px solid rgba(255,255,255,.07); border-top-color: rgba(255,255,255,.2); border-left-color: rgba(255,255,255,.12); border-bottom-color: rgba(0,0,0,.45);
     box-shadow: 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.08); }
@@ -241,6 +241,29 @@
   .xlist .xi .c { margin-left: auto; flex: none; color: var(--muted); font-size: max(11px, .85rem); }
   /* Largo (card ocupando a linha toda): PC e CANAL lado a lado. */
   @container (min-width: 44rem) { .pfields { grid-template-columns: 1fr 1.3fr; } }
+  /* CANAL + aparelho do modo amigável. No card estreito (3ª coluna, celular) o aparelho fica
+     embaixo do número, com a largura toda do campo; no card largo, ao lado. Nome que não
+     cabe corta com reticência (o nome inteiro está no title do campo e na faixa MODO AMIGÁVEL). */
+  .fld.ch .fval .chv { flex: 0 1 auto; min-width: 0; display: flex; flex-direction: column; justify-content: center; line-height: 1.05; }
+  .fld.ch .fval .chv .chn { white-space: nowrap; }
+  .fld.ch .fval .chv small { margin-top: .2rem; line-height: 1.1; }
+  .fld.ch .fval small.nodev { color: var(--muted); }
+  @container (min-width: 44rem) {
+    .fld.ch .fval .chv { flex-direction: row; align-items: center; gap: .95rem; }
+    .fld.ch .fval .chv .chn { flex: none; }
+    .fld.ch .fval .chv small { margin-top: 0; }
+  }
+
+  /* ── faixa MODO AMIGÁVEL (aparelho de cada canal; config global do backup) ── */
+  /* bloco próprio (não fica na linha do cabeçalho do preset), da largura do conteúdo */
+  .mmap { display: flex; align-items: center; gap: .8rem 1.3rem; flex-wrap: wrap; width: fit-content; max-width: 100%;
+    padding: .6rem 1.1rem .6rem 1.3rem; margin-bottom: 1.1rem; background: linear-gradient(180deg, #152029, #0F161E); }
+  .mmap .lbl { font-size: max(11px, 1rem); font-weight: 900; letter-spacing: .3em; color: var(--accent); white-space: nowrap; }
+  .mmap .chips { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; min-width: 0; }
+  .mmap .chip { max-width: 100%; height: 2.5rem; padding: 0 1.15rem; }
+  .mmap .chip b { flex: none; color: var(--muted); font-weight: 900; }
+  .mmap .chip.acc b { color: inherit; opacity: .8; }
+  .mmap .chip .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
   /* ── cabeçalho do preset ── */
   .phead { display: inline-flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; padding: .6rem 1.1rem .6rem 1.3rem; margin-bottom: .9rem;
@@ -419,7 +442,7 @@
   }
   /* alto contraste (forced-colors): os estados deixam de depender só da cor */
   @media (forced-colors: active) {
-    .key.on, .layerseg button.on, .opt.on, .xbtn.on { outline: 2px solid Highlight; outline-offset: -3px; }
+    .key.on, .layerseg button.on, .opt.on, .xbtn.on, .mmap .chip.acc { outline: 2px solid Highlight; outline-offset: -3px; }
     .key.off:not(.on) { color: GrayText; }
     .model { border-color: CanvasText; }
     mark.rs, mark.rs.bad { background: Mark; color: MarkText; }
@@ -519,6 +542,26 @@ const SPECIAL_CCS = { 128: 'UP BANK', 129: 'DOWN BANK', 130: 'UP PRESET', 131: '
 const KEMPER = Object.fromEntries(D.KEMPER_NRPN || []);
 const GP5 = Object.fromEntries(D.GP5_PARAMS || []);
 
+// MATCH_MODE_OPTIONS: o NOME de cada aparelho do MODO AMIGÁVEL, cópia do app.jsx (mesmo
+// índice que vai em match_mode / match_channel_<n>). 44..46 são os USER 1/2/3: na tela
+// vale o nome que o usuário deu (user_pedals do backup), este texto é só o reserva.
+// Append-only e do MESMO tamanho do MATCH_MODE_PEDAL logo abaixo.
+const MATCH_MODE_OPTIONS = [
+  'MULTIPLE MODE',
+  'AMPERO AS2', 'AMPERO MINI', 'HX STOMP', 'A. STAGE 2', 'GP-200LT', 'Valeton GP-5',
+  'POCKET MASTER', 'TONEX ONE', 'KEMPER PLAYER', 'AMPERO MP350', 'MX5', 'NANO CORTEX',
+  'QUAD CORTEX', 'SYNERGY AMPS', 'BigSky', 'BlueSky', 'TimeLine',
+  'ELCAPISTAN', 'FLINT', 'HX-ONE', 'VTR NARCISO', 'VTR LOKI', 'VTR KAILANI',
+  'BFMiDi - Keyboard', 'CUSTOM', "UAFX Ruby '63", "UAFX Enigmatic '82",
+  "UAFX Lion '68", "UAFX Dream '65", 'FRACTAL VP4', 'FRACTAL VP4+',
+  'TONEX ONE+', 'VTR IGNIS', 'VTR HELIOS', 'VTR VENATOR',
+  'HEADRUSH FLEX PRIME', 'Valeton GP-50', 'TONEX PEDAL', 'PLETHORA X5/X3', 'PANTHEON DELUXE',
+  'GT-1000 / CORE', 'BOSS MS-3', 'EVENTIDE H90',
+  'USER 1', 'USER 2', 'USER 3',
+  'SEPIA DELAY', 'COSMOS REVERB', 'BOSS SL-2', 'WAVELENGTH', 'SCARLETT LOVE OD',
+  'Valeton GP-150', 'Valeton GP-180', 'LINE 6 M5', 'LINE 6 M9', 'Mobius',
+  'ZOOM MS-70CDR', 'ZOOM MS-50G', 'ZOOM MS-60B', 'VTR SANCTUM', 'VTR IMAGO',
+];
 // MATCH_MODE_PEDAL: [chave PC_LABELS, chave CC_LABELS] por índice de MATCH_MODE_OPTIONS
 // (app.jsx). Só as tabelas de nome são necessárias aqui. Append-only.
 const MATCH_MODE_PEDAL = [
@@ -592,6 +635,24 @@ function pedalIdxFor(ch) {
   return gi('match_channel_' + (c - 1), 0);
 }
 const userPedal = (slot) => S.backup.user_pedals && S.backup.user_pedals[String(slot)];
+// Nome do aparelho do índice i. USER 1/2/3 com o nome que o usuário deu; índice que esta
+// página ainda não conhece (backup de um editor mais novo) vira "APARELHO #n".
+const pedalKnown = (i) => i > 0 && i < MATCH_MODE_OPTIONS.length;
+function pedalNameOf(i) {
+  i = num(i);
+  const m = MATCH_MODE_PEDAL[i];
+  if (m && m[0] === 'user') { const up = userPedal(m[1]); if (up && up.name) return String(up.name); }
+  return pedalKnown(i) ? MATCH_MODE_OPTIONS[i] : `APARELHO #${i}`;
+}
+// Canais com aparelho no modo amigável, em ordem: [{ ch, idx }]. O pedal único antigo
+// (match_mode > 0) vale para os 16 canais e volta como um item só, com ch = 0.
+function mappedChannels() {
+  const mm = gi('match_mode', 0);
+  if (mm !== 0) return [{ ch: 0, idx: mm }];
+  const out = [];
+  for (let c = 1; c <= 16; c++) { const i = gi('match_channel_' + (c - 1), 0); if (i > 0) out.push({ ch: c, idx: i }); }
+  return out;
+}
 function ccLabel(ch, n) {
   n = num(n);
   if (SPECIAL_CCS[n]) return SPECIAL_CCS[n];
@@ -959,6 +1020,10 @@ function renderPrincipal() {
   const pr = hasPreset(tag) ? presetOf(tag) : null;
   const ch = pr ? num(pr.hdr.channel) : 0, pcn = pr ? num(pr.hdr.bank) : 0, on = validCh(ch);
   const pcName = on ? pcLabel(ch, pcn) : '';
+  // Aparelho que o MODO AMIGÁVEL põe no canal do PC (só com o canal ligado).
+  const devIdx = on ? pedalIdxFor(ch) : 0;
+  const devName = devIdx ? pedalNameOf(devIdx) : '';
+  const devHtml = !on ? '' : devName ? `<small class="dev">${esc(devName)}</small>` : '<small class="nodev">SEM APARELHO</small>';
   const ex = pr ? pr.extras : [];
   if (!ex.length) S.showExtras = false;
   const two = (n) => String(n).padStart(2, '0');
@@ -967,14 +1032,37 @@ function renderPrincipal() {
       return `<div class="xi" title="${esc(`${e.t} ${e.n}${nm ? ' - ' + nm : ''}${val} · CH ${two(e.ch)}`)}"><span class="k ${e.t.toLowerCase()}">${e.t}</span>` +
         `<span class="nm">${e.n}${nm ? ' - ' + esc(nm) : ''}</span>${val ? `<span class="v">${val}</span>` : ''}<span class="c">CH ${two(e.ch)}</span></div>`; }).join('')}</div>` : '<div class="xlist" id="xlist" hidden></div>';
   const miss = pr ? '' : 'Slot fora do backup';
+  const chTip = miss || `Canal do PC principal (OFF = não envia)${on ? ` · Modo amigável: ${devName || 'nenhum aparelho neste canal'}` : ''}`;
   return `<div class="principal"><div class="pbanner" role="heading" aria-level="2">PRINCIPAL</div><div class="pfields">` +
     `<div class="fld pc${on ? '' : ' off'}" title="${miss || 'Program Change enviado na chamada do preset'}"><div class="ftag">${svgi(PC_ICON)}PC</div>` +
       `<div class="fval">${pr ? pcn : '—'}${pcName ? `<small>${esc(pcName)}</small>` : ''}<span class="chev">${svgi(CHEV_R)}</span></div></div>` +
-    `<div class="chrow"><div class="fld ch${on ? '' : ' off'}" title="${miss || 'Canal do PC principal (OFF = não envia)'}"><div class="ftag">${svgi(CH_ICON)}CANAL</div>` +
-      `<div class="fval">${on ? 'CH ' + two(ch) : pr ? 'OFF' : '—'}<span class="chev">${svgi(CHEV_D)}</span></div></div>` +
+    `<div class="chrow"><div class="fld ch${on ? '' : ' off'}" title="${esc(chTip)}"><div class="ftag">${svgi(CH_ICON)}CANAL</div>` +
+      `<div class="fval"><span class="chv"><span class="chn">${on ? 'CH ' + two(ch) : pr ? 'OFF' : '—'}</span>${devHtml}</span><span class="chev">${svgi(CHEV_D)}</span></div></div>` +
       `<button class="xbtn${S.showExtras ? ' on' : ''}" id="extras" aria-expanded="${S.showExtras}" aria-controls="xlist"${ex.length ? '' : ' disabled'} title="${ex.length ? 'Ver os envios extras do preset' : 'Sem envios extras'}">` +
       `${svgi(PLUS_ICON)}EXTRAS${ex.length ? `<span class="cnt">${ex.length}</span>` : ''}</button></div>` +
     `</div>${list}</div>`;
+}
+// Faixa MODO AMIGÁVEL: o aparelho de cada canal. É config GLOBAL do backup (vale em todos
+// os presets); o canal do PC do preset que está na tela acende em laranja.
+function renderModeMap() {
+  const tag = S.bank + S.pi;
+  const pcCh = hasPreset(tag) ? num(presetOf(tag).hdr.channel) : 0;
+  const list = mappedChannels();
+  let chips;
+  if (!list.length) {
+    chips = '<span class="chip unk" title="Nenhum canal tem aparelho no modo amigável: os CC/PC aparecem só com o número">NENHUM APARELHO</span>';
+  } else if (list[0].ch === 0) {
+    const nm = pedalNameOf(list[0].idx);
+    chips = `<span class="chip${validCh(pcCh) ? ' acc' : ''}${pedalKnown(list[0].idx) ? '' : ' unk'}" title="Pedal único (modo antigo): o mesmo aparelho em todos os canais">` +
+      `<b>TODOS OS CANAIS</b><span class="nm">${esc(nm)}</span></span>`;
+  } else {
+    chips = list.map(({ ch, idx }) => {
+      const cur = ch === pcCh;
+      return `<span class="chip${cur ? ' acc' : ''}${pedalKnown(idx) ? '' : ' unk'}"${cur ? ' title="Canal do PC principal deste preset"' : ''}>` +
+        `<b>CH ${ch}</b><span class="nm">${esc(pedalNameOf(idx))}</span></span>`;
+    }).join('');
+  }
+  return `<div class="mmap" role="group" aria-labelledby="mmapLbl"><span class="lbl" id="mmapLbl">MODO AMIGÁVEL</span><span class="chips">${chips}</span></div>`;
 }
 function renderPreset() {
   const tag = S.bank + S.pi;
@@ -1007,7 +1095,7 @@ function render() {
   const a = document.activeElement; const inMain = !!a && $main.contains(a);
   const fk = inMain ? (a.id ? '#' + a.id : a.dataset.pi ? `.key[data-pi="${a.dataset.pi}"]` : a.dataset.layer ? `.layerseg [data-layer="${a.dataset.layer}"]`
     : a.dataset.bank ? `.nav[data-bank="${a.dataset.bank}"]` : a.matches('summary') ? 'details.boot summary' : a.matches('pre') ? 'details.boot pre' : '') : '';
-  $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderPreset()}${renderBootLog()}`;
+  $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderModeMap()}${renderPreset()}${renderBootLog()}`;
   if (inMain) {
     // O controle sumiu ou ficou desabilitado (preset sem extras, sem layer 2, slot fora
     // do backup): o foco vai para a tecla do preset atual, nunca para o <body>.

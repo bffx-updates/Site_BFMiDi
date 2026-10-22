@@ -539,7 +539,7 @@ window.BF_CONTENT = (function () {
           links: [
             { key: 'central', kicker: 'Aplicativos', title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
             { key: 'updater', kicker: 'Firmware', title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/Update_BFMiDi_v15/' },
-            { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' },
+            { key: 'backup', kicker: 'Ferramenta', title: 'Backup View', description: 'Confira os presets de um backup BFMiDi: PC, canal, modo amigável e cada footswitch.', label: 'Abrir Backup View', href: 'backup-view/index.html' },
             /* EDITOR DE SETLIST (PLANO_SETLIST_SITE.md). A página (setlist/) é
                GERADA por `node webApp/build_setlist_site.mjs` — não edite lá. */
             { key: 'setlist', kicker: 'Ferramenta', title: 'Editor de Setlist', description: 'Monte suas músicas e setlists do modo palco no navegador e leve para o app por um arquivo.', label: 'Abrir editor', href: 'setlist/index.html' },
