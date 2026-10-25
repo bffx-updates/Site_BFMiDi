@@ -8,7 +8,7 @@
    modelos fica no topo e a barra de navegação, fixa embaixo.
 
    ORDEM DO ARQUIVO
-     1. base            4. seletor (a mecânica)
+     1. base            4. (menu: refine.css) 
      2. utilitários     5. painéis e HOME
      3. modelo sem foto 6. estreito / baixo / menos movimento
    (a pele do cromo, o rodapé e o celular: css/refine.css)
@@ -112,55 +112,11 @@ ul, ol { padding: 0; list-style: none; }
 
 
 
-/* ---------- 4. SELETOR (a mecânica) ------------------------
-   Pele, tamanhos e estados da cápsula e da barra de baixo moram no
-   bloco CROMO do css/refine.css (grafite, laranja como único estado
-   aceso). Aqui fica só o que faz a cápsula FUNCIONAR:
-
-     MODELOS  8SW+ | 6SW+ | NANO+ | MICRO | APP | engrenagem
-
-   `--n` é quantas colunas há e `--i` qual está acesa; os dois são
-   escritos pelo main.js. O leito do modelo ativo deriva largura e
-   posição dessas variáveis e desliza por transform.
+/* ---------- 4. (o antigo SELETOR saiu em out/2026) ---------
+   A navegação é o MENU de três níveis: visual em css/refine.css
+   (bloco MENU), comportamento no main.js. Nada dela mora aqui.
    ------------------------------------------------------------ */
-.selector-zone { position: relative; z-index: 4; }
 
-.selector {
-  --pad: 10px;      /* respiro interno da cápsula */
-  position: relative;
-  display: flex; align-items: stretch;
-}
-
-.selector-track {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr));
-}
-
-/* O leito do modelo ativo. Fica ABAIXO dos botões (z-index) e desliza. */
-.selector-bed {
-  position: absolute;
-  top: var(--pad); left: var(--pad);
-  width: calc((100% - 2 * var(--pad)) / var(--n, 4));
-  height: calc(100% - 2 * var(--pad));
-  transform: translateX(calc(var(--i, 0) * 100%));
-  transition: transform var(--dur-slide) var(--ease);
-  pointer-events: none;
-}
-
-.tab {
-  position: relative; z-index: 2;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-}
-
-/* divisórias verticais discretas, entre as abas e só entre elas */
-.tab + .tab::before {
-  content: '';
-  position: absolute; left: 0; top: 27%; bottom: 27%;
-  width: 1px;
-}
 
 /* ---------- 5. painéis -------------------------------------- */
 
@@ -333,17 +289,16 @@ ul, ol { padding: 0; list-style: none; }
 
 /* ---------- 8b. viewport BAIXA ------------------------------
    Notebook de 768px de altura e o caso apertado: cabeçalho +
-   seletor + painel + rodapé em 100svh. Sem este bloco, o único
+   menu + painel + rodapé em 100svh. Sem este bloco, o único
    elemento elástico (o palco do produto) absorve sozinho toda a
    falta de altura e a foto de produto encolhe num monitor menor,
    que é o contrário do que a página quer mostrar.
 
-   A folga sai dos intervalos e do título, NUNCA do seletor: ele é
+   A folga sai dos intervalos e do título, NUNCA do menu: ele é
    o elemento principal, e encolhê-lo para caber seria resolver o
    problema errado.
    ------------------------------------------------------------ */
 @media (max-height: 880px) {
-  .tab           { padding: 13px 2px 15px; }
   .hero          { padding-top: var(--sp-3); padding-bottom: var(--sp-3); }
   .hero-h1       { margin-top: var(--sp-2); }
   .hero-lead     { margin-top: var(--sp-2); }
@@ -355,7 +310,7 @@ ul, ol { padding: 0; list-style: none; }
 /* ---------- 9. menos movimento ------------------------------ */
 
 @media (prefers-reduced-motion: reduce) {
-  .selector-bed, .selector-led, .shot, .panel, .btn, .tab {
+  .shot, .panel, .btn {
     transition-duration: 0.01ms;
   }
 }

@@ -5,16 +5,19 @@
    carregado ANTES deste arquivo.
 
    O QUE ESTE ARQUIVO FAZ
-     1. adota o seletor e rotula pelo conteúdo   5. navegação por teclado
-     2. troca de MODELO e troca de PAINEL        6. um clique só: [data-go]
-     3. link direto por hash (#8sw, #8sw/info)   7. anúncio para leitor de tela
+     1. monta o MENU pelo conteúdo            5. páginas Comparar e Comprar
+     2. troca de MODELO e troca de PAINEL     6. um clique só: [data-go]
+     3. link direto por hash (#8sw, #8sw/info) 7. anúncio para leitor de tela
+     4. as fotos do HOME
 
    ----------------------------------------------------------------------------
    O ESTADO DA PÁGINA INTEIRA SÃO DOIS NÚMEROS: qual modelo e qual vista.
 
        vista 'home'    ->  a VISÃO GERAL do modelo (a foto grande)
        vista 'info' | 'conects' | 'comprar'
-                       ->  o painel daquela opção
+                       ->  o painel daquela opção, DENTRO do modelo
+       vista 'apps' | 'downloads' (Suporte) | 'manual' | 'comparar' | 'loja'
+                       ->  páginas do site; o modelo fica guardado
 
    A página ROLA como uma leitura normal, mas a navegação toda continua cabendo
    em `apply(modelo, vista)`: o painel troca por opacidade, dentro da mesma
@@ -23,18 +26,15 @@
    título de vista.
 
    ----------------------------------------------------------------------------
-   SÃO DUAS CÁPSULAS EMPILHADAS, uma por nível: modelos em cima, opções do
-   modelo embaixo. As duas ficam sempre em cena, e por isso não existe botão
-   de voltar — o modelo aceso lá em cima é o caminho de volta para a visão
-   geral dele.
-
-   POR QUE AS DUAS TÊM SEMÂNTICA DIFERENTE
-   Na de MODELOS o clique reescreve a PÁGINA (título do documento, URL,
-   painel, foto): isso não é aba, é um grupo de botões — `role="group"` +
-   `aria-pressed`. Na de OPÇÕES o clique troca um painel que está ali do lado
-   e nada mais: isso é aba de verdade — `role="tablist"` + `role="tab"` +
-   `aria-controls`, com os painéis marcados como `tabpanel` no HTML. Marcar
-   as duas igual prometeria ao leitor de tela uma estrutura que não existe.
+   O MENU (out/2026) TEM TRÊS NÍVEIS, cada um com um papel só (bloco MENU, no
+   fim do arquivo; textos em ui.nav do content.js; visual em css/refine.css):
+     1 o MENU PRINCIPAL, as seções do site, sempre as mesmas (topo no
+       computador, barra de baixo no celular);
+     2 os MODELOS, só nas telas de controladora;
+     3 as SEÇÕES do modelo aberto, dentro da página.
+   Os três são <nav> com links de verdade e o item aceso é
+   aria-current="page" — e não abas nem grupo de botões: cada clique troca a
+   PÁGINA (título do documento, URL, painel), que é o que um link faz.
    ========================================================================== */
 (function () {
   'use strict';
@@ -45,6 +45,12 @@
   var MODELS = C.models;
   var SUB = (C.sub && C.sub.items) || [];
   var RES = C.resources.items;
+  /* As duas páginas do menu que não são de um modelo nem um recurso
+     (out/2026): Comparar e Comprar. Textos em C.compare e C.store. */
+  var EXTRA = [
+    { key: 'comparar', eyebrow: C.compare.eyebrow },
+    { key: 'loja',     eyebrow: C.store.eyebrow }
+  ];
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
 
@@ -120,10 +126,6 @@
 
   /* --------------------------------------------------------------- elementos */
 
-  var selector = $('#selector');          /* cápsula de MODELOS   */
-  var track    = $('#selector-track');
-  var subSel   = $('#subselector');       /* cápsula de OPÇÕES    */
-  var subTrack = $('#subselector-track');
   var live     = $('#live-region');
 
   var heroH1b  = $('#hero-h1b');
@@ -136,11 +138,12 @@
   });
   var stage    = $('#hero-stage');
 
-  /* A vista 'home' é a VISÃO GERAL do modelo — a foto grande. Ela não tem
-     aba própria: quem volta para ela é o modelo aceso na cápsula de cima. */
+  /* A vista 'home' é a VISÃO GERAL do modelo — a foto grande: o modelo na
+     faixa de modelos e a seção "Visão geral" levam a ela. */
   var panels = { home: $('#panel-home') };
   RES.forEach(function (item) { panels[item.key] = $('#panel-' + item.key); });
   SUB.forEach(function (s) { panels[s.key] = $('#panel-' + s.key); });
+  EXTRA.forEach(function (s) { panels[s.key] = $('#panel-' + s.key); });
 
   /* -------------------------------------------------------- fotos do HOME */
 
@@ -400,14 +403,17 @@
     var b = event.target && event.target.closest && event.target.closest('[data-go^="model:"]');
     if (b) mountShot(Number(b.getAttribute('data-go').slice(6)), false);
   }
-  selector.addEventListener('pointerover', homeIntent);
-  selector.addEventListener('focusin', homeIntent);
-  selector.addEventListener('touchstart', homeIntent, { passive: true });
+  var intentZone = $('#mstrip');   /* a faixa de modelos do menu */
+  if (intentZone) {
+    intentZone.addEventListener('pointerover', homeIntent);
+    intentZone.addEventListener('focusin', homeIntent);
+    intentZone.addEventListener('touchstart', homeIntent, { passive: true });
+  }
 
   /* --------------------------------------------------------------- painéis */
 
   function eyebrowOf(key) {
-    var items = SUB.concat(RES);
+    var items = SUB.concat(RES, EXTRA);
     for (var i = 0; i < items.length; i++) if (items[i].key === key) return items[i].eyebrow;
     return '';
   }
@@ -1108,18 +1114,16 @@
   }
 
 
-  /* Icônes funcionais em traço, compartilhados por todos os submenus. */
-  var ICONS = {
-    home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/>',
-    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/>',
-    conects: '<path d="M7 3v5m6-5v5M5 8h10v3a5 5 0 0 1-10 0Zm5 8v2a3 3 0 0 0 6 0v-3h4v6"/>',
-    comprar: '<path d="M3 3h2l3 12h11l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
+  /* Ícones em traço do MENU (out/2026): os itens do menu principal (pela
+     `key` de ui.nav.main, mais o Comprar) e o Comparar da faixa de modelos. */
+  var NAV_ICONS = {
+    ctrl: '<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/>',
     apps: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
-    downloads: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
-    manual: '<path d="M12 5C8 2 5 3 2 4v16c4-2 7-1 10 1 3-2 6-3 10-1V4c-3-1-6-2-10 1Zm0 0v16"/>',
-    gear: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/>'
+    sup: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.6"/><path d="m5.6 5.6 3.9 3.9m5 5 3.9 3.9m0-12.8-3.9 3.9m-5 5-3.9 3.9"/>',
+    buy: '<path d="M3 3h2l3 12h11l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
+    cmp: '<path d="M8 3v18M16 3v18"/><path d="M3 8h5M3 16h5M16 8h5M16 16h5"/>'
   };
-  function icon(key) { return '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[key] || '') + '</svg>'; }
+  function icon(key) { return '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (NAV_ICONS[key] || '') + '</svg>'; }
   /* ------------------------------------ painéis DOWNLOADS e MANUAL ----
      Os dois com o mesmo desenho (css/downloads.css): cabeçalho pg-head e
      cartões grafite com anel de LED, micro-rótulo, título, descrição e o
@@ -1185,10 +1189,6 @@
     var cards = [];
     if (item.key === 'downloads') {
       var manualItem = RES.find(function (entry) { return entry.key === 'manual'; });
-      if (item.apps) cards.push({
-        k: 'apps', kicker: item.apps.kicker, title: item.apps.title, text: item.apps.description,
-        label: item.apps.label, href: '#' + model.hash + '/apps', go: 'view:apps'
-      });
       cards.push(fromLink(byKey(item.links, 'updater')));
       cards.push(fromLink(manualItem && (byKey(manualItem.links, 'manual') || manualItem.links[0])));
       cards.push(fromLink(byKey(item.links, 'backup')));
@@ -1222,8 +1222,92 @@
     if (item.key !== 'apps') RENDER[item.key] = function () { return renderResource(item); };
   });
 
+  /* ------------------------------------- páginas COMPARAR e COMPRAR ----
+     As duas do menu (out/2026), montadas SÓ com os dados que os modelos
+     já têm no content.js (switches, specs, dimensions, ports, buy, note).
+     Visual em css/compare.css. A miniatura de cada modelo é
+     assets/<shot>-thumb.webp (o recorte do corpo, 300px de altura). */
+  function thumbTag(m) {
+    return '<img src="assets/' + esc(m.shot) + '-thumb.webp" alt="" decoding="async">';
+  }
+  function noteText(m) { return (m.note || []).join(' · '); }
+  function sizeOf(m) {
+    return m.dimensions ? m.dimensions.width + ' × ' + m.dimensions.height + ' cm' : '—';
+  }
+  function specOf(m, label) {
+    var s = (m.specs || []).find(function (x) { return x.label === label; });
+    return s ? s.value : '—';
+  }
+
+  function renderComparar() {
+    var K = C.compare, cur = curModel >= 0 ? curModel : 0;
+    var YES = '<svg class="cmp-yes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span class="sr-only">' + esc(K.yes) + '</span>';
+    var NO = '<span class="cmp-no" aria-hidden="true">—</span><span class="sr-only">' + esc(K.no) + '</span>';
+    function cell(row, m) {
+      if (row.port) return (m.ports || []).indexOf(row.port) >= 0 ? YES : NO;
+      if (row.field === 'switches') return esc(String(m.switches));
+      if (row.field === 'dimensions') return esc(sizeOf(m));
+      if (row.spec) return esc(specOf(m, row.spec));
+      return '—';
+    }
+    /* A coluna do modelo aberto fica marcada (`is-cur`): quem chega pelo
+       Comparar da 8SW+ vê a 8SW+ destacada entre as outras. */
+    function col(i) { return i === cur ? ' class="is-cur"' : ''; }
+    var head = '<tr><th scope="col" class="cmp-corner"><span class="sr-only">' + esc(K.feature) + '</span></th>' + MODELS.map(function (m, i) {
+      return '<th scope="col"' + col(i) + '><a class="cmp-model" href="#' + esc(m.hash) + '" data-go="model:' + i + '">' +
+        '<span class="cmp-model__img">' + thumbTag(m) + '</span>' +
+        '<span class="cmp-model__name">' + esc(m.tab) + '</span>' +
+        '<span class="cmp-model__note">' + esc(noteText(m)) + '</span></a></th>';
+    }).join('') + '</tr>';
+    var body = (K.rows || []).map(function (g) {
+      return '<tr class="cmp-group"><th scope="colgroup" colspan="' + (MODELS.length + 1) + '">' + esc(g.group) + '</th></tr>' +
+        g.items.map(function (row) {
+          return '<tr><th scope="row">' + esc(row.label) + '</th>' +
+            MODELS.map(function (m, i) { return '<td' + col(i) + '>' + cell(row, m) + '</td>'; }).join('') + '</tr>';
+        }).join('');
+    }).join('');
+    var foot = '<tr class="cmp-actions"><th scope="row"><span class="sr-only">' + esc(K.actions) + '</span></th>' + MODELS.map(function (m, i) {
+      var buy = m.buy && m.buy.primary;
+      var shop = buy && buy.href && buy.href !== '#';
+      return '<td' + col(i) + '>' +
+        '<a class="pg-ghost cmp-btn" href="#' + esc(m.hash) + '" data-go="model:' + i + '">' + esc(K.details) + '<span class="sr-only"> ' + esc(m.id) + '</span></a>' +
+        (shop ? '<a class="pg-cta cmp-btn" href="' + esc(buy.href) + '" target="_blank" rel="noopener noreferrer">' + esc(K.buy) + '<span class="sr-only"> ' + esc(m.id) + ' (' + esc(K.newTab) + ')</span></a>' : '') +
+      '</td>';
+    }).join('') + '</tr>';
+    return '<div class="panel-inner pg"><div class="cmpg">' +
+      pgHead({ id: 'comparar-title', kicker: K.kicker, title: K.title, hot: K.hot, lead: K.lead }) +
+      '<div class="cmp-wrap"><table class="cmp"><thead>' + head + '</thead><tbody>' + body + '</tbody><tfoot>' + foot + '</tfoot></table></div>' +
+    '</div></div>';
+  }
+
+  function renderLoja() {
+    var K = C.store;
+    var cards = MODELS.map(function (m, i) {
+      var buy = m.buy && m.buy.primary, wait = m.buy && m.buy.waitlist;
+      var shop = buy && buy.href && buy.href !== '#';
+      return '<li class="lj-card pg-card">' +
+        '<a class="lj-card__img" href="#' + esc(m.hash) + '" data-go="model:' + i + '" tabindex="-1" aria-hidden="true">' + thumbTag(m) + '</a>' +
+        '<h3 class="lj-card__t">' + esc(m.id) + '</h3>' +
+        '<p class="lj-card__note">' + esc(noteText(m)) + ' · ' + esc(sizeOf(m)) + '</p>' +
+        '<div class="lj-card__go">' +
+          (shop ? '<a class="pg-cta" href="' + esc(buy.href) + '" target="_blank" rel="noopener noreferrer">' + esc(buy.label) + shopSvg('out', 'lj-arrow') + '<span class="sr-only"> (' + esc(K.newTab) + ')</span></a>' : '') +
+          '<a class="pg-ghost" href="#' + esc(m.hash) + '" data-go="model:' + i + '">' + esc(K.details) + '<span class="sr-only"> ' + esc(m.id) + '</span></a>' +
+        '</div>' +
+        (wait && wait.href ? '<a class="lj-card__wait" href="' + esc(wait.href) + '" target="_blank" rel="noopener noreferrer">' + esc(K.wait) + '<span class="sr-only"> ' + esc(m.id) + ' (' + esc(K.newTab) + ')</span></a>' : '') +
+      '</li>';
+    }).join('');
+    var m0 = MODELS[curModel >= 0 ? curModel : 0];
+    return '<div class="panel-inner pg"><div class="cmpg">' +
+      pgHead({ id: 'loja-title', kicker: K.kicker, title: K.title, hot: K.hot, lead: K.lead }) +
+      '<ul class="lj-grid" role="list">' + cards + '</ul>' +
+      '<p class="lj-cmp"><a href="#' + esc(m0.hash) + '/comparar" data-go="view:comparar">' + esc(K.compare) + '</a></p>' +
+    '</div></div>';
+  }
+  RENDER.comparar = renderComparar;
+  RENDER.loja = renderLoja;
+
   /* O painel é remontado só quando MUDA o modelo que ele está mostrando — o
-     atributo é a memória disso. Sem ele, cada ida e volta pelo submenu
+     atributo é a memória disso. Sem ele, cada ida e volta pelas seções
      recriaria as <img> e devolveria o piscar que o HOME evita. */
   function ensurePanel(key, mi) {
     var el = panels[key];
@@ -1234,101 +1318,129 @@
     el.scrollTop = 0;
   }
 
-  /* --------------------------------------------------------------- cápsulas */
+  /* ------------------------------------------------------------------ MENU */
 
-  /* As duas são construídas UMA VEZ e nunca mais reescritas. Enquanto o
-     seletor trocava de estado, o track era refeito por innerHTML a cada
-     clique e havia uma classe só para congelar a animação durante a troca;
-     com uma cápsula para cada nível, nada disso é preciso. */
-  function fillTrack(el, items, label, attr) {
-    el.innerHTML = items.map(function (it, i) {
-      return '<button class="tab" type="button"' +
-             (it.key ? ' id="subtab-' + esc(it.key) + '" role="tab"' +
-                       ' aria-controls="panel-' + esc(it.key) + '"' : '') +
-             ' data-i="' + i + '"' +
-             ' data-go="' + (it.key ? 'view:' + esc(it.key) : 'model:' + i) + '"' +
-             ' ' + attr + '="false">' + (it.key ? icon(it.key) : '') + '<span>' + esc(it[label]) + '</span></button>';
+  /* O MENU (out/2026). Três níveis, cada um com um papel só, textos em
+     C.ui.nav (ver o comentário lá):
+
+       1 MENU PRINCIPAL  #mnav-main + #mnav-buy (topo, computador) e #mbar
+                         (barra de baixo, celular). Sempre os mesmos itens,
+                         no mesmo lugar: as seções do site e o Comprar;
+       2 MODELOS         #mstrip: os quatro + Comparar, só nas telas de
+                         controladora (área 'ctrl');
+       3 SEÇÕES          #msec: Visão geral + os itens de `sub` sem
+                         `menu: false`, só dentro de um modelo.
+
+     São <nav> com LINKS de verdade: o href é o link direto da vista (abrir
+     em nova aba funciona) e o item aceso é aria-current="page". O clique
+     simples passa pelo [data-go] (ver o listener de clique). Montados UMA
+     VEZ a partir do content.js — o HTML traz a mesma coisa como versão da
+     primeira pintura — e, a cada troca de vista, só mudam os href e o item
+     aceso. Cada nível some quando não vale (atributo `hidden` + data-area e
+     data-sec no <html>, que o script do <head> já grava antes da primeira
+     pintura). */
+  var NAV = C.ui.nav;
+  var mnavMain = $('#mnav-main'), mnavBuy = $('#mnav-buy'), mbar = $('#mbar');
+  var mstrip = $('#mstrip'), msec = $('#msec'), brand = $('.mnav__brand');
+  var SECS = [{ key: 'home', label: C.ui.overview }].concat(SUB.filter(function (s) { return s.menu !== false; }));
+
+  function viewHref(mi, view) { return '#' + MODELS[mi].hash + (view && view !== 'home' ? '/' + view : ''); }
+  /* DENTRO de um modelo: a visão geral e as vistas de `sub` (INFO, IN/OUT,
+     a compra dele). É onde as seções aparecem e onde o Comprar leva à
+     compra daquele modelo; fora (Apps, Suporte, Manual, Comparar, Comprar),
+     ele leva à página com os quatro. */
+  function inModel(view) { return view === 'home' || SUB.some(function (s) { return s.key === view; }); }
+  /* Qual item do menu principal fica aceso. Comparar é da área das
+     controladoras (a faixa de modelos continua à vista). */
+  function areaOf(view) {
+    if (view === 'loja') return 'buy';
+    var item = NAV.main.find(function (it) { return it.view && (it.view === view || (it.view === 'downloads' && view === 'manual')); });
+    return item ? item.key : 'ctrl';
+  }
+  function goOf(it) { return it.key === 'buy' ? 'buy' : it.view ? 'view:' + it.view : 'home'; }
+
+  function buildNav() {
+    mnavMain.setAttribute('aria-label', NAV.label);
+    mnavMain.innerHTML = NAV.main.map(function (it) {
+      return '<a class="mnav__item" href="#" data-go="' + goOf(it) + '" data-key="' + esc(it.key) + '">' + icon(it.key) + '<span>' + esc(it.label) + '</span></a>';
     }).join('');
+    mnavBuy.innerHTML = icon('buy') + '<span>' + esc(NAV.buy) + '</span>';
+    mbar.setAttribute('aria-label', NAV.label);
+    mbar.innerHTML = NAV.main.concat([{ key: 'buy', short: NAV.buy }]).map(function (it) {
+      return '<a class="mbar__item" href="#" data-go="' + goOf(it) + '" data-key="' + esc(it.key) + '">' + icon(it.key) + '<span>' + esc(it.short) + '</span></a>';
+    }).join('');
+    mstrip.setAttribute('aria-label', NAV.models);
+    mstrip.innerHTML = '<div class="mstrip__in">' + MODELS.map(function (m, i) {
+      var n = m.note || [];
+      return '<a class="mstrip__card" href="#' + esc(m.hash) + '" data-go="model:' + i + '">' +
+        '<span class="mstrip__img">' + thumbTag(m) + '</span>' +
+        '<span class="mstrip__txt"><span class="mstrip__name">' + esc(m.tab) + '</span>' +
+        '<span class="mstrip__note"><span class="note-a">' + esc(n[0] || '') + '</span>' +
+        (n[1] ? '<span class="note-b"> · ' + esc(n[1]) + '</span>' : '') + '</span></span></a>';
+    }).join('') +
+      '<a class="mstrip__cmp" href="#" data-go="view:comparar">' + icon('cmp') + '<span>' + esc(NAV.compare) + '</span></a></div>';
+    msec.setAttribute('aria-label', NAV.sections);
+    msec.innerHTML = '<div class="msec__in">' + SECS.map(function (s) {
+      return '<a class="msec__tab" href="#" data-go="' + (s.key === 'home' ? 'home' : 'view:' + esc(s.key)) + '" data-view="' + esc(s.key) + '">' + esc(s.label) + '</a>';
+    }).join('') + '</div>';
+    if (brand) brand.setAttribute('aria-label', NAV.brand);
   }
 
-  function markTabs(el, attr, idx) {
-    var tabs = el.querySelectorAll('.tab');
-    for (var i = 0; i < tabs.length; i++) {
-      tabs[i].setAttribute(attr, i === idx ? 'true' : 'false');
-    }
+  function markNav(mi, view) {
+    var area = areaOf(view), own = inModel(view), buyView = view === 'comprar' || view === 'loja';
+    var root = document.documentElement;
+    function cur(el, on) { if (on) el.setAttribute('aria-current', 'page'); else el.removeAttribute('aria-current'); }
+    root.setAttribute('data-area', area);
+    if (own) root.setAttribute('data-sec', ''); else root.removeAttribute('data-sec');
+    if (brand) brand.href = viewHref(mi, 'home');
+    mnavMain.querySelectorAll('.mnav__item').forEach(function (a) {
+      var it = NAV.main.find(function (x) { return x.key === a.getAttribute('data-key'); }) || {};
+      a.href = viewHref(mi, it.view);
+      cur(a, it.key === area);
+    });
+    mnavBuy.href = viewHref(mi, own ? 'comprar' : 'loja');
+    cur(mnavBuy, buyView);
+    /* Na barra do celular um item só fica aceso: na compra de um modelo é o
+       Comprar, e não o Modelos (no computador os dois, porque a faixa de
+       modelos está à vista e diz de qual é a compra). */
+    mbar.querySelectorAll('.mbar__item').forEach(function (a) {
+      var key = a.getAttribute('data-key');
+      var it = NAV.main.find(function (x) { return x.key === key; }) || {};
+      a.href = key === 'buy' ? mnavBuy.getAttribute('href') : viewHref(mi, it.view);
+      cur(a, buyView ? key === 'buy' : key === area);
+    });
+    mstrip.hidden = area !== 'ctrl';
+    mstrip.querySelectorAll('.mstrip__card').forEach(function (a, i) { cur(a, i === mi && view !== 'comparar'); });
+    var cmp = mstrip.querySelector('.mstrip__cmp');
+    cmp.href = viewHref(mi, 'comparar');
+    cur(cmp, view === 'comparar');
+    msec.hidden = !own;
+    msec.querySelectorAll('.msec__tab').forEach(function (a) {
+      var v = a.getAttribute('data-view');
+      a.href = viewHref(mi, v);
+      cur(a, v === view);
+    });
   }
 
   /* ------------------------------------------------------------ aplicação */
 
-
-  /* O modelo é preservado ao consultar Apps, Downloads ou Manual. Nessas três
-     vistas ("recursos") a barra de baixo troca de conteúdo: [o modelo] APPS ·
-     DOWNLOADS · MANUAL, e a pílula do modelo devolve à HOME dele. A
-     engrenagem e o DOWNLOADS do celular levam SEMPRE ao Downloads (antes
-     reabriam o último recurso visitado: quem passava pelo Manual apertava
-     "Downloads" e caía no Manual). */
+  /* O modelo é preservado em Apps, Suporte, Comparar e Comprar: voltar por
+     Controladoras devolve o último modelo visto. */
   var curModel = -1, curView = '';
-  var modelNav = $('#model-navigation');
-  var resourceNav = $('#resource-navigation');
-  var resourceTrack = $('#resource-track');
-  var resourceHome = $('#resource-home');
-  var overview = $('#overview-link');
-  function resourceView(view) { return RES.some(function (item) { return item.key === view; }); }
-  function isView(view) { return SUB.concat(RES).some(function (item) { return item.key === view; }); }
-  function viewIndex(view) { return SUB.findIndex(function (item) { return item.key === view; }); }
+  function isView(view) { return SUB.concat(RES, EXTRA).some(function (item) { return item.key === view; }); }
 
   function apply(mi, view) {
     mi = Number.isFinite(mi) ? Math.max(0, Math.min(MODELS.length - 1, Math.trunc(mi))) : 0;
     if (view !== 'home' && !isView(view)) view = 'home';
     if (mi === curModel && view === curView) return;
-    var first = curView === '', m = MODELS[mi], resources = resourceView(view), appView = view === 'apps', special = resources;
+    /* `special`: páginas do SITE (Apps, Suporte, Manual, Comparar, Comprar),
+       e não de um modelo — o título não leva o nome dele. */
+    var first = curView === '', m = MODELS[mi], special = !inModel(view);
     curModel = mi;
     curView = view;
     var helpDialog = $('#ajuda-dialog');
     if (view !== 'apps' && helpDialog && helpDialog.open) helpDialog.close();
-    var active = appView ? MODELS.length : view === 'downloads' ? MODELS.length + 1 : resources ? -1 : mi;
-    /* Em Apps e Downloads quem acende é a tecla (APP ou engrenagem), com o
-       anel laranja dela; o leito apaga ONDE ESTÁ (no modelo) em vez de
-       escorregar para trás da tecla, e reacende ali na volta. No Manual
-       nenhuma tecla da cápsula fica apertada: quem diz onde se está é a
-       pílula MANUAL da barra de recursos (a engrenagem se chama
-       "Downloads" e levaria ao Downloads). */
-    selector.style.setProperty('--i', special ? mi : active);
-    selector.classList.toggle('is-util', special);
-    markTabs(track, 'aria-pressed', active);
-    /* Tab itinerante só entre os MODELOS (a parada é o modelo atual); APP e
-       engrenagem são paradas próprias, sempre alcançáveis pelo Tab. */
-    track.querySelectorAll('.tab').forEach(function (tab, i) { tab.tabIndex = i < MODELS.length ? (i === mi ? 0 : -1) : 0; });
-    var mobileApps = $('#mobile-apps-toggle');
-    var mobileResources = $('#mobile-resources-toggle');
-    var mobileUtility = $('#mobile-utility-navigation');
-    if (mobileUtility) mobileUtility.hidden = view !== 'home';
-    document.documentElement.setAttribute('data-view', view === 'home' ? 'home' : 'panel');
-    if (mobileApps) mobileApps.setAttribute('aria-pressed', String(appView));
-    if (mobileResources) mobileResources.setAttribute('aria-pressed', String(view === 'downloads'));
-    modelNav.hidden = special;
-    resourceNav.hidden = !special;
-    if (resourceHome) {
-      var homeName = C.ui.overview + ' · ' + m.id;
-      resourceHome.setAttribute('aria-label', homeName);
-      resourceHome.title = homeName;
-      resourceHome.lastChild.textContent = m.tab;
-    }
-    var vi = viewIndex(view);
-    subSel.classList.toggle('is-idle', vi < 0);
-    if (vi >= 0) subSel.style.setProperty('--i', vi);
-    markTabs(subTrack, 'aria-selected', vi);
-    var ri = RES.findIndex(function (item) { return item.key === view; });
-    markTabs(resourceTrack, 'aria-selected', ri);
-    /* A barra de recursos segue a mesma regra da do modelo: a pílula do
-       modelo entra no ciclo das setas e o Tab para só na vista aberta. */
-    resourceNav.querySelectorAll('button').forEach(function (tab, i) { tab.tabIndex = i === ri + 1 ? 0 : -1; });
-    /* Tab itinerante na barra do modelo; na HOME o INFO também é parada
-       (padrão de abas da APG: o tablist tem sempre uma aba no Tab). */
-    modelNav.querySelectorAll('button').forEach(function (tab, i) { tab.tabIndex = (i === vi + 1 || (vi < 0 && i === 1)) ? 0 : -1; });
-    overview.classList.toggle('is-active', view === 'home');
-    if (view === 'home') overview.setAttribute('aria-current', 'page');
-    else overview.removeAttribute('aria-current');
+    markNav(mi, view);
     /* O h1 mora fora dos painéis e acompanha a vista: o mesmo texto do
        document.title, sem o " | BFFX". */
     heroH1b.textContent = special ? eyebrowOf(view) + ' — BFMIDI'
@@ -1348,19 +1460,27 @@
     if (view !== 'home') ensurePanel(view, mi);
     Object.keys(panels).forEach(function (key) {
       var panel = panels[key], on = key === view;
+      if (!panel) return;
       panel.classList.toggle('is-on', on);
       panel.setAttribute('aria-hidden', String(!on));
       panel.inert = !on;
     });
     /* Toda troca de vista começa do topo: sem isto, quem estava no fim do
-       INFO abria o SHOP rolado pela metade, e a HOME abria descida. O foco
-       não se mexe (quem clicou continua no botão que clicou). */
+       INFO abria o Comprar rolado pela metade, e a HOME abria descida. O
+       foco não se mexe (quem clicou continua no item que clicou). */
     if (!first) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     document.title = (special ? eyebrowOf(view) + ' — BFMIDI'
       : view === 'home' ? m.id + ' — Controladoras MIDI de palco'
       : m.id + ' · ' + eyebrowOf(view)) + ' | BFFX';
-    if (!first && window.history && history.replaceState) history.replaceState(null, '', '#' + m.hash + (view === 'home' ? '' : '/' + view));
+    if (!first && window.history && history.replaceState) history.replaceState(null, '', viewHref(mi, view));
     if (!first && live) live.textContent = special ? eyebrowOf(view) : m.id + (view === 'home' ? ' selecionado.' : ' · ' + eyebrowOf(view));
+  }
+
+  /* O modelo aceso na faixa: o destino do foco na volta à HOME (Esc, ou o
+     item clicado que sumiu junto com a vista). */
+  function focusModel() {
+    var card = mstrip.querySelectorAll('.mstrip__card')[curModel];
+    if (card) card.focus();
   }
 
   document.addEventListener('click', function (event) {
@@ -1373,72 +1493,28 @@
     event.preventDefault();
     var go = control.getAttribute('data-go');
     var prev = curView;
-    if (go === 'resources') apply(curModel, 'downloads');
+    /* O Comprar leva à compra do modelo aberto; fora de um modelo, à
+       página com os quatro. */
+    if (go === 'buy') apply(curModel, inModel(curView) ? 'comprar' : 'loja');
     else if (go === 'home') apply(curModel, 'home');
     else if (go.indexOf('model:') === 0) apply(Number(go.slice(6)), 'home');
     else if (go.indexOf('view:') === 0) apply(curModel, go.slice(5));
     /* O controle acionado pode ter sumido junto com a vista (link dentro de
-       um painel que virou inert, a barra de baixo que trocou): o foco caía
+       um painel que virou inert, a faixa de modelos que saiu): o foco caía
        no <body> e o Tab seguinte recomeçava do lugar antigo, pulando o
-       painel novo. Ele vai para o mesmo alvo do "Pular" (o título da vista)
-       ou, na volta à HOME, para o modelo na cápsula — o destino do Esc. */
+       painel novo. Ele vai para o título da vista (o mesmo alvo do "Pular")
+       ou, na HOME, para o modelo aceso na faixa. */
     if (prev === curView) return;
     var lost = !control.isConnected || control.closest('.panel:not(.is-on), [hidden], [inert]') || !control.getClientRects().length;
     if (!lost && document.activeElement !== document.body) return;
-    if (curView === 'home') { (resourceView(prev) ? track.querySelector('[data-i="' + curModel + '"]') : overview).focus(); return; }
+    if (curView === 'home') { focusModel(); return; }
     var title = document.querySelector('.panel.is-on .pg-title, .panel.is-on .ap-title');
     if (title) { title.tabIndex = -1; title.focus({ preventScroll: true }); }
   });
 
-  /* Setas, Home e End percorrem cada nível sem perder o foco. */
-  function wireKeys(container, getIndex, select) {
-    container.addEventListener('keydown', function (event) {
-      var buttons = Array.from(container.querySelectorAll('button'));
-      /* A posição é a do botão FOCADO, e a vista aberta só entra quando o
-         foco não está num deles: na HOME o INFO também é parada do Tab, e
-         contar pela vista (⌂) levava a ← ao SHOP e a → ao próprio INFO. */
-      var current = buttons.indexOf(document.activeElement), next;
-      if (current < 0) current = getIndex();
-      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (current + 1) % buttons.length;
-      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (current + buttons.length - 1) % buttons.length;
-      else if (event.key === 'Home') next = 0;
-      else if (event.key === 'End') next = buttons.length - 1;
-      else return;
-      event.preventDefault();
-      select(next);
-      buttons[next].focus();
-    });
-  }
-  /* A cápsula de MODELOS é diferente: trocar de modelo reescreve a página
-     inteira, então as setas (e Home/End) só MOVEM O FOCO entre os modelos
-     visíveis, e quem ativa é o Enter/Espaço, pelo clique nativo do botão.
-     APP e engrenagem ficam fora das setas: são paradas próprias do Tab. */
-  selector.addEventListener('keydown', function (event) {
-    var buttons = Array.prototype.filter.call(track.querySelectorAll('[data-go^="model:"]'), function (b) { return b.offsetParent !== null; });
-    var current = buttons.indexOf(document.activeElement), next;
-    if (current < 0) return;
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (current + 1) % buttons.length;
-    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (current + buttons.length - 1) % buttons.length;
-    else if (event.key === 'Home') next = 0;
-    else if (event.key === 'End') next = buttons.length - 1;
-    else return;
-    event.preventDefault();
-    buttons.forEach(function (b, i) { b.tabIndex = i === next ? 0 : -1; });
-    buttons[next].focus();
-  });
-  wireKeys(modelNav, function () { return viewIndex(curView) + 1; }, function (i) { apply(curModel, i === 0 ? 'home' : SUB[i - 1].key); });
-  /* A barra de recursos ganha o MESMO teclado da do modelo: a pílula do
-     modelo é a primeira parada das setas, como o ⌂ lá. Chegar nela leva à
-     HOME, e a barra some junto — o foco vai para o modelo na cápsula (o
-     destino do Esc), em vez de cair no <body>. */
-  wireKeys(resourceNav, function () { return RES.findIndex(function (item) { return item.key === curView; }) + 1; }, function (i) {
-    apply(curModel, i === 0 ? 'home' : RES[i - 1].key);
-    if (i === 0) track.querySelector('[data-i="' + curModel + '"]').focus();
-  });
-
   /* "Pular para o conteúdo": leva o foco ao título da vista aberta, SEM
      trocar o hash — o #panels caía no hashchange e devolvia a HOME da 8SW+
-     a quem estava, por exemplo, no SHOP da NANO+. */
+     a quem estava, por exemplo, na compra da NANO+. */
   var skip = $('.skip-link');
   if (skip) skip.addEventListener('click', function (event) {
     event.preventDefault();
@@ -1446,12 +1522,11 @@
     if (target.id !== 'panels') target.tabIndex = -1;
     target.focus();
   });
+  /* Esc fora da HOME volta à visão geral do modelo aberto. */
   document.addEventListener('keydown', function (event) {
     if (event.key !== 'Escape' || curView === 'home' || document.querySelector('dialog[open]')) return;
-    var wasResource = resourceView(curView);
     apply(curModel, 'home');
-    if (wasResource) track.querySelector('[data-i="' + curModel + '"]').focus();
-    else overview.focus();
+    focusModel();
   });
   /* Hash sem modelo conhecido (o #panels do "Pular", um âncora qualquer)
      devolve null e é ignorado; hash vazio é a HOME do primeiro modelo. O
@@ -1471,26 +1546,7 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
   document.querySelectorAll('[data-copy]').forEach(function (el) { var copy = C.ui && C.ui[el.getAttribute('data-copy')]; if (copy) el.textContent = copy; });
-  var appsItem = RES.find(function (item) { return item.key === 'apps'; }) || {};
-  fillTrack(track, MODELS, 'tab', 'aria-pressed');
-  /* O nome acessível da tecla COMEÇA pelo rótulo visível ("APP" → "App"),
-     para quem a aciona por voz dizendo o que lê (WCAG 2.5.3); a dica do
-     mouse continua com o nome da vista, "Apps". */
-  var appsAria = C.ui.appsShort.charAt(0) + C.ui.appsShort.slice(1).toLowerCase();
-  track.insertAdjacentHTML('beforeend', '<button class="tab software-tab apps-tab" id="software-toggle" type="button" data-i="' + MODELS.length + '" data-go="view:apps" aria-label="' + esc(appsAria) + '" title="' + esc(appsItem.label) + '" aria-pressed="false" aria-controls="panel-apps">' + icon('apps') + '<span class="apps-tab__label">' + esc(C.ui.appsShort) + '</span></button>');
-  track.insertAdjacentHTML('beforeend', '<button class="tab gear-tab" id="resources-toggle" type="button" data-i="' + (MODELS.length + 1) + '" data-go="resources" aria-label="' + esc(C.resources.label) + '" title="' + esc(C.resources.label) + '" aria-pressed="false">' + icon('gear') + '</button>');
-  selector.style.setProperty('--n', MODELS.length + 2);
-  fillTrack(subTrack, SUB, 'label', 'aria-selected');
-  subSel.style.setProperty('--n', SUB.length);
-  fillTrack(resourceTrack, RES, 'label', 'aria-selected');
-  $('#resource-selector').style.setProperty('--n', RES.length);
-  overview.innerHTML = icon('home') + '<span>' + esc(C.ui.overview) + '</span>';
-  overview.title = C.ui.overview;
-  if (resourceHome) resourceHome.innerHTML = icon('home') + '<span></span>';
-  /* A barra APPS · DOWNLOADS do celular: os mesmos nomes da barra de baixo. */
-  var mobileAppsLabel = $('#mobile-apps-label'), mobileResLabel = $('#mobile-resources-label');
-  if (mobileAppsLabel) mobileAppsLabel.textContent = appsItem.label;
-  if (mobileResLabel) mobileResLabel.textContent = C.resources.label;
+  buildNav();
 
   var start = fromHash() || { model: 0, view: 'home' };
   apply(start.model, start.view);

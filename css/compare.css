@@ -1,0 +1,127 @@
+/* ============================================================
+   BFMIDI — VITRINE · PÁGINAS COMPARAR E COMPRAR (out/2026)
+   ------------------------------------------------------------
+   As duas páginas que o MENU pede (main.js, renderComparar e
+   renderLoja; textos em `compare` e `store` do content.js):
+
+     COMPARAR  #<modelo>/comparar — os quatro modelos numa tabela.
+               A coluna do modelo aberto fica marcada (.is-cur). No
+               celular a tabela rola de lado, com a primeira coluna
+               (o nome do recurso) presa à esquerda.
+     COMPRAR   #<modelo>/loja — os quatro lado a lado, quando o
+               Comprar do menu é tocado fora de um modelo.
+
+   Linguagem dos outros painéis (css/pages.css): cabeçalho pgHead,
+   cartão .pg-card, botões .pg-cta / .pg-ghost. Layout por
+   container query (`pg`, declarado no .panel-inner), porque o
+   desktop tem zoom .8. A miniatura de cada modelo é
+   assets/<shot>-thumb.webp; a altura dela vai em px, porque
+   porcentagem em item de grid não limita nada.
+   ============================================================ */
+
+/* Respiro lateral e de baixo: o mesmo do Suporte (downloads.css). */
+:is(#panel-comparar, #panel-loja) .panel-inner.pg {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 16px;
+  padding-bottom: 28px;
+}
+@media (min-width: 601px) {
+  :is(#panel-comparar, #panel-loja) .panel-inner.pg { padding-inline: 28px; padding-bottom: 40px; }
+}
+@media (min-width: 861px) {
+  :is(#panel-comparar, #panel-loja) .panel-inner.pg { padding-inline: 48px; padding-bottom: 44px; }
+}
+.cmpg { display: flex; flex-direction: column; gap: 28px; width: 100%; }
+
+/* ---------- COMPARAR ---------------------------------------- */
+.cmp-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--chrome-edge);
+  border-radius: var(--r-card);
+  background: linear-gradient(180deg, #141b25, #0f141c);
+  box-shadow: var(--chrome-shadow);
+}
+.cmp {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font: 500 17px/1.3 var(--font-body);
+  color: var(--ink-2);
+}
+.cmp th, .cmp td { padding: 12px 14px; text-align: center; border-bottom: 1px solid var(--line); }
+.cmp thead th { padding-top: 20px; vertical-align: bottom; }
+.cmp th[scope="row"] {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-2);
+  background: #121821;
+  white-space: nowrap;
+}
+.cmp .cmp-corner { position: sticky; left: 0; z-index: 1; background: #141b25; }
+.cmp .cmp-group th {
+  text-align: left;
+  padding-top: 24px;
+  font: 600 13px/1 var(--font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--kicker-ink);
+  border-bottom: 1px solid var(--line-2);
+}
+.cmp .is-cur { background: #ff8e3e12; }
+.cmp-model {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.cmp-model__img { display: grid; place-items: center; width: 140px; max-width: 100%; height: 90px; }
+.cmp-model__img img { max-width: 100%; max-height: 90px; object-fit: contain; }
+.cmp-model__name { font: 800 26px/1 var(--font-display); font-variation-settings: 'wdth' 108; }
+.cmp-model__note { font: 500 14px/1.2 var(--font-body); color: var(--ink-3); }
+.cmp-yes { display: inline-block; width: 24px; height: 24px; color: var(--led-input); vertical-align: middle; }
+.cmp-no { color: #6d7a8c; }
+.cmp-actions td { vertical-align: top; border-bottom: 0; padding-bottom: 20px; }
+.pg .cmp-btn { display: flex; width: 100%; min-height: 46px; margin-top: 8px; padding-inline: 10px; font-size: 15px; }
+.pg .cmp-btn:first-child { margin-top: 0; }
+@media (hover: hover) {
+  .cmp-model:hover .cmp-model__name { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+}
+
+/* ---------- COMPRAR ----------------------------------------- */
+.lj-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@container pg (max-width: 1100px) { .lj-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container pg (max-width: 560px)  { .lj-grid { grid-template-columns: minmax(0, 1fr); } }
+.lj-card { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
+.lj-card__img { display: grid; place-items: center; height: 150px; }
+.lj-card__img img { max-width: 100%; max-height: 150px; object-fit: contain; }
+.lj-card__t { margin: 6px 0 0; font: 800 28px/1.05 var(--font-display); font-variation-settings: 'wdth' 108; color: var(--ink); }
+.lj-card__note { margin: 0; font: 500 16px/1.3 var(--font-body); color: var(--ink-3); }
+.lj-card__go { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 8px; }
+.lj-card__go .lj-arrow { width: 18px; height: 18px; }
+.lj-card__wait { font: 500 var(--t-min)/1.3 var(--font-body); color: var(--ink-3); text-underline-offset: 3px; }
+.lj-cmp { margin: 0; font: 600 16px/1.3 var(--font-body); }
+.lj-cmp a { color: var(--kicker-ink); text-underline-offset: 4px; }
+
+/* ---------- CELULAR ----------------------------------------- */
+@media (max-width: 600px) {
+  .cmp { font-size: 15px; min-width: 560px; }
+  .cmp-model__img { width: 84px; height: 56px; }
+  .cmp-model__img img { max-height: 56px; }
+  .cmp-model__name { font-size: 18px; }
+  .cmp-model__note { font-size: 11px; }
+  .lj-card__img { height: 120px; }
+  .lj-card__img img { max-height: 120px; }
+}

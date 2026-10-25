@@ -111,10 +111,30 @@ window.BF_CONTENT = (function () {
       overview: 'Visão geral',
       buy: 'Comprar',
       footerEnd: 'Controladoras MIDI',
-      /* O rótulo curto da tecla de Apps na cápsula. O leitor de tela ouve
-         o mesmo rótulo em caixa normal ("App"), e a dica do mouse é o
-         `label` do item 'apps' de `resources`. */
-      appsShort: 'APP',
+      /* O MENU (out/2026). Três níveis, cada um com um papel só:
+           1 `main`  o menu principal: as seções do site, sempre as mesmas,
+                     mais o botão `buy`. No computador fica no topo; no
+                     celular vira a barra fixa de baixo, com o nome `short`;
+           2 os modelos (`models`), só nas telas de controladora, com o
+             `note` de cada modelo e o atalho `compare`;
+           3 as seções do modelo (`sections`): `overview` + os itens de
+             `sub` que não têm `menu: false`, dentro da página.
+         `view` é a vista que o item abre; sem `view`, ele abre a visão
+         geral do modelo aberto. O Comprar leva à compra do modelo aberto
+         ou, fora de um modelo, à página com os quatro (`store`). */
+      nav: {
+        label: 'Menu principal',
+        brand: 'BFMIDI, página inicial',
+        main: [
+          { key: 'ctrl', label: 'Controladoras', short: 'Modelos' },
+          { key: 'apps', label: 'Apps',          short: 'Apps',    view: 'apps' },
+          { key: 'sup',  label: 'Suporte',       short: 'Suporte', view: 'downloads' }
+        ],
+        buy: 'Comprar',
+        models: 'Modelos BFMIDI',
+        compare: 'Comparar',
+        sections: 'Seções do modelo'
+      },
       /* O cartão de PRÓXIMO PASSO no fim do INFO e do IN/OUT. `view` é a
          chave do painel de destino (o botão leva ao #<modelo>/<view>). O
          INFO fecha com [conects, comprar]; o IN/OUT, com [apps, comprar]. */
@@ -207,6 +227,10 @@ window.BF_CONTENT = (function () {
       {
         hash: '8sw',
         tab: '8SW+',
+        /* O diferencial do modelo em duas partes, na faixa de modelos, na
+           Comparar e na Comprar: o nome sozinho não diz a diferença. No
+           celular só a primeira parte aparece. */
+        note: ['8 foots', 'tela 3,5″'],
         id: 'BFMIDI 8SW+',
         h1: ['BFMIDI', '8SW+'],
         lead: 'MIDI DIN5, TRS e USB. Entradas para expressão e footswitches externos.',
@@ -273,6 +297,7 @@ window.BF_CONTENT = (function () {
       {
         hash: '6sw',
         tab: '6SW+',
+        note: ['6 em linha', 'tela 3,5″'],
         id: 'BFMIDI 6SW+',
         h1: ['BFMIDI', '6SW+'],
         lead: 'Seis footswitches, tela colorida e acesso ao modo LIVE.',
@@ -355,6 +380,7 @@ window.BF_CONTENT = (function () {
       {
         hash: 'nano',
         tab: 'NANO+',
+        note: ['6 compacta', 'tela 3,5″'],
         id: 'BFMIDI NANO+',
         h1: ['BFMIDI', 'NANO+'],
         lead: 'Seis footswitches e tela colorida em formato compacto.',
@@ -420,6 +446,7 @@ window.BF_CONTENT = (function () {
       {
         hash: 'micro',
         tab: 'MICRO',
+        note: ['4 foots', 'tela 2,4″'],
         id: 'BFMIDI MICRO',
         h1: ['BFMIDI', 'MICRO'],
         lead: 'Quatro footswitches e 40 presets ao alcance do pé.',
@@ -497,30 +524,31 @@ window.BF_CONTENT = (function () {
        olho, e por isso é uma palavra por extenso, não a sigla da aba. */
     sub: {
       items: [
-        { key: 'info',    label: 'INFO',   eyebrow: 'Informações' },
-        { key: 'conects', label: 'IN/OUT', eyebrow: 'Conexões' },
-        { key: 'comprar', label: 'SHOP',   eyebrow: 'Comprar' }
+        { key: 'info',    label: 'Recursos',       eyebrow: 'Informações' },
+        { key: 'conects', label: 'Conexões',       eyebrow: 'Conexões' },
+        /* Sem aba própria: quem chega aqui é o Comprar do menu principal. */
+        { key: 'comprar', label: 'Preço e compra', eyebrow: 'Comprar', menu: false }
       ]
     },
 
-    /* RECURSOS: Apps, Downloads e Manual. `label` é o nome da tecla da
-       engrenagem na cápsula e do botão da barra do celular: a palavra da
-       página onde ela chega. Nas três vistas, a barra de baixo mostra
-       [o modelo] + os `label` dos itens, na ordem do array. (O antigo
-       painel "Sistema BFMiDi" saiu em 24/09/2026: repetia os Apps, e o
-       link #<modelo>/software abre os Apps.) */
+    /* RECURSOS: Apps, Suporte (a vista `downloads`) e Manual. Os dois
+       primeiros estão no menu principal (`ui.nav.main`); o Manual não tem
+       item próprio — o cartão dele está no Suporte, e #<modelo>/manual
+       continua abrindo, para links antigos. (O antigo painel "Sistema
+       BFMiDi" saiu em 24/09/2026: repetia os Apps, e o link
+       #<modelo>/software abre os Apps.) */
     resources: {
-      label: 'Downloads',
       items: [
         { key: 'apps', label: 'Apps', eyebrow: 'Apps', title: 'BFMiDi Editor' },
-        /* PAINEL DOWNLOADS (#8sw/downloads). O título sai em duas linhas —
+        /* PAINEL SUPORTE (#8sw/downloads — a chave continua `downloads`
+           para os links antigos valerem). O título sai em duas linhas —
            `head.title` em branco, `head.hot` em laranja. Os cartões, NA
-           ORDEM: o dos apps (`apps`, leva à seção Apps deste site, sem
-           sair da página), o atualizador (`links`, key 'updater'), o
-           manual (o link do item `manual` abaixo), o Backup View (key
-           'backup'), o Monitor MIDI (key 'monitor') e o Gerador de
-           Frequência (key 'freq'). Com seis cartões a grade de 2 colunas
-           fecha em três fileiras; com número ímpar, o dos apps ocupa a
+           ORDEM: o atualizador (`links`, key 'updater'), o manual (o link
+           do item `manual` abaixo), o Backup View (key 'backup'), o Editor
+           de Setlist (key 'setlist'), o Monitor MIDI (key 'monitor') e o
+           Gerador de Frequência (key 'freq'). O cartão do Editor saiu em
+           out/2026: ele só levava de volta para Apps, que agora está no
+           menu principal. Com número ímpar de cartões, o primeiro ocupa a
            fileira inteira (css/downloads.css).
            `kicker` é o micro-rótulo de cada cartão. A Central
            de downloads (key 'central') fica fora dos cartões: a seção Apps
@@ -528,14 +556,13 @@ window.BF_CONTENT = (function () {
            se o cartão abre outra aba ou fica no site (`newTab`, a frase
            inteira, vai para o leitor de tela); `goLabel` é o botão do
            cartão que traz para cá a partir do painel Manual. */
-        { key: 'downloads', label: 'Downloads', eyebrow: 'Downloads', title: 'Downloads e atualizações',
-          head: { title: 'Downloads e', hot: 'atualizações.' },
-          lead: 'O editor, o atualizador de firmware, o manual e as ferramentas da sua BFMIDI.',
+        { key: 'downloads', label: 'Suporte', eyebrow: 'Suporte', title: 'Suporte e downloads',
+          head: { title: 'Suporte e', hot: 'downloads.' },
+          lead: 'Atualizar a controladora, o manual e as ferramentas da sua BFMIDI.',
           newTab: 'Abre em nova aba',
           newTabShort: 'Nova aba',
           here: 'Neste site',
-          goLabel: 'Ver downloads',
-          apps: { kicker: 'Aplicativos', title: 'BFMiDi Editor', description: 'O mesmo editor da sua BFMIDI no navegador, no Windows, no Mac, no iPhone e no iPad.', label: 'Ver os apps' },
+          goLabel: 'Ver o suporte',
           links: [
             { key: 'central', kicker: 'Aplicativos', title: 'Central de downloads', description: 'Escolha o aplicativo compatível com o seu dispositivo.', label: 'Abrir downloads', href: 'https://bffx-updates.github.io/Download_Apps/' },
             { key: 'updater', kicker: 'Firmware', title: 'Atualizador BFMIDI', description: 'Consulte as instruções e atualize o firmware pelo navegador.', label: 'Abrir atualizador', href: 'https://bffx-updates.github.io/Update_BFMiDi_v15/' },
@@ -561,6 +588,64 @@ window.BF_CONTENT = (function () {
             { key: 'manual', kicker: 'Documentação', title: 'Manual online', description: 'Consulte os recursos, os modos de operação e as conexões.', label: 'Abrir manual', href: 'https://bffx-updates.github.io/MANUAL_USER/' }
           ] }
       ]
+    },
+
+    /* PÁGINA COMPARAR (#<modelo>/comparar, out/2026): os quatro modelos
+       numa tabela, montada SÓ com os dados que eles já têm aqui. Cada
+       linha de `rows` lê um campo do modelo: `field` ('switches' ou
+       'dimensions'), `spec` (o `value` da ficha com aquele `label`) ou
+       `port` (a porta está na lista `ports` do modelo: ✓ ou —). */
+    compare: {
+      eyebrow: 'Comparar modelos',
+      kicker: 'Comparar',
+      title: 'Qual BFMIDI',
+      hot: 'é a sua?',
+      lead: 'As quatro lado a lado. Toque no nome de uma para ver tudo sobre ela.',
+      feature: 'Recurso',
+      actions: 'Ações',
+      yes: 'Sim',
+      no: 'Não',
+      details: 'Detalhes',
+      buy: 'Comprar',
+      newTab: 'abre em nova aba',
+      rows: [
+        { group: 'Controladora', items: [
+          { label: 'Footswitches',             field: 'switches' },
+          { label: 'Presets ao alcance do pé', spec: 'Presets ao alcance do pé' },
+          { label: 'Tela colorida',            spec: 'Tela colorida' },
+          { label: 'Tamanho',                  field: 'dimensions' }
+        ] },
+        { group: 'Saídas MIDI', items: [
+          { label: 'DIN5 (5 pinos)', port: 'din5' },
+          { label: 'TRS (P10)',      port: 'trs' }
+        ] },
+        { group: 'USB e sem fio', items: [
+          { label: 'USB DEVICE',     port: 'usbDevice' },
+          { label: 'USB HOST',       port: 'usbHost' },
+          { label: 'Bluetooth MIDI', port: 'bluetooth' },
+          { label: 'Wi-Fi',          port: 'wifi' }
+        ] },
+        { group: 'Entradas', items: [
+          { label: 'Pedal de expressão',    port: 'exp' },
+          { label: 'Footswitches externos', port: 'dualSw' }
+        ] }
+      ]
+    },
+
+    /* PÁGINA COMPRAR (#<modelo>/loja, out/2026): os quatro lado a lado.
+       Abre quando o Comprar do menu é tocado FORA de um modelo (Apps,
+       Suporte, Comparar); dentro de um modelo ele leva ao painel de
+       compra daquele modelo. Os botões usam o `buy` de cada modelo. */
+    store: {
+      eyebrow: 'Comprar',
+      kicker: 'Comprar',
+      title: 'Escolha a sua',
+      hot: 'BFMIDI.',
+      lead: 'As quatro estão na loja online da BFFX (loja.bffx.com.br).',
+      details: 'Ver detalhes',
+      wait: 'Esgotou? Grupo de espera no WhatsApp',
+      compare: 'Não sabe qual? Compare os quatro modelos',
+      newTab: 'abre em nova aba'
     },
 
     /* Texto do estado provisório. Fica aqui, e não no main.js, porque é copy. */
