@@ -213,6 +213,16 @@
 }
 /* Sem JS e sem texto, a luz sozinha seria um clarão sem sentido. */
 #panel-home .hero-wordmark:has(.hero-wordmark-text:empty) { display: none; }
+/* Nome comprido: a palavra fica numa linha só. Vale o tamanho de sempre
+   até ela encostar nas bordas do palco; dali para baixo a letra encolhe
+   (--wm-em, a largura da palavra em em, vem do main.js). Hoje só a
+   MICRO S3 chega lá, e só no celular. A altura da linha continua a da
+   letra cheia, para o micro-rótulo não subir na troca de modelo. */
+#panel-home .hero-wordmark-text {
+  white-space: nowrap;
+  font-size: min(1em, calc(98cqw / var(--wm-em, .001)));
+  line-height: calc(.86 * clamp(58px, var(--wm-font), 152px));
+}
 
 /* "CONTROLADORAS MIDI DE PALCO" + etiqueta do chassi (a gramática do
    micro-rótulo de página, .bf-kicker em pages.css). A altura é

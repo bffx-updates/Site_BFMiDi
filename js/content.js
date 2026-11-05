@@ -92,11 +92,6 @@ window.BF_CONTENT = (function () {
     label: 'Tela colorida',
     note: 'Fundo por imagem, ícone e cor próprios em cada footswitch.'
   };
-  var SPEC_SCREEN_24 = {
-    value: '2,4″',
-    label: 'Tela colorida',
-    note: 'Fundo por imagem, ícone e cor próprios em cada footswitch.'
-  };
   var SPEC_MODES = {
     value: '9',
     label: 'Comportamentos em LIVE',
@@ -442,51 +437,60 @@ window.BF_CONTENT = (function () {
         ]
       },
 
-      /* --------------------------------------------------------------- MICRO */
+      /* ------------------------------------------------------------ MICRO S3 */
+      /* Era "BFMIDI MICRO" até 05/11/2026, quando a MICRO passou a ser a
+         MICRO S3 (pedido do dono): chassi novo, 12 × 11 cm, a tela de 3,5″
+         da NANO+ (a placa BFMIDI-S3 MICRO usa o mesmo painel 480×320 no
+         firmware, e a foto mostra a tela inteira) e as portas na ordem 9V,
+         HOST, DEVICE, TRS. O `hash` continua 'micro': os links já
+         publicados (#micro, #micro/info…) seguem valendo. */
       {
         hash: 'micro',
-        tab: 'MICRO',
-        note: ['4 foots', 'tela 2,4″'],
-        id: 'BFMIDI MICRO',
-        h1: ['BFMIDI', 'MICRO'],
+        tab: 'MICRO S3',
+        note: ['4 foots', 'tela 3,5″'],
+        id: 'BFMIDI MICRO S3',
+        h1: ['BFMIDI', 'MICRO S3'],
         lead: 'Quatro footswitches e 40 presets ao alcance do pé.',
         cta: 'Ver detalhes',
         shot: 'micro-hero',
-        shotAlt: 'BFMIDI MICRO vista de cima: quatro footswitches com anéis de LED ' +
-                 'coloridos, LIVE MODE, tela colorida com o preset ROCK e as portas ' +
-                 '9V, TRS, USB HOST e USB DEVICE no topo.',
-        /* O que a foto mostra no topo: TRS, HOST e DEVICE (mais o 9V). Sem
-           DIN5, e sem entrada de expressão ou dual switch (confirmado pelo
-           usuário, 18/09/2026). */
+        shotAlt: 'BFMIDI MICRO S3 vista de cima: quatro footswitches, anel azul aceso ' +
+                 'no footswitch 1, tela colorida com um amplificador e o preset ' +
+                 'CLASSIC ROCK, e as portas 9V, HOST, DEVICE e TRS no topo.',
+        /* O que a foto mostra no topo: HOST, DEVICE e TRS (mais o 9V). Sem
+           DIN5, e sem entrada de expressão ou dual switch. */
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi'],
         switches: 4,
-        dimensions: { width: 14, height: 10 },
+        dimensions: { width: 12, height: 11 },
         specs: [
           specSwitches(4, 'Quatro footswitches, para quem conta cada centímetro da placa.'),
           /* 4 por banco, e não 6: nas placas de quatro footswitches o pé alcança
              quatro presets por letra. Ver boardPresetCount() no firmware. */
           specPresets(4),
-          SPEC_SCREEN_24,               /* tela de 2,4″, informação do usuário */
+          SPEC_SCREEN_35,
           SPEC_MODES
         ],
         buy: {
           hideDetails: true,
           primary: {
-            label: 'Comprar MICRO',
+            label: 'Comprar MICRO S3',
             href: 'https://loja.bffx.com.br/produtos/bfmidi-3-micro-qdul0'
           },
           waitlist: {
             text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
             label: 'Chamar no WhatsApp',
-            href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%20MICRO.'
+            href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%20MICRO%20S3.'
           }
         },
-        /* A banda de INFO não traz `img` e cai na foto principal (main.js);
-           a de CONEXÕES tem a foto traseira. */
+        /* A banda de INFO não traz `img` e cai na foto principal (main.js).
+           A de CONEXÕES também usa a foto de cima, enquanto não existe uma
+           foto traseira da MICRO S3: a traseira antiga (micro-rear) é do
+           chassi anterior, com as portas em outra ordem. Sem `silk`: as
+           etiquetas do chassi já estão impressas no topo da foto, e as do
+           site desceriam até a borda de baixo, longe das portas. */
         bands: [
           {
             panel: 'info',
-            title: 'Recursos da MICRO',
+            title: 'Recursos da MICRO S3',
             body: 'Quatro footswitches, tela colorida e os mesmos nove comportamentos ' +
                   'de LIVE das maiores. Sem footswitch dedicado, o LIVE MODE entra ' +
                   'pisando o 1 e o 3 juntos.',
@@ -498,17 +502,16 @@ window.BF_CONTENT = (function () {
           },
           {
             panel: 'conects',
-            img: 'micro-rear',
-            size: [1600, 827],
-            floor: 99.6,
-            alt: 'Painel traseiro da BFMIDI MICRO com as conexões identificadas: ' +
-                 '9V, TRS, USB DEVICE e USB HOST.',
+            img: 'micro-hero',
+            size: [1494, 1398],
+            floor: 99.8,
+            alt: 'BFMIDI MICRO S3 vista de cima, com as conexões identificadas no ' +
+                 'topo do chassi: 9V, HOST, DEVICE e TRS.',
             title: 'Cabo, USB',
             hot: 'e sem fio.',
             body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
                   'USB sem computador. Todas as portas ficam no topo, junto da ' +
-                  'alimentação de 9V.',
-            silk: [['9V', 23.4], ['TRS', 39], ['DEVICE', 55.5], ['HOST', 71.6]]
+                  'alimentação de 9V.'
           }
         ]
       }

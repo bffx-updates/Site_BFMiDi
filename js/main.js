@@ -185,7 +185,7 @@
     '8sw-hero-front': { w: 1600, h: 1146, sm: 800, md: 0,    body: [1, 1.25, 1.05, 0.96] },
     '6sw-hero':       { w: 1600, h: 563,  sm: 800, md: 1200, body: [0, 0, 0.18, 0.18] },
     'nano-hero':      { w: 1536, h: 1024, sm: 800, md: 1200, body: [2.2, 2.15, 6.93, 8.59] },
-    'micro-hero':     { w: 1600, h: 1012, sm: 800, md: 1200, body: [0, 0, 0, 0] }
+    'micro-hero':     { w: 1494, h: 1398, sm: 800, md: 1200, body: [0, 0, 0, 0] }
   };
   /* Largura em que a foto aparece. No desktop ela acompanha a ALTURA da
      janela (o teto do palco), então uma medida fixa pegaria o arquivo
@@ -315,8 +315,25 @@
   if (window.ResizeObserver && heroWordmark && heroWordmarkBox) {
     new ResizeObserver(function () {
       heroWordmarkBox.style.setProperty('--wm-w', heroWordmark.offsetWidth + 'px');
+      fitWordmark();
     }).observe(heroWordmark);
   }
+
+  /* Nome comprido (a MICRO S3, 05/11/2026): a palavra fica numa linha só.
+     --wm-em é a largura dela medida em em — não depende do tamanho da
+     letra —, e o css/home.css só baixa a fonte quando a palavra passaria
+     da largura do palco. Medida de novo quando a palavra troca, quando a
+     fonte chega e quando a caixa muda; com a HOME fora de cena a medida
+     dá 0 e é ignorada (o ResizeObserver mede quando ela volta). */
+  function fitWordmark() {
+    if (!heroWordmark || !heroWordmarkBox || !heroWordmark.firstChild) return;
+    var r = document.createRange();
+    r.selectNodeContents(heroWordmark);
+    var w = r.getBoundingClientRect().width;
+    var fs = parseFloat(getComputedStyle(heroWordmark).fontSize);
+    if (w > 0 && fs > 0) heroWordmarkBox.style.setProperty('--wm-em', (w / fs).toFixed(3));
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitWordmark);
 
   /* Estado da troca. Quem decide o modelo e a vista é apply(); daqui só se
      OBSERVA o resultado (a classe is-on das figuras e do painel HOME), para
@@ -451,7 +468,7 @@
     '8sw-top':    { w: 1200, h: 867,  body: [0.5, 0.4, 7.8, 5.6], screen: '320 60 470 300' },
     'nano-top':   { w: 1200, h: 805,  body: [0.5, 3.0, 0.6, 9.2], screen: '340 206 520 324' },
     '6sw-hero':   { w: 1600, h: 563,  body: [0, 0, 0, 0],         screen: '70 104 480 336' },
-    'micro-hero': { w: 1600, h: 1012, body: [0, 0, 0, 0],         screen: '526 224 510 480' }
+    'micro-hero': { w: 1494, h: 1398, body: [0, 0, 0, 0],         screen: '249 372 993 673' }
   };
 
   /* Cores dos anéis, as que as fotos mostram acesas. Cada par é
@@ -1447,6 +1464,7 @@
       : view === 'home' ? m.id : m.id + ' · ' + eyebrowOf(view);
     if (heroWordmark.textContent !== m.h1[1]) {
       heroWordmark.textContent = m.h1[1];
+      fitWordmark();
       /* A palavra nova acende: clarão curto no campo de luz. Não na
          primeira pintura — ali não há troca, só chegada. Tirar e repor a
          classe com um reflow no meio é o que reinicia a animação. */
