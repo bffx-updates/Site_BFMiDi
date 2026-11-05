@@ -330,6 +330,24 @@
 }
 #panel-comprar .shop-details .band-list { margin: 0; }
 
+/* O preço da loja (05/11/2026), no topo do cartão: rótulo neutro à
+   esquerda e o valor grande, na leitura de instrumento da ficha. */
+#panel-comprar .shop-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 0 4px 4px;
+}
+#panel-comprar .shop-amount__v {
+  color: var(--ink);
+  font-size: clamp(30px, 3.4vw, 40px);
+  letter-spacing: -.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 /* ---------- 3. FICHA EM NÚMEROS ----------------------------- */
 
 /* Poço escuro dividido por filetes de 1px (o gap deixa aparecer o fundo

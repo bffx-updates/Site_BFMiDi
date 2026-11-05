@@ -1025,6 +1025,17 @@
     return hit ? hit[1].replace(/^www\./i, '') : '';
   }
 
+  /* O preço da loja (`price` do modelo, em reais), no formato que a loja
+     mostra: R$ 1.049,00. Modelo sem `price` não mostra preço nenhum. */
+  function priceOf(m) {
+    if (!m || typeof m.price !== 'number') return '';
+    try {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(m.price);
+    } catch (e) {
+      return 'R$ ' + m.price.toFixed(2).replace('.', ',');
+    }
+  }
+
   function renderComprar(m) {
     var modelBuy = m.buy || {};
     var b = {
@@ -1077,6 +1088,14 @@
     var details = b.hideDetails ? '' :
       '<div class="shop-details"><p class="shop-price">' + esc(b.price) + '</p>' + listTag(b.list) + '</div>';
 
+    /* O preço da loja, à vista no topo do cartão (05/11/2026). Vale também
+       com `hideDetails`: o que ela esconde é o "Sob consulta" genérico. */
+    var amount = priceOf(m);
+    var priceTag = amount
+      ? '<p class="shop-amount"><span class="pg-label">' + esc(C.buy.priceLabel || '') + '</span>' +
+          '<span class="shop-amount__v pg-readout">' + esc(amount) + '</span></p>'
+      : '';
+
     /* A ficha: os mesmos quatro números do painel INFO, sem as notas, na
        mesma leitura de instrumento (.pg-readout) e com o rótulo neutro
        de cartão (.pg-label). */
@@ -1124,7 +1143,7 @@
         lead: b.hideDetails ? m.lead : b.lead
       }) +
       stage +
-      '<div class="shop-buy">' + details + cta + wait + '</div>' +
+      '<div class="shop-buy">' + priceTag + details + cta + wait + '</div>' +
       facts +
       ports +
     '</div></div>';
@@ -1264,6 +1283,7 @@
       if (row.port) return (m.ports || []).indexOf(row.port) >= 0 ? YES : NO;
       if (row.field === 'switches') return esc(String(m.switches));
       if (row.field === 'dimensions') return esc(sizeOf(m));
+      if (row.field === 'price') return priceOf(m) ? '<strong class="cmp-price">' + esc(priceOf(m)) + '</strong>' : '—';
       if (row.spec) return esc(specOf(m, row.spec));
       return '—';
     }
@@ -1306,6 +1326,7 @@
         '<a class="lj-card__img" href="#' + esc(m.hash) + '" data-go="model:' + i + '" tabindex="-1" aria-hidden="true">' + thumbTag(m) + '</a>' +
         '<h3 class="lj-card__t">' + esc(m.id) + '</h3>' +
         '<p class="lj-card__note">' + esc(noteText(m)) + ' · ' + esc(sizeOf(m)) + '</p>' +
+        (priceOf(m) ? '<p class="lj-card__price pg-readout">' + esc(priceOf(m)) + '</p>' : '') +
         '<div class="lj-card__go">' +
           (shop ? '<a class="pg-cta" href="' + esc(buy.href) + '" target="_blank" rel="noopener noreferrer">' + esc(buy.label) + shopSvg('out', 'lj-arrow') + '<span class="sr-only"> (' + esc(K.newTab) + ')</span></a>' : '') +
           '<a class="pg-ghost" href="#' + esc(m.hash) + '" data-go="model:' + i + '">' + esc(K.details) + '<span class="sr-only"> ' + esc(m.id) + '</span></a>' +

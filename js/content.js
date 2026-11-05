@@ -235,6 +235,10 @@ window.BF_CONTENT = (function () {
                  'tela colorida com amplificador e o anel azul do footswitch 1 aceso.',
         ports: ['din5', 'trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 8,
+        /* Preço da loja online, em reais (05/11/2026). O main.js formata
+           como a loja mostra (R$ 1.049,00) no painel Comprar, na página
+           Comprar e na Comparar. Mudou na loja, mude aqui. */
+        price: 1049,
         dimensions: { width: 18, height: 14 },
         specs: [
           specSwitches(8, 'Seis para presets, mais LIVE MODE e GLOBAL SWITCH dedicados.'),
@@ -306,6 +310,7 @@ window.BF_CONTENT = (function () {
            (mais o 9V). Sem DIN5, como a NANO+. */
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 6,
+        price: 939,
         dimensions: { width: 26, height: 9 },
         specs: [
           specSwitches(6, 'Seis footswitches para presets, com acesso ao modo LIVE.'),
@@ -385,6 +390,7 @@ window.BF_CONTENT = (function () {
                  'com o preset CLASSIC ROCK e anel azul aceso no footswitch 1.',
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 6,
+        price: 899,
         dimensions: { width: 18, height: 11 },
         specs: [
           specSwitches(6, 'Os mesmos seis presets por banco, num corpo bem menor.'),
@@ -460,6 +466,7 @@ window.BF_CONTENT = (function () {
            DIN5, e sem entrada de expressão ou dual switch. */
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi'],
         switches: 4,
+        price: 649,
         dimensions: { width: 12, height: 11 },
         specs: [
           specSwitches(4, 'Quatro footswitches, para quem conta cada centímetro da placa.'),
@@ -616,7 +623,8 @@ window.BF_CONTENT = (function () {
           { label: 'Footswitches',             field: 'switches' },
           { label: 'Presets ao alcance do pé', spec: 'Presets ao alcance do pé' },
           { label: 'Tela colorida',            spec: 'Tela colorida' },
-          { label: 'Tamanho',                  field: 'dimensions' }
+          { label: 'Tamanho',                  field: 'dimensions' },
+          { label: 'Preço',                    field: 'price' }
         ] },
         { group: 'Saídas MIDI', items: [
           { label: 'DIN5 (5 pinos)', port: 'din5' },
@@ -696,6 +704,7 @@ window.BF_CONTENT = (function () {
          tela, do link que abre outra aba. `portTags` é o nome CURTO de
          cada conexão, como na serigrafia do chassi — a descrição longa
          continua em `ports` e vai para o leitor de tela. */
+      priceLabel: 'Preço',
       storeNote: 'Loja online da BFFX',
       soon: 'Em breve',
       waitKicker: 'Grupo de espera',
