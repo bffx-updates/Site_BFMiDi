@@ -450,12 +450,95 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   }
+  /* ── LOG VIEW (telemetria da caixa-preta) ── */
+  .lvbtn { display: inline-flex; align-items: center; gap: .65rem; height: 2.65rem; padding: 0 1.25rem; border-radius: .7rem; cursor: pointer; flex: none;
+    background: linear-gradient(180deg, #18212C, #111820); border: 1px solid rgba(252,99,55,.55); color: var(--accent2);
+    font-size: max(11px, .95rem); font-weight: 900; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .lvbtn svg { width: 1.25rem; height: 1.25rem; }
+  .lvbtn:hover { background: rgba(252,99,55,.12); }
+  .lvbtn[aria-pressed="true"] { background: linear-gradient(180deg, #FF8B50, #F1602A); color: #1A0B04; border-color: transparent;
+    box-shadow: 0 0 1.6rem -.2rem rgba(252,99,55,.6), inset 0 1px 0 rgba(255,255,255,.35); }
+  .lv { display: grid; gap: 1.2rem; }
+  .lv h2 { margin: 0; font-size: max(13px, 1.15rem); font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+  .lv-card { background: linear-gradient(180deg, var(--card-a), var(--card-b)); border-radius: var(--r); padding: 1.3rem 1.5rem; min-width: 0;
+    border: 1px solid rgba(255,255,255,.07); border-top-color: rgba(255,255,255,.2); border-left-color: rgba(255,255,255,.12); border-bottom-color: rgba(0,0,0,.45);
+    box-shadow: 0 1.4rem 2.6rem -1.6rem rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.08); }
+  .lv-card > h2 + * { margin-top: .5rem; }
+  .lv-note { margin: .35rem 0 .7rem; color: var(--muted); font-size: max(11px, .92rem); }
+  .lv-head { display: flex; align-items: center; gap: .8rem 1.4rem; flex-wrap: wrap; }
+  .lv-back { justify-self: start; background: none; border: 0; color: var(--accent2); font-weight: 800; cursor: pointer; padding: .3rem 0; font-size: max(12px, .95rem); }
+  .lv-back:hover { text-decoration: underline; }
+  .lv-none p { color: var(--soft); max-width: 60rem; }
+  .lv-diag { border-left: .35rem solid var(--sev); }
+  .lv-diag ul { list-style: none; margin: .8rem 0 0; padding: 0; display: grid; gap: .9rem; }
+  .lv-diag li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: .4rem 1.1rem; align-items: start; padding-top: .9rem; border-top: 1px solid var(--line); }
+  .lv-diag li:first-child { border-top: 0; padding-top: 0; }
+  .lv-diag b { font-size: max(13px, 1.05rem); }
+  .lv-diag p { margin: .3rem 0 0; color: var(--soft); }
+  .lv-diag .fix { color: var(--text); }
+  .lv-diag .fix span { color: var(--accent2); font-weight: 800; }
+  .lv-sev { display: inline-flex; align-items: center; gap: .45rem; height: 2rem; padding: 0 .8rem; border-radius: 999px; white-space: nowrap; justify-self: start;
+    font-size: max(11px, .82rem); font-weight: 900; letter-spacing: .07em; color: var(--sev); border: 1px solid var(--sev); background: color-mix(in srgb, var(--sev) 12%, transparent); }
+  .lv-sev svg { width: 1.05rem; height: 1.05rem; }
+  .lv-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+  .lv-kpi { --sev: transparent; position: relative; display: grid; gap: .25rem; padding: 1rem 1.2rem; border-radius: var(--r); background: linear-gradient(180deg, #172130, #111922);
+    border: 1px solid rgba(255,255,255,.08); box-shadow: inset .3rem 0 0 var(--sev); min-width: 0; }
+  .lv-kpi .k { font-size: max(11px, .78rem); font-weight: 900; letter-spacing: .14em; color: var(--muted); }
+  .lv-kpi b { font-size: max(18px, 1.7rem); font-weight: 800; font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lv-kpi .s { color: var(--muted); font-size: max(11px, .86rem); overflow-wrap: anywhere; }
+  .lv-boots { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .lv-boots .chip { height: 2.2rem; cursor: pointer; }
+  .lv-chart { width: 100%; min-height: 2rem; overflow: hidden; }
+  .lv-chart svg { display: block; font-family: inherit; }
+  .lv-empty { margin: 1rem 0; color: var(--faint); font-size: max(11px, .92rem); }
+  .lv-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.3rem; margin-top: .6rem; color: var(--soft); font-size: max(11px, .88rem); }
+  .lv-legend span { display: inline-flex; align-items: center; gap: .45rem; }
+  .lv-legend i { width: .8rem; height: .8rem; border-radius: 50%; background: var(--c); flex: none; }
+  .lv-legend i.bar { width: 1.4rem; height: .7rem; border-radius: 3px; background: linear-gradient(90deg, #ec835a, #d03b3b); }
+  .lv-legend.sm { margin-top: .3rem; font-size: max(11px, .8rem); }
+  .lv-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem 1.6rem; margin-top: .6rem; }
+  .lv-grid figure { margin: 0; min-width: 0; }
+  .lv-grid figcaption { color: var(--soft); font-weight: 700; font-size: max(11px, .88rem); margin-bottom: .4rem; }
+  .lv-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+  .lv-stack { display: flex; gap: 2px; height: .9rem; border-radius: 4px; overflow: hidden; margin: .7rem 0 .5rem; }
+  .lv-stack.big { height: 1.6rem; }
+  .lv-stack i { background: var(--c); min-width: 3px; }
+  .lv-ep { padding: .9rem 0; border-top: 1px solid var(--line); }
+  .lv-ep:first-of-type { border-top: 0; }
+  .lv-ep .h { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem 1.1rem; }
+  .lv-ep .h span:not(.lv-sev) { color: var(--soft); }
+  .lv-ep .d { color: var(--muted); font-size: max(11px, .9rem); }
+  .lv-ep .d b { color: var(--soft); }
+  .lv-stalls { margin: .6rem 0 0; padding: 0; list-style: none; display: grid; gap: .6rem; color: var(--soft); }
+  .lv .scroll { overflow-x: auto; }
+  .lv table { width: 100%; border-collapse: collapse; font-size: max(11px, .9rem); }
+  .lv th { text-align: left; color: var(--muted); font-weight: 800; letter-spacing: .05em; padding: .45rem .6rem; border-bottom: 1px solid var(--line2); white-space: nowrap; }
+  .lv td { padding: .5rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--soft); }
+  .lv td.t { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+  .lv td.tx { color: var(--text); min-width: 18rem; }
+  .lv-ev .lane { display: inline-flex; align-items: center; gap: .4rem; font-weight: 800; font-size: max(11px, .8rem); letter-spacing: .06em; color: var(--soft); white-space: nowrap; }
+  .lv-ev .lane::before { content: ''; width: .65rem; height: .65rem; border-radius: 50%; background: var(--c); }
+  .lv-table summary { cursor: pointer; color: var(--accent2); font-weight: 800; margin-top: .9rem; }
+  .lv-table.lv-card summary { margin-top: 0; }
+  .lv-table pre { white-space: pre-wrap; font-size: max(11px, .82rem); color: var(--soft); max-height: 40rem; overflow: auto; }
+  .lv-table table { margin-top: .6rem; }
+  .lv-tip { position: fixed; z-index: 50; max-width: 26rem; padding: .55rem .75rem; border-radius: .6rem; pointer-events: none; font-size: max(12px, .88rem);
+    background: #0B1017; color: var(--text); border: 1px solid var(--line2); box-shadow: 0 .8rem 1.6rem -.4rem rgba(0,0,0,.8); }
+  @media (max-width: 1100px) { .lv-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .lv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 720px) {
+    .lv-grid, .lv-grid2 { grid-template-columns: minmax(0, 1fr); }
+    .lv-diag li { grid-template-columns: minmax(0, 1fr); }
+    .lv-card { padding: 1.1rem 1rem; }
+    .lvbtn { min-height: 44px; }
+  }
+  @media (forced-colors: active) { .lv-sev, .lv-kpi, .lvbtn[aria-pressed="true"] { border: 1px solid CanvasText; } }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand"><span class="name" role="heading" aria-level="1"><b>BFMIDI</b> BACKUP VIEW</span><i class="sep"></i><span class="sub">Visualizador de backup</span></div>
-  <label class="filebtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h3.6l2 2h7.4A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>Abrir backup <input id="file" type="file" accept=".json,application/json"></label>
+  <label class="filebtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h3.6l2 2h7.4A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>Abrir backup <input id="file" type="file" accept=".json,.txt,.log,application/json,text/plain"></label>
+  <button class="lvbtn" id="lvBtn" type="button" aria-pressed="false" title="Telemetria da controladora: travamentos, lentidão, Wi-Fi e pisadas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>LOG VIEW</button>
   <div class="fileinfo" id="fileinfo">Nenhum arquivo aberto</div>
 </header>
 <main id="main"></main>
@@ -587,7 +670,7 @@ const LETTERS = 'ABCDEFGHIJ';
 // ─────────────────────────────────────────────────────────────────────────────
 // ESTADO
 // ─────────────────────────────────────────────────────────────────────────────
-const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false, bootOpen: null };
+const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false, bootOpen: null, view: 'presets', lv: null, lvBoot: 0 };
 let LED = LED_DEFAULT.map(([n, rgb]) => ({ name: n, rgb }));
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1090,7 +1173,445 @@ function renderPreset() {
 const FOLDER_SVG = document.querySelector('.filebtn svg').outerHTML;
 const $main = document.getElementById('main');
 const $info = document.getElementById('fileinfo');
+// ─────────────────────────────────────────────────────────────────────────────
+// LOG VIEW — telemetria da CAIXA-PRETA (firmware 15.6 de 06/nov/2026 em diante)
+// Le a linha "DIAG-JSON {...}" que o firmware poe no fim do GET /log (e que o
+// editor embute no backup, chave boot_log). A ORDEM dos arrays e contrato com
+// o DIAG_RECORDER.h (diag_report_json, "v":1): mudou la, mude aqui.
+// Tambem abre o texto puro do /log ou do /diag (.txt) sem backup.
+// ─────────────────────────────────────────────────────────────────────────────
+const LV_RESET = ['?', 'LIGOU', 'RESET EXTERNO', 'REINÍCIO PEDIDO', 'PÂNICO', 'WATCHDOG (INTERRUPÇÃO)', 'WATCHDOG (TAREFA)',
+  'WATCHDOG', 'DEEPSLEEP', 'QUEDA DE TENSÃO', 'SDIO', 'USB', 'JTAG', 'EFUSE', 'FALHA DE ENERGIA', 'CPU TRAVADA'];
+const LV_RESET_BAD = new Set([4, 5, 6, 7, 9, 14, 15]);
+const LV_WHY = ['outro motivo', 'boot', 'auto-off (90 s sem ninguém)', 'combo do pé', 'busca de redes'];
+const LV_WIFI_REASON = { 1: 'não especificado', 2: 'autenticação expirou', 3: 'o aparelho saiu', 4: 'inatividade (tela do celular apagou?)',
+  5: 'AP cheio', 6: 'não autenticado', 7: 'não associado', 8: 'o aparelho saiu', 15: 'handshake expirou (senha?)', 16: 'chave de grupo expirou',
+  34: 'sinal fraco', 200: 'sinal perdido', 201: 'rede não encontrada', 202: 'senha recusada', 203: 'associação falhou',
+  204: 'handshake expirou', 205: 'conexão falhou', 206: 'roteador reiniciou', 207: 'roaming' };
+const LV_METHOD = ['DELETE', 'GET', 'HEAD', 'POST', 'PUT', '?', 'OPTIONS'];
+// Paleta categórica (modo escuro, validada) — uma cor por fase do loop, em ordem fixa.
+// Fases na ordem MIDI, USB, WEB, WIFI, LED, SWITCHES, COMANDOS, TELA: a ordem validada da paleta
+// (escuro) girada em 3 posições — passa em todas as checagens de daltonismo como vizinhas — e assim as
+// duas fases que mais aparecem, WEB e SWITCHES, ficam verde e azul (bem diferentes).
+const LV_PH_COL = ['#c98500', '#d55181', '#008300', '#9085e9', '#e66767', '#3987e5', '#d95926', '#199e70'];
+const LV_PH_DESC = { MIDI: 'MIDI e USB host', USB: 'canal de controle pelo cabo', WEB: 'pedidos do app/editor pelo Wi-Fi', WIFI: 'conexão com a rede de casa',
+  LED: 'LEDs e testes', SWITCHES: 'footswitches e desenho da tela', COMANDOS: 'comandos e troca de preset', TELA: 'overlays e Kemper/afinador' };
+// Cores de ESTADO (fixas, nunca usadas como série) — sempre com ícone + rótulo.
+const LV_SEV = { ok: { c: '#0ca30c', l: 'OK' }, info: { c: '#3987e5', l: 'INFO' }, warn: { c: '#fab219', l: 'ATENÇÃO' },
+  serious: { c: '#ec835a', l: 'IMPORTANTE' }, crit: { c: '#d03b3b', l: 'CRÍTICO' } };
+const LV_SEV_ICON = { ok: '<path d="m5 12 4.5 4.5L19 7"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+  warn: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>', serious: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>',
+  crit: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>' };
+const LV_LANE = [
+  { k: 'sys', l: 'Sistema', c: '#9085e9' },
+  { k: 'wifi', l: 'Wi-Fi', c: '#3987e5' },
+  { k: 'slow', l: 'Lentidão', c: '#ec835a' },
+  { k: 'http', l: 'HTTP lento', c: '#199e70' },
+  { k: 'press', l: 'Pisadas', c: '#c98500' },
+];
+
+function lvParse(text) {
+  if (typeof text !== 'string') return null;
+  const i = text.lastIndexOf('DIAG-JSON ');
+  if (i < 0) return null;
+  const end = text.indexOf('\n', i);
+  let j;
+  try { j = JSON.parse(text.slice(i + 10, end < 0 ? undefined : end)); } catch (e) { return null; }
+  if (!j || j.v !== 1) return j ? { badVersion: true, v: j.v } : null;
+  const ph = j.phases || [];
+  j.ev = (j.ev || []).map(([boot, ms, type, a, b, b2, c, tag]) => ({ boot, ms, type, a, b, b2, c, tag }));
+  j.ep = (j.ep || []).map(([boot, start, dur, slow, max, sum, phaseMs, route, routeMs, http, presses, pressMax, heapKB, loopMin,
+    wifiEv, apSta, staRssi, apRssi, idleMin, top, topPct]) => ({ boot, start, dur, slow, max, sum, phaseMs, route, routeMs, http, presses,
+    pressMax, heapKB, loopMin, wifiEv, apSta, staRssi, apRssi, idleMin, top, topPct,
+    worst: phaseMs.reduce((w, v, i) => (v > phaseMs[w] ? i : w), 0) }));
+  j.min = (j.min || []).map(([boot, minute, loops, slow, maxLoop, maxPh, presses, maxPress, http, httpSlow, wifiEv, apMax, apRssi, staRssi,
+    loopMin, idleMin, heapKB]) => ({ boot, minute, loops, slow, maxLoop, maxPh, presses, maxPress, http, httpSlow, wifiEv, apMax, apRssi,
+    staRssi, loopMin, idleMin, heapKB }));
+  j.stalls = (j.stalls || []).map(([boot, at, dur, phase, route, heapKB, rebooted, fw]) => ({ boot, at, dur, phase, route, heapKB, rebooted, fw }));
+  j.phName = (i) => ph[i] || '?';
+  // O texto do relatório (sem a linha JSON), para o "ver o relatório em texto".
+  const a = text.lastIndexOf('===== CAIXA-PRETA', i);
+  j.reportText = a >= 0 ? text.slice(a, text.indexOf('===== fim da caixa-preta', i) + 24).replace(/^DIAG-JSON .*$/m, '').trim() : '';
+  return j;
+}
+
+const lvT = (ms) => { const t = Math.floor(ms / 1000), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = t % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : String(m)) + ':' + String(s).padStart(2, '0'); };
+const lvMs = (ms) => (ms >= 10000 ? (ms / 1000).toFixed(0) + ' s' : ms >= 1000 ? (ms / 1000).toFixed(1).replace('.', ',') + ' s' : ms + ' ms');
+const lvKB = (b) => Math.round(b / 1024) + ' KB';
+const lvReason = (r) => (LV_WIFI_REASON[r] ? `${LV_WIFI_REASON[r]} (${r})` : `motivo ${r}`);
+const lvI16 = (v) => (v > 32767 ? v - 65536 : v);
+
+// Um evento em linguagem simples: { lane, sev, label, text }.
+function lvEvent(e, j) {
+  switch (e.type) {
+    case 1: {
+      const bad = LV_RESET_BAD.has(e.a) || e.b === 1;
+      let t = e.a === 1 ? 'Controladora LIGADA' : `Reiniciou: ${LV_RESET[e.a] || e.a}`;
+      if (e.b === 1) t = `REINICIADA PELO VIGIA: loop parado ${lvMs(e.c)}`;
+      if (e.tag) t += ` — caiu em ${e.tag}`;
+      return { lane: 'sys', sev: e.a === 9 ? 'crit' : bad ? 'crit' : 'info', label: 'BOOT', text: t };
+    }
+    case 2: return { lane: 'wifi', sev: 'info', label: 'WI-FI', text: `Wi-Fi ligou (${LV_WHY[e.a] || e.a})` };
+    case 3: return { lane: 'wifi', sev: e.a === 2 || e.a === 3 ? 'warn' : 'info', label: 'WI-FI', text: `Wi-Fi DESLIGOU (${LV_WHY[e.a] || e.a})` };
+    case 4: return { lane: 'wifi', sev: 'info', label: 'WI-FI', text: `Aparelho entrou no Wi-Fi da controladora (…${e.tag}) — ${e.b} conectado(s)` };
+    case 5: return { lane: 'wifi', sev: 'warn', label: 'WI-FI', text: `Aparelho SAIU do Wi-Fi (…${e.tag}): ${lvReason(e.b2)} — ${e.b} conectado(s)` };
+    case 6: return { lane: 'wifi', sev: 'info', label: 'WI-FI', text: `Rede de casa conectou (${lvI16(e.b)} dBm)` };
+    case 7: return { lane: 'wifi', sev: 'warn', label: 'WI-FI', text: `Rede de casa CAIU: ${lvReason(e.b2)}${lvI16(e.b) ? ` (${lvI16(e.b)} dBm)` : ''}${e.a > 1 ? ` — ${e.a} vezes seguidas` : ''}` };
+    case 8: return { lane: 'http', sev: e.b >= 1000 ? 'serious' : 'warn', label: 'HTTP', text: `Pedido lento: ${LV_METHOD[e.a] || ''} ${e.tag || '?'} levou ${lvMs(e.b)}`, ms: e.b };
+    case 9: return { lane: 'sys', sev: 'serious', label: 'MEMÓRIA', text: `Memória interna baixa: ${lvKB(e.c)} livres (maior bloco ${e.b} KB)` };
+    case 10: return { lane: 'press', sev: e.b >= 300 ? 'serious' : 'warn', label: 'PISADA',
+      text: `Pisada lenta (pino ${e.a}): ${lvMs(e.b)}${e.tag ? ` — controladora presa em ${e.tag}` : ' — sem loop lento no meio: contato do footswitch repicando'}`, ms: e.b };
+    case 11: return { lane: 'press', sev: 'warn', label: 'PISADA', text: `Pisada recuperada (pino ${e.a}): o loop ficou parado ${lvMs(e.b)} e o toque só foi visto depois` };
+    case 12: return { lane: 'slow', sev: 'crit', label: 'TRAVOU',
+      text: `Controladora PARADA ${lvMs(e.c)} na fase ${j.phName(e.a)}${e.tag ? ` (pedido ${e.tag})` : ''}${e.b ? ' — o vigia reiniciou' : ''}`, ms: e.c };
+    case 13: return { lane: 'http', sev: 'warn', label: 'HTTP',
+      text: `Pedido incompleto DESCARTADO: ${LV_METHOD[e.a] || ''} ${e.tag || '?'} — o aparelho mandou ${e.b2} bytes em ${lvMs(e.b)} e não terminou (a controladora seguiu normal)` };
+    default: return { lane: 'sys', sev: 'info', label: 'EVENTO', text: `Evento ${e.type}` };
+  }
+}
+
+// Diagnóstico automático: o que aconteceu, por que e o que fazer.
+function lvDiagnose(j) {
+  const out = [];
+  const add = (sev, title, text, fix) => out.push({ sev, title, text, fix });
+  const ev = j.ev;
+  const count = (f) => ev.filter(f).length;
+  const vigia = count((e) => e.type === 1 && e.b === 1) + j.stalls.filter((s) => s.rebooted).length;
+  if (vigia) add('crit', 'A controladora travou de vez e o vigia a reiniciou',
+    `${vigia} vez(es) o loop ficou parado 60 s ou mais.`, 'Mande este backup ao suporte. A fase em que travou está na linha do tempo.');
+  const stalls = j.stalls.length ? j.stalls.map((s) => ({ ph: s.phase, dur: s.dur, route: s.route }))
+    : ev.filter((e) => e.type === 12).map((e) => ({ ph: e.a, dur: e.c, route: e.tag }));
+  if (stalls.length) {
+    const web = stalls.filter((s) => j.phName(s.ph) === 'WEB');
+    const worst = stalls.reduce((a, s) => (s.dur > a.dur ? s : a), stalls[0]);
+    if (web.length) add('crit', `Um aparelho no Wi-Fi congelou a controladora (${web.length}x, pior ${lvMs(Math.max(...web.map((s) => s.dur)))})`,
+      `Nesse tempo os footswitches não respondem. O servidor web atende um pedido por vez e espera o aparelho terminar de mandar o pedido${worst.route ? ` (ex.: ${worst.route})` : ''}. Celular com sinal fraco, que dormiu ou saiu da rede no meio de um pedido, segura a controladora.`,
+      'Deixe o celular/tablet perto da controladora, feche o editor nos aparelhos que não estão sendo usados e evite usar o editor durante o show. Correção definitiva: atualização de firmware.');
+    const other = stalls.filter((s) => j.phName(s.ph) !== 'WEB');
+    if (other.length) add('crit', `A controladora ficou parada ${other.length}x fora do Wi-Fi (pior ${lvMs(Math.max(...other.map((s) => s.dur)))})`,
+      `Fases: ${[...new Set(other.map((s) => j.phName(s.ph)))].join(', ')}.`, 'Mande este backup ao suporte.');
+  }
+  const crash = count((e) => e.type === 1 && LV_RESET_BAD.has(e.a) && e.a !== 9);
+  if (crash) add('crit', `Reinícios por falha: ${crash}`, 'Pânico ou watchdog: o firmware caiu e reiniciou sozinho. O log de boot traz o endereço da falha.',
+    'Mande este backup ao suporte (o log de boot vai junto).');
+  const brown = count((e) => e.type === 1 && e.a === 9);
+  if (brown) add('crit', `Queda de tensão: ${brown} reinício(s)`, 'A alimentação não aguentou o pico de corrente (o Wi-Fi puxa picos ao transmitir).',
+    'Use a fonte de 9 V indicada. Alimentar só pela USB, ou com cabo/fonte fraca, causa isso.');
+  const autoOff = count((e) => e.type === 3 && e.a === 2);
+  if (autoOff) add('info', `O Wi-Fi desligou sozinho ${autoOff}x porque ninguém conectou em 90 s`,
+    'É o comportamento normal da controladora: sem nenhum aparelho no Wi-Fi em 90 s, o rádio desliga para não atrapalhar no palco.',
+    'Conecte o celular logo depois de ligar, ou religue o Wi-Fi pelo combo do pé.');
+  const combo = count((e) => e.type === 3 && e.a === 3);
+  if (combo) add('warn', `O Wi-Fi foi DESLIGADO pelo pé ${combo}x (combo de dois footswitches)`,
+    'Pisar os dois footswitches do combo do Wi-Fi juntos desliga o rádio — pode ter sido sem querer.',
+    'Se não for intencional, troque a ação desse combo em CONFIGURAÇÕES › BANCOS › COMBOS.');
+  const leaves = ev.filter((e) => e.type === 5);
+  if (leaves.length) {
+    const by = {};
+    leaves.forEach((e) => { const k = [4].includes(e.b2) ? 'sleep' : [34, 200].includes(e.b2) ? 'signal' : [3, 8].includes(e.b2) ? 'left' : 'other'; by[k] = (by[k] || 0) + 1; });
+    if (by.sleep) add('warn', `Aparelho caiu do Wi-Fi por inatividade (${by.sleep}x)`, 'O celular parou de responder à controladora — normalmente a tela apagou ou a economia de bateria desligou o Wi-Fi.',
+      'Mantenha a tela do celular acesa durante o uso, ou desligue a economia de bateria para o app.');
+    if (by.signal) add('warn', `Aparelho caiu do Wi-Fi por sinal fraco (${by.signal}x)`, 'O sinal entre o celular e a controladora ficou fraco demais.', 'Aproxime o aparelho; evite obstáculos e o case metálico na frente.');
+    if (by.left) add('warn', `O próprio aparelho saiu do Wi-Fi da controladora (${by.left}x)`,
+      'O celular desconectou por conta própria — é comum ele trocar para o 4G ou para a rede de casa porque a rede da controladora não tem internet.',
+      'No celular, ao entrar na rede BFMIDI_WIFI, confirme "manter conectado" / "usar sem internet". Desligue a troca automática de rede.');
+    if (by.other) add('info', `Aparelho saiu do Wi-Fi por outros motivos (${by.other}x)`, 'Veja os motivos na lista de eventos.', '');
+  }
+  const sta = ev.filter((e) => e.type === 7);
+  if (sta.length) {
+    const n = sta.reduce((a, e) => a + Math.max(1, e.a), 0);
+    add('warn', `A conexão com a rede de casa caiu ${n}x`, `Motivos: ${[...new Set(sta.map((e) => lvReason(e.b2)))].join('; ')}.`,
+      'Confira o sinal do roteador onde a controladora fica e a senha salva.');
+  }
+  if (j.ep.length) {
+    const tot = new Array(8).fill(0);
+    j.ep.forEach((e) => e.phaseMs.forEach((v, i) => { tot[i] += v; }));
+    const w = tot.reduce((a, v, i) => (v > tot[a] ? i : a), 0), name = j.phName(w);
+    const pct = Math.round((tot[w] * 100) / Math.max(1, tot.reduce((a, v) => a + v, 0)));
+    const worstEp = j.ep.reduce((a, e) => (e.max > a.max ? e : a), j.ep[0]);
+    const why = name === 'WEB' ? 'pedidos do app/editor pelo Wi-Fi' : name === 'WIFI' ? 'tentativas de conectar na rede de casa'
+      : name === 'MIDI' ? 'tráfego MIDI / USB host' : (name === 'SWITCHES' || name === 'COMANDOS' || name === 'TELA') ? 'desenho da tela e troca de preset (imagens grandes pesam)' : LV_PH_DESC[name] || name;
+    add(name === 'WEB' || name === 'WIFI' ? 'serious' : 'warn', `${j.ep.length} período(s) de lentidão — ${pct}% do tempo em ${name}`,
+      `Causa provável: ${why}. Pior volta: ${lvMs(worstEp.max)}${worstEp.route ? ` (pedido ${worstEp.route}, ${lvMs(worstEp.routeMs)})` : ''}.`,
+      name === 'WEB' ? 'Use o editor só para configurar, não durante o show; feche-o nos aparelhos parados.'
+        : name === 'WIFI' ? 'Se não usa a rede de casa no palco, esqueça a rede salva (SYSTEM › WI-FI).'
+          : 'Se for no palco, prefira fundos de preset em cor sólida em vez de imagem.');
+    // Só é "CPU tomada" com pouca CPU ociosa: num travamento esperando o celular o loop
+    // também some da CPU, mas sobra CPU livre (é espera, não falta de processador).
+    const cpu = j.ep.filter((e) => e.loopMin < 60 && e.top && e.topPct >= 20 && e.idleMin < 15);
+    if (cpu.length) add('warn', 'Outra tarefa tomou a CPU da controladora', `Durante a lentidão o loop chegou a ${Math.min(...cpu.map((e) => e.loopMin))}% de um núcleo; a tarefa mais ocupada foi ${cpu[0].top} (${cpu[0].topPct}%).`,
+      /wifi|tiT|lwip/i.test(cpu[0].top) ? 'Tráfego de Wi-Fi intenso: menos aparelhos conectados ajuda.' : 'Mande este backup ao suporte.');
+  }
+  const presses = ev.filter((e) => e.type === 10);
+  const bounce = presses.filter((e) => !e.tag);
+  if (bounce.length) {
+    const pins = [...new Set(bounce.map((e) => e.a))];
+    add('warn', `Footswitch com contato repicando (pino ${pins.join(', ')})`, `${bounce.length} pisada(s) demoraram sem a controladora estar ocupada: o contato fica abrindo e fechando antes de firmar.`,
+      'Teste o footswitch em SYSTEM › TESTES › BOTÕES; se repetir, troque a chave.');
+  }
+  const held = presses.filter((e) => e.tag);
+  if (held.length) add('serious', `${held.length} pisada(s) atrasada(s) porque a controladora estava ocupada`,
+    `Pior atraso ${lvMs(Math.max(...held.map((e) => e.b)))}; ocupada em: ${[...new Set(held.map((e) => e.tag.split(' ')[0]))].join(', ')}.`, 'Veja o período de lentidão correspondente na linha do tempo.');
+  if (j.press.recov) add('warn', `${j.press.recov} toque(s) só foram percebidos depois de um travamento`, 'O pé tocou e soltou enquanto a controladora estava parada; o toque foi recuperado depois.', '');
+  const drops = count((e) => e.type === 13);
+  if (drops) add('info', `${drops} pedido(s) incompleto(s) descartado(s) — a controladora não parou`,
+    'Um aparelho começou a mandar um pedido pelo Wi-Fi e não terminou (sinal fraco, celular dormiu ou saiu da rede). Desde o firmware de 06/nov/2026 a controladora descarta esse pedido depois de 1–3 s em vez de ficar esperando, e os footswitches seguem respondendo.',
+    'Se acontecer muito, aproxime o aparelho da controladora.');
+  const heap = count((e) => e.type === 9);
+  if (heap) add('serious', 'Memória interna baixa', `${heap} aviso(s) de memória abaixo de 16 KB.`, 'Mande este backup ao suporte.');
+  if (j.http.slow >= 5 && !j.ep.length) add('info', `${j.http.slow} pedidos HTTP lentos`, `O mais lento: ${j.http.maxRoute} (${lvMs(j.http.max)}). Não chegaram a causar lentidão.`, '');
+  if (!out.length) add('ok', 'Nada fora do normal registrado', 'Sem travamentos, sem períodos de lentidão e sem quedas de Wi-Fi neste registro.', '');
+  const rank = { crit: 0, serious: 1, warn: 2, info: 3, ok: 4 };
+  return out.sort((a, b) => rank[a.sev] - rank[b.sev]);
+}
+
+function lvSevIcon(sev) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LV_SEV_ICON[sev]}</svg>`; }
+function lvBadge(sev) { const s = LV_SEV[sev]; return `<span class="lv-sev" style="--sev:${s.c}">${lvSevIcon(sev)}${s.l}</span>`; }
+
+function renderLogView() {
+  const b = S.backup;
+  const back = b && !b.logOnly ? '<button class="lv-back" id="lvBack">‹ Voltar aos presets</button>' : '';
+  if (!b) return `<div class="empty" id="drop">${FOLDER_SVG}<h2>LOG VIEW</h2><p>Abra um backup da BFMiDi (<span class="k">bfmidi-backup-*.json</span>) ou o texto do <span class="k">/log</span> / <span class="k">/diag</span> salvo da controladora (.txt).</p><p>Nada é enviado a lugar nenhum — tudo é lido no seu navegador.</p></div>`;
+  const j = S.lv;
+  if (!j || j.badVersion) {
+    return `<div class="lv">${back}<div class="lv-card lv-none"><h2>Sem telemetria neste arquivo</h2><p>${j && j.badVersion
+      ? `A caixa-preta deste arquivo é de uma versão mais nova do formato (v${esc(j.v)}). Abra esta página atualizada.`
+      : 'O log não traz a CAIXA-PRETA. Ela existe a partir do firmware 15.6 publicado em 06/nov/2026: atualize a controladora pelo atualizador online e faça o backup de novo depois que o problema acontecer (sem desligar a controladora).'}</p></div></div>`;
+  }
+  const diag = lvDiagnose(j);
+  const n = j.now, worstSev = diag[0].sev;
+  const kpi = (lbl, val, sub, sev) => `<div class="lv-kpi"${sev ? ` style="--sev:${LV_SEV[sev].c}"` : ''}><span class="k">${lbl}</span><b>${val}</b>${sub ? `<span class="s">${sub}</span>` : ''}</div>`;
+  const modes = ['desligado', 'só rede de casa', 'só AP', 'AP + rede de casa'];
+  const stallMax = Math.max(0, ...j.stalls.map((s) => s.dur), ...j.ev.filter((e) => e.type === 12).map((e) => e.c));
+  const kpis = [
+    kpi('LIGADA HÁ', lvT(j.up), `boot nº ${j.boot} desde ligar · fw ${esc(j.fw)}`),
+    kpi('PIOR VOLTA DO LOOP', lvMs(j.loop.max), j.loop.max ? `fase ${esc(j.phName(j.loop.maxPh))}` : 'nenhuma lenta', j.loop.max >= 1000 ? 'crit' : j.loop.max >= 150 ? 'warn' : null),
+    kpi('PISADAS', j.press.n ? `${j.press.avg} ms` : '—', j.press.n ? `média de ${j.press.n} · pior ${lvMs(j.press.max)}` : 'nenhuma neste boot', j.press.max >= 300 ? 'serious' : j.press.slow ? 'warn' : null),
+    kpi('TRAVAMENTOS', stallMax ? lvMs(stallMax) : '0', stallMax ? 'pior (≥ 3 s parada)' : 'nenhum registrado', stallMax ? 'crit' : null),
+    kpi('PEDIDOS HTTP', String(j.http.n), `${j.http.slow} lentos · pior ${lvMs(j.http.max)}${j.http.drops ? ` · ${j.http.drops} descartado(s)` : ''}`, j.http.max >= 1000 ? 'warn' : null),
+    kpi('WI-FI AGORA', modes[n.mode] || '?', `${n.apSta} no AP${n.apRssi ? ` · ${n.apRssi} dBm` : ''}${n.staRssi ? ` · casa ${n.staRssi} dBm` : ''}`, n.apRssi && n.apRssi < -75 ? 'warn' : null),
+    kpi('MEMÓRIA INTERNA', lvKB(n.heap), `mínima ${lvKB(n.heapMin)} · bloco ${lvKB(n.heapBlk)}`, n.heapMin < 16384 ? 'serious' : null),
+    kpi('CPU DO LOOP', `${n.loop}%`, `de um núcleo · outra: ${esc(n.top || '—')} ${n.topPct}%`),
+  ].join('');
+  const boots = [...new Set([j.boot, ...j.ev.map((e) => e.boot), ...j.ep.map((e) => e.boot), ...j.min.map((m) => m.boot)])].sort((a, b2) => b2 - a);
+  if (!boots.includes(S.lvBoot)) S.lvBoot = j.boot;
+  const bootChips = boots.length > 1 ? `<div class="lv-boots" role="group" aria-label="Escolher o boot">${boots.map((bt) =>
+    `<button class="chip${bt === S.lvBoot ? ' acc' : ''}" data-boot="${bt}" aria-pressed="${bt === S.lvBoot}">BOOT ${bt}${bt === j.boot ? ' · ATUAL' : ''}</button>`).join('')}</div>` : '';
+  const evs = j.ev.slice().reverse();
+  const evRows = evs.map((e) => { const x = lvEvent(e, j);
+    return `<tr><td class="t">${e.boot}</td><td class="t">${lvT(e.ms)}</td><td>${lvBadge(x.sev)}</td><td><span class="lane" style="--c:${LV_LANE.find((l) => l.k === x.lane).c}">${x.label}</span></td><td class="tx">${esc(x.text)}</td></tr>`; }).join('');
+  const epCards = j.ep.slice().reverse().map((e) => {
+    const tot = Math.max(1, e.phaseMs.reduce((a, v) => a + v, 0));
+    const seg = e.phaseMs.map((v, i) => (v ? `<i style="flex:${v};--c:${LV_PH_COL[i]}" data-tip="${esc(j.phName(i))}: ${lvMs(v)} (${Math.round((v * 100) / tot)}%)"></i>` : '')).join('');
+    return `<div class="lv-ep"><div class="h"><b>Boot ${e.boot} · ${lvT(e.start)}</b><span>durou ${lvMs(e.dur)}</span><span>${e.slow} volta(s) lenta(s)</span><span>pior ${lvMs(e.max)}</span>${lvBadge(e.max >= 1000 ? 'crit' : e.max >= 300 ? 'serious' : 'warn')}</div>` +
+      `<div class="lv-stack" role="img" aria-label="Tempo por fase: ${e.phaseMs.map((v, i) => (v ? `${j.phName(i)} ${v} ms` : '')).filter(Boolean).join(', ')}">${seg}</div>` +
+      `<div class="d">Mais pesada: <b>${esc(j.phName(e.worst))}</b> (${esc(LV_PH_DESC[j.phName(e.worst)] || '')})` +
+      `${e.route ? ` · pedido mais lento <b>${esc(e.route)}</b> ${lvMs(e.routeMs)}` : ''} · ${e.http} pedido(s) HTTP · ${e.presses} pisada(s)${e.pressMax ? `, pior ${lvMs(e.pressMax)}` : ''}` +
+      ` · Wi-Fi: ${e.wifiEv} evento(s), ${e.apSta} no AP${e.apRssi ? ` (${e.apRssi} dBm)` : ''} · CPU do loop mín. ${e.loopMin}%${e.top ? `, ${esc(e.top)} ${e.topPct}%` : ''}${e.heapKB ? ` · memória ${e.heapKB} KB` : ''}</div></div>`;
+  }).join('');
+  const stallRows = j.stalls.map((s) => `<li>${lvBadge('crit')} fw ${esc(s.fw)} · boot ${s.boot} · ${lvT(s.at)}: parada <b>${lvMs(s.dur)}</b> na fase <b>${esc(j.phName(s.phase))}</b>${s.route ? ` (pedido ${esc(s.route)})` : ''} · memória ${s.heapKB} KB${s.rebooted ? ' · <b>o vigia reiniciou</b>' : ''}</li>`).join('');
+  const minRows = j.min.slice().reverse().map((m) => `<tr><td>${m.boot}</td><td>${m.minute}</td><td>${m.loops}</td><td>${m.slow}</td><td>${m.maxLoop}${m.maxLoop ? ' ' + esc(j.phName(m.maxPh)) : ''}</td><td>${m.presses}</td><td>${m.maxPress}</td><td>${m.http}</td><td>${m.httpSlow}</td><td>${m.wifiEv}</td><td>${m.apMax}</td><td>${m.apRssi || ''}</td><td>${m.staRssi || ''}</td><td>${m.loopMin}%</td><td>${m.heapKB}</td></tr>`).join('');
+  return `<div class="lv">${back}
+  <section class="lv-card lv-diag" aria-labelledby="lvDiagT" style="--sev:${LV_SEV[worstSev].c}">
+    <h2 id="lvDiagT">Diagnóstico</h2>
+    <ul>${diag.map((d) => `<li style="--sev:${LV_SEV[d.sev].c}">${lvBadge(d.sev)}<div><b>${esc(d.title)}</b><p>${esc(d.text)}</p>${d.fix ? `<p class="fix"><span>O que fazer:</span> ${esc(d.fix)}</p>` : ''}</div></li>`).join('')}</ul>
+  </section>
+  <section class="lv-kpis" aria-label="Resumo">${kpis}</section>
+  <section class="lv-card" aria-labelledby="lvTlT">
+    <div class="lv-head"><h2 id="lvTlT">Linha do tempo</h2>${bootChips}</div>
+    <p class="lv-note">Tempo desde ligar (ou reiniciar) a controladora. Passe o mouse ou toque nas marcas.</p>
+    <div class="lv-chart" data-chart="timeline"></div>
+    <div class="lv-legend">${LV_LANE.map((l) => `<span><i style="--c:${l.c}"></i>${l.l}</span>`).join('')}<span><i class="bar"></i>Período lento / travado</span></div>
+  </section>
+  <section class="lv-card" aria-labelledby="lvMinT">
+    <div class="lv-head"><h2 id="lvMinT">Minuto a minuto · boot ${S.lvBoot}</h2></div>
+    <div class="lv-grid" data-minutes>
+      <figure><figcaption>Pior volta do loop (ms), cor = fase que pesou</figcaption><div class="lv-chart" data-chart="m-loop"></div><div class="lv-legend sm" data-phleg></div></figure>
+      <figure><figcaption>Pior atraso de pisada (ms)</figcaption><div class="lv-chart" data-chart="m-press"></div></figure>
+      <figure><figcaption>Pedidos HTTP por minuto</figcaption><div class="lv-chart" data-chart="m-http"></div><div class="lv-legend sm"><span><i style="--c:#3987e5"></i>Normais</span><span><i style="--c:#d95926"></i>Lentos</span></div></figure>
+      <figure><figcaption>Sinal Wi-Fi (dBm, mais alto = melhor)</figcaption><div class="lv-chart" data-chart="m-rssi"></div><div class="lv-legend sm"><span><i style="--c:#3987e5"></i>Pior aparelho no AP</span><span><i style="--c:#199e70"></i>Rede de casa</span></div></figure>
+      <figure><figcaption>CPU: menor fatia do loop (% de um núcleo)</figcaption><div class="lv-chart" data-chart="m-cpu"></div></figure>
+      <figure><figcaption>Memória interna mínima (KB)</figcaption><div class="lv-chart" data-chart="m-heap"></div></figure>
+    </div>
+    <details class="lv-table"><summary>Ver a tabela por minuto</summary><div class="scroll"><table><thead><tr><th>Boot</th><th>Min</th><th>Voltas</th><th>Lentas</th><th>Pior (ms)</th><th>Pisadas</th><th>Pior pisada</th><th>HTTP</th><th>Lentos</th><th>Wi-Fi ev.</th><th>No AP</th><th>Sinal AP</th><th>Sinal casa</th><th>Loop mín.</th><th>Mem KB</th></tr></thead><tbody>${minRows || '<tr><td colspan="15">O primeiro minuto ainda não tinha fechado.</td></tr>'}</tbody></table></div></details>
+  </section>
+  <section class="lv-grid2">
+    <div class="lv-card"><h2>Tempo de cada volta do loop</h2><p class="lv-note">Este boot. Escala logarítmica — o normal é tudo em &lt; 5 ms.</p><div class="lv-chart" data-chart="hist-loop"></div></div>
+    <div class="lv-card"><h2>Atraso das pisadas</h2><p class="lv-note">Da borda no pino até a controladora agir. Normal: 25–50 ms.</p><div class="lv-chart" data-chart="hist-press"></div></div>
+  </section>
+  <section class="lv-card"><h2>Onde a controladora gastou o tempo nas voltas lentas</h2><p class="lv-note">Soma de todas as voltas ≥ ${j.slowMs} ms neste boot, por fase.</p><div class="lv-chart" data-chart="phases"></div><div class="lv-legend" data-phtot></div></section>
+  <section class="lv-card"><h2>Períodos de lentidão (${j.ep.length})</h2>${epCards || '<p class="lv-note">Nenhum período lento registrado (pior volta ≥ 150 ms ou soma ≥ 400 ms).</p>'}</section>
+  ${j.stalls.length ? `<section class="lv-card"><h2>Travamentos gravados (sobrevivem a desligar)</h2><ul class="lv-stalls">${stallRows}</ul></section>` : ''}
+  <section class="lv-card"><h2>Eventos (${j.ev.length})</h2><div class="scroll"><table class="lv-ev"><thead><tr><th>Boot</th><th>Hora</th><th>Nível</th><th>Tipo</th><th>O que aconteceu</th></tr></thead><tbody>${evRows || '<tr><td colspan="5">Nenhum evento.</td></tr>'}</tbody></table></div></section>
+  <details class="lv-table lv-card"><summary>Ver o relatório da caixa-preta em texto</summary><pre>${esc(j.reportText)}</pre></details>
+</div><div class="lv-tip" id="lvTip" role="tooltip" hidden></div>`;
+}
+
+// ── gráficos (SVG medido na largura real do container) ──
+const LV_AX = '#5F6873', LV_GRID = 'rgba(255,255,255,.07)', LV_INK = '#8E97A3';
+function lvNice(max) { if (max <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(max))), f = max / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+function lvSvg(w, h, body, label) { return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}">${body}</svg>`; }
+function lvYAxis(x0, x1, y0, y1, max, fmt) {
+  let s = '';
+  for (let k = 0; k <= 4; k++) { const v = (max * k) / 4, y = y1 - ((y1 - y0) * k) / 4;
+    s += `<line x1="${x0}" x2="${x1}" y1="${y}" y2="${y}" stroke="${LV_GRID}"/><text x="${x0 - 6}" y="${y + 3.5}" text-anchor="end" fill="${LV_AX}" font-size="10.5">${fmt(v)}</text>`; }
+  return s;
+}
+// Barras por minuto. vals: [{x(label), v, c, tip}] ; stacked: [{v,c}] opcional.
+function lvBars(el, items, opt = {}) {
+  const w = Math.max(240, el.clientWidth), h = opt.h || 150, L = 40, R = 8, T = 8, B = 22;
+  if (!items.length) { el.innerHTML = `<p class="lv-empty">${opt.empty || 'Sem dados ainda.'}</p>`; return; }
+  const rawMax = Math.max(1, ...items.map((it) => (it.stack ? it.stack.reduce((a, s) => a + s.v, 0) : it.v)));
+  const max = opt.noAxis ? rawMax * 1.18 : lvNice(rawMax);
+  const iw = (w - L - R) / items.length, bw = Math.max(2, Math.min(opt.bw || 28, iw - 2));
+  let s = opt.noAxis ? '' : lvYAxis(L, w - R, T, h - B, max, opt.fmt || ((v) => Math.round(v)));
+  items.forEach((it, i) => {
+    const x = L + i * iw + (iw - bw) / 2;
+    let y = h - B;
+    const parts = it.stack || [{ v: it.v, c: it.c }];
+    parts.forEach((p, k) => {
+      if (!p.v) return;
+      const bh = Math.max(1, ((h - B - T) * p.v) / max);
+      const top = k === parts.length - 1 || !parts.slice(k + 1).some((q) => q.v);
+      // ponta de cima arredondada, base reta (ancorada no eixo)
+      const rr = top ? Math.min(4, bw / 2, bh / 2) : 0;
+      s += `<rect x="${x}" y="${y - bh}" width="${bw}" height="${bh}" rx="${rr}" fill="${p.c}"/>`;
+      if (rr && bh > rr) s += `<rect x="${x}" y="${y - bh / 2}" width="${bw}" height="${bh / 2}" fill="${p.c}"/>`;
+      y -= bh + (k < parts.length - 1 ? 2 : 0);
+    });
+    if (it.lbl !== undefined) s += `<text x="${x + bw / 2}" y="${y - 5}" text-anchor="middle" fill="${LV_INK}" font-size="10.5" font-weight="700">${esc(it.lbl)}</text>`;
+    s += `<rect x="${L + i * iw}" y="${T}" width="${iw}" height="${h - B - T}" fill="transparent" data-tip="${esc(it.tip)}"/>`;
+    if (items.length <= 12 || i % Math.ceil(items.length / 12) === 0) s += `<text x="${L + i * iw + iw / 2}" y="${h - 6}" text-anchor="middle" fill="${LV_AX}" font-size="10.5">${esc(it.x)}</text>`;
+  });
+  s += `<line x1="${L}" x2="${w - R}" y1="${h - B}" y2="${h - B}" stroke="${LV_AX}"/>`;
+  el.innerHTML = lvSvg(w, h, s, opt.label || '');
+}
+// Linhas por minuto. series: [{c, vals:[v|null]}], xs: labels, tips por índice.
+function lvLines(el, xs, series, opt = {}) {
+  const w = Math.max(240, el.clientWidth), h = opt.h || 150, L = 40, R = 10, T = 10, B = 22;
+  const all = series.flatMap((s) => s.vals).filter((v) => v !== null && v !== undefined);
+  if (!all.length) { el.innerHTML = `<p class="lv-empty">${opt.empty || 'Sem dados ainda.'}</p>`; return; }
+  let lo = opt.min !== undefined ? opt.min : Math.min(...all), hi = opt.max !== undefined ? opt.max : Math.max(...all);
+  if (hi === lo) { hi += 1; lo -= 1; }
+  const X = (i) => L + (xs.length === 1 ? (w - L - R) / 2 : (i * (w - L - R)) / (xs.length - 1));
+  const Y = (v) => T + ((hi - v) * (h - T - B)) / (hi - lo);
+  let s = '';
+  for (let k = 0; k <= 4; k++) { const v = lo + ((hi - lo) * k) / 4, y = Y(v);
+    s += `<line x1="${L}" x2="${w - R}" y1="${y}" y2="${y}" stroke="${LV_GRID}"/><text x="${L - 6}" y="${y + 3.5}" text-anchor="end" fill="${LV_AX}" font-size="10.5">${Math.round(v)}</text>`; }
+  series.forEach((se) => {
+    let d = '', pen = false;
+    se.vals.forEach((v, i) => { if (v === null || v === undefined) { pen = false; return; } d += `${pen ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`; pen = true; });
+    s += `<path d="${d}" fill="none" stroke="${se.c}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    se.vals.forEach((v, i) => { if (v !== null && v !== undefined && (xs.length <= 20)) s += `<circle cx="${X(i)}" cy="${Y(v)}" r="3.2" fill="${se.c}" stroke="#131B26" stroke-width="2"/>`; });
+  });
+  xs.forEach((x, i) => {
+    const cw = (w - L - R) / Math.max(1, xs.length);
+    s += `<rect x="${X(i) - cw / 2}" y="${T}" width="${cw}" height="${h - T - B}" fill="transparent" data-tip="${esc(opt.tip(i))}"/>`;
+    if (xs.length <= 12 || i % Math.ceil(xs.length / 12) === 0) s += `<text x="${X(i)}" y="${h - 6}" text-anchor="middle" fill="${LV_AX}" font-size="10.5">${esc(x)}</text>`;
+  });
+  el.innerHTML = lvSvg(w, h, s, opt.label || '');
+}
+
+function lvTimeline(el, j) {
+  const bt = S.lvBoot;
+  const evs = j.ev.filter((e) => e.boot === bt), eps = j.ep.filter((e) => e.boot === bt);
+  const tMax = bt === j.boot ? j.up : Math.max(5000, ...evs.map((e) => e.ms + (e.type === 12 ? e.c : 0)), ...eps.map((e) => e.start + e.dur)) * 1.03;
+  const w = Math.max(300, el.clientWidth), LW = 92, R = 12, laneH = 30, T = 6, B = 24, h = T + LV_LANE.length * laneH + B;
+  const X = (ms) => LW + (Math.min(ms, tMax) * (w - LW - R)) / Math.max(1, tMax);
+  let s = '';
+  // eixo de tempo
+  const step = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200].map((v) => v * 1000).find((v) => tMax / v <= 8) || 14400000;
+  for (let t = 0; t <= tMax; t += step) s += `<line x1="${X(t)}" x2="${X(t)}" y1="${T}" y2="${h - B}" stroke="${LV_GRID}"/><text x="${X(t)}" y="${h - 7}" text-anchor="middle" fill="${LV_AX}" font-size="10.5">${lvT(t)}</text>`;
+  LV_LANE.forEach((l, i) => {
+    const y = T + i * laneH;
+    s += `<text x="0" y="${y + laneH / 2 + 4}" fill="${LV_INK}" font-size="11.5" font-weight="700">${l.l}</text><line x1="${LW}" x2="${w - R}" y1="${y + laneH / 2}" y2="${y + laneH / 2}" stroke="rgba(255,255,255,.1)" stroke-dasharray="2 4"/>`;
+  });
+  const laneY = (k) => T + LV_LANE.findIndex((l) => l.k === k) * laneH + laneH / 2;
+  // períodos lentos (barras na faixa "Lentidão")
+  eps.forEach((e) => {
+    const x0 = X(e.start), x1 = Math.max(x0 + 4, X(e.start + e.dur)), y = laneY('slow');
+    s += `<rect x="${x0}" y="${y - 8}" width="${x1 - x0}" height="16" rx="4" fill="${e.max >= 1000 ? LV_SEV.crit.c : LV_SEV.serious.c}" fill-opacity=".85" data-tip="${esc(`Lento ${lvMs(e.dur)} · pior volta ${lvMs(e.max)} · fase ${j.phName(e.worst)}${e.route ? ` · pedido ${e.route} ${lvMs(e.routeMs)}` : ''}`)}"/>`;
+  });
+  evs.forEach((e) => {
+    const x = lvEvent(e, j), lane = LV_LANE.find((l) => l.k === x.lane), y = laneY(x.lane), cx = X(e.ms);
+    if (e.type === 12) { const x1 = Math.max(cx + 4, X(e.ms + e.c)); s += `<rect x="${cx}" y="${y - 10}" width="${x1 - cx}" height="20" rx="4" fill="${LV_SEV.crit.c}" stroke="#131B26" stroke-width="2" data-tip="${esc(lvT(e.ms) + ' · ' + x.text)}"/>`; return; }
+    const r = x.ms ? Math.min(9, 4 + Math.log10(Math.max(10, x.ms))) : 5;
+    const hollow = e.type === 5 || e.type === 7 || e.type === 3;
+    const col = x.sev === 'crit' ? LV_SEV.crit.c : lane.c;
+    s += e.type === 1 ? `<rect x="${cx - 5}" y="${y - 5}" width="10" height="10" transform="rotate(45 ${cx} ${y})" fill="${col}" stroke="#131B26" stroke-width="2"/>`
+      : `<circle cx="${cx}" cy="${y}" r="${r}" fill="${hollow ? '#131B26' : col}" stroke="${hollow ? col : '#131B26'}" stroke-width="2"/>`;
+    s += `<circle cx="${cx}" cy="${y}" r="12" fill="transparent" data-tip="${esc(lvT(e.ms) + ' · ' + x.text)}"/>`;
+  });
+  if (bt === j.boot) s += `<line x1="${X(j.up)}" x2="${X(j.up)}" y1="${T}" y2="${h - B}" stroke="${LV_INK}" stroke-dasharray="3 3"/><text x="${X(j.up) - 4}" y="${T + 9}" text-anchor="end" fill="${LV_INK}" font-size="10.5">agora</text>`;
+  el.innerHTML = lvSvg(w, h, s, `Linha do tempo do boot ${bt}: ${evs.length} eventos e ${eps.length} períodos lentos`);
+}
+
+function lvDrawCharts() {
+  const j = S.lv; if (!j || j.badVersion || S.view !== 'log') return;
+  const get = (k) => $main.querySelector(`[data-chart="${k}"]`);
+  if (get('timeline')) lvTimeline(get('timeline'), j);
+  const mins = j.min.filter((m) => m.boot === S.lvBoot);
+  const xs = mins.map((m) => String(m.minute));
+  const empty = 'O primeiro minuto deste boot ainda não tinha fechado.';
+  if (get('m-loop')) {
+    lvBars(get('m-loop'), mins.map((m) => ({ x: m.minute, v: m.maxLoop, c: LV_PH_COL[m.maxPh] || LV_PH_COL[0],
+      tip: `Minuto ${m.minute}: pior volta ${lvMs(m.maxLoop)}${m.maxLoop ? ` (${j.phName(m.maxPh)})` : ''} · ${m.slow} lenta(s) de ${m.loops}` })), { empty, label: 'Pior volta do loop por minuto' });
+    const used = [...new Set(mins.filter((m) => m.maxLoop).map((m) => m.maxPh))];
+    $main.querySelector('[data-phleg]').innerHTML = used.map((p) => `<span><i style="--c:${LV_PH_COL[p]}"></i>${esc(j.phName(p))}</span>`).join('');
+  }
+  if (get('m-press')) lvBars(get('m-press'), mins.map((m) => ({ x: m.minute, v: m.maxPress, c: '#c98500',
+    tip: `Minuto ${m.minute}: ${m.presses} pisada(s), pior ${lvMs(m.maxPress)}` })), { empty, label: 'Pior atraso de pisada por minuto' });
+  if (get('m-http')) lvBars(get('m-http'), mins.map((m) => ({ x: m.minute, stack: [{ v: m.http - m.httpSlow, c: '#3987e5' }, { v: m.httpSlow, c: '#d95926' }],
+    tip: `Minuto ${m.minute}: ${m.http} pedido(s), ${m.httpSlow} lento(s)` })), { empty, label: 'Pedidos HTTP por minuto' });
+  if (get('m-rssi')) lvLines(get('m-rssi'), xs, [{ c: '#3987e5', vals: mins.map((m) => m.apRssi || null) }, { c: '#199e70', vals: mins.map((m) => m.staRssi || null) }],
+    { empty: mins.length ? 'Nenhum aparelho no AP nem rede de casa nesse período.' : empty, tip: (i) => `Minuto ${mins[i].minute}: AP ${mins[i].apRssi || '—'} dBm (${mins[i].apMax} aparelho(s)) · casa ${mins[i].staRssi || '—'} dBm`, label: 'Sinal Wi-Fi por minuto' });
+  if (get('m-cpu')) lvLines(get('m-cpu'), xs, [{ c: '#9085e9', vals: mins.map((m) => m.loopMin) }], { min: 0, max: 100, empty, tip: (i) => `Minuto ${mins[i].minute}: o loop teve no mínimo ${mins[i].loopMin}% de um núcleo`, label: 'CPU do loop por minuto' });
+  if (get('m-heap')) lvLines(get('m-heap'), xs, [{ c: '#d55181', vals: mins.map((m) => m.heapKB || null) }], { min: 0, empty, tip: (i) => `Minuto ${mins[i].minute}: memória interna mínima ${mins[i].heapKB} KB`, label: 'Memória interna mínima por minuto' });
+  // histogramas (escala log nas alturas, valor real na dica e no rótulo)
+  const hl = ['< 5 ms', '5–20', '20–50', '50–100', '100–250', '250–500', '0,5–1 s', '1–3 s', '3–10 s', '> 10 s'];
+  const sevOf = (i) => (i <= 2 ? '#0ca30c' : i <= 4 ? '#fab219' : i <= 6 ? '#ec835a' : '#d03b3b');
+  const short = (v) => (v >= 1e6 ? (v / 1e6).toFixed(1).replace('.', ',') + ' mi' : v >= 1e4 ? Math.round(v / 1e3) + ' mil' : String(v));
+  if (get('hist-loop')) lvBars(get('hist-loop'), j.loop.hist.map((v, i) => ({ x: hl[i], v: v ? Math.log10(v) + 1 : 0, c: sevOf(i), lbl: v ? short(v) : '', tip: `${hl[i]}: ${v.toLocaleString('pt-BR')} volta(s)` })),
+    { h: 170, noAxis: true, bw: 44, label: 'Distribuição do tempo de volta do loop (escala logarítmica)' });
+  const ph = ['< 50 ms', '50–80', '80–120', '120–200', '200–500', '> 500 ms'];
+  if (get('hist-press')) {
+    if (!j.press.n) get('hist-press').innerHTML = '<p class="lv-empty">Nenhuma pisada neste boot.</p>';
+    else lvBars(get('hist-press'), j.press.hist.map((v, i) => ({ x: ph[i], v, lbl: v ? String(v) : '', c: i <= 1 ? '#0ca30c' : i <= 2 ? '#fab219' : i <= 3 ? '#ec835a' : '#d03b3b', tip: `${ph[i]}: ${v} pisada(s)` })),
+      { h: 170, noAxis: true, bw: 44, label: 'Distribuição do atraso das pisadas' });
+  }
+  // fases
+  const pe = get('phases');
+  if (pe) {
+    const tot = j.loop.phaseMs.reduce((a, v) => a + v, 0);
+    if (!tot) { pe.innerHTML = '<p class="lv-empty">Nenhuma volta lenta neste boot.</p>'; $main.querySelector('[data-phtot]').innerHTML = ''; }
+    else {
+      pe.innerHTML = `<div class="lv-stack big" role="img" aria-label="Tempo nas voltas lentas por fase">${j.loop.phaseMs.map((v, i) => (v ? `<i style="flex:${v};--c:${LV_PH_COL[i]}" data-tip="${esc(j.phName(i))}: ${lvMs(v)} (${Math.round((v * 100) / tot)}%) — ${esc(LV_PH_DESC[j.phName(i)] || '')}"></i>` : '')).join('')}</div>`;
+      $main.querySelector('[data-phtot]').innerHTML = j.loop.phaseMs.map((v, i) => (v ? `<span><i style="--c:${LV_PH_COL[i]}"></i>${esc(j.phName(i))} <b>${lvMs(v)}</b> (${Math.round((v * 100) / tot)}%)</span>` : '')).join('');
+    }
+  }
+}
+// Dica flutuante única para tudo que tem data-tip.
+function lvTipMove(e) {
+  const tip = document.getElementById('lvTip'); if (!tip) return;
+  const t = e.target.closest && e.target.closest('[data-tip]');
+  if (!t || !$main.contains(t)) { tip.hidden = true; return; }
+  tip.textContent = t.getAttribute('data-tip'); tip.hidden = false;
+  const r = tip.getBoundingClientRect(), pad = 14;
+  let x = e.clientX + pad, y = e.clientY + pad;
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = e.clientY - r.height - pad;
+  tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+}
+$main.addEventListener('pointermove', lvTipMove);
+$main.addEventListener('pointerdown', lvTipMove);
+$main.addEventListener('pointerleave', () => { const tip = document.getElementById('lvTip'); if (tip) tip.hidden = true; });
+let lvRaf = 0;
+addEventListener('resize', () => { cancelAnimationFrame(lvRaf); lvRaf = requestAnimationFrame(lvDrawCharts); });
+
 function render() {
+  document.getElementById('lvBtn').setAttribute('aria-pressed', String(S.view === 'log'));
+  if (S.view === 'log') { $main.innerHTML = renderLogView(); lvDrawCharts(); return; }
   if (!S.backup) {
     $main.innerHTML = `<div class="empty" id="drop">${FOLDER_SVG}<h2>Abra um backup da BFMiDi</h2><p>Arraste o arquivo <span class="k">bfmidi-backup-*.json</span> aqui ou use o botão <b>ABRIR BACKUP</b>.</p><p>Nada é enviado a lugar nenhum — tudo é lido no seu navegador.</p></div>`;
     return;
@@ -1147,6 +1668,10 @@ let fitRaf = 0;
 addEventListener('resize', () => { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitMidi); });
 function updateInfo() {
   const b = S.backup; if (!b) return;
+  if (b.logOnly) {
+    $info.innerHTML = `<span class="fname" title="${esc(S.name)}">${esc(S.name.replace(/\.(txt|log)$/i, ''))}</span><span class="fchips"><span class="chip">LOG</span>${S.lv && !S.lv.badVersion ? `<span class="chip">FW ${esc(S.lv.fw)}</span>` : ''}</span>`;
+    return;
+  }
   $info.innerHTML = `<span class="fname" title="${esc(S.name)}">${esc(S.name.replace(/\.json$/i, ''))}</span><span class="fchips"><span class="chip">V${esc(b.version)}</span>` +
     `<span class="chip">${svgi(SLIDERS_ICON)}${Object.keys(b.presets || {}).length} PRESETS</span>` +
     (num(b.truncated) ? '<span class="chip bad" title="O backup foi cortado ao ser gerado: presets ou mídias podem estar faltando">TRUNCADO</span>' : '') + '</span>';
@@ -1159,10 +1684,18 @@ function stepBank(dir) {
   S.layer = 1; render();
 }
 function load(text, name) {
-  let b;
-  try { b = JSON.parse(text); } catch (e) { alert('Arquivo não é um JSON válido.'); return; }
-  if (!b || typeof b !== 'object' || !b.presets) { alert('Este JSON não parece um backup da BFMiDi (sem "presets").'); return; }
+  let b = null;
+  try { b = JSON.parse(text); } catch (e) { b = null; }
+  // Texto puro do GET /log ou /diag (salvo da controladora): só o LOG VIEW.
+  if (!b && /CAIXA-PRETA|DIAG-JSON |reset: /.test(text)) {
+    S.backup = { logOnly: true, boot_log: text }; S.name = name; S.lv = lvParse(text); S.lvBoot = S.lv && !S.lv.badVersion ? S.lv.boot : 0;
+    S.view = 'log'; updateInfo(); render(); return;
+  }
+  if (!b) { alert('Arquivo não é um backup da BFMiDi nem um log da controladora.'); return; }
+  if (typeof b !== 'object' || !b.presets) { alert('Este JSON não parece um backup da BFMiDi (sem "presets").'); return; }
   S.backup = b; S.name = name; S.layer = 1; S.bootOpen = null;
+  S.lv = lvParse(b.boot_log); S.lvBoot = S.lv && !S.lv.badVersion ? S.lv.boot : 0;
+  if (S.view === 'log' || !S.lv) S.view = S.view === 'log' ? 'log' : 'presets';
   // paleta de LED do próprio backup (color_N), quando presente
   LED = LED_DEFAULT.map(([n, rgb], i) => { const v = b.global_config && b.global_config['color_' + i]; const q = v ? String(v).split(',').map((x) => num(x)) : null; return { name: n, rgb: q && q.length === 3 ? q : rgb }; });
   // Abre no preset inicial do backup (início automático), senão no primeiro que existir.
@@ -1181,8 +1714,14 @@ addEventListener('pointerdown', () => { lastPointer = true; }, true);
 addEventListener('keydown', () => { lastPointer = false; }, true);
 $file.addEventListener('focus', () => { if (lastPointer) $file.blur(); });
 $file.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; if (lastPointer) e.target.blur(); if (f) f.text().then((t) => load(t, f.name)); });
+document.getElementById('lvBtn').addEventListener('click', () => {
+  if (S.backup && S.backup.logOnly) return;   // log solto: só existe o LOG VIEW
+  S.view = S.view === 'log' ? 'presets' : 'log'; render(); scrollTo(0, 0);
+});
 $main.addEventListener('click', (e) => {
   if (e.target.closest('#drop')) { document.getElementById('file').click(); return; }
+  if (e.target.closest('#lvBack')) { S.view = 'presets'; render(); scrollTo(0, 0); return; }
+  const bt = e.target.closest('[data-boot]'); if (bt) { S.lvBoot = num(bt.dataset.boot); render(); return; }
   const nav = e.target.closest('[data-bank]'); if (nav) { e.stopPropagation(); stepBank(num(nav.dataset.bank, 1)); return; }
   if (e.target.closest('#bankNext')) { stepBank(1); return; }
   if (e.target.closest('#extras')) { S.showExtras = !S.showExtras; render(); return; }
@@ -1191,7 +1730,7 @@ $main.addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => {
   // Só campos de DIGITAR bloqueiam os atalhos (o input de arquivo não digita nada).
-  if (!S.backup || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input:not([type=file]), select, textarea'))) return;
+  if (!S.backup || S.view === 'log' || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input:not([type=file]), select, textarea'))) return;
   // Lendo o log pelo teclado: as teclas são do log (senão o preset muda lá em cima e o log volta ao topo).
   if (e.target.closest && e.target.closest('details.boot pre')) return;
   if (e.key === 'ArrowRight') stepBank(1);
