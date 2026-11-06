@@ -325,23 +325,13 @@ window.BF_CONTENT = (function () {
         ],
         buy: {
           hideDetails: true,
-          /* Sem loja ainda (`href: '#'`): o botão sai desabilitado e esta
-             frase o descreve. É específica do modelo porque a frase
-             compartilhada fala de "canal de contato", e aqui o botão é de
-             compra. */
-          unavailable: 'A 6SW+ ainda não está na loja online.',
+          /* Na loja desde 06/11/2026 (pedido do dono). */
           primary: {
             label: 'Comprar 6SW+',
-            href: '#'
+            href: 'https://loja.bffx.com.br/produtos/bfmidi-3-6sw-1vsgf'
           },
-          ghost: {
-            label: 'Abrir o manual',
-            href: 'https://bffx-updates.github.io/MANUAL_USER/'
-          },
-          /* A 6SW+ ainda não esteve à venda: "caso esteja esgotado" não
-             vale para ela (aprovado em 24/09/2026). */
           waitlist: {
-            text: 'Fale com o Branco, da BFFX, para entrar no grupo de espera e saber quando a 6SW+ chegar à loja.',
+            text: 'Caso esteja esgotado, fale com o Branco para entrar no grupo de espera do próximo lote.',
             label: 'Chamar no WhatsApp',
             href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%206SW%2B.'
           }
