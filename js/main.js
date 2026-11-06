@@ -183,7 +183,7 @@
      Foto nova sem entrada aqui: caixa = arquivo inteiro, proporção 3:2. */
   var HOME_MEDIA = {
     '8sw-hero-front': { w: 1600, h: 1146, sm: 800, md: 0,    body: [1, 1.25, 1.05, 0.96] },
-    '6sw-hero':       { w: 1600, h: 563,  sm: 800, md: 1200, body: [0, 0, 0.18, 0.18] },
+    '6sw-hero':       { w: 1600, h: 541,  sm: 800, md: 1200, body: [0, 0, 0, 0] },
     'nano-hero':      { w: 1536, h: 1024, sm: 800, md: 1200, body: [2.2, 2.15, 6.93, 8.59] },
     'micro-hero':     { w: 1494, h: 1398, sm: 800, md: 1200, body: [0, 0, 0, 0] }
   };
@@ -467,7 +467,8 @@
   var INFO_MEDIA = {
     '8sw-top':    { w: 1200, h: 867,  body: [0.5, 0.4, 7.8, 5.6], screen: '320 60 470 300' },
     'nano-top':   { w: 1200, h: 805,  body: [0.5, 3.0, 0.6, 9.2], screen: '340 206 520 324' },
-    '6sw-hero':   { w: 1600, h: 563,  body: [0, 0, 0, 0],         screen: '70 104 480 336' },
+    '6sw-hero':   { w: 1600, h: 541,  body: [0, 0, 0, 0],         screen: '65 93 482 315' },
+    '6sw-top':    { w: 1600, h: 543,  body: [0, 0, 0, 0],         screen: '62 89 485 316' },
     'micro-hero': { w: 1494, h: 1398, body: [0, 0, 0, 0],         screen: '249 372 993 673' }
   };
 
@@ -1107,8 +1108,8 @@
 
     /* Conexões: etiqueta curta à vista (serigrafia), descrição longa de
        `ports` para o leitor de tela. Chave desconhecida é pulada. Um
-       chassi que imprime outro nome (a 6SW+ chama o dual switch de SW1/2)
-       declara isso no `portTags` da banda de conexões, e o SHOP usa o
+       chassi que imprime outro nome (a 6SW+ antiga chamava o dual switch de
+       SW1/2) declara isso no `portTags` da banda de conexões, e o SHOP usa o
        mesmo nome da foto e do IN/OUT. */
     var keys = (m.ports || []).filter(function (k) { return C.ports && C.ports[k]; });
     var tags = C.buy.portTags || {};

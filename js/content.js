@@ -184,7 +184,8 @@ window.BF_CONTENT = (function () {
        `label` o nome completo da porta, como está na arte.
        `tag`   a etiqueta branca, como a serigrafia do chassi. Um modelo cujo
                chassi imprima outro nome troca só o dele, na banda de
-               conexões (`portTags`) — a 6SW+ chama o dual switch de SW1/2.
+               conexões (`portTags`). (A 6SW+ antiga imprimia SW1/2; o chassi
+               de nov/2026 imprime 2SW, como as outras, e hoje nenhum usa.)
        `name`  o nome em texto; `role` o que a porta faz, numa frase.
        `group` a família no painel. Portas vizinhas com o mesmo `group`
                ficam sob a mesma etiqueta ("Saídas MIDI", "USB"…).
@@ -296,17 +297,21 @@ window.BF_CONTENT = (function () {
       {
         hash: '6sw',
         tab: '6SW+',
-        note: ['6 em linha', 'tela 3,5″'],
+        /* Fotos novas em 05/11/2026 (pedido do dono): o chassi atual tem os
+           seis footswitches em duas fileiras de três, com a tela à esquerda,
+           e imprime 2SW (não mais SW1/2) na entrada dos footswitches
+           externos. */
+        note: ['6 alongada', 'tela 3,5″'],
         id: 'BFMIDI 6SW+',
         h1: ['BFMIDI', '6SW+'],
         lead: 'Seis footswitches, tela colorida e acesso ao modo LIVE.',
         cta: 'Ver detalhes',
         shot: '6sw-hero',
-        shotAlt: 'BFMIDI 6SW+ vista de cima: seis footswitches em linha, tela colorida ' +
-                 'com amplificador e o preset Classic Rock, anel verde aceso no ' +
-                 'footswitch 2, e as conexões DEVICE, TRS, HOST, EXP, SW1/2 e 9V na ' +
-                 'borda de cima.',
-        /* O que a foto mostra na borda de cima: DEVICE, TRS, HOST, EXP e SW1/2
+        shotAlt: 'BFMIDI 6SW+ vista de cima: seis footswitches em duas fileiras de ' +
+                 'três, anel azul aceso no footswitch 1, tela colorida à esquerda ' +
+                 'com um amplificador num estúdio, e as conexões DEVICE, TRS, HOST, ' +
+                 'EXP, 2SW e 9V na borda de cima.',
+        /* O que a foto mostra na borda de cima: DEVICE, TRS, HOST, EXP e 2SW
            (mais o 9V). Sem DIN5, como a NANO+. */
         ports: ['trs', 'usbDevice', 'usbHost', 'bluetooth', 'wifi', 'dualSw', 'exp'],
         switches: 6,
@@ -341,15 +346,19 @@ window.BF_CONTENT = (function () {
             href: 'https://wa.me/5516992274195?text=Ol%C3%A1%20Branco%21%20Quero%20entrar%20no%20grupo%20de%20espera%20do%20pr%C3%B3ximo%20lote%20da%20BFMIDI%206SW%2B.'
           }
         },
-        /* A banda de INFO não traz `img` e cai na foto principal (main.js);
-           a de CONEXÕES tem a foto traseira. */
+        /* A banda de INFO tem a vista de cima com os anéis acesos (como a
+           8SW+ e a NANO+); a de CONEXÕES tem a foto traseira. */
         bands: [
           {
             panel: 'info',
+            img: '6sw-top',
+            alt: 'BFMIDI 6SW+ vista de cima com os seis anéis de LED acesos em ' +
+                 'cores diferentes e a tela mostrando o preset MODERN AMBIENT com ' +
+                 'ícones e pedais de efeito.',
             title: 'Recursos da 6SW+',
-            body: 'Seis footswitches em linha e a mesma tela colorida da 8SW+, num ' +
-                  'corpo baixo e estreito. Sem footswitch dedicado, o LIVE MODE ' +
-                  'entra pisando o 1 e o 2 juntos.',
+            body: 'Seis footswitches em duas fileiras de três e a mesma tela colorida ' +
+                  'da 8SW+, ao lado, num corpo baixo e estreito. Sem footswitch ' +
+                  'dedicado, o LIVE MODE entra pisando o 1 e o 2 juntos.',
             list: [
               'Seis footswitches com anel de LED próprio',
               'LIVE MODE pisando os footswitches 1 e 2 juntos',
@@ -359,19 +368,20 @@ window.BF_CONTENT = (function () {
           {
             panel: 'conects',
             img: '6sw-rear',
-            size: [1600, 517],
-            floor: 99.3,
+            size: [1600, 535],
+            floor: 98.3,
             alt: 'Painel traseiro da BFMIDI 6SW+ com as conexões identificadas: ' +
-                 '9V, SW1/2, EXP, USB HOST, TRS e USB DEVICE.',
+                 '9V, 2SW, EXP, USB HOST, TRS e USB DEVICE.',
             title: 'Cabo, USB',
             hot: 'e sem fio.',
             body: 'MIDI por TRS e por USB, mais a porta USB HOST para controlar pedais ' +
                   'USB sem computador. As entradas de expressão e de footswitches ' +
                   'externos ficam na mesma borda, ao lado do 9V.',
-            silk: [['9V', 13.4], ['SW1/2', 19.9], ['EXP', 26.9], ['HOST', 47.2],
-                   ['TRS', 74.2], ['DEVICE', 86.6]],
-            /* O chassi da 6SW+ imprime SW1/2 onde as outras imprimem 2SW. */
-            portTags: { dualSw: 'SW1/2' }
+            /* Medidas na foto traseira de 05/11/2026 (centro de cada conector,
+               em % da largura). O chassi novo imprime 2SW, como as outras,
+               então o `portTags` com SW1/2 saiu. */
+            silk: [['9V', 14.1], ['2SW', 19.7], ['EXP', 25.7], ['HOST', 43.9],
+                   ['TRS', 70.7], ['DEVICE', 82.4]]
           }
         ]
       },
