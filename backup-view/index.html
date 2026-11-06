@@ -450,7 +450,7 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   }
-  /* ── LOG VIEW (telemetria da caixa-preta) ── */
+  /* ── LOG VIEW (telemetria da blackbox) ── */
   .lvbtn { display: inline-flex; align-items: center; gap: .65rem; height: 2.65rem; padding: 0 1.25rem; border-radius: .7rem; cursor: pointer; flex: none;
     background: linear-gradient(180deg, #18212C, #111820); border: 1px solid rgba(252,99,55,.55); color: var(--accent2);
     font-size: max(11px, .95rem); font-weight: 900; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
@@ -1174,10 +1174,10 @@ const FOLDER_SVG = document.querySelector('.filebtn svg').outerHTML;
 const $main = document.getElementById('main');
 const $info = document.getElementById('fileinfo');
 // ─────────────────────────────────────────────────────────────────────────────
-// LOG VIEW — telemetria da CAIXA-PRETA (firmware 15.6 de 06/nov/2026 em diante)
+// LOG VIEW — telemetria da BLACKBOX (firmware 15.6 de 06/nov/2026 em diante)
 // Le a linha "DIAG-JSON {...}" que o firmware poe no fim do GET /log (e que o
 // editor embute no backup, chave boot_log). A ORDEM dos arrays e contrato com
-// o DIAG_RECORDER.h (diag_report_json, "v":1): mudou la, mude aqui.
+// o BLACKBOX.h (diag_report_json, "v":1): mudou la, mude aqui.
 // Tambem abre o texto puro do /log ou do /diag (.txt) sem backup.
 // ─────────────────────────────────────────────────────────────────────────────
 const LV_RESET = ['?', 'LIGOU', 'RESET EXTERNO', 'REINÍCIO PEDIDO', 'PÂNICO', 'WATCHDOG (INTERRUPÇÃO)', 'WATCHDOG (TAREFA)',
@@ -1230,8 +1230,11 @@ function lvParse(text) {
   j.stalls = (j.stalls || []).map(([boot, at, dur, phase, route, heapKB, rebooted, fw]) => ({ boot, at, dur, phase, route, heapKB, rebooted, fw }));
   j.phName = (i) => ph[i] || '?';
   // O texto do relatório (sem a linha JSON), para o "ver o relatório em texto".
-  const a = text.lastIndexOf('===== CAIXA-PRETA', i);
-  j.reportText = a >= 0 ? text.slice(a, text.indexOf('===== fim da caixa-preta', i) + 24).replace(/^DIAG-JSON .*$/m, '').trim() : '';
+  // Cabeçalho do relatório: "BLACKBOX"; o primeiro firmware publicado com o recurso (15.6,
+  // 06/nov/2026, antes da troca de nome) escreve "CAIXA-PRETA" — os dois abrem.
+  const a = Math.max(text.lastIndexOf('===== BLACKBOX', i), text.lastIndexOf('===== CAIXA-PRETA', i));
+  const fimM = /===== fim da (blackbox|caixa-preta) =====/.exec(text.slice(i));
+  j.reportText = a >= 0 ? text.slice(a, fimM ? i + fimM.index + fimM[0].length : undefined).replace(/^DIAG-JSON .*$/m, '').trim() : '';
   return j;
 }
 
@@ -1376,8 +1379,8 @@ function renderLogView() {
   const j = S.lv;
   if (!j || j.badVersion) {
     return `<div class="lv">${back}<div class="lv-card lv-none"><h2>Sem telemetria neste arquivo</h2><p>${j && j.badVersion
-      ? `A caixa-preta deste arquivo é de uma versão mais nova do formato (v${esc(j.v)}). Abra esta página atualizada.`
-      : 'O log não traz a CAIXA-PRETA. Ela existe a partir do firmware 15.6 publicado em 06/nov/2026: atualize a controladora pelo atualizador online e faça o backup de novo depois que o problema acontecer (sem desligar a controladora).'}</p></div></div>`;
+      ? `A blackbox deste arquivo é de uma versão mais nova do formato (v${esc(j.v)}). Abra esta página atualizada.`
+      : 'O log não traz a BLACKBOX. Ela existe a partir do firmware 15.6 publicado em 06/nov/2026: atualize a controladora pelo atualizador online e faça o backup de novo depois que o problema acontecer (sem desligar a controladora).'}</p></div></div>`;
   }
   const diag = lvDiagnose(j);
   const n = j.now, worstSev = diag[0].sev;
@@ -1444,7 +1447,7 @@ function renderLogView() {
   <section class="lv-card"><h2>Períodos de lentidão (${j.ep.length})</h2>${epCards || '<p class="lv-note">Nenhum período lento registrado (pior volta ≥ 150 ms ou soma ≥ 400 ms).</p>'}</section>
   ${j.stalls.length ? `<section class="lv-card"><h2>Travamentos gravados (sobrevivem a desligar)</h2><ul class="lv-stalls">${stallRows}</ul></section>` : ''}
   <section class="lv-card"><h2>Eventos (${j.ev.length})</h2><div class="scroll"><table class="lv-ev"><thead><tr><th>Boot</th><th>Hora</th><th>Nível</th><th>Tipo</th><th>O que aconteceu</th></tr></thead><tbody>${evRows || '<tr><td colspan="5">Nenhum evento.</td></tr>'}</tbody></table></div></section>
-  <details class="lv-table lv-card"><summary>Ver o relatório da caixa-preta em texto</summary><pre>${esc(j.reportText)}</pre></details>
+  <details class="lv-table lv-card"><summary>Ver o relatório da blackbox em texto</summary><pre>${esc(j.reportText)}</pre></details>
 </div><div class="lv-tip" id="lvTip" role="tooltip" hidden></div>`;
 }
 
@@ -1687,7 +1690,7 @@ function load(text, name) {
   let b = null;
   try { b = JSON.parse(text); } catch (e) { b = null; }
   // Texto puro do GET /log ou /diag (salvo da controladora): só o LOG VIEW.
-  if (!b && /CAIXA-PRETA|DIAG-JSON |reset: /.test(text)) {
+  if (!b && /BLACKBOX|CAIXA-PRETA|DIAG-JSON |reset: /.test(text)) {
     S.backup = { logOnly: true, boot_log: text }; S.name = name; S.lv = lvParse(text); S.lvBoot = S.lv && !S.lv.badVersion ? S.lv.boot : 0;
     S.view = 'log'; updateInfo(); render(); return;
   }
