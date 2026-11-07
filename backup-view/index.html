@@ -371,6 +371,28 @@
   mark.rs { background: rgba(43,214,91,.12); color: inherit; }
   mark.rs.bad { background: rgba(255,72,72,.2); color: #FFC2C2; }
   details.boot .note { padding: 0 2.25rem 1.2rem; color: var(--muted); font-size: max(11px, .95rem); }
+  /* ── SAÚDE e ÚLTIMOS MOVIMENTOS (chaves status/activity do backup, 07/nov/2026) ── */
+  .act-wrap { padding: 0 1.2rem 1.2rem; display: grid; gap: .9rem; }
+  .act-day { font-size: max(11px, .8rem); font-weight: 800; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; margin: .4rem .3rem 0; }
+  .act-row { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) auto; gap: .9rem; align-items: center; padding: .7rem .9rem;
+    border-radius: .9rem; background: rgba(255,255,255,.04); border: 1px solid var(--line2); }
+  .act-ico { width: 2.6rem; height: 2.6rem; border-radius: .7rem; display: grid; place-items: center; color: #9CD0FA; background: rgba(59,160,242,.13); }
+  .act-ico svg { width: 1.45rem; height: 1.45rem; }
+  .act-row.bad .act-ico { color: #FF8F87; background: rgba(229,84,75,.15); }
+  .act-row.good .act-ico { color: #7FE0B0; background: rgba(47,184,122,.15); }
+  .act-tx { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+  .act-tx b { color: var(--text); font-size: max(12px, .98rem); }
+  .act-tx span { color: var(--muted); font-size: max(11px, .86rem); overflow-wrap: anywhere; }
+  .act-meta { text-align: right; display: flex; flex-direction: column; gap: .2rem; align-items: flex-end; }
+  .act-meta b { font-size: max(11px, .9rem); color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .act-meta span { font-size: max(10.5px, .74rem); color: var(--muted); padding: .1rem .5rem; border-radius: 99px; background: rgba(255,255,255,.06); white-space: nowrap; }
+  .st-row { display: grid; grid-template-columns: 1.9rem minmax(0, 1fr); gap: .9rem; align-items: start; padding: .7rem .9rem; border-radius: .9rem;
+    background: rgba(255,255,255,.04); border: 1px solid var(--line2); }
+  .st-dot { width: 1.9rem; height: 1.9rem; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--st); }
+  .st-dot svg { width: 1.15rem; height: 1.15rem; }
+  .st-row b { color: var(--text); font-size: max(12px, .98rem); display: block; }
+  .st-row div span { color: var(--muted); font-size: max(11px, .86rem); }
+  @media (max-width: 720px) { .act-row { grid-template-columns: 2.3rem minmax(0, 1fr); } .act-meta { grid-column: 2; flex-direction: row; align-items: center; } }
 
   /* 1240–1299 (notebook de 1280): ainda 2 colunas. O piso de 61px das opções pesa mais quando o rem
      encolhe, então os vãos da linha e o entre colunas cedem aos poucos (contínuo, 0 em 1300) e o
@@ -600,6 +622,38 @@
   .lvs-advhead { display: flex; align-items: center; gap: .6rem 1.2rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1.4rem; border-top: 1px solid var(--line2); scroll-margin-top: 6.5rem; }
   .lvs-advhead h2 { color: var(--accent2); }
   .lvs-advhead .lv-back { margin-left: auto; }
+  /* ── LOG VIEW · tela principal simples ── */
+  .lvq { padding: 0; overflow: hidden; border-top: .3rem solid var(--st); }
+  .lvq-head { display: flex; align-items: center; gap: 1.3rem; padding: 1.5rem 1.8rem; background: radial-gradient(30rem 12rem at 0% 0%, color-mix(in srgb, var(--st) 15%, transparent), transparent 70%); }
+  .lvq-head .big { width: 4.2rem; height: 4.2rem; flex: none; display: grid; place-items: center; border-radius: 50%; color: #0E141C; background: var(--st);
+    box-shadow: 0 0 2rem -.3rem color-mix(in srgb, var(--st) 70%, transparent); }
+  .lvq-head .big svg { width: 2.4rem; height: 2.4rem; stroke-width: 2.8; }
+  .lvq-head .tx { flex: 1; min-width: 0; }
+  .lvq-head h2 { margin: 0; font-size: max(22px, 2.1rem); letter-spacing: .01em; text-transform: none; color: var(--st); line-height: 1.1; }
+  .lvq-head p { margin: .25rem 0 0; color: var(--soft); font-size: max(13px, 1.02rem); }
+  .lvq-head p.meta { color: var(--muted); font-size: max(11px, .86rem); }
+  .lvq-list { list-style: none; margin: 0; padding: 0; }
+  .lvq-list li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1.1rem; padding: 1rem 1.8rem; border-top: 1px solid var(--line); }
+  .lvq-list li:not(.is-ok):not(.is-none) { background: color-mix(in srgb, var(--st) 7%, transparent); box-shadow: inset .25rem 0 0 var(--st); }
+  .lvq-list .ic { width: 2.5rem; height: 2.5rem; border-radius: .7rem; display: grid; place-items: center; color: var(--soft); background: rgba(255,255,255,.05); border: 1px solid var(--line); }
+  .lvq-list .ic svg { width: 1.35rem; height: 1.35rem; }
+  .lvq-list .q { display: grid; gap: .2rem; min-width: 0; }
+  .lvq-list .q b { font-size: max(13px, 1.05rem); }
+  .lvq-list .q > span { color: var(--soft); font-size: max(12px, .95rem); }
+  .lvq-list li.is-crit .q > span, .lvq-list li.is-serious .q > span { color: var(--text); font-weight: 700; }
+  .lvq-list .lvs-meter { max-width: 26rem; padding-bottom: 1.1rem; }
+  .lvq-st { display: inline-flex; align-items: center; gap: .4rem; min-width: 7.6rem; justify-content: center; height: 2.1rem; padding: 0 .8rem; border-radius: 999px;
+    font-size: max(11px, .8rem); font-weight: 900; letter-spacing: .08em; color: var(--st); border: 1px solid color-mix(in srgb, var(--st) 70%, transparent);
+    background: color-mix(in srgb, var(--st) 13%, transparent); }
+  .lvq-st svg { width: 1rem; height: 1rem; stroke-width: 2.8; }
+  .lvq-list li.is-none .lvq-st { min-width: 0; border: 0; background: none; }
+  @media (max-width: 720px) {
+    .lvq-head { flex-wrap: wrap; padding: 1.2rem 1.1rem; }
+    .lvq-head .big { width: 3.2rem; height: 3.2rem; } .lvq-head .big svg { width: 1.9rem; height: 1.9rem; }
+    .lvq-head .lvs-adv { width: 100%; justify-content: center; min-height: 44px; }
+    .lvq-list li { padding: .9rem 1.1rem; gap: .8rem; grid-template-columns: auto minmax(0, 1fr); }
+    .lvq-st { grid-column: 2; justify-self: start; min-width: 0; height: 1.8rem; }
+  }
   /* 5 áreas (firmware sem a F1): 3 em cima e 2 mais largas embaixo, sem buraco */
   .lvs-grid[data-n="5"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .lvs-grid[data-n="5"] > :nth-child(-n+3) { grid-column: span 2; }
@@ -1176,6 +1230,129 @@ function renderBootLog() {
   const log = esc(b.boot_log).replace(/^.*reset: .*$/m, (l) => `<mark class="rs${bad ? ' bad' : ''}">${l}</mark>`);
   return `<details class="boot"${open ? ' open' : ''}><summary><span class="sb"><span class="lbl">Log de boot do pedal</span><span class="chips">${chips}</span></span></summary><pre>${log}</pre></details>`;
 }
+// ── SAÚDE e ÚLTIMOS MOVIMENTOS (07/nov/2026) ───────────────────────────────
+// Chaves `status` (GET /diag/status) e `activity` (GET /activity) que o editor
+// põe no backup. O texto de cada movimento é o MESMO do card STATUS do editor
+// (webApp/components/devicestatus.jsx, actDescribe): mudou lá, mude aqui.
+const ACT_PRE = [[/^name$/, 'nome'], [/^channel$/, 'canal'], [/^bank$|^midi_bank$/, 'PC'], [/^extra/, 'extras'],
+  [/^(name_|tag_color|font_)/, 'nome na tela'], [/^bg_color$/, 'fundo (PRESET)'], [/^back_layers_color$/, 'fundo (LIVE)'],
+  [/^(plyt|llyt|pcus|lcus)$/, 'layout'], [/^shn[pl]$/, 'mostrar nome'], [/^l2$/, 'dual layer'], [/^esw$/, 'FS externos'], [/^enabled$/, 'ativo']];
+const ACT_PAR = [[/(^|_)ch\d*$|^eff_ch|^lp_ch/, 'canal'], [/^aspc|^lp_aspc/, 'CC/PC'], [/^(num|lp_num)\d*$/, 'comando'], [/slots$|^sslots$/, 'comandos'],
+  [/^(on|off|val|min_val|max_val|custom|lp_on|lp_off|ini|step|top|end|cnt|tgt)\d*$/, 'valores'], [/^(color|lp_color)\d*$/, 'cor do LED'],
+  [/^(start|at_preset|lp_start|lp_at_preset)\d*$/, 'início'], [/^(inv|ledu|ledm|led_tog)\d*$/, 'LED'], [/^fav/, 'favorito'], [/^bka/, 'volta'],
+  [/^(step_ms|sfigs|sync|bsrc|bpm|per_ms|wfig|up_ms|down_ms|trigger|wave)/, 'tempo']];
+const ACT_DSP = [[/^i$/, 'ícone'], [/^s$/, 'nome do ícone'], [/^m$/, 'texto/ícone'], [/^f$/, 'fonte'], [/^[aAbBcCgG]\d?$/, 'cores']];
+const ACT_GLB = [[/^board$/, 'modelo da placa'], [/^(led|bright|color|letter_led|live_led)/, 'LEDs'], [/^(match_|profile|bank_profile|friendly)/, 'modo amigável'],
+  [/^combo/, 'combos'], [/^preset_(call|goto)/, 'chamada de presets'], [/^bank_(letter|change)/, 'bancos'], [/^auto_/, 'início automático'],
+  [/^sw_?global|^swg/, 'FS GLOBAL'], [/^ext_?dual|^ext_|^esw/, 'FS externos'], [/^exp_/, 'expressão'], [/^(tuner|kemper|nano)/, 'afinador'],
+  [/^(header_live|chan_pause|debounce|long_press|double)/, 'tempos'],
+  [/^(icon_|bpm_card|preset_card|name_preset|custom_|layout|preset_layout|live_layout|gig|screen|display|invert|remap)/, 'tela'],
+  [/^(usb_host|ble)/, 'USB host'], [/^(lang|language)/, 'idioma']];
+function actFields(list, rules, raw) {
+  const keys = String(list || '').split(',').filter(Boolean), out = [];
+  for (const k of keys) {
+    if (k === '+' || k === '*') continue;
+    const r = rules.find(([re]) => re.test(k)); const l = r ? r[1] : (raw ? k : 'ajustes');
+    if (!out.includes(l)) out.push(l);
+  }
+  if (keys.includes('+')) out.push('…');
+  return out.join(', ');
+}
+const actMode = (x) => SW_MODE_TITLE[typeof x === 'number' || /^\d+$/.test(x) ? SW_MODE_IDS[+x] : x] || String(x);
+function actDescribe(a) {
+  const it = { t: a[0], ses: a[1], up: a[2], src: a[3], code: a[4], tag: a[5], sw: a[6], ly: a[7], n: a[8], det: a[9] || '' };
+  const sw = it.sw >= 1 && it.sw <= 6 ? 'FS' + it.sw : '', where = (it.tag || '') + (it.ly === 1 ? ' · L2' : '');
+  let r;
+  switch (it.code) {
+    case 'pre': r = ['preset', `Alterou o preset ${it.tag}`, actFields(it.det, ACT_PRE)]; break;
+    case 'mode': { const [x, y] = it.det.split('>').map((v) => parseInt(v, 10)); r = ['mode', `Trocou o modo do ${sw} (${where})`, `${x >= 0 ? actMode(x) : '—'} → ${actMode(y)}`]; break; }
+    case 'par': { const i = it.det.indexOf(':'), m = i > 0 ? it.det.slice(0, i) : '', rest = i > 0 ? it.det.slice(i + 1) : it.det;
+      r = rest === '*' ? ['sw', `Configurou o ${sw} (${where})`, m ? actMode(m) : ''] : ['sw', `Alterou o ${sw} (${where})`, [m ? actMode(m) : '', actFields(rest, ACT_PAR)].filter(Boolean).join(' · ')]; break; }
+    case 'dsp': r = ['display', `Alterou o display do ${sw} (${where})`, actFields(it.det, ACT_DSP)]; break;
+    case 'glb': r = ['global', 'Salvou a configuração global', actFields(it.det, ACT_GLB, true)]; break;
+    case 'img': case 'ico': { const p = it.det.split(',').filter(Boolean), up = p.filter((x) => x[0] === '+').map((x) => x.slice(1)), del = p.filter((x) => x[0] === '-').map((x) => x.slice(1));
+      const w = it.code === 'img' ? ['imagem(ns)', 'image'] : ['ícone(s)', 'icon'];
+      r = [w[1], [up.length ? `Enviou ${up.length} ${w[0]}` : '', del.length ? `Apagou ${del.length} ${w[0]}` : ''].filter(Boolean).join(' · '), [up.length ? '+' + up.join(', ') : '', del.length ? '−' + del.join(', ') : ''].filter(Boolean).join('  ')]; break; }
+    case 'rst': r = ['restore', 'Restaurou um backup', `${it.det || 0} preset(s) aplicado(s)`, 'good']; break;
+    case 'era': r = ['erase', it.det === 'global' ? 'Apagou a configuração global' : 'Apagou todos os presets', '', 'bad']; break;
+    case 'upd': r = it.det === 'fw' ? ['update', 'Atualizou o firmware', '', 'good'] : ['update', 'Atualizou o editor', `${it.n} arquivo(s)`, 'good']; break;
+    case 'wifi': r = it.det === '-' ? ['wifi', 'Esqueceu a rede de casa', ''] : ['wifi', 'Conectou e salvou a rede de casa', it.det.replace(/^\+/, '')]; break;
+    case 'upe': r = ['upedal', `${it.det.startsWith('-') ? 'Apagou' : 'Salvou'} o aparelho personalizado USER ${it.det.replace(/^-/, '')}`, '']; break;
+    case 'cert': r = ['cert', it.det === 'apagado' ? 'Apagou o certificado de teste' : 'Gravou o certificado de teste', '', 'good']; break;
+    case 'fail': r = ['fail', `A gravação do preset ${it.tag} foi recusada`, 'memória cheia ou erro de gravação; nada mudou no preset', 'bad']; break;
+    default: r = ['preset', it.code, it.det];
+  }
+  return { it, ico: r[0], title: r[1], sub: r[2], tone: r[3] || '' };
+}
+const ACT_ICO = {
+  preset: '<rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  mode: '<path d="M4 7h11M4 17h11"/><path d="m15 4 3 3-3 3M15 14l3 3-3 3"/>',
+  sw: '<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="3"/>',
+  display: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m8 13 2.5-3 2 2 1.5-1.5L17 13"/>',
+  global: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  image: '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="9.5" r="1.6"/><path d="m4 18 5.5-5.5 4 4 2.5-2.5 4 4"/>',
+  icon: '<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/>',
+  restore: '<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/>',
+  erase: '<path d="M5 7h14M10 7V4.5h4V7M7 7l1 13h8l1-13"/>',
+  update: '<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19.5h14"/>',
+  wifi: '<path d="M3 9a13 13 0 0 1 18 0M6.2 12.4a8.5 8.5 0 0 1 11.6 0M9.4 15.8a4 4 0 0 1 5.2 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/>',
+  upedal: '<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><circle cx="12" cy="9" r="2.5"/><path d="M8.5 16h7"/>',
+  cert: '<circle cx="12" cy="9.5" r="5.5"/><path d="m9.6 9.5 1.7 1.7 3.2-3.4M8.5 14.3 7.5 21l4.5-2.4 4.5 2.4-1-6.7"/>',
+  fail: '<path d="M12 3.5 21 19.5H3z"/><path d="M12 10v4M12 16.8v.2"/>' };
+const actSvg = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ACT_ICO[k] || ACT_ICO.preset}</svg>`;
+const actDur = (s) => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h ? `${h} h ${m} min` : m ? `${m} min` : `${s} s`; };
+function renderActivity() {
+  const b = S.backup, a = b.activity;
+  if (!a || !Array.isArray(a.items)) {
+    return `<details class="boot act"${S.actOpen ? ' open' : ''}><summary><span class="sb"><span class="lbl">Últimos movimentos</span><span class="chips"><span class="chip">AUSENTE</span></span></span></summary><div class="note">Este backup não traz os últimos movimentos (editor/firmware anteriores a 07/nov/2026).</div></details>`;
+  }
+  const items = a.items.slice().reverse().map(actDescribe);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let lastDay = '', html = '';
+  for (const d of items) {
+    let day;
+    if (d.it.t) { const x = new Date(d.it.t * 1000); x.setHours(0, 0, 0, 0); const diff = Math.round((today - x) / 864e5);
+      day = diff === 0 ? 'Hoje' : diff === 1 ? 'Ontem' : x.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' }); }
+    else day = d.it.ses === a.ses ? 'Sessão do backup (sem horário)' : `Sessão ${d.it.ses} (sem horário)`;
+    if (day !== lastDay) { html += `<div class="act-day">${esc(day)}</div>`; lastDay = day; }
+    const when = d.it.t ? new Date(d.it.t * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : `${actDur(d.it.up)} depois de ligar`;
+    html += `<div class="act-row ${d.tone}"><span class="act-ico">${actSvg(d.ico)}</span><div class="act-tx"><b>${esc(d.title)}</b>${d.sub ? `<span>${esc(d.sub)}</span>` : ''}</div>`
+      + `<div class="act-meta"><b>${esc(when)}</b><span>${d.it.src === 'u' ? 'Cabo USB' : 'Wi-Fi'}${d.it.n > 1 && d.it.code !== 'upd' ? ' · ' + d.it.n + '×' : ''}</span></div></div>`;
+  }
+  const open = S.actOpen ?? true;
+  return `<details class="boot act"${open ? ' open' : ''}><summary><span class="sb"><span class="lbl">Últimos movimentos</span><span class="chips"><span class="chip">${items.length} MOVIMENTO(S)</span></span></span></summary>`
+    + `<div class="act-wrap">${items.length ? html : '<div class="note">Nenhum movimento registrado.</div>'}</div></details>`;
+}
+// Saúde na hora do backup (GET /diag/status): as mesmas 6 perguntas do card STATUS do editor.
+function renderStatus() {
+  const s = S.backup.status;
+  if (!s || !s.v) return '';
+  const kb = (b) => { const k = (+b || 0) / 1024; return k >= 1024 ? (k / 1024).toFixed(1).replace('.', ',') + ' MB' : Math.round(k) + ' KB'; };
+  const ms = (v) => (v >= 1000 ? (v / 1000).toFixed(1).replace('.', ',') + ' s' : Math.round(v) + ' ms');
+  const C = [];
+  const hm = s.heapMin || 0;
+  C.push(['Memória interna', hm < 16384 ? 'crit' : hm < 32768 ? 'warn' : 'ok', `${kb(s.heap)} livres · mínima ${kb(hm)} · maior bloco ${kb(s.heapBlk)}`]);
+  const stalls = Math.max(s.stalls || 0, s.nvsStalls || 0), bad = (s.crash || 0) + (s.heapCorrupt || 0);
+  C.push(['Travou ou reiniciou sozinha', stalls || bad ? 'crit' : (s.loopMax || 0) >= 1000 ? 'warn' : 'ok',
+    stalls || bad ? [stalls ? `parou ${stalls}x, a pior por ${ms(s.stallMax || 0)}` : '', s.crash ? `reiniciou sozinha ${s.crash}x` : '', s.heapCorrupt ? 'memória corrompida' : ''].filter(Boolean).join(' · ')
+      : (s.loopMax || 0) >= 1000 ? `Não, mas ficou lenta (pior volta ${ms(s.loopMax)}, ${s.loopPh || '?'})` : 'Não']);
+  C.push(['Footswitches respondendo', !s.pressN ? 'none' : s.pressMax >= 300 ? 'warn' : 'ok', !s.pressN ? 'Nenhuma pisada desde que ligou' : `média ${s.pressAvg} ms, pior ${ms(s.pressMax)}`]);
+  const rssi = Math.min(0, ...[s.apSta && s.apRssi ? s.apRssi : 0, s.staRssi || 0].filter((v) => v)), drops = (s.staDown || 0) + (s.apLeave || 0);
+  C.push(['Wi-Fi', !s.wifi && !drops ? 'none' : rssi && rssi < -80 ? 'warn' : (s.staDown || 0) > 2 ? 'warn' : 'ok',
+    [['Desligado', 'Na rede de casa', 'Rede própria (AP)', 'AP + rede de casa'][s.wifi] || 'Desligado', s.apSta ? `${s.apSta} no AP` : '', rssi ? rssi + ' dBm' : '', drops ? `${drops} queda(s)` : ''].filter(Boolean).join(' · ')]);
+  if (s.fsTotKB) C.push(['Memória de presets', s.fsFmt ? 'crit' : s.fsFreeKB >= 0 && s.fsFreeKB < 64 ? 'warn' : 'ok', s.fsFmt ? 'FOI FORMATADA ao ligar' : `${kb(s.fsFreeKB * 1024)} livres de ${kb(s.fsTotKB * 1024)}`]);
+  const errs = (s.fsFail || 0) + (s.nvsFail || 0) + (s.allocFail || 0);
+  C.push(['Erros de gravação e de memória', errs ? 'warn' : 'ok', errs ? [s.fsFail ? `${s.fsFail} gravação(ões) recusada(s)` : '', s.nvsFail ? `${s.nvsFail} falha(s) na config` : '', s.allocFail ? `${s.allocFail} falta(s) de memória` : ''].filter(Boolean).join(' · ') : 'Nenhum']);
+  const col = { ok: '#2FB87A', warn: '#E0A12A', crit: '#E5544B', none: '#8E96A3' };
+  const ico = { ok: '<path d="m6.5 12.5 3.5 3.5 7.5-8"/>', warn: '<path d="M12 7v6M12 16.8v.2"/>', crit: '<path d="m8 8 8 8M16 8l-8 8"/>', none: '<path d="M8 12h8"/>' };
+  const rank = { ok: 0, none: 0, warn: 1, crit: 2 };
+  const ov = C.reduce((w, c) => (rank[c[1]] > rank[w] ? c[1] : w), 'ok');
+  const rows = C.map(([q, st, a]) => `<div class="st-row" style="--st:${col[st]}"><span class="st-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">${ico[st]}</svg></span><div><b>${esc(q)}</b><span>${esc(a)}</span></div></div>`).join('');
+  const open = S.stOpen ?? (ov !== 'ok');
+  return `<details class="boot st"${open ? ' open' : ''}><summary><span class="sb"><span class="lbl">Saúde na hora do backup</span><span class="chips">`
+    + `<span class="chip ${ov === 'ok' ? 'ok' : ov === 'warn' ? 'warn' : 'bad'}">${ov === 'ok' ? 'TUDO CERTO' : ov === 'warn' ? 'ATENÇÃO' : 'TEM PROBLEMA'}</span>`
+    + `<span class="chip">LIGADA HÁ ${esc(actDur((s.up || 0) / 1000).toUpperCase())}</span></span></span></summary><div class="act-wrap">${rows}</div></details>`;
+}
 const PC_ICON = '<path d="M4 5h16v10H4z"/><path d="M9 19h6M12 15v4"/>';
 const CH_ICON = '<rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9.5" cy="9.5" r="1" fill="currentColor"/><circle cx="14.5" cy="9.5" r="1" fill="currentColor"/><circle cx="9.5" cy="14.5" r="1" fill="currentColor"/><circle cx="14.5" cy="14.5" r="1" fill="currentColor"/>';
 const PLUS_ICON = '<path d="M12 5v14M5 12h14"/>';
@@ -1742,6 +1919,70 @@ function lvRing(areas, overall) {
     <g transform="translate(40 40)" color="${LV_ST[overall].c}"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${LV_ST_ICON[overall]}</svg></g></svg>`;
 }
 
+// TELA PRINCIPAL SIMPLES (07/nov/2026, pedido do dono: "o que eu mais queria é ver se tem algo
+// errado, como heap interno baixo ou Wi-Fi travando o sistema"): um veredito e uma lista curta de
+// perguntas com resposta direta. Os cartões, gráficos e eventos ficam no AVANÇADOS.
+function lvChecks(j) {
+  const h = lvHealth(j), ar = Object.fromEntries(h.areas.map((a) => [a.k, a])), ev = j.ev, n = j.now;
+  const C = [];
+  // 1) Memória interna (heap): a que o Wi-Fi e o sistema usam
+  const hm = Math.round((n.heapMin || 0) / 1024), m = ar.mem;
+  C.push({ k: 'mem', q: 'Memória interna (heap)', st: m.st,
+    a: m.st === 'ok' ? `Normal — chegou no mínimo a ${hm} KB livres` : m.st === 'warn' ? `Apertada — chegou a ${hm} KB livres`
+      : `BAIXA — chegou a ${hm} KB livres (abaixo de 16 KB o Wi-Fi e o sistema começam a falhar)`, meter: m.meter });
+  // 2) Wi-Fi/editor travando a controladora: paradas (≥ 3 s) e lentidão fora do normal nas fases WEB/WIFI
+  const stalls = j.stalls.length ? j.stalls.map((s) => ({ ph: s.phase, dur: s.dur, route: s.route }))
+    : ev.filter((e) => e.type === 12).map((e) => ({ ph: e.a, dur: e.c, route: e.tag }));
+  const net = (ph) => ['WEB', 'WIFI'].includes(j.phName(ph));
+  const wStall = stalls.filter((x) => net(x.ph)), wSlow = j.ep.filter((e) => !e.exp && e.max < 3000 && net(e.worst));
+  const routes = lvUniq([...wStall, ...wSlow].map((x) => x.route).filter(Boolean));
+  C.push({ k: 'wifi', q: 'Wi-Fi travando a controladora', st: wStall.length ? 'crit' : wSlow.length ? 'warn' : 'ok',
+    a: wStall.length ? `SIM — parou ${wStall.length}x, a pior por ${lvMs(Math.max(...wStall.map((x) => x.dur)))}${routes.length ? ` (pedido ${routes.slice(0, 2).join(', ')})` : ''}. Nesse tempo os footswitches não respondem.`
+      : wSlow.length ? `Deixou lenta ${wSlow.length}x (pior ${lvMs(Math.max(...wSlow.map((e) => e.max)))}), sem chegar a travar` : 'Não' });
+  // 3) Travou ou reiniciou sozinha por outro motivo
+  const oStall = stalls.filter((x) => !net(x.ph));
+  const crash = ev.filter((e) => e.type === 1 && (LV_RESET_BAD.has(e.a) || e.b === 1)).length;
+  const corrupt = ev.filter((e) => e.type === 25).length;
+  const oSlow = j.ep.filter((e) => !e.exp && e.max < 3000 && !net(e.worst));
+  const bits = [];
+  if (crash) bits.push(`reiniciou sozinha ${crash}x`);
+  if (oStall.length) bits.push(`parou ${oStall.length}x (${lvUniq(oStall.map((x) => j.phName(x.ph))).join(', ')})`);
+  if (corrupt) bits.push('memória corrompida');
+  C.push({ k: 'stab', q: 'Travou ou reiniciou sozinha', st: bits.length ? 'crit' : oSlow.length ? 'warn' : 'ok',
+    a: bits.length ? `SIM — ${bits.join(', ')}` : oSlow.length ? `Não, mas ficou lenta ${oSlow.length}x (${lvUniq(oSlow.map((e) => j.phName(e.worst))).join(', ')})` : 'Não' });
+  // 4) Footswitches
+  const p = ar.press;
+  C.push({ k: 'press', q: 'Footswitches respondendo', st: p.st,
+    a: p.st === 'none' ? 'Sem pisadas registradas' : p.st === 'ok' ? `Sim — em ${j.press.avg} ms em média` : `Com atraso — média ${j.press.avg} ms, pior ${lvMs(j.press.max)}` });
+  // 5) Sinal do Wi-Fi
+  const w = ar.wifi, sta = ev.filter((e) => e.type === 7).reduce((a, e) => a + Math.max(1, e.a), 0);
+  const left = ev.filter((e) => e.type === 5).length;
+  const rssi = Math.min(0, ...[n.apSta && n.apRssi ? n.apRssi : 0, n.staRssi || 0].filter((v) => v));
+  const sigSt = !n.mode && !left && !sta ? 'none' : lvWorst([rssi ? (rssi < -85 ? 'serious' : rssi < -75 ? 'warn' : 'ok') : 'ok', left || sta ? 'warn' : 'ok']);
+  C.push({ k: 'sig', q: 'Sinal do Wi-Fi', st: sigSt,
+    a: `${w.val}${left ? ` · aparelho caiu ${left}x` : ''}${sta ? ` · rede de casa caiu ${sta}x (fora de alcance?)` : ''}${!left && !sta ? ' · sem quedas' : ''}` });
+  // 6) Memória de presets (só com a F1)
+  if (ar.disk) C.push({ k: 'disk', q: 'Memória de presets', st: ar.disk.st,
+    a: ar.disk.st === 'ok' ? `Normal — ${ar.disk.val} livres` : `${ar.disk.val} livres — ${ar.disk.st === 'warn' ? 'quase cheia' : 'com falhas, veja AVANÇADOS'}` });
+  return C;
+}
+const LV_Q_ICO = { mem: LV_AREA_ICO.mem, wifi: '<path d="M2.8 9.2a13.5 13.5 0 0 1 18.4 0"/><path d="M5.9 12.6a9 9 0 0 1 12.2 0"/><path d="M10 15.5v5M14 15.5v5"/>',
+  stab: LV_AREA_ICO.stab, press: LV_AREA_ICO.press, sig: LV_AREA_ICO.wifi, disk: LV_AREA_ICO.disk };
+const LV_Q_LBL = { ok: 'OK', warn: 'ATENÇÃO', serious: 'CUIDADO', crit: 'PROBLEMA', none: '—' };
+function lvSimple(j) {
+  const C = lvChecks(j), ov = lvWorst(C.map((c) => c.st)), bad = C.filter((c) => c.st !== 'ok' && c.st !== 'none');
+  const head = ov === 'ok' ? ['Tudo certo', 'Nada de errado registrado.'] : ov === 'none' ? ['Sem dados', 'O registro ainda não tem o suficiente.']
+    : [ov === 'crit' ? 'Tem problema' : 'Atenção', bad.map((c) => c.q).join(' · ')];
+  const rows = C.map((c) => `<li style="--st:${LV_ST[c.st].c}" class="is-${c.st}"><span class="ic">${lvIco(LV_Q_ICO[c.k])}</span>
+      <div class="q"><b>${esc(c.q)}</b><span>${esc(c.a)}</span>${c.meter && c.st !== 'none' ? c.meter : ''}</div>
+      <span class="lvq-st">${lvIco(LV_ST_ICON[c.st])}${LV_Q_LBL[c.st]}</span></li>`).join('');
+  return `<section class="lv-card lvq" style="--st:${LV_ST[ov].c}" aria-labelledby="lvqT">
+    <div class="lvq-head"><span class="big">${lvIco(LV_ST_ICON[ov])}</span>
+      <div class="tx"><h2 id="lvqT">${head[0]}</h2><p>${esc(head[1])}</p><p class="meta">firmware ${esc(j.fw)} · ligada há ${lvT(j.up)} · boot nº ${j.boot}</p></div>
+      <button class="lvs-adv" id="lvAdvBtn" type="button" aria-expanded="${!!S.lvAdv}" aria-controls="lvAdv">AVANÇADOS${lvIco('<path d="m6 9 6 6 6-6"/>', 'chev')}</button></div>
+    <ul class="lvq-list">${rows}</ul></section>`;
+}
+
 function lvSummary(j, diag, bootChips) {
   const h = lvHealth(j), ov = h.overall, okN = h.areas.filter((a) => a.st === 'ok').length;
   const todo = diag.filter((d) => d.sev !== 'info' && d.sev !== 'ok');
@@ -1754,13 +1995,7 @@ function lvSummary(j, diag, bootChips) {
       <p class="s">${esc(a.sub)}</p></article>`).join('');
   const todoHtml = todo.length ? `<ol class="lvs-todo">${todo.slice(0, 3).map((d) => `<li style="--st:${LV_SEV[d.sev].c}">${lvBadge(d.sev)}<div><b>${esc(d.title)}</b>${d.fix ? `<p><span>O que fazer:</span> ${esc(d.fix)}</p>` : `<p>${esc(d.text)}</p>`}</div></li>`).join('')}</ol>`
     : `<p class="lvs-ok">${lvIco(LV_SEV_ICON.ok)}Nada para fazer agora.${more > 0 ? ` ${more} observação(ões) informativa(s) no AVANÇADOS.` : ''}</p>`;
-  return `<section class="lvs-hero lv-card" style="--st:${LV_ST[ov].c}" aria-labelledby="lvsT">
-      ${lvRing(h.areas, ov)}
-      <div class="tx"><span class="eyb">SAÚDE DA CONTROLADORA</span><h2 id="lvsT">${LV_OVERALL[ov][0]}</h2><p>${LV_OVERALL[ov][1]}</p>
-        <p class="meta"><b>${okN} de ${h.areas.length}</b> áreas saudáveis · firmware ${esc(j.fw)} · ligada há ${lvT(j.up)}</p></div>
-      <button class="lvs-adv" id="lvAdvBtn" type="button" aria-expanded="${!!S.lvAdv}" aria-controls="lvAdv">${lvIco('<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>')}AVANÇADOS${lvIco('<path d="m6 9 6 6 6-6"/>', 'chev')}</button>
-    </section>
-    <section class="lvs-grid" data-n="${h.areas.length}" aria-label="Saúde por área">${tiles}</section>
+  return `<section class="lvs-grid" data-n="${h.areas.length}" aria-label="Saúde por área">${tiles}</section>
     <section class="lv-card lvs-todo-card" aria-labelledby="lvsTodoT"><div class="lv-head"><h2 id="lvsTodoT">O que fazer</h2>${todo.length && more > 0 ? `<span class="lv-note">+${more} no AVANÇADOS</span>` : ''}</div>${todoHtml}</section>
     <section class="lv-card" aria-labelledby="lvsStripT"><div class="lv-head"><h2 id="lvsStripT">Minuto a minuto</h2>${bootChips}</div>
       <p class="lv-note">Cada quadrado é um minuto. Toque ou passe o mouse para ver o que aconteceu.</p>
@@ -1839,10 +2074,11 @@ function renderLogView() {
   })();
   const stallRows = j.stalls.map((s) => `<li>${lvBadge('crit')} fw ${esc(s.fw)} · boot ${s.boot} · ${lvT(s.at)}: parada <b>${lvMs(s.dur)}</b> na fase <b>${esc(j.phName(s.phase))}</b>${s.route ? ` (pedido ${esc(s.route)})` : ''} · memória ${s.heapKB} KB${s.rebooted ? ' · <b>o vigia reiniciou</b>' : ''}</li>`).join('');
   const minRows = j.min.slice().reverse().map((m) => `<tr><td>${m.boot}</td><td>${m.minute}</td><td>${m.loops}</td><td>${m.slow}</td><td>${m.maxLoop}${m.maxLoop ? ' ' + esc(j.phName(m.maxPh)) : ''}</td><td>${m.presses}</td><td>${m.maxPress}</td><td>${m.http}</td><td>${m.httpSlow}</td><td>${m.wifiEv}</td><td>${m.apMax}</td><td>${m.apRssi || ''}</td><td>${m.staRssi || ''}</td><td>${m.loopMin}%</td><td>${m.heapKB}</td>${j.f1 ? `<td>${m.psramMinKB || ''}</td><td>${m.fsFreeKB || ''}</td><td>${m.wifiCh || ''}</td><td>${m.subTop >= 0 ? esc(j.subName(m.subTop)) + ' ' + m.subMs : ''}</td>` : ''}</tr>`).join('');
-  const summary = lvSummary(j, diag, bootChips);
-  if (!S.lvAdv) return `<div class="lv">${back}${summary}</div><div class="lv-tip" id="lvTip" role="tooltip" hidden></div>`;
-  return `<div class="lv">${back}${summary}
-  <div class="lvs-advhead" id="lvAdv"><h2>Avançados</h2><span class="lv-note">Diagnóstico completo, gráficos, períodos lentos e eventos.</span><button class="lv-back" id="lvAdvClose" type="button">Fechar avançados ▴</button></div>
+  const simple = lvSimple(j);
+  if (!S.lvAdv) return `<div class="lv">${back}${simple}</div><div class="lv-tip" id="lvTip" role="tooltip" hidden></div>`;
+  return `<div class="lv">${back}${simple}
+  <div class="lvs-advhead" id="lvAdv"><h2>Avançados</h2><span class="lv-note">Saúde por área, minuto a minuto, diagnóstico completo, gráficos e eventos.</span><button class="lv-back" id="lvAdvClose" type="button">Fechar avançados ▴</button></div>
+  ${lvSummary(j, diag, bootChips)}
   <section class="lv-card lv-diag" aria-labelledby="lvDiagT" style="--sev:${LV_SEV[worstSev].c}">
     <h2 id="lvDiagT">Diagnóstico</h2>
     <ul>${diag.map((d) => `<li style="--sev:${LV_SEV[d.sev].c}">${lvBadge(d.sev)}<div><b>${esc(d.title)}</b><p>${esc(d.text)}</p>${d.fix ? `<p class="fix"><span>O que fazer:</span> ${esc(d.fix)}</p>` : ''}</div></li>`).join('')}</ul>
@@ -2055,7 +2291,7 @@ function render() {
   const a = document.activeElement; const inMain = !!a && $main.contains(a);
   const fk = inMain ? (a.id ? '#' + a.id : a.dataset.pi ? `.key[data-pi="${a.dataset.pi}"]` : a.dataset.layer ? `.layerseg [data-layer="${a.dataset.layer}"]`
     : a.dataset.bank ? `.nav[data-bank="${a.dataset.bank}"]` : a.matches('summary') ? 'details.boot summary' : a.matches('pre') ? 'details.boot pre' : '') : '';
-  $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderModeMap()}${renderPreset()}${renderBootLog()}`;
+  $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderModeMap()}${renderPreset()}${renderStatus()}${renderActivity()}${renderBootLog()}`;
   if (inMain) {
     // O controle sumiu ou ficou desabilitado (preset sem extras, sem layer 2, slot fora
     // do backup): o foco vai para a tecla do preset atual, nunca para o <body>.
@@ -2128,7 +2364,7 @@ function load(text, name) {
   }
   if (!b) { alert('Arquivo não é um backup da BFMiDi nem um log da controladora.'); return; }
   if (typeof b !== 'object' || !b.presets) { alert('Este JSON não parece um backup da BFMiDi (sem "presets").'); return; }
-  S.backup = b; S.name = name; S.layer = 1; S.bootOpen = null;
+  S.backup = b; S.name = name; S.layer = 1; S.bootOpen = null; S.actOpen = null; S.stOpen = null;
   S.lv = lvParse(b.boot_log); S.lvBoot = S.lv && !S.lv.badVersion ? S.lv.boot : 0;
   if (S.view === 'log' || !S.lv) S.view = S.view === 'log' ? 'log' : 'presets';
   // paleta de LED do próprio backup (color_N), quando presente
@@ -2185,7 +2421,11 @@ document.addEventListener('keydown', (e) => {
   }
 });
 // O usuário abriu/fechou o log: vale nas próximas trocas de preset e de banco.
-$main.addEventListener('toggle', (e) => { if (e.target.matches('details.boot')) S.bootOpen = e.target.open; }, true);
+$main.addEventListener('toggle', (e) => {
+  if (e.target.matches('details.boot.act')) S.actOpen = e.target.open;
+  else if (e.target.matches('details.boot.st')) S.stOpen = e.target.open;
+  else if (e.target.matches('details.boot')) S.bootOpen = e.target.open;
+}, true);
 // Arrastar arquivo: contador de enter/leave para a camada não piscar ao passar sobre filhos.
 let dragDepth = 0;
 const dragEnd = () => { dragDepth = 0; document.body.classList.remove('dragging'); };
