@@ -535,6 +535,85 @@
     .lv-card { padding: 1.1rem 1rem; }
     .lvbtn { min-height: 44px; }
   }
+  /* ── LOG VIEW · painel resumido (07/nov/2026): selo geral, áreas com medidor, o que fazer, minuto a minuto ── */
+  .lvs-hero { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1.2rem 2rem; position: relative; overflow: hidden;
+    padding: 1.6rem 2rem; border-left: .35rem solid var(--st); }
+  .lvs-hero::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(28rem 14rem at 0% 50%, color-mix(in srgb, var(--st) 16%, transparent), transparent 70%); }
+  .lvs-hero > * { position: relative; }
+  .lvs-ring { width: 8.5rem; height: 8.5rem; display: block; }
+  .lvs-hero .eyb { font-size: max(11px, .78rem); font-weight: 900; letter-spacing: .16em; color: var(--muted); }
+  .lvs-hero h2 { margin: .15rem 0 .25rem; font-size: max(24px, 2.4rem); letter-spacing: .01em; text-transform: none; color: var(--st); line-height: 1.05; }
+  .lvs-hero p { margin: 0; color: var(--soft); font-size: max(13px, 1.05rem); }
+  .lvs-hero p.meta { margin-top: .55rem; color: var(--muted); font-size: max(11px, .9rem); }
+  .lvs-hero p.meta b { color: var(--text); }
+  .lvs-adv { display: inline-flex; align-items: center; gap: .6rem; height: 2.9rem; padding: 0 1.2rem; border-radius: .7rem; cursor: pointer; white-space: nowrap;
+    background: linear-gradient(180deg, #1E2938, #151D29); border: 1px solid var(--line2); color: var(--text);
+    font-size: max(11px, .92rem); font-weight: 900; letter-spacing: .08em; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+  .lvs-adv svg { width: 1.15rem; height: 1.15rem; flex: none; }
+  .lvs-adv .chev { transition: transform .2s; color: var(--muted); }
+  .lvs-adv[aria-expanded="true"] { border-color: rgba(252,99,55,.6); color: var(--accent2); }
+  .lvs-adv[aria-expanded="true"] .chev { transform: rotate(180deg); color: var(--accent2); }
+  .lvs-adv:hover { background: linear-gradient(180deg, #243245, #1A2433); }
+  .lvs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .lvs-area { --st: #5F6873; display: flex; flex-direction: column; gap: .7rem; min-width: 0; padding: 1.15rem 1.3rem 1.2rem; border-radius: var(--r);
+    background: linear-gradient(180deg, var(--card-a), var(--card-b)); border: 1px solid rgba(255,255,255,.07); border-top-color: rgba(255,255,255,.16);
+    box-shadow: 0 1.2rem 2.2rem -1.6rem rgba(0,0,0,.85), inset 0 3px 0 -1px color-mix(in srgb, var(--st) 80%, transparent); }
+  .lvs-area .hd { display: flex; align-items: center; gap: .7rem; }
+  .lvs-area .ic { width: 2.3rem; height: 2.3rem; border-radius: .65rem; display: grid; place-items: center; flex: none;
+    color: var(--soft); background: rgba(255,255,255,.05); border: 1px solid var(--line); }
+  .lvs-area .ic svg { width: 1.3rem; height: 1.3rem; }
+  .lvs-area h3 { margin: 0; flex: 1; min-width: 0; font-size: max(13px, 1.02rem); font-weight: 800; letter-spacing: .02em; }
+  .lvs-pill { display: inline-flex; align-items: center; gap: .35rem; height: 1.75rem; padding: 0 .65rem; border-radius: 999px; flex: none;
+    font-size: max(11px, .72rem); font-weight: 900; letter-spacing: .08em; color: var(--st); border: 1px solid color-mix(in srgb, var(--st) 70%, transparent);
+    background: color-mix(in srgb, var(--st) 13%, transparent); }
+  .lvs-pill svg { width: .95rem; height: .95rem; stroke-width: 2.6; }
+  .lvs-area .v { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+  .lvs-area .v b { font-size: max(22px, 2.05rem); font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .lvs-area .v span { color: var(--muted); font-size: max(11px, .88rem); }
+  .lvs-area .s { margin: auto 0 0; color: var(--muted); font-size: max(11px, .86rem); }
+  .lvs-meter { position: relative; padding: .55rem 0 1.25rem; }
+  .lvs-meter .trk { position: relative; height: .6rem; border-radius: 999px; background: rgba(255,255,255,.05); overflow: hidden; }
+  .lvs-meter .trk i { position: absolute; top: 0; bottom: 0; background: var(--st); opacity: .42; border-right: 2px solid var(--card-b); }
+  .lvs-meter .trk i:last-child { border-right: 0; }
+  .lvs-meter .pin { position: absolute; top: .2rem; width: 1.3rem; height: 1.3rem; margin-left: -.65rem; border-radius: 50%; cursor: default;
+    background: #F2F4F7; border: 3px solid var(--card-b); box-shadow: 0 0 0 1.5px rgba(242,244,247,.9), 0 .2rem .5rem rgba(0,0,0,.6); }
+  .lvs-meter .pin.gh { width: .25rem; height: 1.2rem; margin-left: -.125rem; top: .25rem; border-radius: 2px; border: 0; background: rgba(242,244,247,.55); box-shadow: none; }
+  .lvs-meter .tks { position: absolute; left: 0; right: 0; bottom: 0; height: 1rem; }
+  .lvs-meter .tks span { position: absolute; transform: translateX(var(--tx)); color: var(--faint); font-size: max(10.5px, .72rem); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .lvs-area .ck { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+  .lvs-area .ck li { display: flex; align-items: center; gap: .55rem; color: var(--soft); font-size: max(12px, .92rem); }
+  .lvs-area .ck li svg { width: 1.15rem; height: 1.15rem; flex: none; padding: .15rem; border-radius: 50%; stroke-width: 3; }
+  .lvs-area .ck li.y svg { color: #0B1A0B; background: #0ca30c; }
+  .lvs-area .ck li.n svg { color: #fff; background: #d03b3b; }
+  .lvs-area .ck li.n { color: var(--text); font-weight: 700; }
+  .lvs-todo { list-style: none; margin: .7rem 0 0; padding: 0; display: grid; gap: .8rem; }
+  .lvs-todo li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: .3rem 1rem; align-items: start; padding: .8rem 1rem; border-radius: .8rem;
+    background: color-mix(in srgb, var(--st) 7%, rgba(0,0,0,.18)); border-left: 3px solid var(--st); }
+  .lvs-todo b { font-size: max(13px, 1.02rem); }
+  .lvs-todo p { margin: .25rem 0 0; color: var(--soft); }
+  .lvs-todo p span { color: var(--accent2); font-weight: 800; }
+  .lvs-ok { display: flex; align-items: center; gap: .7rem; margin: .7rem 0 0; color: var(--soft); font-size: max(13px, 1rem); }
+  .lvs-ok svg { width: 1.6rem; height: 1.6rem; padding: .25rem; border-radius: 50%; color: #0B1A0B; background: #0ca30c; stroke-width: 3; flex: none; }
+  .lvs-lg { color: var(--soft); }
+  .lvs-lg svg { width: 1.05rem; height: 1.05rem; padding: .12rem; border-radius: 4px; background: var(--st); color: #131B26; stroke-width: 3; }
+  .lvs-advhead { display: flex; align-items: center; gap: .6rem 1.2rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1.4rem; border-top: 1px solid var(--line2); scroll-margin-top: 6.5rem; }
+  .lvs-advhead h2 { color: var(--accent2); }
+  .lvs-advhead .lv-back { margin-left: auto; }
+  /* 5 áreas (firmware sem a F1): 3 em cima e 2 mais largas embaixo, sem buraco */
+  .lvs-grid[data-n="5"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .lvs-grid[data-n="5"] > :nth-child(-n+3) { grid-column: span 2; }
+  .lvs-grid[data-n="5"] > :nth-child(n+4) { grid-column: span 3; }
+  @media (max-width: 1100px) { .lvs-grid, .lvs-grid[data-n="5"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lvs-grid[data-n="5"] > * { grid-column: auto; } .lvs-grid[data-n="5"] > :last-child { grid-column: 1 / -1; } }
+  @media (max-width: 720px) {
+    .lvs-hero { grid-template-columns: auto minmax(0, 1fr); padding: 1.2rem 1.1rem; }
+    .lvs-ring { width: 6rem; height: 6rem; }
+    .lvs-adv { grid-column: 1 / -1; justify-content: center; min-height: 44px; }
+    .lvs-grid, .lvs-grid[data-n="5"] { grid-template-columns: minmax(0, 1fr); } .lvs-grid[data-n="5"] > * { grid-column: auto !important; }
+    .lvs-todo li { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (forced-colors: active) { .lvs-pill, .lvs-area, .lvs-adv { border: 1px solid CanvasText; } }
   @media (forced-colors: active) { .lv-sev, .lv-kpi, .lvbtn[aria-pressed="true"] { border: 1px solid CanvasText; } }
 </style>
 </head>
@@ -674,7 +753,8 @@ const LETTERS = 'ABCDEFGHIJ';
 // ─────────────────────────────────────────────────────────────────────────────
 // ESTADO
 // ─────────────────────────────────────────────────────────────────────────────
-const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false, bootOpen: null, view: 'presets', lv: null, lvBoot: 0 };
+const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false, bootOpen: null, view: 'presets', lv: null, lvBoot: 0,
+  lvAdv: (() => { try { return localStorage.getItem('bv_lv_adv') === '1'; } catch (e) { return false; } })() };
 let LED = LED_DEFAULT.map(([n, rgb]) => ({ name: n, rgb }));
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1459,6 +1539,174 @@ function lvDiagnose(j) {
 function lvSevIcon(sev) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LV_SEV_ICON[sev]}</svg>`; }
 function lvBadge(sev) { const s = LV_SEV[sev]; return `<span class="lv-sev" style="--sev:${s.c}">${lvSevIcon(sev)}${s.l}</span>`; }
 
+// ── PAINEL RESUMIDO (07/nov/2026): saúde por área, com medidor de faixas; o detalhado
+//    (a tela de antes) fica atrás do botão AVANÇADOS. As cores de ESTADO são as LV_SEV.
+const LV_ST = { ok: { c: LV_SEV.ok.c, l: 'SAUDÁVEL' }, warn: { c: LV_SEV.warn.c, l: 'ATENÇÃO' }, serious: { c: LV_SEV.serious.c, l: 'CUIDADO' },
+  crit: { c: LV_SEV.crit.c, l: 'PROBLEMA' }, none: { c: '#5F6873', l: 'SEM DADOS' } };
+const LV_ST_RANK = { crit: 0, serious: 1, warn: 2, ok: 3, none: 4 };
+const LV_ST_ICON = { ...LV_SEV_ICON, none: '<path d="M7 12h10"/>' };
+const LV_OVERALL = { ok: ['Saudável', 'A controladora está funcionando bem.'], warn: ['Atenção', 'Funciona, mas algo merece um olhar.'],
+  serious: ['Precisa de cuidado', 'Há sinais de problema que afetam o uso.'], crit: ['Problema', 'Algo sério aconteceu — veja o que fazer.'], none: ['Sem dados', 'O registro ainda não tem o suficiente.'] };
+const LV_AREA_ICO = {
+  stab: '<path d="M12 3 4.5 6v6c0 4.4 3.2 7.9 7.5 9 4.3-1.1 7.5-4.6 7.5-9V6z"/><path d="m8.6 12.2 2.4 2.4 4.4-4.8"/>',
+  speed: '<path d="M4.2 17.5a8 8 0 1 1 15.6 0"/><path d="m12 15.5 4.2-4.6"/><circle cx="12" cy="16" r="1.3"/>',
+  press: '<rect x="4" y="13.5" width="16" height="6" rx="2"/><path d="M8 13.5v-2.2a4 4 0 0 1 8 0v2.2"/><path d="M12 3.5v2.5"/>',
+  wifi: '<path d="M2.8 9.2a13.5 13.5 0 0 1 18.4 0"/><path d="M5.9 12.6a9 9 0 0 1 12.2 0"/><path d="M9 16a4.5 4.5 0 0 1 6 0"/><circle cx="12" cy="19.2" r="1"/>',
+  mem: '<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>',
+  disk: '<ellipse cx="12" cy="6" rx="7.5" ry="2.8"/><path d="M4.5 6v12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V6"/><path d="M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8"/>',
+};
+const lvIco = (p, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+function lvPill(st) { const s = LV_ST[st]; return `<span class="lvs-pill" style="--st:${s.c}">${lvIco(LV_ST_ICON[st])}${s.l}</span>`; }
+const lvWorst = (list) => list.filter((s) => s !== 'none').sort((a, b) => LV_ST_RANK[a] - LV_ST_RANK[b])[0] || 'none';
+const lvPct = (v) => (v >= 99.95 ? '100%' : v >= 99 ? v.toFixed(1).replace('.', ',') + '%' : Math.round(v) + '%');
+
+// Medidor horizontal: faixas coloridas pelo estado + um pino no valor (e um fantasma opcional).
+function lvMeter(o) {
+  const lo = o.log ? Math.log10(o.min) : o.min, hi = o.log ? Math.log10(o.max) : o.max;
+  const P = (v) => { const x = Math.max(o.min, Math.min(o.max, v)); return Math.max(0, Math.min(100, (((o.log ? Math.log10(x) : x) - lo) * 100) / (hi - lo))); };
+  let from = o.min;
+  const zones = o.zones.map((z) => { const a = P(from), b = P(Math.min(z.to, o.max)); from = z.to; return b > a ? `<i style="left:${a}%;width:${b - a}%;--st:${LV_ST[z.st].c}"></i>` : ''; }).join('');
+  const pin = (v, cls, tip) => `<b class="pin${cls}" style="left:${P(v)}%" data-tip="${esc(tip)}"></b>`;
+  const ticks = (o.ticks || []).map((t) => { const p = P(t.v); return `<span style="left:${p}%;--tx:${p <= 1 ? '0' : p >= 99 ? '-100%' : '-50%'}">${esc(t.l)}</span>`; }).join('');
+  return `<div class="lvs-meter" role="img" aria-label="${esc(o.label)}"><div class="trk">${zones}</div>` +
+    (o.ghost !== undefined && o.ghost !== null ? pin(o.ghost, ' gh', o.ghostTip || '') : '') + pin(o.val, '', o.valTip || '') +
+    `<div class="tks">${ticks}</div></div>`;
+}
+
+// A saúde de cada área, em linguagem simples, a partir da blackbox.
+function lvHealth(j) {
+  const ev = j.ev, n = j.now, c = (f) => ev.filter(f).length, A = [];
+  // 1) Estabilidade: travou, reiniciou por falha, caiu a energia, memória corrompida
+  const stallN = Math.max(j.stalls.length, c((e) => e.type === 12));
+  const stallMax = Math.max(0, ...j.stalls.map((s) => s.dur), ...ev.filter((e) => e.type === 12).map((e) => e.c));
+  const vigia = c((e) => e.type === 1 && e.b === 1), crash = c((e) => e.type === 1 && LV_RESET_BAD.has(e.a) && e.a !== 9);
+  const brown = c((e) => e.type === 1 && e.a === 9), corrupt = c((e) => e.type === 25);
+  const fails = stallN + vigia + crash + brown + corrupt;
+  A.push({ k: 'stab', name: 'Estabilidade', st: fails ? 'crit' : 'ok', val: String(fails), unit: fails === 1 ? 'falha' : 'falhas',
+    sub: `ligada há ${lvT(j.up)} · boot nº ${j.boot}`,
+    checks: [
+      [!stallN, stallN ? `Travou ${stallN}x (pior ${lvMs(stallMax)})` : 'Nunca travou'],
+      [!crash && !vigia, crash + vigia ? `Reiniciou sozinha ${crash + vigia}x` : 'Sem reinícios por falha'],
+      [!brown, brown ? `Queda de energia ${brown}x` : 'Energia estável'],
+      ...(corrupt ? [[false, 'Memória corrompida']] : []),
+    ] });
+  // 2) Resposta: a pior volta do loop (enquanto ela dura, nada responde)
+  const lm = j.loop.max || 0, fast = j.loop.n ? ((j.loop.hist[0] + j.loop.hist[1]) * 100) / j.loop.n : 100;
+  A.push({ k: 'speed', name: 'Resposta', st: lm >= 1000 ? 'crit' : lm >= 150 || j.ep.length ? 'warn' : 'ok', val: lvMs(lm), unit: 'pior demora',
+    sub: `${lvPct(fast)} das voltas abaixo de 20 ms${j.ep.length ? ` · ${j.ep.length} período(s) lento(s)` : ''}`,
+    meter: lvMeter({ min: 1, max: 10000, log: true, val: Math.max(1, lm), valTip: `Pior volta do loop: ${lvMs(lm)}${lm ? ` (fase ${j.phName(j.loop.maxPh)})` : ''}`,
+      zones: [{ to: 150, st: 'ok' }, { to: 1000, st: 'warn' }, { to: 10000, st: 'crit' }],
+      ticks: [{ v: 1, l: '1 ms' }, { v: 150, l: '150 ms' }, { v: 1000, l: '1 s' }, { v: 10000, l: '10 s' }], label: `Pior demora ${lvMs(lm)}: verde até 150 ms, amarelo até 1 s, vermelho acima` }) });
+  // 3) Footswitches: atraso médio da pisada (normal 25–50 ms)
+  const p = j.press, held = c((e) => e.type === 10 && e.tag), bounce = c((e) => e.type === 10 && !e.tag);
+  A.push(p.n ? { k: 'press', name: 'Footswitches', st: p.max >= 300 || held ? 'serious' : p.slow || bounce || p.recov ? 'warn' : 'ok',
+    val: `${p.avg} ms`, unit: 'atraso médio', sub: `${p.n} pisada(s) · pior ${lvMs(p.max)}${bounce ? ` · ${bounce} com contato repicando` : ''}`,
+    meter: lvMeter({ min: 10, max: 1000, log: true, val: Math.max(10, p.avg), ghost: Math.max(10, p.max), valTip: `Média: ${p.avg} ms`, ghostTip: `Pior pisada: ${lvMs(p.max)}`,
+      zones: [{ to: 120, st: 'ok' }, { to: 300, st: 'warn' }, { to: 1000, st: 'crit' }],
+      ticks: [{ v: 10, l: '10 ms' }, { v: 120, l: '120 ms' }, { v: 1000, l: '1 s' }], label: `Atraso médio ${p.avg} ms, pior ${p.max} ms` }) }
+    : { k: 'press', name: 'Footswitches', st: 'none', val: '—', unit: 'sem pisadas', sub: 'Nenhuma pisada registrada neste boot.' });
+  // 4) Wi-Fi: o sinal mais fraco agora (AP ou rede de casa) e as quedas
+  const modes = ['desligado', 'só rede de casa', 'só AP', 'AP + rede de casa'];
+  const rs = [n.apSta && n.apRssi ? n.apRssi : 0, n.staRssi || 0].filter((v) => v);
+  const rssi = rs.length ? Math.min(...rs) : 0;
+  const drops = c((e) => e.type === 5 && [4, 34, 200].includes(e.b2)) + ev.filter((e) => e.type === 7).reduce((a, e) => a + Math.max(1, e.a), 0);
+  const httpDrop = c((e) => e.type === 13);
+  const wst = lvWorst([rssi ? (rssi < -85 ? 'crit' : rssi < -75 ? 'warn' : 'ok') : 'none', drops >= 5 ? 'serious' : drops || httpDrop ? 'warn' : n.mode ? 'ok' : 'none']);
+  A.push({ k: 'wifi', name: 'Wi-Fi', st: wst, val: rssi ? `${rssi} dBm` : modes[n.mode] || '—', unit: rssi ? 'sinal mais fraco' : 'agora',
+    sub: `${modes[n.mode] || '?'} · ${n.apSta || 0} aparelho(s) no AP · ${drops ? `${drops} queda(s)` : 'sem quedas'}`,
+    meter: rssi ? lvMeter({ min: -95, max: -30, val: rssi, valTip: `Sinal: ${rssi} dBm`, zones: [{ to: -80, st: 'crit' }, { to: -70, st: 'warn' }, { to: -30, st: 'ok' }],
+      ticks: [{ v: -95, l: 'fraco' }, { v: -70, l: '−70' }, { v: -30, l: 'forte' }], label: `Sinal ${rssi} dBm` }) : '' });
+  // 5) Memória interna (a do rádio e do sistema): a mínima livre
+  const hm = Math.round((n.heapMin || 0) / 1024), hnow = Math.round((n.heap || 0) / 1024);
+  const mst = corrupt ? 'crit' : c((e) => [9, 22, 24].includes(e.type)) || hm < 16 ? 'serious' : hm < 32 || c((e) => e.type === 23) ? 'warn' : 'ok';
+  A.push({ k: 'mem', name: 'Memória', st: mst, val: `${hm} KB`, unit: 'mínima livre',
+    sub: `agora ${hnow} KB${j.f1 ? ` · PSRAM mín. ${lvKB(n.psramMin || 0)}` : ''}${c((e) => e.type === 22) ? ` · ${c((e) => e.type === 22)} falha(s) de alocação` : ''}`,
+    meter: lvMeter({ min: 0, max: 96, val: hm, ghost: hnow, valTip: `Mínima livre: ${hm} KB`, ghostTip: `Livre agora: ${hnow} KB`,
+      zones: [{ to: 16, st: 'crit' }, { to: 32, st: 'warn' }, { to: 96, st: 'ok' }], ticks: [{ v: 0, l: '0' }, { v: 16, l: '16' }, { v: 32, l: '32 KB' }, { v: 96, l: '96+' }],
+      label: `Memória interna mínima ${hm} KB` }) });
+  // 6) Armazenamento (F1): memória de presets + NVS
+  if (j.f1) {
+    const f = j.fs, nv = j.nvs || {}, mount = ev.find((e) => e.type === 14 && e.a === 0);
+    const totKB = mount && mount.c ? Math.round(mount.c / 1024) : 0, freeKB = f.freeKB >= 0 ? f.freeKB : -1;
+    const usedPct = totKB && freeKB >= 0 ? Math.max(0, Math.min(100, ((totKB - freeKB) * 100) / totKB)) : -1;
+    const sst = f.formatted || c((e) => (e.type === 14 && e.a >= 1) || e.type === 18) ? 'crit'
+      : c((e) => [15, 16, 19, 20].includes(e.type)) || f.readErr || f.writeFail || (nv.fails || 0) || (freeKB >= 0 && freeKB < 64) ? 'serious'
+        : c((e) => [17, 21, 26].includes(e.type)) || f.readMax >= 50 || (freeKB >= 0 && freeKB < 256) ? 'warn' : 'ok';
+    A.push({ k: 'disk', name: 'Armazenamento', st: sst, val: freeKB >= 0 ? (freeKB >= 1024 ? (freeKB / 1024).toFixed(1).replace('.', ',') + ' MB' : freeKB + ' KB') : '—', unit: 'livres para presets',
+      sub: `configurações (NVS): ${nv.used >= 0 && nv.total ? `${nv.used} de ${nv.total}` : '—'}${f.readN ? ` · leitura do preset ${f.readAvg} ms` : ''}`,
+      meter: usedPct >= 0 ? lvMeter({ min: 0, max: 100, val: usedPct, valTip: `Usado: ${Math.round(usedPct)}% de ${totKB >= 1024 ? (totKB / 1024).toFixed(1).replace('.', ',') + ' MB' : totKB + ' KB'}`,
+        zones: [{ to: 85, st: 'ok' }, { to: 96, st: 'warn' }, { to: 100, st: 'crit' }], ticks: [{ v: 0, l: 'vazia' }, { v: 85, l: '85%' }, { v: 100, l: 'cheia' }],
+        label: `Memória de presets ${Math.round(usedPct)}% usada` }) : '' });
+  }
+  return { areas: A, overall: lvWorst(A.map((a) => a.st)) };
+}
+
+// Estado de cada área num minuto (faixa "minuto a minuto").
+const LV_STRIP = [
+  { k: 'speed', l: 'Resposta', f: (m) => (m.maxLoop >= 1000 ? 'crit' : m.maxLoop >= 150 ? 'warn' : 'ok'), t: (m, j) => `pior volta ${lvMs(m.maxLoop)}${m.maxLoop ? ` (${j.phName(m.maxPh)})` : ''}` },
+  { k: 'press', l: 'Pisadas', f: (m) => (!m.presses ? 'none' : m.maxPress >= 300 ? 'crit' : m.maxPress >= 120 ? 'warn' : 'ok'), t: (m) => (m.presses ? `${m.presses} pisada(s), pior ${lvMs(m.maxPress)}` : 'nenhuma pisada') },
+  { k: 'wifi', l: 'Wi-Fi', f: (m) => { const r = [m.apRssi, m.staRssi].filter((v) => v); if (!r.length) return 'none'; const v = Math.min(...r); return v < -80 ? 'crit' : v < -70 ? 'warn' : 'ok'; },
+    t: (m) => `sinal AP ${m.apRssi || '—'} dBm (${m.apMax} aparelho(s)) · casa ${m.staRssi || '—'} dBm` },
+  { k: 'web', l: 'Editor/app', f: (m) => (!m.http ? 'none' : m.httpSlow ? 'warn' : 'ok'), t: (m) => (m.http ? `${m.http} pedido(s), ${m.httpSlow} lento(s)` : 'nenhum pedido') },
+  { k: 'mem', l: 'Memória', f: (m) => (!m.heapKB ? 'none' : m.heapKB < 16 ? 'crit' : m.heapKB < 32 ? 'warn' : 'ok'), t: (m) => `memória interna mínima ${m.heapKB} KB` },
+];
+function lvHealthStrip(el, j) {
+  const mins = j.min.filter((m) => m.boot === S.lvBoot);
+  if (!mins.length) { el.innerHTML = '<p class="lv-empty">O primeiro minuto deste boot ainda não tinha fechado — a faixa aparece depois de 1 minuto ligada.</p>'; return; }
+  const w = Math.max(280, el.clientWidth), LW = w < 520 ? 74 : 96, R = 2, T = 2, rowH = 26, gap = 4, B = 20, h = T + LV_STRIP.length * (rowH + gap) - gap + B;
+  const cw = (w - LW - R) / mins.length;
+  let s = '';
+  LV_STRIP.forEach((row, r) => {
+    const y = T + r * (rowH + gap);
+    s += `<text x="0" y="${y + rowH / 2 + 4}" fill="${LV_INK}" font-size="11.5" font-weight="700">${row.l}</text>`;
+    mins.forEach((m, i) => {
+      const st = row.f(m), x = LW + i * cw;
+      s += `<rect x="${(x + 1).toFixed(1)}" y="${y}" width="${Math.max(2, cw - 2).toFixed(1)}" height="${rowH}" rx="4" fill="${LV_ST[st].c}" fill-opacity="${st === 'none' ? '.25' : st === 'ok' ? '.75' : '1'}" data-tip="${esc(`Minuto ${m.minute} · ${row.l}: ${LV_ST[st].l.toLowerCase()} — ${row.t(m, j)}`)}"/>`;
+      if (st === 'warn' || st === 'crit') s += `<path d="M${(x + cw / 2 - 4).toFixed(1)} ${y + rowH / 2 + 3} l4 -7 l4 7z" fill="#131B26" pointer-events="none"/>`;
+    });
+  });
+  const every = Math.ceil(mins.length / Math.max(1, Math.floor((w - LW) / 34)));
+  mins.forEach((m, i) => { if (i % every === 0) s += `<text x="${LW + i * cw + cw / 2}" y="${h - 5}" text-anchor="middle" fill="${LV_AX}" font-size="10.5">${m.minute}′</text>`; });
+  el.innerHTML = lvSvg(w, h, s, `Saúde minuto a minuto, boot ${S.lvBoot}, ${mins.length} minuto(s)`);
+}
+
+// Anel do selo geral: um gomo por área, na cor do estado dela.
+function lvRing(areas, overall) {
+  const N = areas.length, R = 52, C = 2 * Math.PI * R, gapL = 6, seg = C / N - gapL;
+  const arcs = areas.map((a, i) => `<circle cx="64" cy="64" r="${R}" fill="none" stroke="${LV_ST[a.st].c}" stroke-opacity="${a.st === 'none' ? '.35' : '1'}" stroke-width="12" stroke-linecap="round"
+    stroke-dasharray="${seg.toFixed(2)} ${(C - seg).toFixed(2)}" stroke-dashoffset="${(-(i * C) / N - gapL / 2 + C / 4).toFixed(2)}" data-tip="${esc(`${a.name}: ${LV_ST[a.st].l.toLowerCase()}`)}"/>`).join('');
+  return `<svg class="lvs-ring" viewBox="0 0 128 128" role="img" aria-label="${areas.filter((a) => a.st === 'ok').length} de ${N} áreas saudáveis">
+    <circle cx="64" cy="64" r="${R}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/>${arcs}
+    <g transform="translate(40 40)" color="${LV_ST[overall].c}"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${LV_ST_ICON[overall]}</svg></g></svg>`;
+}
+
+function lvSummary(j, diag, bootChips) {
+  const h = lvHealth(j), ov = h.overall, okN = h.areas.filter((a) => a.st === 'ok').length;
+  const todo = diag.filter((d) => d.sev !== 'info' && d.sev !== 'ok');
+  const more = diag.filter((d) => d.sev !== 'ok').length - Math.min(3, todo.length);
+  const tiles = h.areas.map((a) => `<article class="lvs-area" style="--st:${LV_ST[a.st].c}" aria-label="${esc(a.name)}: ${LV_ST[a.st].l.toLowerCase()}">
+      <div class="hd"><span class="ic">${lvIco(LV_AREA_ICO[a.k])}</span><h3>${esc(a.name)}</h3>${lvPill(a.st)}</div>
+      <div class="v"><b>${esc(a.val)}</b><span>${esc(a.unit)}</span></div>
+      ${a.meter || ''}
+      ${a.checks ? `<ul class="ck">${a.checks.map(([ok, t]) => `<li class="${ok ? 'y' : 'n'}">${lvIco(ok ? LV_SEV_ICON.ok : LV_SEV_ICON.crit)}${esc(t)}</li>`).join('')}</ul>` : ''}
+      <p class="s">${esc(a.sub)}</p></article>`).join('');
+  const todoHtml = todo.length ? `<ol class="lvs-todo">${todo.slice(0, 3).map((d) => `<li style="--st:${LV_SEV[d.sev].c}">${lvBadge(d.sev)}<div><b>${esc(d.title)}</b>${d.fix ? `<p><span>O que fazer:</span> ${esc(d.fix)}</p>` : `<p>${esc(d.text)}</p>`}</div></li>`).join('')}</ol>`
+    : `<p class="lvs-ok">${lvIco(LV_SEV_ICON.ok)}Nada para fazer agora.${more > 0 ? ` ${more} observação(ões) informativa(s) no AVANÇADOS.` : ''}</p>`;
+  return `<section class="lvs-hero lv-card" style="--st:${LV_ST[ov].c}" aria-labelledby="lvsT">
+      ${lvRing(h.areas, ov)}
+      <div class="tx"><span class="eyb">SAÚDE DA CONTROLADORA</span><h2 id="lvsT">${LV_OVERALL[ov][0]}</h2><p>${LV_OVERALL[ov][1]}</p>
+        <p class="meta"><b>${okN} de ${h.areas.length}</b> áreas saudáveis · firmware ${esc(j.fw)} · ligada há ${lvT(j.up)}</p></div>
+      <button class="lvs-adv" id="lvAdvBtn" type="button" aria-expanded="${!!S.lvAdv}" aria-controls="lvAdv">${lvIco('<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>')}AVANÇADOS${lvIco('<path d="m6 9 6 6 6-6"/>', 'chev')}</button>
+    </section>
+    <section class="lvs-grid" data-n="${h.areas.length}" aria-label="Saúde por área">${tiles}</section>
+    <section class="lv-card lvs-todo-card" aria-labelledby="lvsTodoT"><div class="lv-head"><h2 id="lvsTodoT">O que fazer</h2>${todo.length && more > 0 ? `<span class="lv-note">+${more} no AVANÇADOS</span>` : ''}</div>${todoHtml}</section>
+    <section class="lv-card" aria-labelledby="lvsStripT"><div class="lv-head"><h2 id="lvsStripT">Minuto a minuto</h2>${bootChips}</div>
+      <p class="lv-note">Cada quadrado é um minuto. Toque ou passe o mouse para ver o que aconteceu.</p>
+      <div class="lv-chart" data-chart="health"></div>
+      <div class="lv-legend">${['ok', 'warn', 'crit', 'none'].map((st) => `<span class="lvs-lg" style="--st:${LV_ST[st].c}">${lvIco(LV_ST_ICON[st])}${st === 'ok' ? 'Saudável' : st === 'warn' ? 'Atenção' : st === 'crit' ? 'Problema' : 'Sem atividade'}</span>`).join('')}</div>
+    </section>`;
+}
+
 function renderLogView() {
   const b = S.backup;
   const back = b && !b.logOnly ? '<button class="lv-back" id="lvBack">‹ Voltar aos presets</button>' : '';
@@ -1529,7 +1777,10 @@ function renderLogView() {
   })();
   const stallRows = j.stalls.map((s) => `<li>${lvBadge('crit')} fw ${esc(s.fw)} · boot ${s.boot} · ${lvT(s.at)}: parada <b>${lvMs(s.dur)}</b> na fase <b>${esc(j.phName(s.phase))}</b>${s.route ? ` (pedido ${esc(s.route)})` : ''} · memória ${s.heapKB} KB${s.rebooted ? ' · <b>o vigia reiniciou</b>' : ''}</li>`).join('');
   const minRows = j.min.slice().reverse().map((m) => `<tr><td>${m.boot}</td><td>${m.minute}</td><td>${m.loops}</td><td>${m.slow}</td><td>${m.maxLoop}${m.maxLoop ? ' ' + esc(j.phName(m.maxPh)) : ''}</td><td>${m.presses}</td><td>${m.maxPress}</td><td>${m.http}</td><td>${m.httpSlow}</td><td>${m.wifiEv}</td><td>${m.apMax}</td><td>${m.apRssi || ''}</td><td>${m.staRssi || ''}</td><td>${m.loopMin}%</td><td>${m.heapKB}</td>${j.f1 ? `<td>${m.psramMinKB || ''}</td><td>${m.fsFreeKB || ''}</td><td>${m.wifiCh || ''}</td><td>${m.subTop >= 0 ? esc(j.subName(m.subTop)) + ' ' + m.subMs : ''}</td>` : ''}</tr>`).join('');
-  return `<div class="lv">${back}
+  const summary = lvSummary(j, diag, bootChips);
+  if (!S.lvAdv) return `<div class="lv">${back}${summary}</div><div class="lv-tip" id="lvTip" role="tooltip" hidden></div>`;
+  return `<div class="lv">${back}${summary}
+  <div class="lvs-advhead" id="lvAdv"><h2>Avançados</h2><span class="lv-note">Diagnóstico completo, gráficos, períodos lentos e eventos.</span><button class="lv-back" id="lvAdvClose" type="button">Fechar avançados ▴</button></div>
   <section class="lv-card lv-diag" aria-labelledby="lvDiagT" style="--sev:${LV_SEV[worstSev].c}">
     <h2 id="lvDiagT">Diagnóstico</h2>
     <ul>${diag.map((d) => `<li style="--sev:${LV_SEV[d.sev].c}">${lvBadge(d.sev)}<div><b>${esc(d.title)}</b><p>${esc(d.text)}</p>${d.fix ? `<p class="fix"><span>O que fazer:</span> ${esc(d.fix)}</p>` : ''}</div></li>`).join('')}</ul>
@@ -1669,6 +1920,7 @@ function lvTimeline(el, j) {
 function lvDrawCharts() {
   const j = S.lv; if (!j || j.badVersion || S.view !== 'log') return;
   const get = (k) => $main.querySelector(`[data-chart="${k}"]`);
+  if (get('health')) lvHealthStrip(get('health'), j);
   if (get('timeline')) lvTimeline(get('timeline'), j);
   const mins = j.min.filter((m) => m.boot === S.lvBoot);
   const xs = mins.map((m) => String(m.minute));
@@ -1842,6 +2094,13 @@ document.getElementById('lvBtn').addEventListener('click', () => {
 $main.addEventListener('click', (e) => {
   if (e.target.closest('#drop')) { document.getElementById('file').click(); return; }
   if (e.target.closest('#lvBack')) { S.view = 'presets'; render(); scrollTo(0, 0); return; }
+  if (e.target.closest('#lvAdvBtn, #lvAdvClose')) {
+    S.lvAdv = !S.lvAdv; try { localStorage.setItem('bv_lv_adv', S.lvAdv ? '1' : '0'); } catch (err) { /* sem armazenamento: vale só nesta aba */ }
+    render();
+    if (S.lvAdv) { const a = document.getElementById('lvAdv'); if (a) a.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    const b = document.getElementById('lvAdvBtn'); if (b) b.focus({ preventScroll: !!S.lvAdv });
+    return;
+  }
   const bt = e.target.closest('[data-boot]'); if (bt) { S.lvBoot = num(bt.dataset.boot); render(); return; }
   const nav = e.target.closest('[data-bank]'); if (nav) { e.stopPropagation(); stepBank(num(nav.dataset.bank, 1)); return; }
   if (e.target.closest('#bankNext')) { stepBank(1); return; }
