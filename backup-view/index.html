@@ -508,6 +508,10 @@
   .lv-ep .h { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem 1.1rem; }
   .lv-ep .h span:not(.lv-sev) { color: var(--soft); }
   .lv-ep .d { color: var(--muted); font-size: max(11px, .9rem); }
+  .lv-mem { list-style: none; margin: .4rem 0 .9rem; padding: 0; display: grid; gap: .55rem; color: var(--muted); font-size: max(11px, .92rem); }
+  .lv-mem li { padding-left: .9rem; border-left: 3px solid #d55181; }
+  .lv-mem b { color: var(--soft); }
+  .lv-card h3 { margin: 1rem 0 .3rem; font-size: max(11px, .8rem); font-weight: 900; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
   .lv-ep .d b { color: var(--soft); }
   .lv-stalls { margin: .6rem 0 0; padding: 0; list-style: none; display: grid; gap: .6rem; color: var(--soft); }
   .lv .scroll { overflow-x: auto; }
@@ -1174,7 +1178,9 @@ const FOLDER_SVG = document.querySelector('.filebtn svg').outerHTML;
 const $main = document.getElementById('main');
 const $info = document.getElementById('fileinfo');
 // ─────────────────────────────────────────────────────────────────────────────
-// LOG VIEW — telemetria da BLACKBOX (firmware 15.6 de 06/nov/2026 em diante)
+// LOG VIEW — telemetria da BLACKBOX (firmware 15.6 de 06/nov/2026 em diante; a F1 do
+// PLANO_BLACKBOX.md — memória e armazenamento, eventos 14..29, chaves fs/nvs/media/sub — do
+// mesmo dia; sem elas a página mostra só o que o firmware mandou)
 // Le a linha "DIAG-JSON {...}" que o firmware poe no fim do GET /log (e que o
 // editor embute no backup, chave boot_log). A ORDEM dos arrays e contrato com
 // o BLACKBOX.h (diag_report_json, "v":1): mudou la, mude aqui.
@@ -1202,8 +1208,20 @@ const LV_SEV = { ok: { c: '#0ca30c', l: 'OK' }, info: { c: '#3987e5', l: 'INFO' 
 const LV_SEV_ICON = { ok: '<path d="m5 12 4.5 4.5L19 7"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   warn: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>', serious: '<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>',
   crit: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>' };
+// F1 (06/nov/2026): memória e armazenamento — nomes dos campos dos eventos 14..29 (BLACKBOX.h).
+const LV_FSR = ['no boot', 'do preset', 'do display do footswitch', 'do aparelho USER', 'no backup', 'linha descartada'];
+const LV_FSW = ['não conseguiu abrir o arquivo', 'escrita curta', 'tamanho diferente do esperado (sem espaço?)', 'renomear falhou', 'SEM ESPAÇO', 'o original não abriu',
+  'leitura incompleta do original', 'linha acima do teto', 'envio abortado pelo app', 'remover/criar pasta falhou', 'cota de mídia'];
+const LV_NVSK = ['config global', 'FS GLOBAL', 'FS GLOBAL 2', 'External FS', 'modelo da placa', 'Wi-Fi', 'certificado', 'blackbox', 'outra'];
+const LV_NVS_STATE = ['?', 'AUSENTE', 'ILEGÍVEL', 'não abriu', 'de um firmware mais novo'];
+const LV_MEDIA = ['?', 'fundo JPEG não decodificou (tela preta)', 'ícone PNG não decodificou (ícone sumido)', 'cache de fundo sem PSRAM', 'giro de ícone sem PSRAM', 'sprite de overlay sem memória'];
+const LV_RST = ['—', 'restauração', 'atualização', 'troca de placa', 'apagar dados', 'config (FS6/LIVE/tela)', 'touch USB', 'vigia', 'gravação falhou', 'outro'];
+const LV_SUB_DESC = { fs: 'lendo/gravando na memória de presets', dec: 'decodificando imagem de fundo ou ícone', nvs: 'gravando a config na NVS', pausa: 'pausa de MIDI configurada',
+  blit: 'esperando o desenho da tela', webw: 'escrevendo a resposta pelo Wi-Fi', usbw: 'escrevendo a resposta pelo cabo', ser1: 'MIDI OUT bloqueado' };
+const LV_SUB_COL = ['#c98500', '#d55181', '#9085e9', '#3987e5', '#199e70', '#008300', '#e66767', '#d95926'];
 const LV_LANE = [
   { k: 'sys', l: 'Sistema', c: '#9085e9' },
+  { k: 'mem', l: 'Memória', c: '#d55181' },
   { k: 'wifi', l: 'Wi-Fi', c: '#3987e5' },
   { k: 'slow', l: 'Lentidão', c: '#ec835a' },
   { k: 'http', l: 'HTTP lento', c: '#199e70' },
@@ -1220,13 +1238,20 @@ function lvParse(text) {
   if (!j || j.v !== 1) return j ? { badVersion: true, v: j.v } : null;
   const ph = j.phases || [];
   j.ev = (j.ev || []).map(([boot, ms, type, a, b, b2, c, tag]) => ({ boot, ms, type, a, b, b2, c, tag }));
+  // F1: `subMs`/`flags` no fim do episódio e psramMinKB/fsFreeKB/wifiCh/flags/subTop/subMs no fim do
+  // minuto só existem no firmware de 06/nov/2026 em diante (chegam undefined nos antigos).
   j.ep = (j.ep || []).map(([boot, start, dur, slow, max, sum, phaseMs, route, routeMs, http, presses, pressMax, heapKB, loopMin,
-    wifiEv, apSta, staRssi, apRssi, idleMin, top, topPct]) => ({ boot, start, dur, slow, max, sum, phaseMs, route, routeMs, http, presses,
-    pressMax, heapKB, loopMin, wifiEv, apSta, staRssi, apRssi, idleMin, top, topPct,
+    wifiEv, apSta, staRssi, apRssi, idleMin, top, topPct, subMs, flags]) => ({ boot, start, dur, slow, max, sum, phaseMs, route, routeMs, http, presses,
+    pressMax, heapKB, loopMin, wifiEv, apSta, staRssi, apRssi, idleMin, top, topPct, subMs: subMs || null, flags: flags || 0,
     worst: phaseMs.reduce((w, v, i) => (v > phaseMs[w] ? i : w), 0) }));
   j.min = (j.min || []).map(([boot, minute, loops, slow, maxLoop, maxPh, presses, maxPress, http, httpSlow, wifiEv, apMax, apRssi, staRssi,
-    loopMin, idleMin, heapKB]) => ({ boot, minute, loops, slow, maxLoop, maxPh, presses, maxPress, http, httpSlow, wifiEv, apMax, apRssi,
-    staRssi, loopMin, idleMin, heapKB }));
+    loopMin, idleMin, heapKB, psramMinKB, fsFreeKB, wifiCh, flags, subTop, subMs]) => ({ boot, minute, loops, slow, maxLoop, maxPh, presses, maxPress, http, httpSlow, wifiEv, apMax, apRssi,
+    staRssi, loopMin, idleMin, heapKB, psramMinKB: psramMinKB || 0, fsFreeKB: fsFreeKB || 0, wifiCh: wifiCh || 0, flags: flags || 0,
+    subTop: subTop === undefined ? -1 : subTop, subMs: subMs || 0 }));
+  j.f1 = !!j.fs;  // a frente 1 (memória e armazenamento) está neste firmware
+  j.sub = j.sub || { names: [], ms: [] };
+  j.mem = j.mem || null; j.fs = j.fs || null; j.nvs = j.nvs || null; j.media = j.media || null; j.bootlog = j.bootlog || null;
+  j.subName = (i) => (j.sub.names || [])[i] || '?';
   j.stalls = (j.stalls || []).map(([boot, at, dur, phase, route, heapKB, rebooted, fw]) => ({ boot, at, dur, phase, route, heapKB, rebooted, fw }));
   j.phName = (i) => ph[i] || '?';
   // O texto do relatório (sem a linha JSON), para o "ver o relatório em texto".
@@ -1270,6 +1295,26 @@ function lvEvent(e, j) {
       text: `Controladora PARADA ${lvMs(e.c)} na fase ${j.phName(e.a)}${e.tag ? ` (pedido ${e.tag})` : ''}${e.b ? ' — o vigia reiniciou' : ''}`, ms: e.c };
     case 13: return { lane: 'http', sev: 'warn', label: 'HTTP',
       text: `Pedido incompleto DESCARTADO: ${LV_METHOD[e.a] || ''} ${e.tag || '?'} — o aparelho mandou ${e.b2} bytes em ${lvMs(e.b)} e não terminou (a controladora seguiu normal)` };
+    case 14: return e.a === 0 ? { lane: 'mem', sev: 'info', label: 'MEMÓRIA', text: `Memória de presets montou: ${e.b} KB usados de ${Math.round(e.c / 1048576)} MB` }
+      : { lane: 'mem', sev: 'crit', label: 'MEMÓRIA', text: e.a === 1 ? 'A memória de presets foi FORMATADA neste boot: presets, imagens, ícones e o editor foram perdidos'
+        : e.a === 2 ? 'A memória de presets NÃO montou (sem sistema de arquivos)' : 'Partição de armazenamento AUSENTE' };
+    case 15: return { lane: 'mem', sev: e.a === 5 ? 'warn' : 'serious', label: 'LEITURA', text: `Leitura falhou ${LV_FSR[e.a] || ''}: ${e.tag || '?'}${e.b ? ` (erro ${e.b})` : ''}` };
+    case 16: return { lane: 'mem', sev: e.a === 4 || e.a === 10 ? 'serious' : e.a === 8 ? 'info' : 'serious', label: 'GRAVAÇÃO',
+      text: `Gravação falhou — ${LV_FSW[e.a] || 'causa ' + e.a}: ${e.tag || '?'}${e.b ? ` (erro ${e.b})` : ''}` };
+    case 17: return { lane: 'mem', sev: 'warn', label: 'MEMÓRIA', text: `Memória de presets QUASE CHEIA: ${lvKB(e.c)} livres` };
+    case 18: return { lane: 'mem', sev: 'crit', label: 'NVS', text: 'A NVS (configurações) foi APAGADA pelo sistema: a controladora voltou aos padrões de fábrica' };
+    case 19: return { lane: 'mem', sev: e.b === 4 ? 'info' : 'serious', label: 'NVS', text: `Configuração ${LV_NVSK[e.a] || e.a} na NVS: ${LV_NVS_STATE[e.b] || e.b}` };
+    case 20: return { lane: 'mem', sev: 'serious', label: 'NVS', text: `Gravação na NVS FALHOU (${LV_NVSK[e.a] || e.tag}) — ${e.b} entradas livres de ${e.b + e.b2}` };
+    case 21: return { lane: 'mem', sev: 'warn', label: 'NVS', text: `NVS quase cheia: ${e.b} entradas livres` };
+    case 22: return { lane: 'mem', sev: 'serious', label: 'MEMÓRIA', text: `Alocação de memória FALHOU ${e.b}x (última: ${lvKB(e.c)} na ${e.a === 2 ? 'PSRAM' : 'memória interna'}, em ${e.tag || '?'})` };
+    case 23: return { lane: 'mem', sev: 'warn', label: 'MEMÓRIA', text: `PSRAM no limite: ${lvKB(e.c)} livres, maior bloco ${e.b} KB (o backup pode não caber)` };
+    case 24: return { lane: 'mem', sev: 'serious', label: 'MEMÓRIA', text: `Pilha quase no fim: tarefa ${e.tag || '?'} com ${e.b} B livres` };
+    case 25: return { lane: 'mem', sev: 'crit', label: 'MEMÓRIA', text: `Memória ${e.a === 2 ? 'PSRAM' : 'interna'} CORROMPIDA (um bloco foi escrito além do limite)` };
+    case 26: return { lane: 'mem', sev: e.a === 1 || e.a === 2 ? 'warn' : 'info', label: 'MÍDIA', text: `${LV_MEDIA[e.a] || 'mídia ' + e.a}${e.a <= 2 ? ` — slot ${e.b}` : ''}` };
+    case 27: return { lane: 'sys', sev: e.a === 3 ? 'serious' : 'info', label: 'ATUALIZAÇÃO',
+      text: e.a === 1 ? 'Atualização por Wi-Fi iniciou' : e.a === 2 ? `Atualização por Wi-Fi terminou OK (${lvKB(e.c)})` : `Atualização por Wi-Fi FALHOU: ${e.tag || 'erro ' + e.b}` };
+    case 28: return { lane: 'sys', sev: 'info', label: 'LOG', text: `O log de boot encheu aos ${lvT(e.c)} — as linhas depois disso se perderam (o relatório diz quantas)` };
+    case 29: return { lane: 'sys', sev: 'info', label: 'REINÍCIO', text: `Reinício pedido: ${LV_RST[e.a] || e.a}` };
     default: return { lane: 'sys', sev: 'info', label: 'EVENTO', text: `Evento ${e.type}` };
   }
 }
@@ -1363,6 +1408,48 @@ function lvDiagnose(j) {
     'Se acontecer muito, aproxime o aparelho da controladora.');
   const heap = count((e) => e.type === 9);
   if (heap) add('serious', 'Memória interna baixa', `${heap} aviso(s) de memória abaixo de 16 KB.`, 'Mande este backup ao suporte.');
+  // F1: memória e armazenamento
+  if (count((e) => e.type === 14 && e.a === 1) || (j.fs && j.fs.formatted)) add('crit', 'A memória de presets foi FORMATADA neste boot',
+    'A controladora não conseguiu montar o sistema de arquivos e o refez do zero: presets, imagens, ícones e o próprio editor foram perdidos.',
+    'Grave de novo pelo atualizador online (ele regrava o editor) e restaure o último backup. Se repetir, a flash pode estar com defeito: mande ao suporte.');
+  if (count((e) => e.type === 14 && e.a >= 2)) add('crit', 'A memória de presets não montou', 'Sem sistema de arquivos a controladora toca sem presets e sem editor.', 'Grave pelo atualizador online; se repetir, mande ao suporte.');
+  if (count((e) => e.type === 18)) add('crit', 'As configurações (NVS) foram apagadas pelo sistema',
+    'A área de configuração corrompeu e o sistema a apagou inteira: placa, Wi-Fi salvo, FS GLOBAL e config global voltaram ao padrão.',
+    'Confira o MODELO em CONFIGURAÇÕES › HARDWARE (uma placa errada deixa a tela morta) e refaça as configurações globais. Mande este backup ao suporte.');
+  const nvsW = count((e) => e.type === 20), nvsF = count((e) => e.type === 21);
+  if (nvsW || nvsF || (j.nvs && j.nvs.free >= 0 && j.nvs.free < 40)) add('serious', nvsW ? `${nvsW} gravação(ões) de configuração falharam na NVS` : 'A NVS está quase cheia',
+    `${j.nvs ? `${j.nvs.used} de ${j.nvs.total} entradas usadas.` : ''} Quando a NVS enche, salvar a config global, o Wi-Fi ou o FS GLOBAL falha em silêncio.`,
+    'Mande este backup ao suporte (a solução é do firmware).');
+  const blobBad = ev.filter((e) => e.type === 19 && e.b !== 4);
+  if (blobBad.length) add('serious', 'Configuração ilegível na NVS', `${blobBad.map((e) => `${LV_NVSK[e.a] || e.a}: ${LV_NVS_STATE[e.b] || e.b}`).join('; ')}. A controladora usou o padrão no lugar.`, 'Refaça essa configuração no editor e salve; se repetir, mande ao suporte.');
+  const nospace = count((e) => e.type === 16 && (e.a === 4 || e.a === 2 || e.a === 10)) + count((e) => e.type === 17);
+  if (nospace || (j.fs && j.fs.freeKB >= 0 && j.fs.freeKB < 64)) add('serious', 'Memória de presets cheia ou quase',
+    `${j.fs ? `${j.fs.freeKB} KB livres.` : ''} ${count((e) => e.type === 16) ? `${count((e) => e.type === 16)} gravação(ões) recusada(s).` : ''} Uma edição que não grava volta ao que estava.`,
+    'Apague imagens ou ícones que não usa em CONFIGURAÇÕES › IMAGENS (presets e mídia dividem a mesma memória).');
+  const wother = ev.filter((e) => e.type === 16 && ![4, 2, 10, 8].includes(e.a));
+  if (wother.length) add('serious', `${wother.length} gravação(ões) falharam por erro de memória`, `Causas: ${[...new Set(wother.map((e) => LV_FSW[e.a] || e.a))].join('; ')}.`, 'Se repetir sem a memória estar cheia, a flash pode estar com defeito: mande ao suporte.');
+  const rerr = ev.filter((e) => e.type === 15);
+  if (rerr.length || (j.fs && (j.fs.readErr || j.fs.lineDrop))) add('serious', 'Presets com leitura falhando',
+    `${j.fs ? `${j.fs.readErr} leitura(s) com erro, ${j.fs.lineDrop} linha(s) descartada(s).` : ''} Um preset que não lê inteiro toca com footswitches vazios ou com a configuração antiga.`,
+    'Abra o preset no editor e salve de novo (regrava o arquivo); se repetir, restaure o backup.');
+  if (j.fs && j.fs.readN && j.fs.readMax >= 50) add('warn', `A troca de preset está lenta ao ler a memória (pior ${j.fs.readMax} ms)`,
+    `Média ${j.fs.readAvg} ms em ${j.fs.readN} troca(s). Normal: 10–20 ms. A memória fragmentada ou quase cheia deixa a leitura lenta.`, 'Libere espaço (imagens/ícones) ou refaça um RESTAURAR do backup, que regrava tudo em sequência.');
+  const media = ev.filter((e) => e.type === 26);
+  if (media.some((e) => e.a === 1)) add('warn', 'Fundo de preset com imagem que não decodifica (tela preta)', `Slot(s) ${[...new Set(media.filter((e) => e.a === 1).map((e) => e.b))].join(', ')}.`,
+    'Troque a imagem desse slot por um JPEG comum (baseline, sem progressivo) em CONFIGURAÇÕES › IMAGENS.');
+  if (media.some((e) => e.a === 2)) add('warn', 'Ícone enviado que não decodifica (ícone sumido)', `Slot(s) ${[...new Set(media.filter((e) => e.a === 2).map((e) => e.b))].join(', ')}.`, 'Envie o ícone de novo como PNG 100×100.');
+  if (media.some((e) => e.a >= 3)) add('info', 'Sem memória para o cache de imagens', 'A controladora seguiu funcionando, só mais lenta ao trocar de fundo.', '');
+  if (j.media && j.media.decN && j.media.decMax >= 250) add('info', `Decodificar o fundo levou até ${j.media.decMax} ms`, `${j.media.bgMiss} falta(s) e ${j.media.bgHit} acerto(s) do cache de fundo neste boot. Cada falta é um decode de ~130 ms na troca de preset.`,
+    'No palco, prefira fundos em cor sólida nos presets que troca com frequência.');
+  const sMs = j.sub.ms || [], sTot = sMs.reduce((a, v) => a + v, 0);
+  if (sTot && j.ep.length) { const w = sMs.reduce((a, v, i) => (v > sMs[a] ? i : a), 0);
+    if (sMs[w] >= 500) add('info', `Dentro das voltas lentas, o tempo foi principalmente em "${j.subName(w)}"`, `${LV_SUB_DESC[j.subName(w)] || ''}: ${lvMs(sMs[w])} neste boot.`, ''); }
+  if (count((e) => e.type === 22)) add('serious', 'A controladora ficou sem memória para alocar', 'Alguma função pediu memória e não recebeu: pode faltar cache de imagem, buffer de backup ou o próprio editor.', 'Reinicie a controladora; se repetir, mande este backup ao suporte.');
+  if (count((e) => e.type === 23)) add('warn', 'PSRAM no limite', 'Com pouca PSRAM livre o backup pode não caber e as imagens deixam de ser guardadas em cache.', 'Reinicie a controladora; se repetir, mande ao suporte.');
+  if (count((e) => e.type === 24)) add('serious', 'Pilha de uma tarefa quase no fim', `Tarefa(s): ${[...new Set(ev.filter((e) => e.type === 24).map((e) => e.tag))].join(', ')}. Estourar a pilha trava a controladora.`, 'Mande este backup ao suporte.');
+  if (count((e) => e.type === 25)) add('crit', 'Memória corrompida detectada', 'Um bloco de memória foi escrito além do limite — é defeito de firmware e costuma terminar em travamento.', 'Mande este backup ao suporte com o que estava fazendo na hora.');
+  if (count((e) => e.type === 27 && e.a === 3)) add('serious', 'Uma atualização por Wi-Fi falhou', `${ev.filter((e) => e.type === 27 && e.a === 3).map((e) => e.tag).filter(Boolean).join('; ') || 'veja o evento'}.`, 'Use o atualizador online pelo cabo.');
+  if (j.bootlog && j.bootlog.fullMs) add('info', `O log de boot encheu aos ${lvT(j.bootlog.fullMs)}`, `${j.bootlog.lostLines} linha(s) (${lvKB(j.bootlog.lostBytes)}) se perderam depois disso; a blackbox continua inteira.`, '');
   if (j.http.slow >= 5 && !j.ep.length) add('info', `${j.http.slow} pedidos HTTP lentos`, `O mais lento: ${j.http.maxRoute} (${lvMs(j.http.max)}). Não chegaram a causar lentidão.`, '');
   if (!out.length) add('ok', 'Nada fora do normal registrado', 'Sem travamentos, sem períodos de lentidão e sem quedas de Wi-Fi neste registro.', '');
   const rank = { crit: 0, serious: 1, warn: 2, info: 3, ok: 4 };
@@ -1396,6 +1483,11 @@ function renderLogView() {
     kpi('WI-FI AGORA', modes[n.mode] || '?', `${n.apSta} no AP${n.apRssi ? ` · ${n.apRssi} dBm` : ''}${n.staRssi ? ` · casa ${n.staRssi} dBm` : ''}`, n.apRssi && n.apRssi < -75 ? 'warn' : null),
     kpi('MEMÓRIA INTERNA', lvKB(n.heap), `mínima ${lvKB(n.heapMin)} · bloco ${lvKB(n.heapBlk)}`, n.heapMin < 16384 ? 'serious' : null),
     kpi('CPU DO LOOP', `${n.loop}%`, `de um núcleo · outra: ${esc(n.top || '—')} ${n.topPct}%`),
+    ...(j.f1 ? [
+      kpi('PSRAM', lvKB(n.psram), `mínima ${lvKB(n.psramMin)} · bloco ${lvKB(n.psramBlk)}`, n.psramMin < 524288 ? 'warn' : null),
+      kpi('MEMÓRIA DE PRESETS', j.fs.freeKB >= 0 ? `${j.fs.freeKB} KB` : '—', `livres${j.fs.formatted ? ' · FORMATADA NESTE BOOT' : ''}`, j.fs.formatted ? 'crit' : j.fs.freeKB >= 0 && j.fs.freeKB < 64 ? 'serious' : null),
+      kpi('NVS (CONFIG)', j.nvs && j.nvs.free >= 0 ? `${j.nvs.used}/${j.nvs.total}` : '—', `entradas · ${j.nvs ? j.nvs.writes : 0} gravação(ões)${j.nvs && j.nvs.fails ? ` · ${j.nvs.fails} FALHA(S)` : ''}`, j.nvs && (j.nvs.fails || j.nvs.free < 40) ? 'serious' : null),
+    ] : []),
   ].join('');
   const boots = [...new Set([j.boot, ...j.ev.map((e) => e.boot), ...j.ep.map((e) => e.boot), ...j.min.map((m) => m.boot)])].sort((a, b2) => b2 - a);
   if (!boots.includes(S.lvBoot)) S.lvBoot = j.boot;
@@ -1411,10 +1503,32 @@ function renderLogView() {
       `<div class="lv-stack" role="img" aria-label="Tempo por fase: ${e.phaseMs.map((v, i) => (v ? `${j.phName(i)} ${v} ms` : '')).filter(Boolean).join(', ')}">${seg}</div>` +
       `<div class="d">Mais pesada: <b>${esc(j.phName(e.worst))}</b> (${esc(LV_PH_DESC[j.phName(e.worst)] || '')})` +
       `${e.route ? ` · pedido mais lento <b>${esc(e.route)}</b> ${lvMs(e.routeMs)}` : ''} · ${e.http} pedido(s) HTTP · ${e.presses} pisada(s)${e.pressMax ? `, pior ${lvMs(e.pressMax)}` : ''}` +
-      ` · Wi-Fi: ${e.wifiEv} evento(s), ${e.apSta} no AP${e.apRssi ? ` (${e.apRssi} dBm)` : ''} · CPU do loop mín. ${e.loopMin}%${e.top ? `, ${esc(e.top)} ${e.topPct}%` : ''}${e.heapKB ? ` · memória ${e.heapKB} KB` : ''}</div></div>`;
+      ` · Wi-Fi: ${e.wifiEv} evento(s), ${e.apSta} no AP${e.apRssi ? ` (${e.apRssi} dBm)` : ''} · CPU do loop mín. ${e.loopMin}%${e.top ? `, ${esc(e.top)} ${e.topPct}%` : ''}${e.heapKB ? ` · memória ${e.heapKB} KB` : ''}</div>` +
+      (e.subMs && e.subMs.some((v) => v) ? `<div class="d">Dentro das fases: ${e.subMs.map((v, i) => (v ? `<b>${esc(j.subName(i))}</b> ${lvMs(v)}` : '')).filter(Boolean).join(' · ')}` +
+        `${e.flags ? ` · contexto: ${[e.flags & 1 && 'teste de hardware', e.flags & 2 && 'tela ATUALIZANDO', e.flags & 4 && 'ponte do host', e.flags & 8 && 'atualização', e.flags & 16 && 'memória formatada'].filter(Boolean).join(', ')}` : ''}</div>` : '') + `</div>`;
   }).join('');
+  const memCard = !j.f1 ? '' : (() => {
+    const f = j.fs, nv = j.nvs, md = j.media, mm = j.mem;
+    const rh = ['< 5 ms', '5–10', '10–20', '20–50', '50–100', '> 100'];
+    const hist = f.readN ? f.readHist.map((v, i) => (v ? `${rh[i]}: ${v}` : '')).filter(Boolean).join(' · ') : '';
+    const sMs = j.sub.ms || [], sTot = sMs.reduce((a, v) => a + v, 0);
+    const subStack = sTot ? `<div class="lv-stack" role="img" aria-label="Tempo por sub-fase">${sMs.map((v, i) => (v ? `<i style="flex:${v};--c:${LV_SUB_COL[i]}" data-tip="${esc(`${j.subName(i)}: ${lvMs(v)} — ${LV_SUB_DESC[j.subName(i)] || ''}`)}"></i>` : '')).join('')}</div>` +
+      `<div class="lv-legend sm">${sMs.map((v, i) => (v ? `<span><i style="--c:${LV_SUB_COL[i]}"></i>${esc(j.subName(i))} <b>${lvMs(v)}</b></span>` : '')).join('')}</div>` : '<p class="lv-note">Nenhuma volta lenta com sub-fase marcada neste boot.</p>';
+    const stacks = mm && mm.stackNames ? mm.stackNames.map((nm, i) => `<span><i style="--c:${mm.stackMin[i] >= 0 && mm.stackMin[i] < 512 ? LV_SEV.serious.c : '#199e70'}"></i>${esc(nm)} <b>${mm.stackMin[i] < 0 ? '—' : mm.stackMin[i] + ' B'}</b></span>`).join('') : '';
+    return `<section class="lv-card"><h2>Memória e armazenamento</h2>
+    <ul class="lv-mem">
+      <li><b>Memória de presets (LittleFS)</b>: ${f.freeKB >= 0 ? `${f.freeKB} KB livres` : 'livre desconhecido'}${f.formatted ? ' · <b>FORMATADA NESTE BOOT</b>' : ''} · leitura do preset: ${f.readN ? `${f.readN} troca(s), média ${f.readAvg} ms, pior ${f.readMax} ms (${hist})` : 'nenhuma troca'} · ${f.readErr} leitura(s) com erro · ${f.lineDrop} linha(s) descartada(s) · gravações conferidas: ${f.writeN}${f.writeN ? ` (média ${f.writeAvg} ms, pior ${f.writeMax} ms)` : ''} · falharam ${f.writeFail}</li>
+      <li><b>Configurações (NVS)</b>: ${nv && nv.free >= 0 ? `${nv.used} de ${nv.total} entradas usadas (${nv.free} livres)` : 'sem leitura'} · ${nv ? nv.writes : 0} gravação(ões) · ${nv ? nv.fails : 0} falha(s) · ${nv ? nv.gc : 0} página(s) reciclada(s)${nv && nv.virgin ? ' · unidade recém-gravada' : ''}</li>
+      <li><b>Imagens e ícones</b>: cache de fundo ${md.bgHit} acerto(s) / ${md.bgMiss} falta(s) / ${md.bgEvict} evicção(ões) · ${md.decN} decode(s)${md.decN ? ` (média ${md.decAvg} ms, pior ${md.decMax} ms)` : ''} · ${md.fail} falha(s)</li>
+      <li><b>Alocação</b>: ${mm ? `${mm.allocFail} falha(s) · ${mm.allocFallback} buffer(s) caíram da PSRAM para a memória interna · ${mm.allocNull} sem memória nenhuma${mm.heapCorrupt ? ` · <b>${mm.heapCorrupt} corrupção(ões) de heap</b>` : ''}` : '—'}</li>
+      ${j.bootlog && j.bootlog.fullMs ? `<li><b>Log de boot</b>: encheu aos ${lvT(j.bootlog.fullMs)} · ${j.bootlog.lostLines} linha(s) (${lvKB(j.bootlog.lostBytes)}) perdidas depois</li>` : ''}
+    </ul>
+    <h3>Pilhas das tarefas (mínimo livre neste boot)</h3><div class="lv-legend sm">${stacks || '<span>sem amostra</span>'}</div>
+    <h3>Onde as voltas lentas gastaram o tempo dentro das fases</h3>${subStack}
+    </section>`;
+  })();
   const stallRows = j.stalls.map((s) => `<li>${lvBadge('crit')} fw ${esc(s.fw)} · boot ${s.boot} · ${lvT(s.at)}: parada <b>${lvMs(s.dur)}</b> na fase <b>${esc(j.phName(s.phase))}</b>${s.route ? ` (pedido ${esc(s.route)})` : ''} · memória ${s.heapKB} KB${s.rebooted ? ' · <b>o vigia reiniciou</b>' : ''}</li>`).join('');
-  const minRows = j.min.slice().reverse().map((m) => `<tr><td>${m.boot}</td><td>${m.minute}</td><td>${m.loops}</td><td>${m.slow}</td><td>${m.maxLoop}${m.maxLoop ? ' ' + esc(j.phName(m.maxPh)) : ''}</td><td>${m.presses}</td><td>${m.maxPress}</td><td>${m.http}</td><td>${m.httpSlow}</td><td>${m.wifiEv}</td><td>${m.apMax}</td><td>${m.apRssi || ''}</td><td>${m.staRssi || ''}</td><td>${m.loopMin}%</td><td>${m.heapKB}</td></tr>`).join('');
+  const minRows = j.min.slice().reverse().map((m) => `<tr><td>${m.boot}</td><td>${m.minute}</td><td>${m.loops}</td><td>${m.slow}</td><td>${m.maxLoop}${m.maxLoop ? ' ' + esc(j.phName(m.maxPh)) : ''}</td><td>${m.presses}</td><td>${m.maxPress}</td><td>${m.http}</td><td>${m.httpSlow}</td><td>${m.wifiEv}</td><td>${m.apMax}</td><td>${m.apRssi || ''}</td><td>${m.staRssi || ''}</td><td>${m.loopMin}%</td><td>${m.heapKB}</td>${j.f1 ? `<td>${m.psramMinKB || ''}</td><td>${m.fsFreeKB || ''}</td><td>${m.wifiCh || ''}</td><td>${m.subTop >= 0 ? esc(j.subName(m.subTop)) + ' ' + m.subMs : ''}</td>` : ''}</tr>`).join('');
   return `<div class="lv">${back}
   <section class="lv-card lv-diag" aria-labelledby="lvDiagT" style="--sev:${LV_SEV[worstSev].c}">
     <h2 id="lvDiagT">Diagnóstico</h2>
@@ -1436,14 +1550,16 @@ function renderLogView() {
       <figure><figcaption>Sinal Wi-Fi (dBm, mais alto = melhor)</figcaption><div class="lv-chart" data-chart="m-rssi"></div><div class="lv-legend sm"><span><i style="--c:#3987e5"></i>Pior aparelho no AP</span><span><i style="--c:#199e70"></i>Rede de casa</span></div></figure>
       <figure><figcaption>CPU: menor fatia do loop (% de um núcleo)</figcaption><div class="lv-chart" data-chart="m-cpu"></div></figure>
       <figure><figcaption>Memória interna mínima (KB)</figcaption><div class="lv-chart" data-chart="m-heap"></div></figure>
+      ${j.f1 ? '<figure><figcaption>PSRAM mínima (KB) e memória de presets livre (KB)</figcaption><div class="lv-chart" data-chart="m-psram"></div><div class="lv-legend sm"><span><i style="--c:#d55181"></i>PSRAM mínima</span><span><i style="--c:#c98500"></i>Presets livre</span></div></figure>' : ''}
     </div>
-    <details class="lv-table"><summary>Ver a tabela por minuto</summary><div class="scroll"><table><thead><tr><th>Boot</th><th>Min</th><th>Voltas</th><th>Lentas</th><th>Pior (ms)</th><th>Pisadas</th><th>Pior pisada</th><th>HTTP</th><th>Lentos</th><th>Wi-Fi ev.</th><th>No AP</th><th>Sinal AP</th><th>Sinal casa</th><th>Loop mín.</th><th>Mem KB</th></tr></thead><tbody>${minRows || '<tr><td colspan="15">O primeiro minuto ainda não tinha fechado.</td></tr>'}</tbody></table></div></details>
+    <details class="lv-table"><summary>Ver a tabela por minuto</summary><div class="scroll"><table><thead><tr><th>Boot</th><th>Min</th><th>Voltas</th><th>Lentas</th><th>Pior (ms)</th><th>Pisadas</th><th>Pior pisada</th><th>HTTP</th><th>Lentos</th><th>Wi-Fi ev.</th><th>No AP</th><th>Sinal AP</th><th>Sinal casa</th><th>Loop mín.</th><th>Mem KB</th>${j.f1 ? '<th>PSRAM mín KB</th><th>FS livre KB</th><th>Canal</th><th>Sub-fase</th>' : ''}</tr></thead><tbody>${minRows || '<tr><td colspan="19">O primeiro minuto ainda não tinha fechado.</td></tr>'}</tbody></table></div></details>
   </section>
   <section class="lv-grid2">
     <div class="lv-card"><h2>Tempo de cada volta do loop</h2><p class="lv-note">Este boot. Escala logarítmica — o normal é tudo em &lt; 5 ms.</p><div class="lv-chart" data-chart="hist-loop"></div></div>
     <div class="lv-card"><h2>Atraso das pisadas</h2><p class="lv-note">Da borda no pino até a controladora agir. Normal: 25–50 ms.</p><div class="lv-chart" data-chart="hist-press"></div></div>
   </section>
   <section class="lv-card"><h2>Onde a controladora gastou o tempo nas voltas lentas</h2><p class="lv-note">Soma de todas as voltas ≥ ${j.slowMs} ms neste boot, por fase.</p><div class="lv-chart" data-chart="phases"></div><div class="lv-legend" data-phtot></div></section>
+  ${memCard}
   <section class="lv-card"><h2>Períodos de lentidão (${j.ep.length})</h2>${epCards || '<p class="lv-note">Nenhum período lento registrado (pior volta ≥ 150 ms ou soma ≥ 400 ms).</p>'}</section>
   ${j.stalls.length ? `<section class="lv-card"><h2>Travamentos gravados (sobrevivem a desligar)</h2><ul class="lv-stalls">${stallRows}</ul></section>` : ''}
   <section class="lv-card"><h2>Eventos (${j.ev.length})</h2><div class="scroll"><table class="lv-ev"><thead><tr><th>Boot</th><th>Hora</th><th>Nível</th><th>Tipo</th><th>O que aconteceu</th></tr></thead><tbody>${evRows || '<tr><td colspan="5">Nenhum evento.</td></tr>'}</tbody></table></div></section>
@@ -1571,6 +1687,8 @@ function lvDrawCharts() {
     { empty: mins.length ? 'Nenhum aparelho no AP nem rede de casa nesse período.' : empty, tip: (i) => `Minuto ${mins[i].minute}: AP ${mins[i].apRssi || '—'} dBm (${mins[i].apMax} aparelho(s)) · casa ${mins[i].staRssi || '—'} dBm`, label: 'Sinal Wi-Fi por minuto' });
   if (get('m-cpu')) lvLines(get('m-cpu'), xs, [{ c: '#9085e9', vals: mins.map((m) => m.loopMin) }], { min: 0, max: 100, empty, tip: (i) => `Minuto ${mins[i].minute}: o loop teve no mínimo ${mins[i].loopMin}% de um núcleo`, label: 'CPU do loop por minuto' });
   if (get('m-heap')) lvLines(get('m-heap'), xs, [{ c: '#d55181', vals: mins.map((m) => m.heapKB || null) }], { min: 0, empty, tip: (i) => `Minuto ${mins[i].minute}: memória interna mínima ${mins[i].heapKB} KB`, label: 'Memória interna mínima por minuto' });
+  if (get('m-psram')) lvLines(get('m-psram'), xs, [{ c: '#d55181', vals: mins.map((m) => m.psramMinKB || null) }, { c: '#c98500', vals: mins.map((m) => m.fsFreeKB || null) }],
+    { min: 0, empty, tip: (i) => `Minuto ${mins[i].minute}: PSRAM mínima ${mins[i].psramMinKB} KB · presets livre ${mins[i].fsFreeKB} KB · canal Wi-Fi ${mins[i].wifiCh || '—'}`, label: 'PSRAM mínima e memória de presets livre por minuto' });
   // histogramas (escala log nas alturas, valor real na dica e no rótulo)
   const hl = ['< 5 ms', '5–20', '20–50', '50–100', '100–250', '250–500', '0,5–1 s', '1–3 s', '3–10 s', '> 10 s'];
   const sevOf = (i) => (i <= 2 ? '#0ca30c' : i <= 4 ? '#fab219' : i <= 6 ? '#ec835a' : '#d03b3b');
