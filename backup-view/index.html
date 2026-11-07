@@ -1308,6 +1308,42 @@ const LV_LANE = [
   { k: 'press', l: 'Pisadas', c: '#c98500' },
 ];
 
+// Operações NORMAIS e demoradas, com tempo conhecido (07/nov/2026, pedido do dono): uma volta lenta
+// que cabe aqui não conta como falha — carregar o editor, ler a imagem de fundo, gravar preset/config.
+// [começo da rota (o firmware corta em 15 letras), tempo normal máximo em ms, o que é].
+const LV_EXPECT_ROUTES = [
+  [/^\/app\.js/, 2500, 'carregar o editor'], [/^\/app\.css/, 1200, 'carregar o editor'], [/^\/icons\//, 1000, 'carregar o editor'],
+  [/^\/(index\.html)?$/, 800, 'carregar o editor'], [/^\/(sw\.js|manifest|webapp_ver)/, 800, 'carregar o editor'],
+  [/^\/backup/, 2500, 'fazer backup'], [/^\/restore/, 8000, 'restaurar backup'], [/^\/log|^\/diag/, 2000, 'ler o log'],
+  [/^\/img\//, 1500, 'enviar ou ler imagem'], [/^\/icon\//, 1000, 'enviar ou ler ícone'], [/^\/fs\/write/, 4000, 'gravar o editor'],
+  [/^\/update/, 60000, 'atualizar o firmware'], [/^\/(bank\/preset|sw\/params|upedal|erase)/, 800, 'gravar preset'],
+  [/^\/config\/global/, 600, 'gravar a configuração'], [/^\/storage|^\/(img|icon)\/list/, 600, 'ler a memória'],
+];
+// Sub-fase que dominou a volta lenta -> [tempo normal máximo em ms, o que é].
+const LV_EXPECT_SUB = { dec: [350, 'ler a imagem de fundo'], fs: [400, 'ler ou gravar o preset'], nvs: [500, 'gravar a configuração'],
+  pausa: [2500, 'pausa de MIDI configurada'], blit: [250, 'desenhar a tela'] };
+function lvRouteExpect(route, ms) {
+  if (!route) return '';
+  for (const [re, max, l] of LV_EXPECT_ROUTES) if (re.test(route)) return ms <= max ? l : '';
+  return '';
+}
+// '' = demora fora do normal; senão, o nome da operação normal que a explica.
+function lvEpExpect(e, j) {
+  if (e.max >= 3000) return '';                                    // parada longa nunca é normal
+  if (e.start < 6000 && e.max < 1500) return 'ligar a controladora';
+  const tot = e.phaseMs.reduce((a, v) => a + v, 0) || 1;
+  if (e.subMs && e.subMs.some((v) => v)) {
+    const w = e.subMs.reduce((a, v, i) => (v > e.subMs[a] ? i : a), 0), x = LV_EXPECT_SUB[j.subName(w)];
+    if (x && e.subMs[w] >= tot * 0.5 && e.max <= x[0]) return x[1];
+  }
+  const ph = j.phName(e.worst);
+  if (ph === 'WEB' && e.route) { const l = lvRouteExpect(e.route, e.routeMs); if (l && e.routeMs >= e.max * 0.6) return l; }
+  if ((ph === 'SWITCHES' || ph === 'COMANDOS' || ph === 'TELA') && e.max <= 400) return 'trocar de preset e desenhar a tela';
+  if (ph === 'USB' && e.max <= 500) return 'atender o editor pelo cabo USB';
+  return '';
+}
+const lvUniq = (a) => [...new Set(a)];
+
 function lvParse(text) {
   if (typeof text !== 'string') return null;
   const i = text.lastIndexOf('DIAG-JSON ');
@@ -1339,6 +1375,7 @@ function lvParse(text) {
   // 06/nov/2026, antes da troca de nome) escreve "CAIXA-PRETA" — os dois abrem.
   const a = Math.max(text.lastIndexOf('===== BLACKBOX', i), text.lastIndexOf('===== CAIXA-PRETA', i));
   const fimM = /===== fim da (blackbox|caixa-preta) =====/.exec(text.slice(i));
+  j.ep.forEach((e) => { e.exp = lvEpExpect(e, j); });
   j.reportText = a >= 0 ? text.slice(a, fimM ? i + fimM.index + fimM[0].length : undefined).replace(/^DIAG-JSON .*$/m, '').trim() : '';
   return j;
 }
@@ -1366,7 +1403,9 @@ function lvEvent(e, j) {
     case 5: return { lane: 'wifi', sev: 'warn', label: 'WI-FI', text: `Aparelho SAIU do Wi-Fi (…${e.tag}): ${lvReason(e.b2)} — ${e.b} conectado(s)` };
     case 6: return { lane: 'wifi', sev: 'info', label: 'WI-FI', text: `Rede de casa conectou (${lvI16(e.b)} dBm)` };
     case 7: return { lane: 'wifi', sev: 'warn', label: 'WI-FI', text: `Rede de casa CAIU: ${lvReason(e.b2)}${lvI16(e.b) ? ` (${lvI16(e.b)} dBm)` : ''}${e.a > 1 ? ` — ${e.a} vezes seguidas` : ''}` };
-    case 8: return { lane: 'http', sev: e.b >= 1000 ? 'serious' : 'warn', label: 'HTTP', text: `Pedido lento: ${LV_METHOD[e.a] || ''} ${e.tag || '?'} levou ${lvMs(e.b)}`, ms: e.b };
+    case 8: { const x = lvRouteExpect(e.tag, e.b);
+      return { lane: 'http', sev: x ? 'info' : e.b >= 1000 ? 'serious' : 'warn', label: 'HTTP', exp: x,
+        text: `Pedido ${x ? 'demorado' : 'lento'}: ${LV_METHOD[e.a] || ''} ${e.tag || '?'} levou ${lvMs(e.b)}${x ? ` — normal (${x})` : ''}`, ms: e.b }; }
     case 9: return { lane: 'sys', sev: 'serious', label: 'MEMÓRIA', text: `Memória interna baixa: ${lvKB(e.c)} livres (maior bloco ${e.b} KB)` };
     case 10: return { lane: 'press', sev: e.b >= 300 ? 'serious' : 'warn', label: 'PISADA',
       text: `Pisada lenta (pino ${e.a}): ${lvMs(e.b)}${e.tag ? ` — controladora presa em ${e.tag}` : ' — sem loop lento no meio: contato do footswitch repicando'}`, ms: e.b };
@@ -1452,22 +1491,25 @@ function lvDiagnose(j) {
     add('warn', `A conexão com a rede de casa caiu ${n}x`, `Motivos: ${[...new Set(sta.map((e) => lvReason(e.b2)))].join('; ')}.`,
       'Confira o sinal do roteador onde a controladora fica e a senha salva.');
   }
-  if (j.ep.length) {
+  const epU = j.ep.filter((e) => !e.exp), epN = j.ep.filter((e) => e.exp);
+  if (epN.length) add('info', `${epN.length} operação(ões) demorada(s) dentro do normal`,
+    `Levaram mais que uma volta comum, mas dentro do tempo esperado: ${lvUniq(epN.map((e) => `${e.exp} (${lvMs(e.max)})`)).join('; ')}. Não contam como falha.`, '');
+  if (epU.length) {
     const tot = new Array(8).fill(0);
-    j.ep.forEach((e) => e.phaseMs.forEach((v, i) => { tot[i] += v; }));
+    epU.forEach((e) => e.phaseMs.forEach((v, i) => { tot[i] += v; }));
     const w = tot.reduce((a, v, i) => (v > tot[a] ? i : a), 0), name = j.phName(w);
     const pct = Math.round((tot[w] * 100) / Math.max(1, tot.reduce((a, v) => a + v, 0)));
-    const worstEp = j.ep.reduce((a, e) => (e.max > a.max ? e : a), j.ep[0]);
+    const worstEp = epU.reduce((a, e) => (e.max > a.max ? e : a), epU[0]);
     const why = name === 'WEB' ? 'pedidos do app/editor pelo Wi-Fi' : name === 'WIFI' ? 'tentativas de conectar na rede de casa'
       : name === 'MIDI' ? 'tráfego MIDI / USB host' : (name === 'SWITCHES' || name === 'COMANDOS' || name === 'TELA') ? 'desenho da tela e troca de preset (imagens grandes pesam)' : LV_PH_DESC[name] || name;
-    add(name === 'WEB' || name === 'WIFI' ? 'serious' : 'warn', `${j.ep.length} período(s) de lentidão — ${pct}% do tempo em ${name}`,
+    add(name === 'WEB' || name === 'WIFI' ? 'serious' : 'warn', `${epU.length} período(s) de lentidão fora do normal — ${pct}% do tempo em ${name}`,
       `Causa provável: ${why}. Pior volta: ${lvMs(worstEp.max)}${worstEp.route ? ` (pedido ${worstEp.route}, ${lvMs(worstEp.routeMs)})` : ''}.`,
       name === 'WEB' ? 'Use o editor só para configurar, não durante o show; feche-o nos aparelhos parados.'
         : name === 'WIFI' ? 'Se não usa a rede de casa no palco, esqueça a rede salva (SYSTEM › WI-FI).'
           : 'Se for no palco, prefira fundos de preset em cor sólida em vez de imagem.');
     // Só é "CPU tomada" com pouca CPU ociosa: num travamento esperando o celular o loop
     // também some da CPU, mas sobra CPU livre (é espera, não falta de processador).
-    const cpu = j.ep.filter((e) => e.loopMin < 60 && e.top && e.topPct >= 20 && e.idleMin < 15);
+    const cpu = epU.filter((e) => e.loopMin < 60 && e.top && e.topPct >= 20 && e.idleMin < 15);
     if (cpu.length) add('warn', 'Outra tarefa tomou a CPU da controladora', `Durante a lentidão o loop chegou a ${Math.min(...cpu.map((e) => e.loopMin))}% de um núcleo; a tarefa mais ocupada foi ${cpu[0].top} (${cpu[0].topPct}%).`,
       /wifi|tiT|lwip/i.test(cpu[0].top) ? 'Tráfego de Wi-Fi intenso: menos aparelhos conectados ajuda.' : 'Mande este backup ao suporte.');
   }
@@ -1522,7 +1564,7 @@ function lvDiagnose(j) {
   if (j.media && j.media.decN && j.media.decMax >= 250) add('info', `Decodificar o fundo levou até ${j.media.decMax} ms`, `${j.media.bgMiss} falta(s) e ${j.media.bgHit} acerto(s) do cache de fundo neste boot. Cada falta é um decode de ~130 ms na troca de preset.`,
     'No palco, prefira fundos em cor sólida nos presets que troca com frequência.');
   const sMs = j.sub.ms || [], sTot = sMs.reduce((a, v) => a + v, 0);
-  if (sTot && j.ep.length) { const w = sMs.reduce((a, v, i) => (v > sMs[a] ? i : a), 0);
+  if (sTot && epU.length) { const w = sMs.reduce((a, v, i) => (v > sMs[a] ? i : a), 0);
     if (sMs[w] >= 500) add('info', `Dentro das voltas lentas, o tempo foi principalmente em "${j.subName(w)}"`, `${LV_SUB_DESC[j.subName(w)] || ''}: ${lvMs(sMs[w])} neste boot.`, ''); }
   if (count((e) => e.type === 22)) add('serious', 'A controladora ficou sem memória para alocar', 'Alguma função pediu memória e não recebeu: pode faltar cache de imagem, buffer de backup ou o próprio editor.', 'Reinicie a controladora; se repetir, mande este backup ao suporte.');
   if (count((e) => e.type === 23)) add('warn', 'PSRAM no limite', 'Com pouca PSRAM livre o backup pode não caber e as imagens deixam de ser guardadas em cache.', 'Reinicie a controladora; se repetir, mande ao suporte.');
@@ -1530,7 +1572,8 @@ function lvDiagnose(j) {
   if (count((e) => e.type === 25)) add('crit', 'Memória corrompida detectada', 'Um bloco de memória foi escrito além do limite — é defeito de firmware e costuma terminar em travamento.', 'Mande este backup ao suporte com o que estava fazendo na hora.');
   if (count((e) => e.type === 27 && e.a === 3)) add('serious', 'Uma atualização por Wi-Fi falhou', `${ev.filter((e) => e.type === 27 && e.a === 3).map((e) => e.tag).filter(Boolean).join('; ') || 'veja o evento'}.`, 'Use o atualizador online pelo cabo.');
   if (j.bootlog && j.bootlog.fullMs) add('info', `O log de boot encheu aos ${lvT(j.bootlog.fullMs)}`, `${j.bootlog.lostLines} linha(s) (${lvKB(j.bootlog.lostBytes)}) se perderam depois disso; a blackbox continua inteira.`, '');
-  if (j.http.slow >= 5 && !j.ep.length) add('info', `${j.http.slow} pedidos HTTP lentos`, `O mais lento: ${j.http.maxRoute} (${lvMs(j.http.max)}). Não chegaram a causar lentidão.`, '');
+  const httpU = ev.filter((e) => e.type === 8 && !lvRouteExpect(e.tag, e.b));
+  if (httpU.length >= 5 && !epU.length) add('info', `${httpU.length} pedidos HTTP lentos`, `O mais lento: ${httpU.reduce((a, e) => (e.b > a.b ? e : a)).tag} (${lvMs(Math.max(...httpU.map((e) => e.b)))}). Não chegaram a causar lentidão.`, '');
   if (!out.length) add('ok', 'Nada fora do normal registrado', 'Sem travamentos, sem períodos de lentidão e sem quedas de Wi-Fi neste registro.', '');
   const rank = { crit: 0, serious: 1, warn: 2, info: 3, ok: 4 };
   return out.sort((a, b) => rank[a.sev] - rank[b.sev]);
@@ -1590,13 +1633,22 @@ function lvHealth(j) {
       [!brown, brown ? `Queda de energia ${brown}x` : 'Energia estável'],
       ...(corrupt ? [[false, 'Memória corrompida']] : []),
     ] });
-  // 2) Resposta: a pior volta do loop (enquanto ela dura, nada responde)
-  const lm = j.loop.max || 0, fast = j.loop.n ? ((j.loop.hist[0] + j.loop.hist[1]) * 100) / j.loop.n : 100;
-  A.push({ k: 'speed', name: 'Resposta', st: lm >= 1000 ? 'crit' : lm >= 150 || j.ep.length ? 'warn' : 'ok', val: lvMs(lm), unit: 'pior demora',
-    sub: `${lvPct(fast)} das voltas abaixo de 20 ms${j.ep.length ? ` · ${j.ep.length} período(s) lento(s)` : ''}`,
-    meter: lvMeter({ min: 1, max: 10000, log: true, val: Math.max(1, lm), valTip: `Pior volta do loop: ${lvMs(lm)}${lm ? ` (fase ${j.phName(j.loop.maxPh)})` : ''}`,
+  // 2) Resposta: a pior demora FORA DO NORMAL (enquanto ela dura, nada responde). Demora com
+  //    tempo conhecido (carregar o editor, ler a imagem de fundo…) aparece só como referência.
+  const lm = j.loop.max || 0, epU = j.ep.filter((e) => !e.exp), epN = j.ep.filter((e) => e.exp);
+  const lmU = Math.max(0, ...epU.map((e) => e.max));   // os travamentos (≥ 3 s) ficam no cartão Estabilidade
+  const explained = lm < 150 || epN.some((e) => e.max >= lm - 2);
+  const worstU = explained ? lmU : Math.max(lmU, lm);
+  const edges = [5, 20, 50, 100], quiet = edges[[0, 1, 2, 3].filter((i) => j.loop.hist[i]).pop() ?? 0];
+  const normLbl = lvUniq(epN.map((e) => e.exp));
+  A.push({ k: 'speed', name: 'Resposta', st: worstU >= 1000 ? 'crit' : worstU >= 150 || epU.length ? 'warn' : 'ok',
+    val: worstU ? lvMs(worstU) : 'Normal', unit: worstU ? 'pior demora fora do normal' : 'nenhuma demora fora do normal',
+    sub: `${epU.length ? `${epU.length} período(s) lento(s)` : 'sem períodos lentos'}${epN.length ? ` · ${epN.length} demora(s) normal(is): ${normLbl.join(', ')}` : ''}`,
+    meter: lvMeter({ min: 1, max: 10000, log: true, val: Math.max(1, worstU || quiet), valTip: worstU ? `Pior demora fora do normal: ${lvMs(worstU)}` : `As voltas comuns ficam abaixo de ${quiet} ms`,
+      ghost: explained && lm >= 150 ? lm : null, ghostTip: `Normal (${normLbl.join(', ')}): até ${lvMs(lm)}`,
       zones: [{ to: 150, st: 'ok' }, { to: 1000, st: 'warn' }, { to: 10000, st: 'crit' }],
-      ticks: [{ v: 1, l: '1 ms' }, { v: 150, l: '150 ms' }, { v: 1000, l: '1 s' }, { v: 10000, l: '10 s' }], label: `Pior demora ${lvMs(lm)}: verde até 150 ms, amarelo até 1 s, vermelho acima` }) });
+      ticks: [{ v: 1, l: '1 ms' }, { v: 150, l: '150 ms' }, { v: 1000, l: '1 s' }, { v: 10000, l: '10 s' }],
+      label: `Pior demora fora do normal ${lvMs(worstU)}: verde até 150 ms, amarelo até 1 s, vermelho acima` }) });
   // 3) Footswitches: atraso médio da pisada (normal 25–50 ms)
   const p = j.press, held = c((e) => e.type === 10 && e.tag), bounce = c((e) => e.type === 10 && !e.tag);
   A.push(p.n ? { k: 'press', name: 'Footswitches', st: p.max >= 300 || held ? 'serious' : p.slow || bounce || p.recov ? 'warn' : 'ok',
@@ -1643,13 +1695,23 @@ function lvHealth(j) {
 
 // Estado de cada área num minuto (faixa "minuto a minuto").
 const LV_STRIP = [
-  { k: 'speed', l: 'Resposta', f: (m) => (m.maxLoop >= 1000 ? 'crit' : m.maxLoop >= 150 ? 'warn' : 'ok'), t: (m, j) => `pior volta ${lvMs(m.maxLoop)}${m.maxLoop ? ` (${j.phName(m.maxPh)})` : ''}` },
+  { k: 'speed', l: 'Resposta', f: (m, j) => (m.maxLoop < 150 || lvMinNormal(m, j) ? 'ok' : m.maxLoop >= 1000 ? 'crit' : 'warn'),
+    t: (m, j) => { const n = lvMinNormal(m, j); return `pior volta ${lvMs(m.maxLoop)}${m.maxLoop ? ` (${j.phName(m.maxPh)})` : ''}${n ? ` — normal: ${n}` : ''}`; } },
   { k: 'press', l: 'Pisadas', f: (m) => (!m.presses ? 'none' : m.maxPress >= 300 ? 'crit' : m.maxPress >= 120 ? 'warn' : 'ok'), t: (m) => (m.presses ? `${m.presses} pisada(s), pior ${lvMs(m.maxPress)}` : 'nenhuma pisada') },
   { k: 'wifi', l: 'Wi-Fi', f: (m) => { const r = [m.apRssi, m.staRssi].filter((v) => v); if (!r.length) return 'none'; const v = Math.min(...r); return v < -80 ? 'crit' : v < -70 ? 'warn' : 'ok'; },
     t: (m) => `sinal AP ${m.apRssi || '—'} dBm (${m.apMax} aparelho(s)) · casa ${m.staRssi || '—'} dBm` },
-  { k: 'web', l: 'Editor/app', f: (m) => (!m.http ? 'none' : m.httpSlow ? 'warn' : 'ok'), t: (m) => (m.http ? `${m.http} pedido(s), ${m.httpSlow} lento(s)` : 'nenhum pedido') },
+  { k: 'web', l: 'Editor/app', f: (m, j) => (!m.http && !lvMinHttp(m, j).length ? 'none' : lvMinHttp(m, j).some((e) => !lvRouteExpect(e.tag, e.b)) ? 'warn' : 'ok'),
+    t: (m, j) => { const h = lvMinHttp(m, j), u = h.filter((e) => !lvRouteExpect(e.tag, e.b));
+      return `${m.http} pedido(s)${u.length ? `, ${u.length} lento(s) fora do normal (${lvUniq(u.map((e) => e.tag)).join(', ')})` : ''}${h.length > u.length ? `, ${h.length - u.length} demorado(s) normal(is)` : ''}`; } },
   { k: 'mem', l: 'Memória', f: (m) => (!m.heapKB ? 'none' : m.heapKB < 16 ? 'crit' : m.heapKB < 32 ? 'warn' : 'ok'), t: (m) => `memória interna mínima ${m.heapKB} KB` },
 ];
+// Pedidos lentos (evento 8) e demora normal que caíram dentro do minuto m.
+const lvInMin = (m, at, dur = 0) => at < (m.minute + 1) * 60000 && at + dur >= m.minute * 60000;
+const lvMinHttp = (m, j) => j.ev.filter((e) => e.type === 8 && e.boot === m.boot && lvInMin(m, e.ms));
+function lvMinNormal(m, j) {
+  const e = j.ep.find((x) => x.exp && x.boot === m.boot && lvInMin(m, x.start, x.dur) && x.max >= m.maxLoop - 2);
+  return e ? e.exp : '';
+}
 function lvHealthStrip(el, j) {
   const mins = j.min.filter((m) => m.boot === S.lvBoot);
   if (!mins.length) { el.innerHTML = '<p class="lv-empty">O primeiro minuto deste boot ainda não tinha fechado — a faixa aparece depois de 1 minuto ligada.</p>'; return; }
@@ -1660,7 +1722,7 @@ function lvHealthStrip(el, j) {
     const y = T + r * (rowH + gap);
     s += `<text x="0" y="${y + rowH / 2 + 4}" fill="${LV_INK}" font-size="11.5" font-weight="700">${row.l}</text>`;
     mins.forEach((m, i) => {
-      const st = row.f(m), x = LW + i * cw;
+      const st = row.f(m, j), x = LW + i * cw;
       s += `<rect x="${(x + 1).toFixed(1)}" y="${y}" width="${Math.max(2, cw - 2).toFixed(1)}" height="${rowH}" rx="4" fill="${LV_ST[st].c}" fill-opacity="${st === 'none' ? '.25' : st === 'ok' ? '.75' : '1'}" data-tip="${esc(`Minuto ${m.minute} · ${row.l}: ${LV_ST[st].l.toLowerCase()} — ${row.t(m, j)}`)}"/>`;
       if (st === 'warn' || st === 'crit') s += `<path d="M${(x + cw / 2 - 4).toFixed(1)} ${y + rowH / 2 + 3} l4 -7 l4 7z" fill="#131B26" pointer-events="none"/>`;
     });
@@ -1747,7 +1809,7 @@ function renderLogView() {
   const epCards = j.ep.slice().reverse().map((e) => {
     const tot = Math.max(1, e.phaseMs.reduce((a, v) => a + v, 0));
     const seg = e.phaseMs.map((v, i) => (v ? `<i style="flex:${v};--c:${LV_PH_COL[i]}" data-tip="${esc(j.phName(i))}: ${lvMs(v)} (${Math.round((v * 100) / tot)}%)"></i>` : '')).join('');
-    return `<div class="lv-ep"><div class="h"><b>Boot ${e.boot} · ${lvT(e.start)}</b><span>durou ${lvMs(e.dur)}</span><span>${e.slow} volta(s) lenta(s)</span><span>pior ${lvMs(e.max)}</span>${lvBadge(e.max >= 1000 ? 'crit' : e.max >= 300 ? 'serious' : 'warn')}</div>` +
+    return `<div class="lv-ep"><div class="h"><b>Boot ${e.boot} · ${lvT(e.start)}</b><span>durou ${lvMs(e.dur)}</span><span>${e.slow} volta(s) lenta(s)</span><span>pior ${lvMs(e.max)}</span>${e.exp ? `<span class="lv-sev" style="--sev:${LV_SEV.info.c}">${lvSevIcon('ok')}NORMAL</span><span>${esc(e.exp)}</span>` : lvBadge(e.max >= 1000 ? 'crit' : e.max >= 300 ? 'serious' : 'warn')}</div>` +
       `<div class="lv-stack" role="img" aria-label="Tempo por fase: ${e.phaseMs.map((v, i) => (v ? `${j.phName(i)} ${v} ms` : '')).filter(Boolean).join(', ')}">${seg}</div>` +
       `<div class="d">Mais pesada: <b>${esc(j.phName(e.worst))}</b> (${esc(LV_PH_DESC[j.phName(e.worst)] || '')})` +
       `${e.route ? ` · pedido mais lento <b>${esc(e.route)}</b> ${lvMs(e.routeMs)}` : ''} · ${e.http} pedido(s) HTTP · ${e.presses} pisada(s)${e.pressMax ? `, pior ${lvMs(e.pressMax)}` : ''}` +
@@ -1790,7 +1852,7 @@ function renderLogView() {
     <div class="lv-head"><h2 id="lvTlT">Linha do tempo</h2>${bootChips}</div>
     <p class="lv-note">Tempo desde ligar (ou reiniciar) a controladora. Passe o mouse ou toque nas marcas.</p>
     <div class="lv-chart" data-chart="timeline"></div>
-    <div class="lv-legend">${LV_LANE.map((l) => `<span><i style="--c:${l.c}"></i>${l.l}</span>`).join('')}<span><i class="bar"></i>Período lento / travado</span></div>
+    <div class="lv-legend">${LV_LANE.map((l) => `<span><i style="--c:${l.c}"></i>${l.l}</span>`).join('')}<span><i class="bar"></i>Período lento / travado</span><span><i style="--c:${LV_SEV.info.c}"></i>Demora normal</span></div>
   </section>
   <section class="lv-card" aria-labelledby="lvMinT">
     <div class="lv-head"><h2 id="lvMinT">Minuto a minuto · boot ${S.lvBoot}</h2></div>
@@ -1901,7 +1963,7 @@ function lvTimeline(el, j) {
   // períodos lentos (barras na faixa "Lentidão")
   eps.forEach((e) => {
     const x0 = X(e.start), x1 = Math.max(x0 + 4, X(e.start + e.dur)), y = laneY('slow');
-    s += `<rect x="${x0}" y="${y - 8}" width="${x1 - x0}" height="16" rx="4" fill="${e.max >= 1000 ? LV_SEV.crit.c : LV_SEV.serious.c}" fill-opacity=".85" data-tip="${esc(`Lento ${lvMs(e.dur)} · pior volta ${lvMs(e.max)} · fase ${j.phName(e.worst)}${e.route ? ` · pedido ${e.route} ${lvMs(e.routeMs)}` : ''}`)}"/>`;
+    s += `<rect x="${x0}" y="${y - 8}" width="${x1 - x0}" height="16" rx="4" fill="${e.exp ? LV_SEV.info.c : e.max >= 1000 ? LV_SEV.crit.c : LV_SEV.serious.c}" fill-opacity=".85" data-tip="${esc(`${e.exp ? `Normal (${e.exp}): ` : 'Lento '}${lvMs(e.dur)} · pior volta ${lvMs(e.max)} · fase ${j.phName(e.worst)}${e.route ? ` · pedido ${e.route} ${lvMs(e.routeMs)}` : ''}`)}"/>`;
   });
   evs.forEach((e) => {
     const x = lvEvent(e, j), lane = LV_LANE.find((l) => l.k === x.lane), y = laneY(x.lane), cx = X(e.ms);
