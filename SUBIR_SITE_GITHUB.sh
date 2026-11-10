@@ -44,5 +44,5 @@ if ! git push -u "$GITHUB_REMOTE" HEAD:"$GITHUB_BRANCH"; then
   echo; echo "  O envio nao foi concluido. Se aparecer non-fast-forward, o GitHub tem commits"
   echo "  que nao estao aqui; o script nao substitui a forca."; exit 1
 fi
-echo; echo "  Site enviado: https://github.com/bffx-updates/Site_BFMiDi  ->  https://bffx.com.br"
+echo; echo "  Site enviado: https://github.com/bffx-updates/Site_BFMiDi  ->  https://bfmidi.com.br"
 exit 0

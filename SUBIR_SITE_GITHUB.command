@@ -7,7 +7,7 @@
 cd "$(dirname "$0")" || exit 1
 bash "./SUBIR_SITE_GITHUB.sh" "$@"; rc=$?
 if [ "$rc" = "0" ]; then
-  osascript -e 'display notification "bffx.com.br atualiza em 1 a 2 minutos." with title "Site BFMIDI enviado"' >/dev/null 2>&1
+  osascript -e 'display notification "bfmidi.com.br atualiza em 1 a 2 minutos." with title "Site BFMIDI enviado"' >/dev/null 2>&1
   # Fecha ESTA janela do Terminal (achada pela tty) logo depois que o shell sair
   # — depois, e nao antes, senao o Terminal pergunta "encerrar processo?".
   T="$(tty)"
