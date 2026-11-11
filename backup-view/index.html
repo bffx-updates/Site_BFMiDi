@@ -1230,6 +1230,25 @@ function renderBootLog() {
   const log = esc(b.boot_log).replace(/^.*reset: .*$/m, (l) => `<mark class="rs${bad ? ' bad' : ''}">${l}</mark>`);
   return `<details class="boot"${open ? ' open' : ''}><summary><span class="sb"><span class="lbl">Log de boot do pedal</span><span class="chips">${chips}</span></span></summary><pre>${log}</pre></details>`;
 }
+// ── APARELHOS USB (11/nov/2026) ────────────────────────────────────────────
+// Chave `usb_host_reports`: o relatório de cada aparelho do USB host que o
+// usuário abriu no popup AVANÇADO do editor antes de fazer o backup (texto
+// pronto, montado pelo editor). Ausente = ninguém abriu, ou editor anterior.
+function renderUsbReports() {
+  const list = S.backup.usb_host_reports;
+  if (!Array.isArray(list) || !list.length) return '';
+  return list.map((r, i) => {
+    const text = String(r && r.text || '');
+    const when = r && r.t ? new Date(r.t * 1000).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    const warn = /\n  ! /.test(text);
+    const quirk = /AJUSTE (GRAVADO|DE TESTE)/.test(text);
+    const chips = `<span class="chip">${esc(String(r.id || ''))}</span>`
+      + (warn ? '<span class="chip warn">COM AVISOS</span>' : '<span class="chip ok">SEM AVISOS</span>')
+      + (quirk ? '<span class="chip warn">COM AJUSTE</span>' : '')
+      + (when ? `<span class="chip">${esc(when)}</span>` : '');
+    return `<details class="boot"${i === 0 && warn ? ' open' : ''}><summary><span class="sb"><span class="lbl">Aparelho USB · ${esc(String(r.name || 'USB MIDI'))}</span><span class="chips">${chips}</span></span></summary><pre>${esc(text)}</pre></details>`;
+  }).join('');
+}
 // ── SAÚDE e ÚLTIMOS MOVIMENTOS (07/nov/2026) ───────────────────────────────
 // Chaves `status` (GET /diag/status) e `activity` (GET /activity) que o editor
 // põe no backup. O texto de cada movimento é o MESMO do card STATUS do editor
@@ -2291,7 +2310,7 @@ function render() {
   const a = document.activeElement; const inMain = !!a && $main.contains(a);
   const fk = inMain ? (a.id ? '#' + a.id : a.dataset.pi ? `.key[data-pi="${a.dataset.pi}"]` : a.dataset.layer ? `.layerseg [data-layer="${a.dataset.layer}"]`
     : a.dataset.bank ? `.nav[data-bank="${a.dataset.bank}"]` : a.matches('summary') ? 'details.boot summary' : a.matches('pre') ? 'details.boot pre' : '') : '';
-  $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderModeMap()}${renderPreset()}${renderStatus()}${renderActivity()}${renderBootLog()}`;
+  $main.innerHTML = `<div class="hero">${renderConsole()}${renderModel()}${renderPrincipal()}</div>${renderModeMap()}${renderPreset()}${renderStatus()}${renderActivity()}${renderUsbReports()}${renderBootLog()}`;
   if (inMain) {
     // O controle sumiu ou ficou desabilitado (preset sem extras, sem layer 2, slot fora
     // do backup): o foco vai para a tecla do preset atual, nunca para o <body>.
