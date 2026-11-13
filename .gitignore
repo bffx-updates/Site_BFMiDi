@@ -6,3 +6,6 @@ NANO+ PNG/
 node_modules/
 .codex-remote-attachments/
 .DS_Store
+
+# impeccable (revisão de design local; não vai para o site)
+.impeccable/

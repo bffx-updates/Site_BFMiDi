@@ -40,17 +40,19 @@
     canvas.height = Math.round(height * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     if (!widthChanged && points.length) { draw(0); return; }
-    var count = Math.min(100, Math.max(30, Math.round(width * height / 12000)));
+    /* Menos e mais apagadas (13/11/2026): o fundo não compete com os LEDs
+       do produto, que são a luz da página. */
+    var count = Math.min(40, Math.max(14, Math.round(width * height / 30000)));
     points = Array.from({ length: count }, function () {
       return { x: Math.random() * width, y: Math.random() * height,
-        radius: .5 + Math.random() * 1.2, opacity: .15 + Math.random() * .4,
+        radius: .5 + Math.random() * 1, opacity: .1 + Math.random() * .25,
         dx: (Math.random() - .5) * 3, dy: -3 - Math.random() * 7 };
     });
-    var softCount = Math.min(18, Math.max(8, Math.round(width * height / 70000)));
+    var softCount = Math.min(5, Math.max(2, Math.round(width * height / 260000)));
     if (softCtx) {
       var softPoints = Array.from({ length: softCount }, function () {
         return { x: Math.random() * width, y: Math.random() * height,
-          radius: 14 + Math.random() * 22, opacity: .5 + Math.random() * .45,
+          radius: 14 + Math.random() * 22, opacity: .25 + Math.random() * .25,
           dx: (Math.random() - .5) * 5, dy: -4 - Math.random() * 6, soft: true };
       });
       points = softPoints.concat(points);

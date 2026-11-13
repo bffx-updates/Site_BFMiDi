@@ -177,7 +177,6 @@
   height: 7px;
   border-radius: 50%;
   background: var(--orange);
-  box-shadow: 0 0 8px var(--orange);
 }
 .pg .pg-kicker:has(> .pg-kicker__ico)::before,
 .bf-kicker:has(> .pg-kicker__ico)::before { display: none; }
@@ -207,12 +206,8 @@
 }
 .pg .pg-title__line { display: block; }
 .pg .pg-title__hot {
+  /* Cor sólida (13/11/2026): o degradê dentro da letra era enfeite. */
   color: var(--hot-ink);
-  background: var(--hot);
-  -webkit-background-clip: text;
-          background-clip: text;
-  -webkit-text-fill-color: transparent;
-  padding-bottom: .06em;   /* descendentes não são cortados pelo clip */
 }
 /* O salto de 10px da grade + 4px = 14px do título ao lead. */
 .pg .pg-lead {

@@ -128,3 +128,43 @@
   .lj-card__img { height: 120px; }
   .lj-card__img img { max-height: 120px; }
 }
+
+/* ---------- CELULAR: os quatro de uma vez (13/11/2026) --------
+   A tabela rolava de lado e mostrava um modelo por vez, sem dizer
+   que havia mais. Até 600px cada linha vira uma grade: o nome do
+   recurso ocupa a largura toda e, embaixo, os quatro valores lado a
+   lado, na ordem das colunas do cabeçalho. A tabela continua sendo
+   tabela para o leitor de tela (os papéis vêm do HTML). */
+@media (max-width: 600px) {
+  .cmp-wrap { overflow: visible; }
+  .cmp { min-width: 0; font-size: 15px; }
+  .cmp, .cmp thead, .cmp tbody, .cmp tfoot { display: block; }
+  .cmp tr {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-bottom: 1px solid var(--line);
+  }
+  .cmp th, .cmp td { display: block; padding: 8px 4px; border-bottom: 0; min-width: 0; }
+  .cmp .cmp-corner { display: none; }
+  .cmp th[scope="row"] {
+    position: static;
+    grid-column: 1 / -1;
+    padding: 12px 12px 2px;
+    background: none;
+    white-space: normal;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+  .cmp td { padding-bottom: 12px; color: var(--ink); overflow-wrap: anywhere; }
+  .cmp .cmp-group th { grid-column: 1 / -1; padding: 22px 12px 10px; }
+  .cmp thead tr { position: sticky; top: 0; z-index: 2; background: #141b25; border-radius: var(--r-card) var(--r-card) 0 0; }
+  .cmp thead th { padding: 14px 4px 10px; }
+  .cmp-model__img { width: 64px; height: 44px; }
+  .cmp-model__img img { max-height: 44px; }
+  .cmp-model__name { font-size: 17px; }
+  .cmp-model__note { display: none; }
+  .cmp .cmp-price { white-space: normal; font-size: 14px; }
+  .cmp-actions th[scope="row"] { display: none; }
+  .cmp-actions td { padding: 12px 3px 16px; }
+  .pg .cmp-btn { min-height: 44px; padding-inline: 4px; font-size: 13px; }
+}

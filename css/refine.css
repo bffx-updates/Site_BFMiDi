@@ -461,7 +461,7 @@ html:not([data-sec]) .msec { display: none !important; }
   color: #1d0d02;
   font-weight: 700;
   background: linear-gradient(160deg, #ffbb64 0%, #ff8e3e 44%, #ff6933 100%);
-  box-shadow: inset 0 2px 2px #fff0cbaa, inset 0 -2px 3px #b9311766, 0 8px 22px -10px #ff6f33aa;
+  box-shadow: inset 0 2px 2px #fff0cbaa, inset 0 -2px 3px #b9311766, 0 8px 18px -10px #000;
 }
 /* Aceso (na compra de um modelo ou na página Comprar): um aro claro. */
 .mnav__buy[aria-current] { box-shadow: 0 0 0 3px #08101a, 0 0 0 5px var(--chrome-on-ink); }
@@ -518,7 +518,7 @@ html:not([data-sec]) .msec { display: none !important; }
 .mstrip__card[aria-current] {
   border-color: var(--chrome-on-edge);
   background: var(--chrome-on-bg);
-  box-shadow: inset 0 1px 1px #ffd7ad2e, 0 0 0 1px #e7a36b44, 0 14px 30px -18px #ff7a33aa;
+  box-shadow: inset 0 1px 1px #ffd7ad2e, 0 0 0 1px #e7a36b44, 0 14px 30px -18px #000;
 }
 .mstrip__card[aria-current] .mstrip__note { color: var(--chrome-on-ink); }
 .mstrip__cmp {
@@ -734,5 +734,38 @@ html:not([data-sec]) .msec { display: none !important; }
   .mstrip__cmp[aria-current], .msec__tab[aria-current], .mbar__item[aria-current] {
     outline: 3px solid Highlight;
     outline-offset: -3px;
+  }
+}
+
+
+/* ── RODAPÉ COM LINKS (13/11/2026) ───────────────────────────────────── */
+#app > .site-footer .footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#app > .site-footer .footer-links a {
+  display: inline-block;
+  padding: 8px 2px;
+  font: 600 var(--t-min)/1.2 var(--font-body);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+#app > .site-footer .footer-links a:focus-visible { outline: 2px solid var(--chrome-on-ink); outline-offset: 2px; border-radius: 4px; }
+@media (hover: hover) {
+  #app > .site-footer .footer-links a:hover { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+}
+/* No celular o rodapé aparece fora da HOME (que cabe na janela),
+   empilhado, acima da barra fixa de baixo. */
+@media (max-width: 600px) {
+  .app:not(:has(#panel-home.is-on)) > .site-footer { display: block; padding-bottom: 8px; }
+  .app:not(:has(#panel-home.is-on)) > .site-footer .footer-row {
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 10px;
   }
 }

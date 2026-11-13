@@ -106,6 +106,14 @@ window.BF_CONTENT = (function () {
       overview: 'Visão geral',
       buy: 'Comprar',
       footerEnd: 'Controladoras MIDI',
+      /* A HOME (13/11/2026): o que a controladora faz, numa frase, mais o
+         preço do modelo à vista e dois caminhos. O preço e o nome do modelo
+         saem do próprio modelo (`price`, `tab`). */
+      pitch: {
+        line: 'Troque presets, ligue efeitos e bata o tempo do seu rig com o pé.',
+        details: 'Ver recursos',
+        buy: 'Comprar {model}'
+      },
       /* O MENU (out/2026). Três níveis, cada um com um papel só:
            1 `main`  o menu principal: as seções do site, sempre as mesmas,
                      mais o botão `buy`. No computador fica no topo; no
@@ -159,10 +167,10 @@ window.BF_CONTENT = (function () {
         value: '{v}\u00a0cm',
         label: 'Medidas da {model} vista de cima: {w} cm de largura por {h} cm de profundidade.'
       },
-      switches: { description: 'Acesso rápido, intuitivo e total controle do seu setup em qualquer situação.' },
-      presets: { description: 'Organize seus timbres e setups com liberdade e praticidade.' },
-      screen: { title: 'Visualização clara e intuitiva.' },
-      live: { title: 'Mais possibilidades no seu palco.' },
+      switches: { description: 'Um pé chama o preset, outro liga o delay, outro bate o tempo.' },
+      presets: { description: 'Um banco por show ou por estilo, trocado sem tirar a mão da guitarra.' },
+      screen: { title: 'O nome e o ícone de cada efeito, na tela.' },
+      live: { title: 'Cada footswitch faz o que você mandar.' },
       leds: {
         title: 'Anéis de LED independentes',
         description: 'Cada footswitch tem o próprio anel de LED. A cor diz o estado, e o estado é seu: você escolhe a cor de ligado e de desligado em cada um.'
@@ -203,7 +211,7 @@ window.BF_CONTENT = (function () {
                    role: 'MIDI por USB, com o computador.' },
       usbHost:   { img: 'port-usb-host-240',    label: 'USB HOST',
                    tag: 'HOST',   name: 'USB HOST',        group: 'USB',
-                   role: 'Controla pedais USB, sem computador.' },
+                   role: 'Liga TONEX ONE, GP-5, Nano Cortex e outros pedais USB, sem computador.' },
       bluetooth: { img: 'port-bluetooth',       label: 'Conexão Bluetooth MIDI — BLE (MIDI wireless)',
                    tag: 'BLE',    name: 'Bluetooth MIDI',  group: 'Sem fio',
                    role: 'MIDI sem fio, por Bluetooth LE.' },
@@ -708,6 +716,18 @@ window.BF_CONTENT = (function () {
       storeNote: 'Loja online da BFFX',
       soon: 'Em breve',
       waitKicker: 'Grupo de espera',
+      waitShort: 'Esgotado? Entre no grupo de espera pelo WhatsApp',
+      /* Compatibilidade (13/11/2026): fato do produto. Toda BFMIDI manda
+         MIDI comum; o modo amigável do editor já traz os comandos com nome
+         de 60 aparelhos (MATCH_MODE_BRANDS no webApp). Marca nova lá, nova
+         aqui. */
+      compat: {
+        title: 'Funciona com o seu equipamento',
+        text: 'Qualquer aparelho que recebe MIDI. Mais de 60 já vêm com os comandos nomeados no editor:',
+        brands: ['Kemper', 'Valeton', 'IK Multimedia', 'Neural DSP', 'Line 6', 'Fractal',
+                 'Strymon', 'Universal Audio', 'Boss', 'Zoom', 'Hotone', 'HeadRush',
+                 'TC Electronic', 'Eventide', 'VTR']
+      },
       newTab: 'abre em nova aba',
       portTags: {
         din5: 'DIN5',

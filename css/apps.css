@@ -214,12 +214,7 @@
    o título em duas linhas e o lead. 10px do micro-rótulo ao título,
    14px do título ao lead. As regras de desenho do micro-rótulo são as
    do pages.css; aqui só o encaixe. */
-.apps-page .ap-eyebrow { margin: 0 0 10px; }
-.apps-page .ap-eyebrow__icon {
-  border-radius: 5px;
-  box-shadow: 0 0 0 1px #ffffff1f, 0 0 12px -2px #ff782d66;
-}
-.apps-page .ap-eyebrow__ver { white-space: nowrap; }
+/* O micro-rótulo de Apps saiu em 13/11/2026 (o título diz o nome). */
 
 .apps-page .ap-title {
   margin: 0;
@@ -234,12 +229,8 @@
 }
 .apps-page .ap-title__line { display: block; }
 .apps-page .ap-title__line--hot {
+  /* Cor sólida (13/11/2026): o degradê dentro da letra era enfeite. */
   color: var(--hot-ink, #ff9a4c);
-  background: var(--hot);
-  -webkit-background-clip: text;
-          background-clip: text;
-  -webkit-text-fill-color: transparent;
-  padding-bottom: .06em;   /* o descendente do "q" não é cortado pelo clip */
 }
 .apps-page .ap-lead {
   max-width: 34em;
@@ -403,7 +394,7 @@
   border-color: var(--chrome-on-edge, #e7a36b);
   background: var(--chrome-on-bg, linear-gradient(155deg, #3a2a1f, #231a14));
   box-shadow:
-    var(--chrome-util-on, 0 0 0 2px #ff8e3e, 0 0 24px #ff7a3355),
+    var(--chrome-util-on, 0 0 0 2px #ff8e3e, 0 10px 22px -12px #000),
     inset 0 1px 0 #ffd7ad2e,
     0 12px 22px -14px #000;
 }
@@ -472,7 +463,7 @@
   width: 100%;
   height: 100%;
   border-radius: 14px;
-  box-shadow: 0 0 0 1px #ffffff1f, 0 10px 22px -10px #000, 0 0 24px -8px #ff782d66;
+  box-shadow: 0 0 0 1px #ffffff1f, 0 10px 22px -10px #000;
 }
 .apps-page .ap-plat__id { grid-area: id; min-width: 0; }
 .apps-page .ap-plat h3 {
@@ -1685,7 +1676,7 @@
   border-bottom: 1px solid #a6bedd24;
   flex-shrink: 0;
 }
-#ajuda-dialog .apps-dialog-icon { width: 46px; height: 46px; flex: none; border-radius: 12px; box-shadow: 0 0 0 1px #ffffff1a, 0 0 22px -6px #ff782d66; }
+#ajuda-dialog .apps-dialog-icon { width: 46px; height: 46px; flex: none; border-radius: 12px; box-shadow: 0 0 0 1px #ffffff1a, 0 8px 18px -8px #000; }
 #ajuda-dialog .apps-dialog-titles { flex: 1 1 auto; min-width: 0; }
 /* O micro-rótulo é o mesmo da página (.bf-kicker do pages.css): a
    palavra em mono pêssego e a etiqueta branca "Versão 14". O ícone do

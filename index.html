@@ -130,6 +130,7 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
         </div>
 <p class="hero-wordmark" aria-hidden="true"><span class="hero-rays"><span class="hero-rays-field"><i class="r1"></i><i class="r2"></i><i class="r3"></i><i class="core"></i></span></span><span class="hero-wordmark-text" id="hero-wordmark">8SW+</span></p>
 <p class="hero-kicker bf-kicker" id="hero-kicker"></p>
+<div class="hero-pitch" id="hero-pitch"></div>
       </div>
     </section>
     <section class="panel" id="panel-info" aria-hidden="true"></section>
@@ -143,13 +144,8 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
        texto vira a coluna da esquerda e o palco a da direita. -->
   <div class="ap-hero">
     <div class="ap-copy">
-      <p class="ap-eyebrow bf-kicker">
-        <img class="ap-eyebrow__icon pg-kicker__ico" src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="20px" width="256" height="256" alt="" loading="lazy" decoding="async">
-        <span class="ap-eyebrow__name">BFMiDi Editor</span>
-        <b class="ap-eyebrow__ver">Versão 14</b>
-      </p>
       <h2 class="ap-title" id="apps-title">
-        <span class="ap-title__line">Controle total,</span>
+        <span class="ap-title__line">BFMiDi Editor,</span>
         <span class="ap-title__line ap-title__line--hot">em qualquer tela.</span>
       </h2>
       <p class="ap-lead">O mesmo editor da sua BFMIDI no navegador, no Windows, no Mac, no iPhone e no iPad.</p>
@@ -416,7 +412,6 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
     <section class="ap-perks" aria-labelledby="apps-perks-title">
       <div class="ap-sec-head">
         <div class="ap-sec-head__t">
-          <p class="ap-kicker" aria-hidden="true">No editor</p>
           <h3 id="apps-perks-title">O que você controla</h3>
         </div>
         <p class="ap-sec-lead">Presets, footswitches, tela e LEDs da sua BFMIDI, tudo num lugar só.</p>
@@ -482,7 +477,7 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
     </section>
 
     <div class="ap-foot">
-      <p class="ap-compat"><span class="ap-compat__k">Para</span> 8SW+, 6SW+, NANO+ e MICRO S3 <span class="ap-compat__dot" aria-hidden="true">·</span> <span>Backup dos presets e atualização do firmware no próprio editor</span></p>
+      <p class="ap-compat"><span class="ap-compat__k">Para</span> 8SW+, 6SW+, NANO+ e MICRO S3 <span class="ap-compat__dot" aria-hidden="true">·</span> <span>Backup dos presets no editor e firmware pelo atualizador online</span></p>
       <button class="ap-link-btn js-help" type="button" commandfor="ajuda-dialog" command="show-modal" aria-haspopup="dialog">Guia de instalação e ajuda</button>
     </div>
   </div>
@@ -493,7 +488,7 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
   <div class="apps-dialog-head">
     <img class="apps-dialog-icon" src="assets/apps/icon-256.png" srcset="assets/apps/icon-112.webp 112w, assets/apps/icon-256.webp 256w" sizes="46px" width="256" height="256" alt="" loading="lazy" decoding="async">
     <div class="apps-dialog-titles">
-      <p class="apps-dialog-label bf-kicker"><span class="apps-dialog-brand">BFMiDi Editor</span> <b class="apps-dialog-ver">Versão 14</b></p>
+      <p class="apps-dialog-label bf-kicker"><span class="apps-dialog-brand">BFMiDi Editor</span></p>
       <h2 id="ajuda-titulo">Como podemos ajudar?</h2>
     </div>
     <button class="apps-close-help" type="button" aria-label="Fechar ajuda" commandfor="ajuda-dialog" command="close" autofocus>
@@ -558,7 +553,16 @@ if (!location.hash || /^#8sw\/?$/i.test(location.hash)) document.head.insertAdja
   </nav>
   <footer class="site-footer">
     <div class="wrap footer-row">
-      <p class="footer-note">© BFFX · BFMIDI</p><p class="footer-end" data-copy="footerEnd">Controladoras MIDI</p>
+      <p class="footer-note">© BFFX · BFMIDI</p>
+      <!-- Links do rodapé (13/11/2026): a loja e o WhatsApp são os mesmos
+           destinos do painel Comprar. -->
+      <ul class="footer-links">
+        <li><a href="https://loja.bffx.com.br" target="_blank" rel="noopener noreferrer">Loja online<span class="sr-only"> (abre em nova aba)</span></a></li>
+        <li><a href="https://wa.me/5516992274195" target="_blank" rel="noopener noreferrer">WhatsApp<span class="sr-only"> (abre em nova aba)</span></a></li>
+        <li><a href="https://bffx-updates.github.io/MANUAL_USER/" target="_blank" rel="noopener noreferrer">Manual<span class="sr-only"> (abre em nova aba)</span></a></li>
+        <li><a href="#8sw/downloads" data-go="view:downloads">Suporte</a></li>
+      </ul>
+      <p class="footer-end" data-copy="footerEnd">Controladoras MIDI</p>
     </div>
   </footer>
 </div>

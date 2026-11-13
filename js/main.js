@@ -114,10 +114,11 @@
      Sem palavra e sem etiqueta, o micro-rótulo não é desenhado. */
   function pgHead(o) {
     var tag = o.model || o.tag;
+    /* Sem micro-rótulo acima do título (13/11/2026): a faixa de modelos
+       já diz qual modelo está aberto, e o título fala por si. `kicker` e
+       `model` continuam aceitos e são ignorados. */
+    void tag;
     return '<header class="pg-head">' +
-      (o.kicker || tag
-        ? '<p class="pg-kicker">' + esc(o.kicker || '') + (tag ? ' <b>' + esc(tag) + '</b>' : '') + '</p>'
-        : '') +
       '<h2 class="pg-title"' + (o.id ? ' id="' + esc(o.id) + '"' : '') + '><span class="pg-title__line">' + esc(o.title) + '</span>' +
         (o.hot ? '<span class="pg-title__line pg-title__hot">' + esc(o.hot) + '</span>' : '') + '</h2>' +
       (o.lead ? '<p class="pg-lead">' + esc(o.lead) + '</p>' : '') +
@@ -307,6 +308,25 @@
     if (heroKicker.getAttribute('data-for') === m.hash) return;
     heroKicker.setAttribute('data-for', m.hash);
     heroKicker.innerHTML = '<span>' + esc(C.ui.header) + '</span><b aria-hidden="true">' + esc(m.id) + '</b>';
+    homePitch(m);
+  }
+
+  /* A frase do que a controladora faz, o preço do modelo à vista e os
+     dois caminhos (13/11/2026): a HOME é a tela que o anúncio abre, e
+     sem isto ela não dizia o que é nem quanto custa. Os links usam o
+     [data-go] de sempre, então trocam o painel sem sair da página. */
+  var heroPitch = $('#hero-pitch');
+  function homePitch(m) {
+    var P = C.ui && C.ui.pitch;
+    if (!heroPitch || !P) return;
+    var amount = priceOf(m);
+    heroPitch.innerHTML =
+      '<p class="hero-pitch__line">' + esc(P.line) + '</p>' +
+      '<div class="hero-pitch__row">' +
+        (amount ? '<p class="hero-pitch__price">' + esc(amount) + '</p>' : '') +
+        '<a class="hero-pitch__btn is-ghost" href="#' + esc(m.hash) + '/info" data-go="view:info">' + esc(P.details) + '</a>' +
+        '<a class="hero-pitch__btn" href="#' + esc(m.hash) + '/comprar" data-go="view:comprar">' + esc(fillCopy(P.buy, { model: m.tab })) + '</a>' +
+      '</div>';
   }
 
   /* Abaixo de 900px a luz do nome acompanha a LARGURA da palavra
@@ -1075,15 +1095,21 @@
       }
     }
 
+    /* O grupo de espera (13/11/2026) virou um link discreto abaixo do
+       destino da loja: logo abaixo do botão, um bloco grande dizendo
+       "caso esteja esgotado" plantava a dúvida na hora da compra. */
     var wait = b.waitlist
-      ? '<p class="shop-sep" aria-hidden="true"><span>' + esc(C.buy.waitKicker) + '</span></p>' +
-        '<a class="shop-wa" href="' + esc(b.waitlist.href) + '" target="_blank" rel="noopener noreferrer">' +
-          ledRing('var(--led-whatsapp)', shopSvg('wa', 'pg-ring__ico')) +
-          '<span class="shop-wa__txt"><strong>' + esc(b.waitlist.label) + '</strong>' +
-            '<span>' + esc(b.waitlist.text) + '</span></span>' +
-          shopSvg('out', 'shop-wa__go') +
-          '<span class="sr-only"> (' + esc(C.buy.newTab) + ')</span>' +
-        '</a>'
+      ? '<p class="shop-wait"><a href="' + esc(b.waitlist.href) + '" target="_blank" rel="noopener noreferrer">' +
+          esc(C.buy.waitShort || b.waitlist.label) + shopSvg('out', 'shop-wait__go') +
+          '<span class="sr-only"> (' + esc(C.buy.newTab) + ')</span></a></p>'
+      : '';
+
+    /* Com o que ela funciona: a pergunta que mais trava a compra. */
+    var K = C.buy.compat;
+    var compat = K
+      ? '<div class="shop-compat"><p class="shop-compat__t">' + esc(K.title) + '</p>' +
+          '<p class="shop-compat__x">' + esc(K.text) + '</p>' +
+          '<ul class="shop-compat__list">' + K.brands.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('') + '</ul></div>'
       : '';
 
     var details = b.hideDetails ? '' :
@@ -1145,6 +1171,7 @@
       }) +
       stage +
       '<div class="shop-buy">' + priceTag + details + cta + wait + '</div>' +
+      compat +
       facts +
       ports +
     '</div></div>';

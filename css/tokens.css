@@ -67,7 +67,7 @@ html:root {
   --cta:     linear-gradient(155deg, #ffb765, #ff7838);   /* botão primário */
   --cta-ink: #391508;                                     /* texto sobre o --cta: 9,5:1 a 6,2:1 */
   --cta-edge: #ffc17e99;
-  --cta-shadow: inset 0 1px 1px #ffdfb2, 0 10px 28px -10px #ff6a1f88;
+  --cta-shadow: inset 0 1px 1px #ffdfb2, 0 8px 18px -10px #000;
   /* Botão fantasma (secundário): neutro, sem a cor do assunto. */
   --ghost-bg: #0f1824cc;
   --ghost-bg-hover: #16212fcc;
@@ -126,7 +126,7 @@ html:root {
   --chrome-on-edge: #e7a36b;
   --chrome-on-ink:  #ffd2a4;          /* 9,8:1 no tom mais claro do fundo */
   /* A tecla utilitária ativa (APP, engrenagem): anel + brilho. */
-  --chrome-util-on: 0 0 0 2px #ff8e3e, 0 0 24px #ff7a3355;
+  --chrome-util-on: 0 0 0 2px #ff8e3e, 0 10px 22px -12px #000;
 
   /* ---------- TIPOGRAFIA -----------------------------------
      Archivo é VARIÁVEL no eixo de largura. Três ajustes, e só
