@@ -1266,7 +1266,7 @@ const ACT_GLB = [[/^board$/, 'modelo da placa'], [/^(led|bright|color|letter_led
   [/^sw_?global|^swg/, 'FS GLOBAL'], [/^ext_?dual|^ext_|^esw/, 'FS externos'], [/^exp_/, 'expressão'], [/^(tuner|kemper|nano)/, 'afinador'],
   [/^(header_live|chan_pause|debounce|long_press|double)/, 'tempos'],
   [/^(icon_|bpm_card|preset_card|name_preset|custom_|layout|preset_layout|live_layout|gig|screen|display|invert|remap)/, 'tela'],
-  [/^(usb_host|ble)/, 'USB host'], [/^(lang|language)/, 'idioma']];
+  [/^(usb_host|usb_thru|ble)/, 'USB host'], [/^(lang|language)/, 'idioma']];
 function actFields(list, rules, raw) {
   const keys = String(list || '').split(',').filter(Boolean), out = [];
   for (const k of keys) {
