@@ -659,7 +659,8 @@ html:not([data-sec]) .msec { display: none !important; }
   }
   .mbar__item .nav-icon { width: 22px; height: 22px; }
   .mbar__item > span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  @media (max-width: 380px) { .mbar__item { font-size: 10px; letter-spacing: .03em; } }
+  /* cinco itens em tela estreita: a letra continua em 11px, só o espaço entre letras cede */
+  @media (max-width: 380px) { .mbar__item { letter-spacing: 0; } }
   .mbar__item[aria-current] {
     color: var(--chrome-on-ink);
     background: var(--chrome-on-bg);
