@@ -131,6 +131,9 @@ window.BF_CONTENT = (function () {
         main: [
           { key: 'ctrl', label: 'Controladoras', short: 'Modelos' },
           { key: 'apps', label: 'Apps',          short: 'Apps',    view: 'apps' },
+          /* `href` = página própria fora da vitrine (o Editor de Setlist,
+             setlist/): link comum, sem vista e sem item aceso. */
+          { key: 'setlist', label: 'Setlist',    short: 'Setlist', href: 'setlist/' },
           { key: 'sup',  label: 'Suporte',       short: 'Suporte', view: 'downloads' }
         ],
         buy: 'Comprar',

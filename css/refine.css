@@ -633,9 +633,10 @@ html:not([data-sec]) .msec { display: none !important; }
     right: 0;
     bottom: 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
-    padding: 6px max(10px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    /* cinco itens desde nov/2026 (entrou o Setlist) */
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px max(8px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
     background: linear-gradient(180deg, #131a24, #0b0f15);
     border-top: 1px solid var(--line-2);
     box-shadow: 0 -14px 30px -18px #000;
@@ -657,6 +658,8 @@ html:not([data-sec]) .msec { display: none !important; }
     transition: color .2s ease, background-color .2s ease, transform .12s ease;
   }
   .mbar__item .nav-icon { width: 22px; height: 22px; }
+  .mbar__item > span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 380px) { .mbar__item { font-size: 10px; letter-spacing: .03em; } }
   .mbar__item[aria-current] {
     color: var(--chrome-on-ink);
     background: var(--chrome-on-bg);

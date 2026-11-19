@@ -1185,7 +1185,8 @@
     apps: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
     sup: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.6"/><path d="m5.6 5.6 3.9 3.9m5 5 3.9 3.9m0-12.8-3.9 3.9m-5 5-3.9 3.9"/>',
     buy: '<path d="M3 3h2l3 12h11l2-8H6"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/>',
-    cmp: '<path d="M8 3v18M16 3v18"/><path d="M3 8h5M3 16h5M16 8h5M16 16h5"/>'
+    cmp: '<path d="M8 3v18M16 3v18"/><path d="M3 8h5M3 16h5M16 8h5M16 16h5"/>',
+    setlist: '<path d="M4 6h11M4 11h11M4 16h7"/><circle cx="17.5" cy="18" r="2.4"/><path d="M19.9 18V8.5l-3.4 1"/>'
   };
   function icon(key) { return '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (NAV_ICONS[key] || '') + '</svg>'; }
   /* ------------------------------------ painéis DOWNLOADS e MANUAL ----
@@ -1424,16 +1425,19 @@
     return item ? item.key : 'ctrl';
   }
   function goOf(it) { return it.key === 'buy' ? 'buy' : it.view ? 'view:' + it.view : 'home'; }
+  /* Item com `href` (o Editor de Setlist) é um link comum para outra página:
+     sem [data-go], e o markNav não mexe no endereço dele. */
+  function navAttrs(it) { return it.href ? 'href="' + esc(it.href) + '"' : 'href="#" data-go="' + goOf(it) + '"'; }
 
   function buildNav() {
     mnavMain.setAttribute('aria-label', NAV.label);
     mnavMain.innerHTML = NAV.main.map(function (it) {
-      return '<a class="mnav__item" href="#" data-go="' + goOf(it) + '" data-key="' + esc(it.key) + '">' + icon(it.key) + '<span>' + esc(it.label) + '</span></a>';
+      return '<a class="mnav__item" ' + navAttrs(it) + ' data-key="' + esc(it.key) + '">' + icon(it.key) + '<span>' + esc(it.label) + '</span></a>';
     }).join('');
     mnavBuy.innerHTML = icon('buy') + '<span>' + esc(NAV.buy) + '</span>';
     mbar.setAttribute('aria-label', NAV.label);
     mbar.innerHTML = NAV.main.concat([{ key: 'buy', short: NAV.buy }]).map(function (it) {
-      return '<a class="mbar__item" href="#" data-go="' + goOf(it) + '" data-key="' + esc(it.key) + '">' + icon(it.key) + '<span>' + esc(it.short) + '</span></a>';
+      return '<a class="mbar__item" ' + navAttrs(it) + ' data-key="' + esc(it.key) + '">' + icon(it.key) + '<span>' + esc(it.short) + '</span></a>';
     }).join('');
     mstrip.setAttribute('aria-label', NAV.models);
     mstrip.innerHTML = '<div class="mstrip__in">' + MODELS.map(function (m, i) {
@@ -1461,6 +1465,7 @@
     if (brand) brand.href = viewHref(mi, 'home');
     mnavMain.querySelectorAll('.mnav__item').forEach(function (a) {
       var it = NAV.main.find(function (x) { return x.key === a.getAttribute('data-key'); }) || {};
+      if (it.href) return;
       a.href = viewHref(mi, it.view);
       cur(a, it.key === area);
     });
@@ -1472,6 +1477,7 @@
     mbar.querySelectorAll('.mbar__item').forEach(function (a) {
       var key = a.getAttribute('data-key');
       var it = NAV.main.find(function (x) { return x.key === key; }) || {};
+      if (it.href) return;
       a.href = key === 'buy' ? mnavBuy.getAttribute('href') : viewHref(mi, it.view);
       cur(a, buyView ? key === 'buy' : key === area);
     });
