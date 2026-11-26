@@ -2481,7 +2481,29 @@ function monSw(mode, p) {
     }
   }
   for (const m of [...init, ...gest.flatMap((x) => x.msgs)]) if (m && m.t !== 'INFO') m.name = m.t === 'PC' ? pcLabel(m.ch, m.n) : ccLabel(m.ch, m.n);
-  return { init, gest, state };
+  // Depois do nome (que é do número lógico): cada PC vira Bank Select + PC.
+  for (const x of gest) x.msgs = x.msgs.flatMap(monPcSeq);
+  return { init: init.flatMap(monPcSeq), gest, state };
+}
+// PC "lógico" como o firmware o manda (swBankSendPcLogical, SW_BANK.h): o número vai de
+// 0 a 16383 e vira Bank Select + PC. Genérico: CC0 = n/128 e PC = n%128. Kemper (Player
+// e Stage): CC0 = 0, CC32 = n/128 e PC = n%128. Valeton GP-5/GP-50: SÓ o CC0 com o número
+// (0..99; acima disso nada sai). A mensagem PC vira a sequência real, na ordem.
+const MON_KEMPER_IDX = [9, 62, 63], MON_VALETON_IDX = [6, 37];
+function monPcSeq(m) {
+  if (!m || m.t !== 'PC') return [m];
+  const v = Math.max(0, Math.min(16383, num(m.n))), idx = pedalIdxFor(m.ch);
+  const bank = Math.floor(v / 128), pc = v % 128;
+  const cc = (n, val, name) => ({ t: 'CC', ch: m.ch, n, v: val, name, note: '' });
+  if (MON_VALETON_IDX.includes(idx)) {
+    if (v > 99) return [{ t: 'INFO', ch: 0, n: 0, v: '', note: `PC ${v} fora da faixa da Valeton (0..99): nada sai` }];
+    return [{ ...cc(0, v, m.name || ''), note: [m.note, 'a Valeton troca de preset pelo CC0, sem PC'].filter(Boolean).join(' · ') }];
+  }
+  const out = MON_KEMPER_IDX.includes(idx)
+    ? [cc(0, 0, 'Bank Select MSB'), cc(32, bank, 'Bank Select LSB (banco do Kemper)')]
+    : [cc(0, bank, 'Bank Select MSB')];
+  out.push({ ...m, n: pc, v: '', note: [m.note, v !== pc ? `preset ${v}` : ''].filter(Boolean).join(' · ') });
+  return out;
 }
 const two = (n) => String(n).padStart(2, '0');
 const monK = (t) => `<span class="k ${t === 'PC' ? 'pc' : t === 'CC' ? 'cc' : t === 'CMD' ? 'cmd' : 'info'}">${t}</span>`;
@@ -2492,13 +2514,13 @@ function monTimeline(pr) {
   const rows = []; const h = pr.hdr;
   const ch = num(h.channel);
   rows.push({ grp: 'HEADER' });
-  if (validCh(ch)) rows.push({ src: 'PC principal', m: { ...mMsg('PC', ch, num(h.bank)), name: pcLabel(ch, num(h.bank)) } });
+  if (validCh(ch)) monPcSeq({ ...mMsg('PC', ch, num(h.bank)), name: pcLabel(ch, num(h.bank)) }).forEach((m) => rows.push({ src: 'PC principal', m }));
   else rows.push({ src: 'PC principal', m: { t: 'INFO', ch: 0, n: 0, v: '', note: 'CANAL OFF: não manda PC' } });
   for (const e of pr.extras) {
     const m = e.t === 'PC' ? mMsg('PC', e.ch, e.n) : mMsg('CC', e.ch, e.n, e.v === 128 ? 'EXP' : e.v);
     m.name = e.t === 'PC' ? pcLabel(e.ch, e.n) : ccLabel(e.ch, e.n);
     if (e.t === 'CC' && e.v === 128) m.note = 'destino do pedal de expressão (não sai agora)';
-    rows.push({ src: 'Extra', m });
+    monPcSeq(m).forEach((x) => rows.push({ src: 'Extra', m: x }));
   }
   const pause = gi('header_live_pause_ms');
   if (pause > 0) rows.push({ grp: `PAUSA ${pause} ms (TEMPOS DE DISPARO)` });
