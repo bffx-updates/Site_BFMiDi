@@ -1074,6 +1074,8 @@ const swCount = () => boardIs4(g('board')) ? 4 : 6;
 const banksInBackup = () => LETTERS.split('').filter((L) => Object.keys(S.backup.presets || {}).some((t) => t[0] === L));
 
 // ── mensagens MIDI de um SW (a 1ª vai pra linha; todas vão pro tooltip) ──
+// Tipo PC de um slot/seção: 1 = PC com Bank Select, 2 = PC(NB), só o PC cru (26/nov/2026).
+const pcK = (t) => t === 1 || t === 2;
 function swMessages(mode, p) {
   const out = [];
   const cc = (ch, n) => { if (validCh(ch)) out.push({ t: num(n) >= 128 ? 'CMD' : 'CC', ch, n: num(n) }); };
@@ -1084,18 +1086,18 @@ function swMessages(mode, p) {
       break;
     case 'macros':
       // Em PC o programa e o on (ou o off); o num do slot e ignorado (0).
-      for (const s of ['', '2', '3']) for (const [t, ch, n, on, off] of splitSlots(p['mslots' + s])) (t === 1 ? pc(ch, on >= 0 ? on : off) : cc(ch, n));
+      for (const s of ['', '2', '3']) for (const [t, ch, n, on, off] of splitSlots(p['mslots' + s])) (pcK(t) ? pc(ch, on >= 0 ? on : off) : cc(ch, n));
       break;
     case 'single': {
       const slots = [...splitSlots(p.sslots), ...splitSlots(p.lslots), ...splitSlots(p.rslots)];
-      if (slots.length) for (const [t, ch, n] of slots) (t === 1 ? pc : cc)(ch, n);
+      if (slots.length) for (const [t, ch, n, v] of slots) (pcK(t) ? pc(ch, v) : cc(ch, n));
       else if (hasCh(p)) (P(p, 'as_pc') ? pc(P(p, 'ch'), P(p, 'pc')) : cc(P(p, 'ch'), P(p, 'num')));
       break;
     }
     case 'momentary': {
       const sl = splitSlots(p.mom_slots);
       // 5o campo t=1 = slot em PC (programa = on, ou off; -1 = nada).
-      if (sl.length) for (const [ch, n, on, off, t] of sl) (t === 1 ? pc(ch, on >= 0 ? on : off) : cc(ch, n)); else cc(P(p, 'ch'), P(p, 'num'));
+      if (sl.length) for (const [ch, n, on, off, t] of sl) (pcK(t) ? pc(ch, on >= 0 ? on : off) : cc(ch, n)); else cc(P(p, 'ch'), P(p, 'num'));
       break;
     }
     // SEGURAR do TAP/SPIN: ate 3 slots (out/2026) — lp_ch/lp_num e os mesmos
@@ -2357,12 +2359,14 @@ addEventListener('resize', () => { cancelAnimationFrame(lvRaf); lvRaf = requestA
 // FS manda em cada gesto. É uma leitura do backup: não fala com controladora nenhuma.
 // Regras espelhadas do SW_BANK.h — mudou o disparo inicial de um modo lá, mude aqui.
 // ─────────────────────────────────────────────────────────────────────────────
+// PC com o tipo: kind 2 = PC(NB), sai sem o Bank Select (ver monPcSeq).
+const mPc = (ch, n, kind) => ({ ...mMsg('PC', ch, n), nb: num(kind) === 2 });
 const mMsg = (t, ch, n, v, note) => { const cmd = t === 'CC' && num(n) >= 128 && num(n) < 200; return { t: cmd ? 'CMD' : t, ch: num(ch), n: num(n), v: cmd ? '' : v, note: note || '' }; };
 function monCcVal(p, s, on) { const c = P(p, 'custom' + s); return on ? (c ? P(p, 'on' + s, 127) : 127) : (c ? P(p, 'off' + s, 0) : 0); }
 // Mensagem de uma seção do STOMP no estado `on` (PC com aspc: programa = on/off; -1 = nada).
 function monStompMsg(p, s, on) {
   const ch = P(p, 'ch' + s);
-  if (P(p, 'aspc' + s)) { const v = P(p, (on ? 'on' : 'off') + s, -1); return v >= 0 ? mMsg('PC', ch, v, '') : null; }
+  if (P(p, 'aspc' + s)) { const v = P(p, (on ? 'on' : 'off') + s, -1); return v >= 0 ? mPc(ch, v, P(p, 'aspc' + s)) : null; }
   return mMsg('CC', ch, P(p, 'num' + s), monCcVal(p, s, on));
 }
 function monLpSlots(p, on) {   // SEGURAR do TAP/SPIN, até 3 slots
@@ -2370,7 +2374,7 @@ function monLpSlots(p, on) {   // SEGURAR do TAP/SPIN, até 3 slots
   for (const s of ['', '2', '3']) {
     const ch = P(p, 'lp_ch' + s); if (!validCh(ch)) continue;
     const v = P(p, 'lp_' + (on ? 'on' : 'off') + s, on ? 127 : 0);
-    if (P(p, 'lp_aspc' + s)) { if (v >= 0) out.push(mMsg('PC', ch, v)); }
+    if (P(p, 'lp_aspc' + s)) { if (v >= 0) out.push(mPc(ch, v, P(p, 'lp_aspc' + s))); }
     else out.push(mMsg('CC', ch, P(p, 'lp_num' + s), v));
   }
   return out;
@@ -2399,7 +2403,7 @@ function monSw(mode, p) {
     case 'macros': {
       for (const s of ['', '2', '3']) {
         const sl = splitSlots(p['mslots' + s]).filter(([, ch]) => validCh(ch)); if (!sl.length) continue;
-        const mk = (on) => sl.map(([t, ch, n, von, voff]) => { const v = on ? von : voff; return t === 1 ? (v >= 0 ? mMsg('PC', ch, v) : null) : mMsg('CC', ch, n, v); });
+        const mk = (on) => sl.map(([t, ch, n, von, voff]) => { const v = on ? von : voff; return pcK(t) ? (v >= 0 ? mPc(ch, v, t) : null) : mMsg('CC', ch, n, v); });
         add(GEST[s] + ' · liga', mk(true).map((m) => m && { ...m, note: 'liga' }));
         add(GEST[s] + ' · desliga', mk(false).map((m) => m && { ...m, note: 'desliga' }));
         const start = !!P(p, 'start' + s);
@@ -2410,8 +2414,8 @@ function monSw(mode, p) {
     case 'momentary': {
       let sl = splitSlots(p.mom_slots).filter(([ch]) => validCh(ch));
       if (!sl.length && hasCh(p)) sl = [[P(p, 'ch'), P(p, 'num'), P(p, 'on', 127), P(p, 'off', 0), 0]];
-      add('PISAR', sl.map(([ch, n, on, , t]) => t === 1 ? (on >= 0 ? mMsg('PC', ch, on) : null) : mMsg('CC', ch, n, on)));
-      add('SOLTAR', sl.map(([ch, n, , off, t]) => t === 1 ? (off >= 0 ? mMsg('PC', ch, off) : null) : mMsg('CC', ch, n, off)));
+      add('PISAR', sl.map(([ch, n, on, , t]) => pcK(t) ? (on >= 0 ? mPc(ch, on, t) : null) : mMsg('CC', ch, n, on)));
+      add('SOLTAR', sl.map(([ch, n, , off, t]) => pcK(t) ? (off >= 0 ? mPc(ch, off, t) : null) : mMsg('CC', ch, n, off)));
       state = 'não dispara na chamada';
       break;
     }
@@ -2419,7 +2423,7 @@ function monSw(mode, p) {
       const fld = { sslots: 'TOQUE', lslots: 'SEGURAR', rslots: 'PISAR DE NOVO' };
       for (const f of Object.keys(fld)) {
         const sl = splitSlots(p[f]).filter(([t, ch, n]) => validCh(ch) || (n >= 128 && n <= 151));
-        add(fld[f], sl.map(([t, ch, n, v]) => t === 1 ? mMsg('PC', ch, n) : mMsg('CC', ch, n, v)));
+        add(fld[f], sl.map(([t, ch, n, v]) => pcK(t) ? mPc(ch, v, t) : mMsg('CC', ch, n, v)));
       }
       if (!splitSlots(p.sslots).length && hasCh(p)) add('TOQUE', [P(p, 'as_pc') ? mMsg('PC', P(p, 'ch'), P(p, 'pc')) : mMsg('CC', P(p, 'ch'), P(p, 'num'), P(p, 'on', 127))]);
       const at = p.at_preset === undefined || p.at_preset === '' ? P(p, 'start') : P(p, 'at_preset');
@@ -2437,8 +2441,8 @@ function monSw(mode, p) {
     case 'spin': {
       let sl = splitSlots(p.spin_slots).filter(([ch]) => validCh(ch));
       if (!sl.length && hasCh(p)) sl = [[P(p, 'ch'), P(p, 'num'), P(p, 'val1', 0), P(p, 'val2', 64), P(p, 'val3', 127), 0]];
-      for (let k = 0; k < 3; k++) add(`TOQUE · posição ${k + 1}`, sl.map((q) => q[5] === 1 ? (q[2 + k] >= 0 ? mMsg('PC', q[0], q[2 + k]) : null) : mMsg('CC', q[0], q[1], q[2 + k])));
-      if (P(p, 'at_preset', 1)) sl.forEach((q) => init.push({ ...(q[5] === 1 ? mMsg('PC', q[0], q[2]) : mMsg('CC', q[0], q[1], q[2])), note: 'posição 1' }));
+      for (let k = 0; k < 3; k++) add(`TOQUE · posição ${k + 1}`, sl.map((q) => pcK(q[5]) ? (q[2 + k] >= 0 ? mPc(q[0], q[2 + k], q[5]) : null) : mMsg('CC', q[0], q[1], q[2 + k])));
+      if (P(p, 'at_preset', 1)) sl.forEach((q) => init.push({ ...(pcK(q[5]) ? mPc(q[0], q[2], q[5]) : mMsg('CC', q[0], q[1], q[2])), note: 'posição 1' }));
       add('SEGURAR · liga', monLpSlots(p, true)); add('SEGURAR · desliga', monLpSlots(p, false));
       const st = !!P(p, 'lp_start');
       if (P(p, 'lp_at_preset', 0)) monLpSlots(p, st).forEach((m) => init.push({ ...m, note: `SEGURAR · começa ${st ? 'LIGADO' : 'DESLIGADO'}` }));
@@ -2474,7 +2478,7 @@ function monSw(mode, p) {
     }
     case 'spring': {
       const ch = P(p, 'ch'); if (!validCh(ch)) break;
-      const mk = (on) => P(p, 'aspc') ? mMsg('PC', ch, P(p, on ? 'on' : 'off', on ? 127 : 0)) : mMsg('CC', ch, P(p, 'num'), P(p, on ? 'on' : 'off', on ? 127 : 0));
+      const mk = (on) => P(p, 'aspc') ? mPc(ch, P(p, on ? 'on' : 'off', on ? 127 : 0), P(p, 'aspc')) : mMsg('CC', ch, P(p, 'num'), P(p, on ? 'on' : 'off', on ? 127 : 0));
       add('PISAR · ação', [mk(true)]); add('SOLTAR · repouso', [mk(false)]);
       if (P(p, 'at_preset', 1)) init.push({ ...mk(false), note: 'repouso' });
       break;
@@ -2492,6 +2496,8 @@ function monSw(mode, p) {
 const MON_KEMPER_IDX = [9, 62, 63], MON_VALETON_IDX = [6, 37];
 function monPcSeq(m) {
   if (!m || m.t !== 'PC') return [m];
+  // PC(NB): só o Program Change cru (0..127), sem Bank Select.
+  if (m.nb) return [{ ...m, n: Math.min(127, Math.max(0, num(m.n))), note: [m.note, 'PC(NB): sem Bank Select'].filter(Boolean).join(' · ') }];
   const v = Math.max(0, Math.min(16383, num(m.n))), idx = pedalIdxFor(m.ch);
   const bank = Math.floor(v / 128), pc = v % 128;
   const cc = (n, val, name) => ({ t: 'CC', ch: m.ch, n, v: val, name, note: '' });
