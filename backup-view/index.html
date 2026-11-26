@@ -669,6 +669,54 @@
   }
   @media (forced-colors: active) { .lvs-pill, .lvs-area, .lvs-adv { border: 1px solid CanvasText; } }
   @media (forced-colors: active) { .lv-sev, .lv-kpi, .lvbtn[aria-pressed="true"] { border: 1px solid CanvasText; } }
+
+  /* ── MONITOR (26/nov/2026): o MIDI que cada preset manda ── */
+  .mon { display: grid; gap: 1.2rem; padding: 1.6rem 2.5rem 3rem; max-width: 110rem; margin: 0 auto; }
+  .mon-head { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .mon-head h2 { margin: 0; font-size: 1.5rem; letter-spacing: .04em; }
+  .mon-head .lv-note { color: var(--muted); }
+  .mon-banks { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .mon-banks button { min-width: 2.9rem; height: 2.6rem; border-radius: .7rem; border: 1px solid var(--line2); background: #141A23; font-weight: 900; cursor: pointer; font-size: 1.05rem; }
+  .mon-banks button.on { color: var(--accent2); border-color: rgba(252,99,55,.75); background: rgba(252,99,55,.1); box-shadow: 0 0 1rem -.35rem rgba(252,99,55,.6); }
+  .mon-banks button:disabled { opacity: .35; cursor: default; }
+  .mon-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .8rem; }
+  .mon-p { text-align: left; display: grid; gap: .35rem; padding: .9rem 1rem; border-radius: .9rem; border: 1px solid var(--line2); cursor: pointer;
+    background: linear-gradient(180deg, var(--card-a), var(--card-b)); min-width: 0; }
+  .mon-p .t { font-size: 1.5rem; font-weight: 900; }
+  .mon-p .nm { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mon-p .s { color: var(--muted); font-size: max(11px, .85rem); }
+  .mon-p.on { border-color: rgba(252,99,55,.8); box-shadow: 0 0 1.2rem -.4rem rgba(252,99,55,.7); }
+  .mon-p.on .t { color: var(--accent2); }
+  .mon-p:disabled { opacity: .35; cursor: default; }
+  .mon-sec { background: linear-gradient(180deg, var(--card-a), var(--card-b)); border-radius: var(--r); padding: 1.2rem 1.4rem; border: 1px solid var(--line); min-width: 0; }
+  .mon-sec > h3 { margin: 0 0 .25rem; font-size: 1.15rem; letter-spacing: .05em; text-transform: uppercase; }
+  .mon-sec > p { margin: 0 0 .9rem; color: var(--muted); font-size: max(11px, .9rem); }
+  .mon-tbl { width: 100%; border-collapse: collapse; font-size: max(11px, .95rem); }
+  .mon-tbl th { text-align: left; color: var(--muted); font-weight: 700; font-size: max(11px, .8rem); letter-spacing: .06em; text-transform: uppercase; padding: .4rem .6rem; border-bottom: 1px solid var(--line2); }
+  .mon-tbl td { padding: .5rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .mon-tbl tr.grp td { color: var(--soft); font-weight: 900; letter-spacing: .05em; background: rgba(255,255,255,.03); }
+  .mon-tbl td.o { color: var(--faint); width: 2.5rem; font-variant-numeric: tabular-nums; }
+  .mon-tbl td.v, .mon-tbl td.c, .mon-tbl td.n { font-family: ui-monospace, Menlo, Consolas, monospace; white-space: nowrap; }
+  .mon-tbl .k { display: inline-block; min-width: 2.6rem; text-align: center; padding: .1rem .45rem; border-radius: .4rem; font-weight: 900; font-size: max(11px, .8rem); }
+  .mon-tbl .k.pc { background: rgba(58,160,242,.16); color: #7CC3FF; } .mon-tbl .k.cc { background: rgba(43,214,91,.13); color: #6BE993; }
+  .mon-tbl .k.cmd { background: rgba(252,99,55,.15); color: var(--accent2); } .mon-tbl .k.info { background: rgba(255,255,255,.07); color: var(--soft); }
+  .mon-tbl .nmv { color: var(--soft); } .mon-tbl .dim { color: var(--muted); }
+  .mon-empty { color: var(--muted); padding: .6rem 0; }
+  .mon-fs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
+  .mon-fs .fs { border: 1px solid var(--line2); border-radius: .9rem; padding: .9rem 1rem; min-width: 0; background: rgba(0,0,0,.15); }
+  .mon-fs .fs h4 { margin: 0 0 .5rem; display: flex; gap: .7rem; align-items: baseline; font-size: 1.05rem; }
+  .mon-fs .fs h4 .md { color: var(--accent2); letter-spacing: .05em; }
+  .mon-fs .fs h4 .st { margin-left: auto; color: var(--muted); font-weight: 600; font-size: max(11px, .85rem); }
+  .mon-fs .g { color: var(--muted); font-size: max(11px, .8rem); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; margin: .55rem 0 .2rem; }
+  .mon-fs .m { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .2rem .6rem; align-items: baseline; padding: .15rem 0; }
+  .mon-fs .m .x { color: var(--soft); min-width: 0; overflow-wrap: anywhere; }
+  .mon-fs .m .vv { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--text); white-space: nowrap; }
+  .mon-lsel { display: flex; gap: .5rem; margin: 0 0 .9rem; }
+  .mon-lsel button { height: 2.3rem; padding: 0 1rem; border-radius: .6rem; border: 1px solid var(--line2); background: #141A23; font-weight: 800; cursor: pointer; }
+  .mon-lsel button.on { color: var(--accent2); border-color: rgba(252,99,55,.75); }
+  @media (max-width: 1100px) { .mon-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .mon-fs { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 720px) { .mon { padding: 1rem; } .mon-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mon-tbl td.nmcol, .mon-tbl th.nmcol { display: none; } }
 </style>
 </head>
 <body>
@@ -676,6 +724,7 @@
   <div class="brand"><span class="name" role="heading" aria-level="1"><b>BFMIDI</b> BACKUP VIEW</span><i class="sep"></i><span class="sub">Visualizador de backup</span></div>
   <label class="filebtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h3.6l2 2h7.4A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>Abrir backup <input id="file" type="file" accept=".json,.txt,.log,application/json,text/plain"></label>
   <button class="lvbtn" id="lvBtn" type="button" aria-pressed="false" title="Telemetria da controladora: travamentos, lentidão, Wi-Fi e pisadas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2.5-6 4 12 2.5-6H21"/></svg>LOG VIEW</button>
+  <button class="lvbtn" id="monBtn" type="button" aria-pressed="false" title="O MIDI que cada preset manda: header e footswitches"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 12l2.5-3 2.5 2 3-4 2 2"/></svg>MONITOR</button>
   <div class="fileinfo" id="fileinfo">Nenhum arquivo aberto</div>
 </header>
 <main id="main"></main>
@@ -809,7 +858,7 @@ const LETTERS = 'ABCDEFGHIJ';
 // ─────────────────────────────────────────────────────────────────────────────
 // ESTADO
 // ─────────────────────────────────────────────────────────────────────────────
-const S = { backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false, bootOpen: null, view: 'presets', lv: null, lvBoot: 0,
+const S = { monBank: 'A', monTag: '', monLayer: 1, backup: null, name: '', bank: 'A', pi: 1, layer: 1, showExtras: false, bootOpen: null, view: 'presets', lv: null, lvBoot: 0,
   lvAdv: (() => { try { return localStorage.getItem('bv_lv_adv') === '1'; } catch (e) { return false; } })() };
 let LED = LED_DEFAULT.map(([n, rgb]) => ({ name: n, rgb }));
 
@@ -2301,9 +2350,221 @@ $main.addEventListener('pointerleave', () => { const tip = document.getElementBy
 let lvRaf = 0;
 addEventListener('resize', () => { cancelAnimationFrame(lvRaf); lvRaf = requestAnimationFrame(lvDrawCharts); });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MONITOR (26/nov/2026) — o MIDI que cada preset manda: o HEADER (PC + extras) e,
+// na mesma ordem do firmware (swBankSendPresetMidi → swActiveSendInitialMidi), o que
+// cada footswitch dispara AO CHAMAR o preset (DISPARA/COMEÇA); embaixo, tudo o que cada
+// FS manda em cada gesto. É uma leitura do backup: não fala com controladora nenhuma.
+// Regras espelhadas do SW_BANK.h — mudou o disparo inicial de um modo lá, mude aqui.
+// ─────────────────────────────────────────────────────────────────────────────
+const mMsg = (t, ch, n, v, note) => { const cmd = t === 'CC' && num(n) >= 128 && num(n) < 200; return { t: cmd ? 'CMD' : t, ch: num(ch), n: num(n), v: cmd ? '' : v, note: note || '' }; };
+function monCcVal(p, s, on) { const c = P(p, 'custom' + s); return on ? (c ? P(p, 'on' + s, 127) : 127) : (c ? P(p, 'off' + s, 0) : 0); }
+// Mensagem de uma seção do STOMP no estado `on` (PC com aspc: programa = on/off; -1 = nada).
+function monStompMsg(p, s, on) {
+  const ch = P(p, 'ch' + s);
+  if (P(p, 'aspc' + s)) { const v = P(p, (on ? 'on' : 'off') + s, -1); return v >= 0 ? mMsg('PC', ch, v, '') : null; }
+  return mMsg('CC', ch, P(p, 'num' + s), monCcVal(p, s, on));
+}
+function monLpSlots(p, on) {   // SEGURAR do TAP/SPIN, até 3 slots
+  const out = [];
+  for (const s of ['', '2', '3']) {
+    const ch = P(p, 'lp_ch' + s); if (!validCh(ch)) continue;
+    const v = P(p, 'lp_' + (on ? 'on' : 'off') + s, on ? 127 : 0);
+    if (P(p, 'lp_aspc' + s)) { if (v >= 0) out.push(mMsg('PC', ch, v)); }
+    else out.push(mMsg('CC', ch, P(p, 'lp_num' + s), v));
+  }
+  return out;
+}
+const GEST = { '': 'TOQUE', '2': 'SEGURAR', '3': 'PISAR DE NOVO' };
+// { init: [msgs na chamada do preset], gest: [{ g, msgs }], state }
+function monSw(mode, p) {
+  const init = [], gest = []; let state = '';
+  const add = (g, msgs) => { msgs = msgs.filter(Boolean).filter((m) => validCh(m.ch) || m.t === 'CMD'); if (msgs.length) gest.push({ g, msgs }); };
+  switch (mode) {
+    case 'fx1': case 'fx2': case 'fx3': {
+      for (const s of ['', '2', '3']) {
+        if (s === '3' && mode === 'fx2') continue;
+        if (P(p, 'fav' + s)) { gest.push({ g: GEST[s], msgs: [{ t: 'INFO', ch: 0, n: 0, v: '', note: 'FAVORITO (chama outro preset, sem MIDI)' }] }); continue; }
+        if (!hasCh(p, s)) continue;
+        const on = monStompMsg(p, s, true), off = monStompMsg(p, s, false);
+        const msgs = [];
+        if (on) msgs.push({ ...on, note: 'liga' }); if (off) msgs.push({ ...off, note: 'desliga' });
+        add(GEST[s] + ' · alterna', msgs);
+        const start = !!P(p, 'start' + s);
+        if (P(p, 'at_preset' + s, 1)) { const m = start ? on : off; if (m) init.push({ ...m, note: `${GEST[s]} · começa ${start ? 'LIGADO' : 'DESLIGADO'}` }); }
+        if (s === '') state = start ? 'começa LIGADO' : 'começa DESLIGADO';
+      }
+      break;
+    }
+    case 'macros': {
+      for (const s of ['', '2', '3']) {
+        const sl = splitSlots(p['mslots' + s]).filter(([, ch]) => validCh(ch)); if (!sl.length) continue;
+        const mk = (on) => sl.map(([t, ch, n, von, voff]) => { const v = on ? von : voff; return t === 1 ? (v >= 0 ? mMsg('PC', ch, v) : null) : mMsg('CC', ch, n, v); });
+        add(GEST[s] + ' · liga', mk(true).map((m) => m && { ...m, note: 'liga' }));
+        add(GEST[s] + ' · desliga', mk(false).map((m) => m && { ...m, note: 'desliga' }));
+        const start = !!P(p, 'start' + s);
+        if (P(p, 'at_preset' + s, 0)) mk(start).forEach((m) => m && init.push({ ...m, note: `${GEST[s]} · começa ${start ? 'LIGADO' : 'DESLIGADO'}` }));
+      }
+      break;
+    }
+    case 'momentary': {
+      let sl = splitSlots(p.mom_slots).filter(([ch]) => validCh(ch));
+      if (!sl.length && hasCh(p)) sl = [[P(p, 'ch'), P(p, 'num'), P(p, 'on', 127), P(p, 'off', 0), 0]];
+      add('PISAR', sl.map(([ch, n, on, , t]) => t === 1 ? (on >= 0 ? mMsg('PC', ch, on) : null) : mMsg('CC', ch, n, on)));
+      add('SOLTAR', sl.map(([ch, n, , off, t]) => t === 1 ? (off >= 0 ? mMsg('PC', ch, off) : null) : mMsg('CC', ch, n, off)));
+      state = 'não dispara na chamada';
+      break;
+    }
+    case 'single': {
+      const fld = { sslots: 'TOQUE', lslots: 'SEGURAR', rslots: 'PISAR DE NOVO' };
+      for (const f of Object.keys(fld)) {
+        const sl = splitSlots(p[f]).filter(([t, ch, n]) => validCh(ch) || (n >= 128 && n <= 151));
+        add(fld[f], sl.map(([t, ch, n, v]) => t === 1 ? mMsg('PC', ch, n) : mMsg('CC', ch, n, v)));
+      }
+      if (!splitSlots(p.sslots).length && hasCh(p)) add('TOQUE', [P(p, 'as_pc') ? mMsg('PC', P(p, 'ch'), P(p, 'pc')) : mMsg('CC', P(p, 'ch'), P(p, 'num'), P(p, 'on', 127))]);
+      const at = p.at_preset === undefined || p.at_preset === '' ? P(p, 'start') : P(p, 'at_preset');
+      if (at && gest[0] && gest[0].g === 'TOQUE') gest[0].msgs.forEach((m) => init.push({ ...m, note: 'TOQUE (DISPARA)' }));
+      break;
+    }
+    case 'tap_tempo': {
+      const sl = splitSlots(p.tslots).filter(([ch]) => validCh(ch));
+      add('TOQUE · tempo', sl.flatMap(([ch, n, md]) => md === 2 ? [mMsg('CC', ch, n, 127, 'pulso'), mMsg('CC', ch, n, 0, 'pulso')] : [mMsg('CC', ch, n, 127)]));
+      add('SEGURAR · liga', monLpSlots(p, true)); add('SEGURAR · desliga', monLpSlots(p, false));
+      const st = !!P(p, 'lp_start');
+      if (P(p, 'lp_at_preset', 0)) monLpSlots(p, st).forEach((m) => init.push({ ...m, note: `SEGURAR · começa ${st ? 'LIGADO' : 'DESLIGADO'}` }));
+      break;
+    }
+    case 'spin': {
+      let sl = splitSlots(p.spin_slots).filter(([ch]) => validCh(ch));
+      if (!sl.length && hasCh(p)) sl = [[P(p, 'ch'), P(p, 'num'), P(p, 'val1', 0), P(p, 'val2', 64), P(p, 'val3', 127), 0]];
+      for (let k = 0; k < 3; k++) add(`TOQUE · posição ${k + 1}`, sl.map((q) => q[5] === 1 ? (q[2 + k] >= 0 ? mMsg('PC', q[0], q[2 + k]) : null) : mMsg('CC', q[0], q[1], q[2 + k])));
+      if (P(p, 'at_preset', 1)) sl.forEach((q) => init.push({ ...(q[5] === 1 ? mMsg('PC', q[0], q[2]) : mMsg('CC', q[0], q[1], q[2])), note: 'posição 1' }));
+      add('SEGURAR · liga', monLpSlots(p, true)); add('SEGURAR · desliga', monLpSlots(p, false));
+      const st = !!P(p, 'lp_start');
+      if (P(p, 'lp_at_preset', 0)) monLpSlots(p, st).forEach((m) => init.push({ ...m, note: `SEGURAR · começa ${st ? 'LIGADO' : 'DESLIGADO'}` }));
+      break;
+    }
+    case 'ramp':
+      if (hasCh(p)) add('TOQUE · rampa', [mMsg('CC', P(p, 'ch'), P(p, 'num'), `${P(p, 'min_val', 0)} ↔ ${P(p, 'max_val', 127)}`)]);
+      state = 'não dispara na chamada'; break;
+    case 'wave':
+      if (hasCh(p)) add('TOQUE · onda', [mMsg('CC', P(p, 'ch'), P(p, 'num'), `${P(p, 'min_val', 0)} ↔ ${P(p, 'max_val', 127)}`)]);
+      if (P(p, 'at_preset', 0) && !P(p, 'trig') && hasCh(p)) init.push({ ...mMsg('CC', P(p, 'ch'), P(p, 'num'), `${P(p, 'min_val', 0)} ↔ ${P(p, 'max_val', 127)}`), note: 'a onda já começa ligada' });
+      break;
+    case 'steps':
+      if (validCh(P(p, 'ch'))) add('SEQUÊNCIA', [mMsg('CC', P(p, 'ch'), P(p, 'num', 21), 'valores dos steps')]);
+      if (validCh(P(p, 'eff_ch'))) add('LIGAR EFEITO', [mMsg('CC', P(p, 'eff_ch'), P(p, 'eff_num', 20), `${P(p, 'eff_on', 127)} / ${P(p, 'eff_off', 0)}`)]);
+      break;
+    case 'control': {
+      const a = hasCh(p) ? mMsg('CC', P(p, 'ch'), P(p, 'num'), 127) : null, b = hasCh(p, '2') ? mMsg('CC', P(p, 'ch2'), P(p, 'num2'), 127) : null;
+      const z = (m) => m && { ...m, v: 0 };
+      add('TOQUE · vai pro FX 2', [z(a), b]); add('TOQUE · volta pro FX 1', [z(b), a]);
+      const fx2 = !!P(p, 'start');
+      if (P(p, 'at_preset', 1)) (fx2 ? [z(a), b] : [z(b), a]).forEach((m) => m && init.push({ ...m, note: `começa no FX ${fx2 ? 2 : 1}` }));
+      break;
+    }
+    case 'increment': {
+      const tgt = P(p, 'tgt'), ini = P(p, 'ini'), step = P(p, 'step', 1) || 1, ch = P(p, 'ch');
+      const m = tgt === 2 ? mMsg('PC', ch, ini) : tgt === 1 ? mMsg('CC', ch, ini, P(p, 'val', 127)) : mMsg('CC', ch, P(p, 'num'), ini);
+      if (validCh(ch)) {
+        add('TOQUE', [{ ...m, note: `${step > 0 ? 'sobe' : 'desce'} ${Math.abs(step)} a cada pisada (${tgt === 2 ? 'PC' : tgt === 1 ? 'nº do CC' : 'valor'})` }]);
+        if (P(p, 'at_preset', 1)) init.push({ ...m, note: 'número de início' });
+      }
+      break;
+    }
+    case 'spring': {
+      const ch = P(p, 'ch'); if (!validCh(ch)) break;
+      const mk = (on) => P(p, 'aspc') ? mMsg('PC', ch, P(p, on ? 'on' : 'off', on ? 127 : 0)) : mMsg('CC', ch, P(p, 'num'), P(p, on ? 'on' : 'off', on ? 127 : 0));
+      add('PISAR · ação', [mk(true)]); add('SOLTAR · repouso', [mk(false)]);
+      if (P(p, 'at_preset', 1)) init.push({ ...mk(false), note: 'repouso' });
+      break;
+    }
+  }
+  for (const m of [...init, ...gest.flatMap((x) => x.msgs)]) if (m && m.t !== 'INFO') m.name = m.t === 'PC' ? pcLabel(m.ch, m.n) : ccLabel(m.ch, m.n);
+  return { init, gest, state };
+}
+const two = (n) => String(n).padStart(2, '0');
+const monK = (t) => `<span class="k ${t === 'PC' ? 'pc' : t === 'CC' ? 'cc' : t === 'CMD' ? 'cmd' : 'info'}">${t}</span>`;
+const monNum = (m) => m.t === 'CMD' ? '' : String(m.n);
+const monCh = (m) => m.t === 'CMD' || m.t === 'INFO' ? '—' : 'CH ' + two(m.ch);
+// Header + disparo inicial, na ordem em que saem do pedal.
+function monTimeline(pr) {
+  const rows = []; const h = pr.hdr;
+  const ch = num(h.channel);
+  rows.push({ grp: 'HEADER' });
+  if (validCh(ch)) rows.push({ src: 'PC principal', m: { ...mMsg('PC', ch, num(h.bank)), name: pcLabel(ch, num(h.bank)) } });
+  else rows.push({ src: 'PC principal', m: { t: 'INFO', ch: 0, n: 0, v: '', note: 'CANAL OFF: não manda PC' } });
+  for (const e of pr.extras) {
+    const m = e.t === 'PC' ? mMsg('PC', e.ch, e.n) : mMsg('CC', e.ch, e.n, e.v === 128 ? 'EXP' : e.v);
+    m.name = e.t === 'PC' ? pcLabel(e.ch, e.n) : ccLabel(e.ch, e.n);
+    if (e.t === 'CC' && e.v === 128) m.note = 'destino do pedal de expressão (não sai agora)';
+    rows.push({ src: 'Extra', m });
+  }
+  const pause = gi('header_live_pause_ms');
+  if (pause > 0) rows.push({ grp: `PAUSA ${pause} ms (TEMPOS DE DISPARO)` });
+  const n = swCount();
+  const layers = num(h.l2) === 1 ? [1, 2] : [1];
+  for (const L of layers) {
+    let any = false;
+    for (const sw of pr.sws[L].slice(0, n)) {
+      if (sw.mode === 'mute' || sw.mode === 'favorite') continue;
+      const d = monSw(sw.mode, sw.p);
+      for (const m of d.init) { if (!any) { rows.push({ grp: `FOOTSWITCHES · LAYER ${L}` }); any = true; } rows.push({ src: `FS${sw.n} · ${SW_MODE_TITLE[sw.mode] || sw.mode}`, m }); }
+    }
+    if (!any) rows.push({ grp: `FOOTSWITCHES · LAYER ${L} · nenhum manda MIDI ao chamar` });
+  }
+  return rows;
+}
+function monRowHtml(r, i) {
+  if (r.grp) return `<tr class="grp"><td colspan="7">${esc(r.grp)}</td></tr>`;
+  const m = r.m;
+  const val = m.v === undefined || m.v === '' ? '' : String(m.v);
+  return `<tr><td class="o">${i}</td><td>${esc(r.src)}</td><td>${monK(m.t)}</td><td class="c">${monCh(m)}</td><td class="n">${esc(monNum(m))}</td><td class="v">${esc(val)}</td>` +
+    `<td class="nmcol"><span class="nmv">${esc(m.name || '')}</span>${m.note ? ` <span class="dim">${m.name ? '· ' : ''}${esc(m.note)}</span>` : ''}</td></tr>`;
+}
+function renderMonitor() {
+  const b = S.backup;
+  if (!b || b.logOnly) return `<div class="empty" id="drop">${FOLDER_SVG}<h2>MONITOR</h2><p>Abra um backup da BFMiDi (<span class="k">bfmidi-backup-*.json</span>) para ver o MIDI que cada preset manda.</p></div>`;
+  const banks = banksInBackup();
+  if (!banks.includes(S.monBank)) S.monBank = banks.includes(S.bank) ? S.bank : banks[0];
+  const L = S.monBank, n = swCount();
+  const bankBtns = LETTERS.split('').map((x) => `<button data-mbank="${x}" class="${x === L ? 'on' : ''}" aria-pressed="${x === L}"${banks.includes(x) ? '' : ' disabled'}>${x}</button>`).join('');
+  const cards = Array.from({ length: n }, (_, k) => {
+    const tag = L + (k + 1);
+    if (!hasPreset(tag)) return `<button class="mon-p" disabled><span class="t">${tag}</span><span class="nm">fora do backup</span></button>`;
+    const pr = presetOf(tag); const ch = num(pr.hdr.channel);
+    const nInit = monTimeline(pr).filter((r) => r.m && r.m.t !== 'INFO').length;
+    return `<button class="mon-p${S.monTag === tag ? ' on' : ''}" data-mtag="${tag}" aria-pressed="${S.monTag === tag}"><span class="t">${tag}</span>` +
+      `<span class="nm">${esc(pr.hdr.name || '(sem nome)')}</span><span class="s">${validCh(ch) ? `PC ${num(pr.hdr.bank)} · CH ${two(ch)}` : 'sem PC'} · ${nInit} mensagens</span></button>`;
+  }).join('');
+  let detail = '<div class="mon-sec"><p class="mon-empty">Toque num preset para ver o MIDI que ele manda.</p></div>';
+  if (S.monTag && S.monTag[0] === L && hasPreset(S.monTag)) {
+    const pr = presetOf(S.monTag);
+    const tl = monTimeline(pr); let i = 0;
+    const rows = tl.map((r) => monRowHtml(r, r.grp ? 0 : ++i)).join('');
+    const hasL2 = num(pr.hdr.l2) === 1; if (!hasL2) S.monLayer = 1;
+    const lsel = hasL2 ? `<div class="mon-lsel">${[1, 2].map((x) => `<button data-mlayer="${x}" class="${S.monLayer === x ? 'on' : ''}" aria-pressed="${S.monLayer === x}">LAYER ${x}</button>`).join('')}</div>` : '';
+    const fs = pr.sws[S.monLayer].slice(0, n).map((sw) => {
+      const d = sw.mode === 'mute' ? { gest: [], init: [], state: '' } : monSw(sw.mode, sw.p);
+      const body = d.gest.length ? d.gest.map((x) => `<div class="g">${esc(x.g)}</div>` + x.msgs.map((m) => m.t === 'INFO'
+        ? `<div class="m">${monK('INFO')}<span class="x">${esc(m.note)}</span><span class="vv"></span></div>`
+        : `<div class="m">${monK(m.t)}<span class="x">${m.t === 'CMD' ? '' : esc(m.n) + ' '}${esc(m.name || '')} <span class="dim">· ${monCh(m)}${m.note ? ' · ' + esc(m.note) : ''}</span></span><span class="vv">${esc(m.v === undefined ? '' : m.v)}</span></div>`).join('')).join('')
+        : `<p class="mon-empty">${sw.mode === 'mute' || sw.mode === 'favorite' ? 'Sem envio MIDI.' : 'Sem canal: não manda MIDI.'}</p>`;
+      return `<div class="fs"><h4>FS${sw.n}<span class="md">${esc(SW_MODE_TITLE[sw.mode] || sw.mode)}</span><span class="st">${esc(d.state)}</span></h4>${body}</div>`;
+    }).join('');
+    detail = `<section class="mon-sec"><h3>${S.monTag} · ao chamar o preset</h3><p>Tudo o que sai, na ordem: o header (PC principal e extras) e o que cada footswitch dispara sozinho (DISPARA / COMEÇA).</p>` +
+      `<table class="mon-tbl"><thead><tr><th>#</th><th>Origem</th><th>Tipo</th><th>Canal</th><th>Nº</th><th>Valor</th><th class="nmcol">Nome</th></tr></thead><tbody>${rows}</tbody></table></section>` +
+      `<section class="mon-sec"><h3>${S.monTag} · nos footswitches</h3><p>O que cada footswitch manda em cada gesto.</p>${lsel}<div class="mon-fs">${fs}</div></section>`;
+  }
+  return `<div class="mon"><div class="mon-head"><button class="lv-back" id="monBack">‹ Voltar aos presets</button><h2>MONITOR</h2><div class="mon-banks" role="group" aria-label="Banco">${bankBtns}</div>` +
+    `<span class="lv-note">Lido do backup: não fala com a controladora.</span></div><div class="mon-grid">${cards}</div>${detail}</div>`;
+}
+
 function render() {
   document.getElementById('lvBtn').setAttribute('aria-pressed', String(S.view === 'log'));
+  document.getElementById('monBtn').setAttribute('aria-pressed', String(S.view === 'mon'));
   if (S.view === 'log') { $main.innerHTML = renderLogView(); lvDrawCharts(); return; }
+  if (S.view === 'mon') { $main.innerHTML = renderMonitor(); return; }
   if (!S.backup) {
     $main.innerHTML = `<div class="empty" id="drop">${FOLDER_SVG}<h2>Abra um backup da BFMiDi</h2><p>Arraste o arquivo <span class="k">bfmidi-backup-*.json</span> aqui ou use o botão <b>ABRIR BACKUP</b>.</p><p>Nada é enviado a lugar nenhum — tudo é lido no seu navegador.</p></div>`;
     return;
@@ -2410,8 +2671,17 @@ document.getElementById('lvBtn').addEventListener('click', () => {
   if (S.backup && S.backup.logOnly) return;   // log solto: só existe o LOG VIEW
   S.view = S.view === 'log' ? 'presets' : 'log'; render(); scrollTo(0, 0);
 });
+document.getElementById('monBtn').addEventListener('click', () => {
+  if (S.backup && S.backup.logOnly) return;   // log solto: não há presets
+  if (S.view !== 'mon' && S.backup) { S.monBank = S.bank; S.monTag = S.bank + S.pi; S.monLayer = 1; }
+  S.view = S.view === 'mon' ? 'presets' : 'mon'; render(); scrollTo(0, 0);
+});
 $main.addEventListener('click', (e) => {
   if (e.target.closest('#drop')) { document.getElementById('file').click(); return; }
+  if (e.target.closest('#monBack')) { S.view = 'presets'; render(); scrollTo(0, 0); return; }
+  const mb = e.target.closest('[data-mbank]'); if (mb && !mb.disabled) { S.monBank = mb.dataset.mbank; S.monTag = ''; S.monLayer = 1; render(); return; }
+  const mt = e.target.closest('[data-mtag]'); if (mt) { S.monTag = mt.dataset.mtag; S.monLayer = 1; render(); const d = $main.querySelector('.mon-sec'); if (d && innerWidth < 1100) d.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  const ml = e.target.closest('[data-mlayer]'); if (ml) { S.monLayer = num(ml.dataset.mlayer, 1); render(); return; }
   if (e.target.closest('#lvBack')) { S.view = 'presets'; render(); scrollTo(0, 0); return; }
   if (e.target.closest('#lvAdvBtn, #lvAdvClose')) {
     S.lvAdv = !S.lvAdv; try { localStorage.setItem('bv_lv_adv', S.lvAdv ? '1' : '0'); } catch (err) { /* sem armazenamento: vale só nesta aba */ }
@@ -2429,7 +2699,7 @@ $main.addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => {
   // Só campos de DIGITAR bloqueiam os atalhos (o input de arquivo não digita nada).
-  if (!S.backup || S.view === 'log' || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input:not([type=file]), select, textarea'))) return;
+  if (!S.backup || S.view === 'log' || S.view === 'mon' || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input:not([type=file]), select, textarea'))) return;
   // Lendo o log pelo teclado: as teclas são do log (senão o preset muda lá em cima e o log volta ao topo).
   if (e.target.closest && e.target.closest('details.boot pre')) return;
   if (e.key === 'ArrowRight') stepBank(1);
